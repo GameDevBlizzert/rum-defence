@@ -1,14 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace RumDefence;
 
 public class BossTroop : Troop
 {
-    public BossTroop(Vector2 start, Texture2D texture)
-        : base(start, texture)
+    public BossTroop(Vector2 start, Vector2 target)
+        : base(start, target)
     {
         Health = 300;
-        Speed = 30f;
+
+        SpeedMultiplier = 0.5f;
     }
 }

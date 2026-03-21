@@ -9,8 +9,8 @@ public class SpeedModifier : IModifier
         this.multiplier = multiplier;
     }
 
-    public void Apply(Troop enemy)
+    public void Apply(Troop troop)
     {
-        enemy.Speed *= multiplier;
+        troop.SpeedMultiplier *= multiplier;
     }
 }

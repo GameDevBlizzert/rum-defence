@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 
 namespace RumDefence;
 
@@ -44,7 +45,6 @@ public class Ship : Entity
     private const float MinSpeedFactor = 0.2f;
     private const float RotationSpeed = 5f;
     private const float LeaveSpeed = 80f;
-    private const float UnloadDuration = 2f;
 
     private const float BackOffDistance = 100f;
     private const float ExitDistance = 400f;
@@ -64,14 +64,21 @@ public class Ship : Entity
     private Vector2 leaveTarget;
     private Vector2 spawnPosition;
 
-    private float unloadTimer;
     private float baseSpeed;
 
     public int EnemyCount { get; private set; }
-    public bool IsBoss { get; private set; }
 
     public bool IsFinished => state == ShipState.Leaving_ToSea &&
                               Vector2.Distance(Position, leaveTarget) < 10f;
+
+    // 🔥 TroopSpawner
+    private TroopSpawner troopSpawner;
+
+    public List<Troop> SpawnedTroops { get; } = new();
+
+    // =====================
+    // CONSTRUCTOR
+    // =====================
 
     public Ship(Vector2 start, Vector2 target, Data data, Texture2D texture)
     {
@@ -87,13 +94,20 @@ public class Ship : Entity
         baseSpeed = data.Speed;
 
         EnemyCount = data.EnemyCount;
-        IsBoss = data.IsBoss;
 
         Size = SizeSystem.FromTiles(data.WidthInTiles, data.WidthInTiles);
-
         ApplySize();
         scale *= data.SizeMultiplier;
+
+        troopSpawner = new TroopSpawner(
+            RumGame.Instance.CurrentLevel,
+            RumGame.Instance.CurrentGrid
+        );
     }
+
+    // =====================
+    // UPDATE
+    // =====================
 
     public override void Update(GameTime gameTime)
     {
@@ -121,6 +135,10 @@ public class Ship : Entity
         }
     }
 
+    // =====================
+    // SAILING
+    // =====================
+
     private void UpdateSailing(GameTime gameTime)
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -143,19 +161,35 @@ public class Ship : Entity
             state = ShipState.Docked;
     }
 
+    // =====================
+    // UNLOADING
+    // =====================
+
     private void StartUnloading()
     {
-        unloadTimer = 0f;
+        troopSpawner.StartSpawning(Position, EnemyCount);
         state = ShipState.Unloading;
     }
 
     private void UpdateUnloading(GameTime gameTime)
     {
-        unloadTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+        troopSpawner.Update(gameTime);
 
-        if (unloadTimer >= UnloadDuration)
+        if (troopSpawner.SpawnedTroops.Count > 0)
+        {
+            SpawnedTroops.AddRange(troopSpawner.SpawnedTroops);
+            troopSpawner.SpawnedTroops.Clear();
+        }
+
+        if (!troopSpawner.IsSpawning)
+        {
             StartLeaving();
+        }
     }
+
+    // =====================
+    // LEAVING
+    // =====================
 
     private void StartLeaving()
     {
@@ -172,7 +206,7 @@ public class Ship : Entity
         if (Vector2.Distance(Position, leaveTarget) < 10f)
         {
             Vector2 dirToSpawn = spawnPosition - dockTarget;
-            dirToSpawn = Normalize(dirToSpawn);
+            dirToSpawn.Normalize();
 
             leaveTarget = spawnPosition + dirToSpawn * ExitDistance;
 
@@ -184,6 +218,10 @@ public class Ship : Entity
     {
         MoveTowards(leaveTarget, LeaveSpeed, gameTime);
     }
+
+    // =====================
+    // HELPERS
+    // =====================
 
     private void MoveTowards(Vector2 target, float speed, GameTime gameTime)
     {
@@ -203,12 +241,5 @@ public class Ship : Entity
     private Vector2 GetForwardVector()
     {
         return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation));
-    }
-
-    private Vector2 Normalize(Vector2 v)
-    {
-        if (v == Vector2.Zero) return v;
-        v.Normalize();
-        return v;
     }
 }

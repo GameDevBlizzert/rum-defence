@@ -30,25 +30,19 @@ public static class DockSystem
 
     public static Vector2 GetSpawnPosition(Grid grid, CoastTile coast)
     {
+        Vector2 basePos = grid.GridToWorld(coast.GridPos);
         Vector2 dir = GetDirection(coast.TileType);
 
         float margin = grid.TileSize * 2f;
 
-        float left = grid.Offset.X;
-        float right = grid.Offset.X + grid.Width * grid.TileSize;
-        float top = grid.Offset.Y;
-        float bottom = grid.Offset.Y + grid.Height * grid.TileSize;
+        float x = basePos.X;
+        float y = basePos.Y;
 
-        float x = 0;
-        float y = 0;
+        if (dir.X < 0) x = -margin;
+        if (dir.X > 0) x = RumGame.VirtualWidth + margin;
 
-        if (dir.X < 0) x = left - margin;
-        else if (dir.X > 0) x = right + margin;
-        else x = grid.Offset.X + (grid.Width * grid.TileSize) / 2f;
-
-        if (dir.Y < 0) y = top - margin;
-        else if (dir.Y > 0) y = bottom + margin;
-        else y = grid.Offset.Y + (grid.Height * grid.TileSize) / 2f;
+        if (dir.Y < 0) y = -margin;
+        if (dir.Y > 0) y = RumGame.VirtualHeight + margin;
 
         return new Vector2(x, y);
     }

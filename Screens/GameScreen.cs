@@ -12,7 +12,9 @@ public class GameScreen : Screen
     private Level currentLevel;
 
     private ShipSpawner spawner;
+
     private List<Ship> ships = new();
+    private List<Troop> troops = new(); 
 
     private bool levelCompleted = false;
 
@@ -26,7 +28,6 @@ public class GameScreen : Screen
         grid = new Grid(currentLevel.Map);
 
         RumGame.Instance.CurrentGrid = grid;
-
         RumGame.Instance.CurrentLevel = currentLevel;
 
         GridSystem.CalculateLayout(grid);
@@ -56,14 +57,29 @@ public class GameScreen : Screen
         {
             ships[i].Update(gameTime);
 
+            if (ships[i].SpawnedTroops.Count > 0)
+            {
+                troops.AddRange(ships[i].SpawnedTroops);
+                ships[i].SpawnedTroops.Clear();
+            }
+
             if (ships[i].IsFinished)
             {
                 ships.RemoveAt(i);
             }
         }
 
-        // 🔹 Level completion
-        if (!levelCompleted && spawner.IsFinished && ships.Count == 0)
+        for (int i = troops.Count - 1; i >= 0; i--)
+        {
+            troops[i].Update(gameTime);
+
+            if (troops[i].IsFinished || troops[i].IsDead)
+            {
+                troops.RemoveAt(i);
+            }
+        }
+
+        if (!levelCompleted && spawner.IsFinished && ships.Count == 0 && troops.Count == 0)
         {
             levelCompleted = true;
             UnlockNextLevel();
@@ -77,9 +93,10 @@ public class GameScreen : Screen
         renderer.Draw(grid, spriteBatch);
 
         foreach (var ship in ships)
-        {
             ship.Draw(spriteBatch);
-        }
+
+        foreach (var troop in troops) 
+            troop.Draw(spriteBatch);
     }
 
     private void UnlockNextLevel()

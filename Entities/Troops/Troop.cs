@@ -6,32 +6,71 @@ namespace RumDefence;
 
 public class Troop : Entity
 {
-    public float Speed { get; set; } = 50f;
+    private Vector2 target;
+
+    private float baseSpeed = 60f;
+    public float SpeedMultiplier { get; set; } = 1f;
+
     public int Health { get; protected set; } = 100;
+    public bool IsDead => Health <= 0;
+    public bool IsFinished { get; private set; }
 
-    protected List<IModifier> modifiers = new();
+    private List<ITroopAbility> abilities = new();
 
-    public Troop(Vector2 start, Texture2D texture)
+    private static Texture2D pixel;
+
+    public Troop(Vector2 start, Vector2 targetPos)
     {
         Position = start;
-        Texture = texture;
+        target = targetPos;
+
+        if (pixel == null)
+        {
+            pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
+        }
+
+        Texture = pixel;
+        origin = Vector2.Zero;
+
+        Size = SizeSystem.Square(0.3f);
+        ApplySize();
     }
 
-    public void AddModifier(IModifier mod)
+    public void AddAbility(ITroopAbility ability)
     {
-        mod.Apply(this);
-        modifiers.Add(mod);
+        abilities.Add(ability);
     }
 
     public override void Update(GameTime gameTime)
     {
-        // later pathfinding
+        if (IsFinished || IsDead) return;
+
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        SpeedMultiplier = 1f;
+
+        foreach (var ability in abilities)
+        {
+            ability.Update(this, gameTime);
+        }
+
+        float speed = baseSpeed * SpeedMultiplier;
+
+        Vector2 dir = target - Position;
+
+        if (dir.Length() < 5f)
+        {
+            IsFinished = true;
+            return;
+        }
+
+        dir.Normalize();
+        Position += dir * speed * dt;
     }
 
-    public virtual void TakeDamage(int amount)
+    public void TakeDamage(int amount)
     {
         Health -= amount;
     }
-
-    public bool IsDead => Health <= 0;
 }
