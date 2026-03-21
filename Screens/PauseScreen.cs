@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Windows.Forms;
 
 namespace RumDefence;
 
@@ -17,9 +18,21 @@ public class PauseScreen : Screen
 
     private Rectangle panelRect;
 
+    private Texture2D pixel;
+
     public PauseScreen(ScreenManager manager, Screen previous) : base(manager)
     {
         previousScreen = previous;
+    }
+
+    private Texture2D GetPixel(SpriteBatch spriteBatch)
+    {
+        if (pixel == null)
+        {
+            pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
+        }
+        return pixel;
     }
 
     public override void Load()
@@ -69,10 +82,18 @@ public class PauseScreen : Screen
     {
         previousScreen.Draw(spriteBatch);
 
+        spriteBatch.Begin();
+
+        spriteBatch.Draw(GetPixel(spriteBatch),
+            new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
+            Color.Black * 0.5f);
+
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
         resumeButton.Draw(spriteBatch);
         settingsButton.Draw(spriteBatch);
         menuButton.Draw(spriteBatch);
+
+        spriteBatch.End();
     }
 }
