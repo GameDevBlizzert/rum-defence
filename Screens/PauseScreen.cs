@@ -82,11 +82,9 @@ public class PauseScreen : Screen
     {
         previousScreen.Draw(spriteBatch);
 
-        spriteBatch.Begin();
-
         spriteBatch.Draw(GetPixel(spriteBatch),
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
-            Color.Black * 0.5f);
+            Color.Black * 0.3f);
 
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
@@ -94,6 +92,5 @@ public class PauseScreen : Screen
         settingsButton.Draw(spriteBatch);
         menuButton.Draw(spriteBatch);
 
-        spriteBatch.End();
     }
 }
