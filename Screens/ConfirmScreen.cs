@@ -56,12 +56,8 @@ public class ConfirmScreen : Screen
         noButton.Update(gameTime);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Matrix scale)
+    public override void Draw(SpriteBatch spriteBatch)
     {
-        previous.Draw(spriteBatch, scale);
-
-        spriteBatch.Begin(transformMatrix: scale);
-
         spriteBatch.Draw(GetPixel(spriteBatch),
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
@@ -72,8 +68,6 @@ public class ConfirmScreen : Screen
 
         yesButton.Draw(spriteBatch);
         noButton.Draw(spriteBatch);
-
-        spriteBatch.End();
     }
 
     private Texture2D pixel;

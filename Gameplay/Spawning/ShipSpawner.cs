@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
@@ -7,11 +6,12 @@ namespace RumDefence;
 
 public class ShipSpawner
 {
-    private Level level;
-    private List<Point> coastTiles;
-    private Random rng = new Random();
+    private readonly Level level;
+    private readonly Grid grid;
+    private readonly List<CoastTile> coastTiles;
+    private readonly Random rng = new();
 
-    private int currentWaveIndex = 0;
+    private int currentWaveIndex;
     private float timer;
     private float nextSpawnTime;
 
@@ -19,13 +19,19 @@ public class ShipSpawner
 
     public bool IsFinished { get; private set; }
 
-    public ShipSpawner(Level level)
+    public ShipSpawner(Level level, Grid grid)
     {
         this.level = level;
-        coastTiles = CoastFinder.GetCoastTiles(level.Map);
+        this.grid = grid;
+
+        coastTiles = CoastSystem.GetCoastTiles(level.Map);
 
         StartWave(0);
     }
+
+    // =====================
+    // WAVE FLOW
+    // =====================
 
     private void StartWave(int index)
     {
@@ -49,62 +55,76 @@ public class ShipSpawner
         );
     }
 
+    // =====================
+    // UPDATE
+    // =====================
+
     public Ship Update(GameTime gameTime)
     {
-        if (currentWaveIndex >= level.Waves.Count)
-        {
-            IsFinished = true;
+        if (IsFinished)
             return null;
-        }
 
         timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+        if (timer < nextSpawnTime)
+            return null;
+
+        timer = 0f;
+
         var wave = level.Waves[currentWaveIndex];
+        var ship = SpawnFromWave(wave);
 
-        if (timer >= nextSpawnTime)
-        {
-            timer = 0;
+        SetNextSpawnTime(wave);
 
-            var ship = SpawnFromWave(wave);
-
-            SetNextSpawnTime(wave);
-
-            return ship;
-        }
-
-        return null;
+        return ship;
     }
+
+    // =====================
+    // SPAWNING
+    // =====================
 
     private Ship SpawnFromWave(Wave wave)
     {
+        var group = GetNextGroup();
+
+        if (group == null)
+            return null;
+
+        var coast = GetRandomCoast();
+
+        return (Ship)SpawnSystem.CreateShip (level, grid, group.Data, coast
+        );
+    }
+
+    // =====================
+    // HELPERS
+    // =====================
+
+    private ShipGroup GetNextGroup()
+    {
         var available = activeGroups.FindAll(g => g.Count > 0);
 
-        if (available.Count == 0)
+        if (available.Count > 0)
         {
-            currentWaveIndex++;
-
-            if (currentWaveIndex < level.Waves.Count)
-                StartWave(currentWaveIndex);
-            else
-                IsFinished = true;
-
-            return null;
+            var group = available[rng.Next(available.Count)];
+            group.Count--;
+            return group;
         }
 
-        var group = available[rng.Next(available.Count)];
-        group.Count--;
+        currentWaveIndex++;
 
-        var coast = coastTiles[rng.Next(coastTiles.Count)];
+        if (currentWaveIndex < level.Waves.Count)
+        {
+            StartWave(currentWaveIndex);
+            return GetNextGroup(); 
+        }
 
-        Vector2 target = new Vector2(
-            coast.X * 64 + 32,
-            coast.Y * 64 + 32
-        );
+        IsFinished = true;
+        return null;
+    }
 
-        Vector2 start = new Vector2(-200, target.Y);
-
-        var texture = level.Theme.GetShip(group.Data.Texture);
-
-        return new Ship(start, target, group.Data, texture);
+    private CoastTile GetRandomCoast()
+    {
+        return coastTiles[rng.Next(coastTiles.Count)];
     }
 }

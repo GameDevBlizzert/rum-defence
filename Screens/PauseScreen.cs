@@ -65,33 +65,14 @@ public class PauseScreen : Screen
         menuButton.Update(gameTime);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Matrix scale)
+    public override void Draw(SpriteBatch spriteBatch)
     {
-        previousScreen.Draw(spriteBatch, scale);
-
-        spriteBatch.Begin(transformMatrix: scale);
-
-        spriteBatch.Draw(GetPixel(spriteBatch),
-            new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
-            Color.Black * 0.5f);
+        previousScreen.Draw(spriteBatch);
 
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
         resumeButton.Draw(spriteBatch);
         settingsButton.Draw(spriteBatch);
         menuButton.Draw(spriteBatch);
-
-        spriteBatch.End();
-    }
-
-    private Texture2D pixel;
-    private Texture2D GetPixel(SpriteBatch spriteBatch)
-    {
-        if (pixel == null)
-        {
-            pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
-        }
-        return pixel;
     }
 }

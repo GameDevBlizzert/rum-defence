@@ -18,30 +18,43 @@ namespace RumDefence
 
         private Matrix scaleMatrix;
 
+        public Grid CurrentGrid { get; set; }
+        public Level CurrentLevel { get; set; }
+
         public RumGame()
         {
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            _graphics.PreferredBackBufferWidth = 1920;
-            _graphics.PreferredBackBufferHeight = 1080;
+
+            _graphics.PreferredBackBufferWidth = 1280; // probeer verschillende resoluties om de scaling te testen
+            _graphics.PreferredBackBufferHeight = 720; // 1920 x 1080 1280 x 720
             _graphics.IsFullScreen = false;
             _graphics.ApplyChanges();
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += OnResize;
 
             Instance = this;
+        }
+
+        private void OnResize(object sender, System.EventArgs e)
+        {
+            UpdateScaleMatrix();
+        }
+
+        private void UpdateScaleMatrix()
+        {
+            float scaleX = (float)GraphicsDevice.Viewport.Width / VirtualWidth;
+            float scaleY = (float)GraphicsDevice.Viewport.Height / VirtualHeight;
+
+            scaleMatrix = Matrix.CreateScale(scaleX, scaleY, 1f);
         }
 
         protected override void Initialize()
         {
             _screenManager = new ScreenManager();
-
             base.Initialize();
-
-            float scaleX = (float)GraphicsDevice.Viewport.Width / VirtualWidth;
-            float scaleY = (float)GraphicsDevice.Viewport.Height / VirtualHeight;
-
-            scaleMatrix = Matrix.CreateScale(scaleX, scaleY, 1f);
-
+            UpdateScaleMatrix();
             _screenManager.SetScreen(new MainMenuScreen(_screenManager));
         }
 
@@ -62,8 +75,7 @@ namespace RumDefence
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(new Color(30, 144, 255)); 
-
+            GraphicsDevice.Clear(new Color(30, 144, 255));
 
             _screenManager.Draw(_spriteBatch, scaleMatrix);
 

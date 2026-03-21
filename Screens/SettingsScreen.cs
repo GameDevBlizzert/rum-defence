@@ -21,10 +21,8 @@ public class SettingsScreen : Screen
         }
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Matrix scale)
+    public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Begin(transformMatrix: scale);
-
-        spriteBatch.End();
+        RumGame.Instance.GraphicsDevice.Clear(Color.DarkSlateGray);
     }
 }

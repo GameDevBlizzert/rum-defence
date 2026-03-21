@@ -1,26 +1,57 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace RumDefence;
 
 public class Level
 {
-    public int Id { get; }
-    public int[,] Map { get; }
-    public ITileTheme Theme { get; }
-    public List<Wave> Waves { get; }
-    public bool IsUnlocked { get; set; }
+    public int Id;
+    public int[,] Map;
+    public ITileTheme Theme;
+    public List<Wave> Waves;
 
-    public Level(
-        int id,
-        int[,] map,
-        ITileTheme theme,
-        List<Wave> waves,
-        bool unlocked = false)
+    public bool IsUnlocked;
+
+    public Point RumTile { get; private set; }
+
+    public Level(int id, string[] mapData, ITileTheme theme, List<Wave> waves, bool unlocked = false)
     {
         Id = id;
-        Map = map;
         Theme = theme;
         Waves = waves;
         IsUnlocked = unlocked;
+
+        Map = ParseMap(mapData);
+    }
+
+    private int[,] ParseMap(string[] data)
+    {
+        int height = data.Length;
+        var firstRow = data[0].Split(' ');
+        int width = firstRow.Length;
+
+        int[,] map = new int[height, width];
+
+        for (int y = 0; y < height; y++)
+        {
+            var row = data[y].Split(' ');
+
+            for (int x = 0; x < width; x++)
+            {
+                string cell = row[x];
+
+                if (cell == "#")
+                {
+                    RumTile = new Point(x, y);
+                    map[y, x] = TileRules.Center;
+                }
+                else
+                {
+                    map[y, x] = int.Parse(cell);
+                }
+            }
+        }
+
+        return map;
     }
 }

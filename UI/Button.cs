@@ -14,10 +14,9 @@ public class Button : UIElement
     private Rectangle bounds;
 
     private bool isHovering;
+    private bool wasPressed;
 
     public Action OnClick;
-
-    private bool wasPressed;
 
     public Button(Texture2D texture, SpriteFont font, string text, Vector2 position)
     {
@@ -52,7 +51,17 @@ public class Button : UIElement
     public override void Update(GameTime gameTime)
     {
         var mouse = Mouse.GetState();
-        var mouseRect = new Rectangle(mouse.X, mouse.Y, 1, 1);
+
+        // 🔥 SCALE FIX
+        float scaleX = (float)RumGame.Instance.GraphicsDevice.Viewport.Width / RumGame.VirtualWidth;
+        float scaleY = (float)RumGame.Instance.GraphicsDevice.Viewport.Height / RumGame.VirtualHeight;
+
+        var mousePos = new Vector2(
+            mouse.X / scaleX,
+            mouse.Y / scaleY
+        );
+
+        var mouseRect = new Rectangle((int)mousePos.X, (int)mousePos.Y, 1, 1);
 
         isHovering = mouseRect.Intersects(bounds);
 

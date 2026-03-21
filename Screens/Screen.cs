@@ -14,5 +14,5 @@ public abstract class Screen
 
     public virtual void Load() { }
     public virtual void Update(GameTime gameTime) { }
-    public virtual void Draw(SpriteBatch spriteBatch, Matrix scale) { }
+    public abstract void Draw(SpriteBatch spriteBatch);
 }

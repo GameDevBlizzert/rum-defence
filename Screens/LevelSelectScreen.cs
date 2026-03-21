@@ -23,13 +23,11 @@ public class LevelSelectScreen : Screen
         }
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Matrix scale)
+    public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Begin();
+        RumGame.Instance.GraphicsDevice.Clear(Color.Black);
 
         spriteBatch.DrawString(font, "Select Level", new Vector2(300, 200), Color.White);
         spriteBatch.DrawString(font, "Press 1 for Level 1", new Vector2(300, 300), Color.White);
-
-        spriteBatch.End();
     }
 }

@@ -61,18 +61,14 @@ public class MainMenuScreen : Screen
         quitButton.Update(gameTime);
     }
 
-    public override void Draw(SpriteBatch spriteBatch, Matrix scale)
+    public override void Draw(SpriteBatch spriteBatch)
     {
         RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
-
-        spriteBatch.Begin();
 
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
         levelsButton.Draw(spriteBatch);
         settingsButton.Draw(spriteBatch);
         quitButton.Draw(spriteBatch);
-
-        spriteBatch.End();
     }
 }
