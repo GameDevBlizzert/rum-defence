@@ -10,9 +10,9 @@ public class MainMenuScreen : Screen
 
     private SpriteFont font;
 
-    private Button levelsButton;
-    private Button settingsButton;
-    private Button quitButton;
+    private SimpleButton levelsButton;
+    private SimpleButton settingsButton;
+    private SimpleButton quitButton;
 
     private Rectangle panelRect;
 
@@ -29,13 +29,13 @@ public class MainMenuScreen : Screen
 
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        levelsButton = new Button(buttonTexture, font, "Levels", new Vector2(800, 300), new Vector2(300, 100));
-        settingsButton = new Button(buttonTexture, font, "Settings", new Vector2(800, 450), new Vector2(300, 100));
-        quitButton = new Button(buttonTexture, font, "Quit", new Vector2(800, 600), new Vector2(300, 100));
+        levelsButton = new SimpleButton(buttonTexture, font, "Levels", new Vector2(800, 300), new Vector2(300, 100));
+        settingsButton = new SimpleButton(buttonTexture, font, "Settings", new Vector2(800, 450), new Vector2(300, 100));
+        quitButton = new SimpleButton(buttonTexture, font, "Quit", new Vector2(800, 600), new Vector2(300, 100));
 
         levelsButton.OnClick = () =>
         {
-            manager.SetScreen(new GameScreen(manager, GrassLevels.All[0]));
+            manager.SetScreen(new ThemeSelectScreen(manager));
         };
 
         settingsButton.OnClick = () =>

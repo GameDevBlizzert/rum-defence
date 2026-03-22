@@ -12,9 +12,9 @@ public class PauseScreen : Screen
     private Texture2D buttonTexture;
     private SpriteFont font;
 
-    private Button resumeButton;
-    private Button settingsButton;
-    private Button menuButton;
+    private SimpleButton resumeButton;
+    private SimpleButton settingsButton;
+    private SimpleButton menuButton;
 
     private Rectangle panelRect;
 
@@ -46,9 +46,9 @@ public class PauseScreen : Screen
 
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        resumeButton = new Button(buttonTexture, font, "Resume", new Vector2(800, 300), new Vector2(300, 100));
-        settingsButton = new Button(buttonTexture, font, "Settings", new Vector2(800, 450), new Vector2(300, 100));
-        menuButton = new Button(buttonTexture, font, "Main Menu", new Vector2(800, 600), new Vector2(300, 100));
+        resumeButton = new SimpleButton(buttonTexture, font, "Resume", new Vector2(800, 300), new Vector2(300, 100));
+        settingsButton = new SimpleButton(buttonTexture, font, "Settings", new Vector2(800, 450), new Vector2(300, 100));
+        menuButton = new SimpleButton(buttonTexture, font, "Main Menu", new Vector2(800, 600), new Vector2(300, 100));
 
         resumeButton.OnClick = () =>
         {

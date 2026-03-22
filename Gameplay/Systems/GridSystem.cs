@@ -10,22 +10,22 @@ public static class GridSystem
         int screenWidth = RumGame.VirtualWidth;
         int screenHeight = RumGame.VirtualHeight;
 
-        int padding = screenWidth / 20;
+        int gridWidth = grid.Width;
+        int gridHeight = grid.Height;
 
-        int tileWidth = (screenWidth - padding) / grid.Width;
-        int tileHeight = (screenHeight - padding) / grid.Height;
+        float tileWidth = (float)screenWidth / gridWidth;
+        float tileHeight = (float)screenHeight / gridHeight;
 
-        int tileSize = Math.Min(tileWidth, tileHeight);
-
-        int gridWidth = grid.Width * tileSize;
-        int gridHeight = grid.Height * tileSize;
-
-        Vector2 offset = new(
-            (screenWidth - gridWidth) / 2,
-            (screenHeight - gridHeight) / 2
-        );
+        int tileSize = (int)Math.Min(tileWidth, tileHeight);
 
         grid.TileSize = tileSize;
-        grid.Offset = offset;
+
+        int totalWidth = grid.Width * tileSize;
+        int totalHeight = grid.Height * tileSize;
+
+        grid.Offset = new Vector2(
+            (screenWidth - totalWidth) / 2,
+            (screenHeight - totalHeight) / 2
+        );
     }
 }

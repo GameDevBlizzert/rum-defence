@@ -71,7 +71,6 @@ public class Ship : Entity
     public bool IsFinished => state == ShipState.Leaving_ToSea &&
                               Vector2.Distance(Position, leaveTarget) < 10f;
 
-    // 🔥 TroopSpawner
     private TroopSpawner troopSpawner;
 
     public List<Troop> SpawnedTroops { get; } = new();

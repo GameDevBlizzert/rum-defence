@@ -14,8 +14,8 @@ public class ConfirmScreen : Screen
     private Texture2D buttonTexture;
     private SpriteFont font;
 
-    private Button yesButton;
-    private Button noButton;
+    private SimpleButton yesButton;
+    private SimpleButton noButton;
 
     private Rectangle panelRect;
 
@@ -36,8 +36,8 @@ public class ConfirmScreen : Screen
 
         panelRect = new Rectangle(600, 300, 700, 400);
 
-        yesButton = new Button(buttonTexture, font, "Yes", new Vector2(700, 550), new Vector2(200, 100));
-        noButton = new Button(buttonTexture, font, "No", new Vector2(1000, 550), new Vector2(200, 100));
+        yesButton = new SimpleButton(buttonTexture, font, "Yes", new Vector2(700, 550), new Vector2(200, 100));
+        noButton = new SimpleButton(buttonTexture, font, "No", new Vector2(1000, 550), new Vector2(200, 100));
 
         yesButton.OnClick = () =>
         {
