@@ -11,12 +11,12 @@ public class GameScreen : Screen
     private GridRenderer renderer;
     private Level currentLevel;
 
-    private ShipSpawner spawner;
+    public ShipSpawner Spawner { get; private set;  }
 
-    private List<Ship> ships = new();
-    private List<Troop> troops = new(); 
+    public List<Ship> Ships { get; private set; } = new();
+    public List<Troop> Troops { get; private set; }  = new(); 
 
-    private bool levelCompleted = false;
+    private bool levelCompleted;
     
     private LevelProgressSystem progress;
 
@@ -36,7 +36,7 @@ public class GameScreen : Screen
 
         renderer = new GridRenderer(currentLevel.Theme);
 
-        spawner = new ShipSpawner(currentLevel, grid);
+        Spawner = new ShipSpawner(currentLevel, grid);
         progress = new (10);
     }
 
@@ -50,31 +50,31 @@ public class GameScreen : Screen
             return;
         }
 
-        var newShip = spawner.Update(gameTime);
+        var newShip = Spawner.Update(gameTime);
         if (newShip != null)
         {
-            ships.Add(newShip);
+            Ships.Add(newShip);
         }
 
-        for (int i = ships.Count - 1; i >= 0; i--)
+        for (int i = Ships.Count - 1; i >= 0; i--)
         {
-            ships[i].Update(gameTime);
+            Ships[i].Update(gameTime);
 
-            if (ships[i].SpawnedTroops.Count > 0)
+            if (Ships[i].SpawnedTroops.Count > 0)
             {
-                troops.AddRange(ships[i].SpawnedTroops);
-                ships[i].SpawnedTroops.Clear();
+                Troops.AddRange(Ships[i].SpawnedTroops);
+                Ships[i].SpawnedTroops.Clear();
             }
 
-            if (ships[i].IsFinished)
+            if (Ships[i].IsFinished)
             {
-                ships.RemoveAt(i);
+                Ships.RemoveAt(i);
             }
         }
 
-        for (int i = troops.Count - 1; i >= 0; i--)
+        for (int i = Troops.Count - 1; i >= 0; i--)
         {
-            var troop = troops[i]; 
+            var troop = Troops[i]; 
             troop.Update(gameTime);
 
             if (troop.IsFinished || troop.IsDead)
@@ -82,11 +82,14 @@ public class GameScreen : Screen
                 // TODO: Base the hits on the damage stat of the troop
                 if (troop.IsFinished) progress.TakeHits(1);
                 
-                troops.RemoveAt(i);
+                Troops.RemoveAt(i);
             }
         }
+        
+        progress.Update(gameTime, this);
 
-        levelCompleted = progress.IsWon() || progress.IsLost();
+        // TODO: Do not ignore IsLost after testing
+        levelCompleted = progress.IsWon() /*|| progress.IsLost()*/;
 
         if (progress.IsWon())
         {
@@ -107,10 +110,10 @@ public class GameScreen : Screen
 
         renderer.Draw(grid, spriteBatch);
 
-        foreach (var ship in ships)
+        foreach (var ship in Ships)
             ship.Draw(spriteBatch);
 
-        foreach (var troop in troops) 
+        foreach (var troop in Troops) 
             troop.Draw(spriteBatch);
     }
 

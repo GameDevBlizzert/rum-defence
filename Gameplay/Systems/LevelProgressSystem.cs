@@ -1,20 +1,26 @@
 ﻿using System;
+using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace RumDefence;
 
-public class LevelProgressSystem
+public class LevelProgressSystem : IGameLoopSystem
 {
-    
     /// <summary>
     /// Indicates the number of lives the player has remaining.
     /// </summary>
-    private int LivesRemaining { get; set; }
-    
+    public int LivesRemaining { get; private set; }
+
     /// <summary>
     /// Indicates the total number of lives the player had at the start of the level.
     /// </summary>
-    private int LivesTotal { get; set; }
-    
+    public int LivesTotal { get; private set; }
+
+    /// <summary>
+    /// Indicates whether the level has been won or not.
+    /// </summary>
+    private bool levelWon;
+
     /// <param name="initialLives">The initial amount of lives at the start of the level</param>
     public LevelProgressSystem(int initialLives)
     {
@@ -33,7 +39,7 @@ public class LevelProgressSystem
         {
             throw new ArgumentException("Hits cannot be negative");
         }
-        
+
         LivesRemaining -= hits;
     }
 
@@ -44,7 +50,8 @@ public class LevelProgressSystem
     /// <returns>A boolean indicating if the level is won or not</returns>
     public bool IsWon()
     {
-        return false;
+        // TODO: Add other relevant checks
+        return levelWon;
     }
 
     /// <summary>
@@ -55,5 +62,13 @@ public class LevelProgressSystem
     {
         return LivesRemaining <= 0;
     }
-    
+
+    public void Update(GameTime gameTime, GameScreen gameScreen)
+    {
+        if (gameScreen.Spawner.IsFinished &&
+            gameScreen.Ships.Count(s => 
+                s.State == Ship.ShipState.SailingToDock || s.State == Ship.ShipState.SailingToDock || s.State == Ship.ShipState.Unloading) == 0 &&
+            gameScreen.Troops.Count == 0)
+            levelWon = true;
+    }
 }
