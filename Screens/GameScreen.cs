@@ -16,7 +16,7 @@ public class GameScreen : Screen
     private ShipSpawner spawner;
 
     private List<Ship> ships = new();
-    private List<Troop> troops = new(); 
+    private List<Troop> troops = new();
 
     //remove when hud is done
     private List<CannonTower> testTowers;
@@ -41,13 +41,14 @@ public class GameScreen : Screen
 
         spawner = new ShipSpawner(currentLevel, grid);
 
-        //remove when hud is done
-        testTowers = new List<CannonTower>()
+        //remove when hud is done now only spawn at level 3
+        testTowers = currentLevel.Id == 3 ? new List<CannonTower>()
         {
             new (new Vector2(1500, 300), troops),
             new (new Vector2(1500, 900), troops),
             new (new Vector2(1700, 500), troops),
-        };
+
+        } : new();
 
     }
 
@@ -111,7 +112,7 @@ public class GameScreen : Screen
         foreach (var ship in ships)
             ship.Draw(spriteBatch);
 
-        foreach (var troop in troops) 
+        foreach (var troop in troops)
             troop.Draw(spriteBatch);
 
 
