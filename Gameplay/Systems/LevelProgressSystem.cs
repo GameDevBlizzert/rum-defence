@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
+using RumDefence.Exceptions;
 
 namespace RumDefence;
 
@@ -37,6 +38,7 @@ public class LevelProgressSystem : IGameLoopSystem
 
     /// <summary>
     /// Make the player take a certain amount of hits, reducing their remaining lives accordingly.
+    /// When the player takes more hits than they have remaining, their lives will be reduced to 0, but not below.
     /// </summary>
     /// <param name="hits">Amount of hits to take, hits must be a positive integer</param>
     /// <exception cref="ArgumentException">Thrown when the amount of hits is negative</exception>
@@ -47,7 +49,7 @@ public class LevelProgressSystem : IGameLoopSystem
             throw new ArgumentException("Hits cannot be negative");
         }
 
-        LivesRemaining -= hits;
+        LivesRemaining = Math.Max(LivesRemaining - hits, 0);
     }
     
     /// <summary>
@@ -68,13 +70,19 @@ public class LevelProgressSystem : IGameLoopSystem
     /// <summary>
     /// Deduct a certain amount of coins from the player's total, reducing their remaining coins accordingly.
     /// </summary>
-    /// <param name="coins">Amount of coins to remove, must be a negative integer</param>
-    /// <exception cref="ArgumentException">Thrown when the amount of coins is zero or positive</exception>
+    /// <param name="coins">Amount of coins to remove, must be a positive integer</param>
+    /// <exception cref="ArgumentException">Thrown when the amount of coins is negative</exception>
+    /// <exception cref="ArgumentException">Thrown when the amount of coins to spend is greater than the remaining coins</exception>
     public void SpendCoins(int coins)
     {
-        if (coins >= 0)
+        if (coins < 0)
         {
-            throw new ArgumentException("Coins must be negative");
+            throw new ArgumentException("Coins cannot be negative");
+        }
+        
+        if (coins > CoinsRemaining)
+        {
+            throw new InsufficientBalanceException("Not enough coins remaining to spend");
         }
         
         CoinsRemaining -= coins;
