@@ -15,6 +15,11 @@ public class LevelProgressSystem : IGameLoopSystem
     /// Indicates the total number of lives the player had at the start of the level.
     /// </summary>
     public int LivesTotal { get; private set; }
+    
+    /// <summary>
+    /// Indicates the number of coins the player has collected so far in the level.
+    /// </summary>
+    public int CoinsRemaining { get; private set; }
 
     /// <summary>
     /// Indicates whether the level has been won or not.
@@ -22,14 +27,16 @@ public class LevelProgressSystem : IGameLoopSystem
     private bool levelWon;
 
     /// <param name="initialLives">The initial amount of lives at the start of the level</param>
-    public LevelProgressSystem(int initialLives)
+    /// <param name="initialCoins">The initial amount of coins at the start of the level</param>
+    public LevelProgressSystem(int initialLives, int initialCoins)
     {
         LivesRemaining = initialLives;
         LivesTotal = initialLives;
+        CoinsRemaining = initialCoins;
     }
 
     /// <summary>
-    /// Let the player take a certain amount of hits, reducing their remaining lives accordingly.
+    /// Make the player take a certain amount of hits, reducing their remaining lives accordingly.
     /// </summary>
     /// <param name="hits">Amount of hits to take, hits must be a positive integer</param>
     /// <exception cref="ArgumentException">Thrown when the amount of hits is negative</exception>
@@ -41,6 +48,36 @@ public class LevelProgressSystem : IGameLoopSystem
         }
 
         LivesRemaining -= hits;
+    }
+    
+    /// <summary>
+    /// Add a certain amount of coins to the player's total, increasing their remaining coins accordingly.
+    /// </summary>
+    /// <param name="coins">Amount of coins to add, coins must be a positive integer</param>
+    /// <exception cref="ArgumentException">Thrown when the amount of coins is negative</exception>
+    public void AddCoins(int coins)
+    {
+        if (coins < 0)
+        {
+            throw new ArgumentException("Coins cannot be negative");
+        }
+        
+        CoinsRemaining += coins;
+    }
+    
+    /// <summary>
+    /// Deduct a certain amount of coins from the player's total, reducing their remaining coins accordingly.
+    /// </summary>
+    /// <param name="coins">Amount of coins to remove, must be a negative integer</param>
+    /// <exception cref="ArgumentException">Thrown when the amount of coins is zero or positive</exception>
+    public void SpendCoins(int coins)
+    {
+        if (coins >= 0)
+        {
+            throw new ArgumentException("Coins must be negative");
+        }
+        
+        CoinsRemaining -= coins;
     }
 
     /// <summary>

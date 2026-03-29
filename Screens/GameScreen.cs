@@ -37,7 +37,7 @@ public class GameScreen : Screen
         renderer = new GridRenderer(currentLevel.Theme);
 
         Spawner = new ShipSpawner(currentLevel, grid);
-        progress = new (10);
+        progress = new (10, currentLevel.StartingCoinBalance);
     }
 
     public override void Update(GameTime gameTime)
