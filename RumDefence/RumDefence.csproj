@@ -6,6 +6,7 @@
     <RollForward>Major</RollForward>
     <PublishReadyToRun>false</PublishReadyToRun>
     <TieredCompilation>false</TieredCompilation>
+    <RootNamespace>Rum_Defence</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -14,6 +15,7 @@
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.*" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.*" />
+    <PackageReference Include="Moq" Version="4.20.72" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\Art\Themes\Grass\Enemies\" />
