@@ -14,9 +14,11 @@ public class Level
 
     public Point RumTile { get; private set; }
     
-    public int StartingCoinBalance;
+    public int StartingCoinBalance { get; private set; }
+    public int StartingLives { get; private set; }
+    
 
-    public Level(int id, string[] mapData, ITileTheme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0)
+    public Level(int id, string[] mapData, ITileTheme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0, int startingLives = 10)
     {
         Id = id;
         Theme = theme;
@@ -25,6 +27,7 @@ public class Level
 
         Map = ParseMap(mapData);
         StartingCoinBalance = startingCoinBalance;
+        StartingLives = startingLives;
     }
 
     private int[,] ParseMap(string[] data)
