@@ -14,7 +14,7 @@ public static class SpawnSystem
         Vector2 target = DockSystem.GetDockPosition(grid, coast);
         Vector2 start = DockSystem.GetSpawnPosition(grid, coast);
 
-        var texture = level.Theme.GetShip(data.Texture);
+        var texture = level.Theme.Tiles.GetShip(data.Texture);
 
         return new Ship(start, target, data, texture);
     }

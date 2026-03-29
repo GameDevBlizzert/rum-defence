@@ -47,6 +47,8 @@ public class Hud
         wallButton.OnClick = () =>
         {
             buildManager.SetMode(BuildMode.Wall);
+
+            wallButton.SetSelected(buildManager.GetMode() == BuildMode.Wall);
         };
     }
 

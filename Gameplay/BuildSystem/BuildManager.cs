@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using RumDefence;
+using System;
 
 public class BuildManager
 {
     private Grid grid;
-    private BuildMode currentMode = BuildMode.Wall; // tijdelijk direct actief
-
+    private BuildMode currentMode = BuildMode.None; 
     private Point? hoveredTile;
+
+    private Action<Point> onWallPlaced;
 
     public BuildManager(Grid grid)
     {
@@ -15,13 +17,17 @@ public class BuildManager
 
     public void Update(Vector2 mousePosition, bool isClick)
     {
+        if (currentMode == BuildMode.None)
+        {
+            hoveredTile = null; 
+            return;
+        }
+
         hoveredTile = grid.WorldToGrid(mousePosition);
 
+        if (hoveredTile == null) return;
+
         HandleClick(isClick);
-
-        if (currentMode == BuildMode.None)
-            return;
-
     }
 
     private void HandleClick(bool isClick)
@@ -31,12 +37,14 @@ public class BuildManager
 
         var p = hoveredTile.Value;
 
-        if (currentMode == BuildMode.Wall)
+        switch (currentMode)
         {
-            if (grid.Tiles[p.Y, p.X] == 5)
-            {
-                grid.Tiles[p.Y, p.X] = 99;
-            }
+            case BuildMode.Wall:
+                if (CanPlaceWall(p))
+                {
+                    onWallPlaced?.Invoke(p);
+                }
+                break;
         }
     }
 
@@ -47,7 +55,15 @@ public class BuildManager
 
     public void SetMode(BuildMode mode)
     {
-        currentMode = mode;
+        if (currentMode == mode)
+            currentMode = BuildMode.None;
+        else
+            currentMode = mode;
+    }
+
+    public BuildMode GetMode()
+    {
+        return currentMode;
     }
 
     private bool CanPlaceWall(Point p)
@@ -59,5 +75,9 @@ public class BuildManager
         // if (playerCoins < wallCost) return false;
 
         return true;
+    }
+    public void SetWallPlacementCallback(Action<Point> callback)
+    {
+        onWallPlaced = callback;
     }
 }

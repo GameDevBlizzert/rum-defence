@@ -7,12 +7,12 @@ public class Level
 {
     public int Id { get; set; }
     public int[,] Map { get; set; }
-    public ITileTheme Theme { get; set; }
+    public Theme Theme;
     public List<Wave> Waves { get; set; }
     public bool IsUnlocked { get; set; }
     public Point RumTile { get; private set; }
 
-    public Level(int id, string[] mapData, ITileTheme theme, List<Wave> waves, bool unlocked = false)
+    public Level(int id, string[] mapData, Theme theme, List<Wave> waves, bool unlocked = false)
     {
         Id = id;
         Theme = theme;

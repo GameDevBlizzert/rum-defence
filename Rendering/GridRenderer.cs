@@ -60,6 +60,9 @@ public class GridRenderer
 
         var hovered = buildManager.GetHoveredTile();
 
+        if (buildManager.GetMode() == BuildMode.None)
+            return;
+
         if (hovered != null)
         {
             var p = hovered.Value;

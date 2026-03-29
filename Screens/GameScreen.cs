@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Rum_Defence.Input;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -18,6 +19,8 @@ public class GameScreen : Screen
 
     private List<Ship> ships = new();
     private List<Troop> troops = new();
+    private Dictionary<Point, Wall> walls = new();
+    private WallRenderer wallRenderer;
     private bool levelCompleted = false;
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
@@ -37,23 +40,36 @@ public class GameScreen : Screen
         input = new InputManager();
         buildManager = new BuildManager(grid);
 
-        renderer = new GridRenderer(currentLevel.Theme, buildManager, grid);
+        renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
 
         spawner = new ShipSpawner(currentLevel, grid);
 
         hud = new Hud(buildManager);
+
+        wallRenderer = new WallRenderer(
+            grid,
+            currentLevel.Theme.Walls, 
+            walls
+        );
+
+        buildManager.SetWallPlacementCallback(p =>
+        {
+            if (!walls.ContainsKey(p))
+            {
+                walls[p] = new Wall(p);
+            }
+        });
+
     }
 
     public override void Update(GameTime gameTime)
     {
         if (HandlePause()) return;
-
-        UpdateBuildSystem();
+        input.Update();
+        UpdateBuildSystem(gameTime);
         UpdateSpawner(gameTime);
         UpdateShips(gameTime);
         UpdateTroops(gameTime);
-        input.Update();
-
         CheckLevelCompletion();
     }
 
@@ -62,6 +78,8 @@ public class GameScreen : Screen
         RumGame.Instance.GraphicsDevice.Clear(new Color(30, 144, 255));
 
         renderer.Draw(grid, spriteBatch);
+
+        wallRenderer.Draw(spriteBatch);
 
         foreach (var ship in ships)
             ship.Draw(spriteBatch);
@@ -82,11 +100,9 @@ public class GameScreen : Screen
         }
     }
 
-    private void UpdateBuildSystem()
+    private void UpdateBuildSystem(GameTime gameTime)
     {
-        input.Update();
-
-        hud.Update(input.MousePositionScaled, input.IsLeftClick());
+        hud.Update(gameTime);
 
         buildManager.Update(
             input.MousePositionScaled,
