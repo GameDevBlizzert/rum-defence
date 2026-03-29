@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Rum_Defence.Entities.Towers;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -15,6 +17,9 @@ public class GameScreen : Screen
 
     private List<Ship> ships = new();
     private List<Troop> troops = new(); 
+
+    //remove when hud is done
+    private List<CannonTower> testTowers;
 
     private bool levelCompleted = false;
 
@@ -35,6 +40,15 @@ public class GameScreen : Screen
         renderer = new GridRenderer(currentLevel.Theme);
 
         spawner = new ShipSpawner(currentLevel, grid);
+
+        //remove when hud is done
+        testTowers = new List<CannonTower>()
+        {
+            new (new Vector2(1500, 300), troops),
+            new (new Vector2(1500, 900), troops),
+            new (new Vector2(1700, 500), troops),
+        };
+
     }
 
     public override void Update(GameTime gameTime)
@@ -84,6 +98,8 @@ public class GameScreen : Screen
             levelCompleted = true;
             UnlockNextLevel();
         }
+
+        testTowers.ForEach(x => x.Update(gameTime));
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -97,6 +113,9 @@ public class GameScreen : Screen
 
         foreach (var troop in troops) 
             troop.Draw(spriteBatch);
+
+
+        testTowers.ForEach(x => x.Draw(spriteBatch));
     }
 
     private void UnlockNextLevel()
