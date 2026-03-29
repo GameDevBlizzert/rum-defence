@@ -17,6 +17,8 @@ public class GameScreen : Screen
     private List<Troop> troops = new(); 
 
     private bool levelCompleted = false;
+    
+    private LevelProgressSystem progress;
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
@@ -35,6 +37,7 @@ public class GameScreen : Screen
         renderer = new GridRenderer(currentLevel.Theme);
 
         spawner = new ShipSpawner(currentLevel, grid);
+        progress = new (10);
     }
 
     public override void Update(GameTime gameTime)
@@ -71,19 +74,31 @@ public class GameScreen : Screen
 
         for (int i = troops.Count - 1; i >= 0; i--)
         {
-            troops[i].Update(gameTime);
+            var troop = troops[i]; 
+            troop.Update(gameTime);
 
-            if (troops[i].IsFinished || troops[i].IsDead)
+            if (troop.IsFinished || troop.IsDead)
             {
+                // TODO: Base the hits on the damage stat of the troop
+                if (troop.IsFinished) progress.TakeHits(1);
+                
                 troops.RemoveAt(i);
             }
         }
 
-        if (!levelCompleted && spawner.IsFinished && ships.Count == 0 && troops.Count == 0)
+        levelCompleted = progress.IsWon() || progress.IsLost();
+
+        if (progress.IsWon())
         {
-            levelCompleted = true;
             UnlockNextLevel();
         }
+
+        if (levelCompleted)
+        {
+            // TODO: Show win or lose screen based
+            manager.SetScreen(new MainMenuScreen(manager));
+        }
+        
     }
 
     public override void Draw(SpriteBatch spriteBatch)
