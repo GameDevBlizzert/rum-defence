@@ -49,7 +49,7 @@ public class Ship : Entity
     private const float BackOffDistance = 100f;
     private const float ExitDistance = 400f;
 
-    private enum ShipState
+    public enum ShipState
     {
         SailingToDock,
         Docked,
@@ -58,7 +58,7 @@ public class Ship : Entity
         Leaving_ToSea
     }
 
-    private ShipState state = ShipState.SailingToDock;
+    public ShipState State { get; private set; } = ShipState.SailingToDock;
 
     private Vector2 dockTarget;
     private Vector2 leaveTarget;
@@ -68,7 +68,7 @@ public class Ship : Entity
 
     public int EnemyCount { get; private set; }
 
-    public bool IsFinished => state == ShipState.Leaving_ToSea &&
+    public bool IsFinished => State == ShipState.Leaving_ToSea &&
                               Vector2.Distance(Position, leaveTarget) < 10f;
 
     private TroopSpawner troopSpawner;
@@ -110,7 +110,7 @@ public class Ship : Entity
 
     public override void Update(GameTime gameTime)
     {
-        switch (state)
+        switch (State)
         {
             case ShipState.SailingToDock:
                 UpdateSailing(gameTime);
@@ -157,7 +157,7 @@ public class Ship : Entity
         Position += dir * currentSpeed * dt;
 
         if (distance < 5f)
-            state = ShipState.Docked;
+            State = ShipState.Docked;
     }
 
     // =====================
@@ -167,7 +167,7 @@ public class Ship : Entity
     private void StartUnloading()
     {
         troopSpawner.StartSpawning(Position, EnemyCount);
-        state = ShipState.Unloading;
+        State = ShipState.Unloading;
     }
 
     private void UpdateUnloading(GameTime gameTime)
@@ -195,7 +195,7 @@ public class Ship : Entity
         Vector2 backward = GetForwardVector() * -1f;
         leaveTarget = Position + backward * BackOffDistance;
 
-        state = ShipState.Leaving_BackOff;
+        State = ShipState.Leaving_BackOff;
     }
 
     private void UpdateLeavingBackOff(GameTime gameTime)
@@ -209,7 +209,7 @@ public class Ship : Entity
 
             leaveTarget = spawnPosition + dirToSpawn * ExitDistance;
 
-            state = ShipState.Leaving_ToSea;
+            State = ShipState.Leaving_ToSea;
         }
     }
 
