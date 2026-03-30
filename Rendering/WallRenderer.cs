@@ -46,7 +46,7 @@ public class WallRenderer
                 ? theme.GetDamagedEnd(p.X, p.Y)
                 : theme.End;
 
-            if (down) rotation = 0f;                        
+            if (down) rotation = 0f;
             if (left) rotation = MathHelper.PiOver2;
             if (up) rotation = MathHelper.Pi;
             if (right) rotation = -MathHelper.PiOver2;
@@ -90,11 +90,11 @@ public class WallRenderer
 
         spriteBatch.Draw(
             texture,
-            world,                         
+            world,
             null,
             Color.White,
             rotation,
-            new Vector2(texture.Width / 2f, texture.Height / 2f), 
+            new Vector2(texture.Width / 2f, texture.Height / 2f),
             scale,
             SpriteEffects.None,
             0f

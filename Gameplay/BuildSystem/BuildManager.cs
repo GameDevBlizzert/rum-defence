@@ -5,7 +5,7 @@ using System;
 public class BuildManager
 {
     private Grid grid;
-    private BuildMode currentMode = BuildMode.None; 
+    private BuildMode currentMode = BuildMode.None;
     private Point? hoveredTile;
 
     private Action<Point> onWallPlaced;
@@ -19,7 +19,7 @@ public class BuildManager
     {
         if (currentMode == BuildMode.None)
         {
-            hoveredTile = null; 
+            hoveredTile = null;
             return;
         }
 

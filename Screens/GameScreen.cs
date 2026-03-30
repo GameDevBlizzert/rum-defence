@@ -16,7 +16,7 @@ public class GameScreen : Screen
     private BuildManager buildManager { get; set; }
     private InputManager input { get; set; }
     private Hud hud { get; set; }
-    
+
     private Dictionary<Point, Wall> walls = new();
     private WallRenderer wallRenderer;
     private bool levelCompleted = false;
@@ -58,7 +58,7 @@ public class GameScreen : Screen
 
         wallRenderer = new WallRenderer(
             grid,
-            currentLevel.Theme.Walls, 
+            currentLevel.Theme.Walls,
             walls
         );
 
@@ -193,7 +193,7 @@ public class GameScreen : Screen
     private void CheckLevelCompletion()
     {
         if (!levelCompleted && spawner.IsFinished && ships.Count == 0 && troops.Count == 0)
-        progress.Update(gameTime, this);
+            progress.Update(gameTime, this);
 
         // TODO: Do not ignore IsLost after testing
         levelCompleted = progress.IsWon() /*|| progress.IsLost()*/;
