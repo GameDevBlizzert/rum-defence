@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  format:
+  lint-and-build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -38,25 +38,7 @@ jobs:
             git add .
             git commit -m "chore: auto-format code"
             git push
-
-  lint-and-build:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.head_ref }}
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: "8.0.x"
-
-      - name: Restore dependencies
-        run: dotnet restore
+          fi
 
       - name: Lint (dotnet build with warnings as errors)
         run: dotnet build --no-restore -warnaserror
