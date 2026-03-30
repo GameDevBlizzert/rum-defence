@@ -92,7 +92,7 @@ public class ShipSpawner
 
         var coast = GetRandomCoast();
 
-        return (Ship)SpawnSystem.CreateShip (level, grid, group.Data, coast
+        return (Ship)SpawnSystem.CreateShip(level, grid, group.Data, coast
         );
     }
 
@@ -116,7 +116,7 @@ public class ShipSpawner
         if (currentWaveIndex < level.Waves.Count)
         {
             StartWave(currentWaveIndex);
-            return GetNextGroup(); 
+            return GetNextGroup();
         }
 
         IsFinished = true;
