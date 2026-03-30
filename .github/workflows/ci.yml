@@ -7,12 +7,10 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-build:
+  format:
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'github-actions' }}
     permissions:
       contents: write
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,7 +38,25 @@ jobs:
             git add .
             git commit -m "chore: auto-format code"
             git push
-          fi
+
+  lint-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore
 
       - name: Lint (dotnet build with warnings as errors)
         run: dotnet build --no-restore -warnaserror
