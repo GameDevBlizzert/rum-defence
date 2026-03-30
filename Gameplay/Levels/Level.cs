@@ -5,13 +5,11 @@ namespace RumDefence;
 
 public class Level
 {
-    public int Id;
-    public int[,] Map;
-    public ITileTheme Theme;
-    public List<Wave> Waves;
-
-    public bool IsUnlocked;
-
+    public int Id { get; set; }
+    public int[,] Map { get; set; }
+    public Theme Theme;
+    public List<Wave> Waves { get; set; }
+    public bool IsUnlocked { get; set; }
     public Point RumTile { get; private set; }
 
     public int StartingCoinBalance { get; private set; }

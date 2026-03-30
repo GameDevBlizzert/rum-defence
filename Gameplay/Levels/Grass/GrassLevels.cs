@@ -4,7 +4,13 @@ namespace RumDefence;
 
 public static class GrassLevels
 {
-    private static ITileTheme theme = new GrassTheme();
+    private static GrassTheme grass = new GrassTheme();
+
+    private static Theme theme = new Theme
+    {
+        Tiles = grass,
+        Walls = grass
+    };
 
     public static List<Level> All = new()
     {
