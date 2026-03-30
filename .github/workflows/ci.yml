@@ -39,6 +39,7 @@ jobs:
             git add .
             git commit -m "chore: auto-format code"
             git push
+          fi
 
       - name: Lint (dotnet build with warnings as errors)
         run: dotnet build --no-restore -warnaserror
