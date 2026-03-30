@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Lint (dotnet build with warnings as errors)
+        run: dotnet build --no-restore -warnaserror
+
+      - name: Check formatting
+        run: dotnet format --verify-no-changes
+
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Install MonoGame tools
+        run: dotnet tool install -g dotnet-mgcb
+
+      - name: Build content
+        run: mgcb /@:"Content/Content.mgcb"
