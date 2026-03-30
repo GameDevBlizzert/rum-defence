@@ -7,6 +7,7 @@ namespace RumDefence;
 public class Troop : Entity
 {
     private Vector2 target;
+    private TroopAnimation animation;
 
     private float baseSpeed = 60f;
     public float SpeedMultiplier { get; set; } = 1f;
@@ -23,6 +24,13 @@ public class Troop : Entity
     {
         Position = start;
         target = targetPos;
+        animation = new(
+            16,
+            16,
+            0.2f,
+            3,
+            true
+        );
 
         if (pixel == null)
         {
@@ -30,10 +38,11 @@ public class Troop : Entity
             pixel.SetData(new[] { Color.White });
         }
 
-        Texture = pixel;
+        // https://foozlecc.itch.io/scallywag-pirates
+        Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Objects/pirate_grunt");
         origin = Vector2.Zero;
 
-        Size = SizeSystem.Square(0.3f);
+        Size = SizeSystem.Square(10f);
         ApplySize();
     }
 
@@ -66,6 +75,8 @@ public class Troop : Entity
         }
 
         dir.Normalize();
+        sourceRectangles = animation.GetCurrentLayerRectangles(gameTime, dir);
+
         Position += dir * speed * dt;
     }
 
