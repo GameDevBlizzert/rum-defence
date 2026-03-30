@@ -23,6 +23,7 @@ public abstract class Entity
     protected Rectangle[] sourceRectangles = null;
     protected SpriteEffects spriteEffect = SpriteEffects.None;
     protected float layerDepth = 0f;
+
     protected void ApplySize()
     {
         if (Texture == null) return;

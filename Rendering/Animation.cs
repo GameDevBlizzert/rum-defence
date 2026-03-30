@@ -1,6 +1,6 @@
-using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+namespace Rum_Defence.Rendering;
 
 public struct SpriteLayer
 {
@@ -22,6 +22,7 @@ public struct SpriteLayer
         return new Rectangle(column * frameWidth, Row * frameHeight, frameWidth, frameHeight);
     }
 }
+
 public abstract class Animation
 {
     public int FrameWidth { get; protected set; }
@@ -31,7 +32,7 @@ public abstract class Animation
     public bool IsLoop { get; protected set; }
     public float ElapseTime { get; protected set; }
     public int CurrentFrame { get; protected set; }
-    public bool IsFinished { get; protected set; }
+
     public Animation(int frameWidth, int frameHeight, float frameDuration, int totalFrames, bool isLoop)
     {
         FrameWidth = frameWidth;

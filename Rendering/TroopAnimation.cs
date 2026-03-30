@@ -1,10 +1,11 @@
 using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Rum_Defence.Rendering;
 
 public class TroopAnimation : Animation
 {
     private SpriteLayer[] _currentActiveLayers;
+
     private readonly SpriteLayer[] _walkDownLayers = {
         new SpriteLayer(0, 2, 0), // Body Down
         new SpriteLayer(4, 6, 0), // Hat Down
@@ -25,16 +26,14 @@ public class TroopAnimation : Animation
         new SpriteLayer(4, 6, 3), // Hat Left
         new SpriteLayer(8, 10, 3) // Clothes Left
     };
-    public SpriteLayer BodyLayer = new SpriteLayer(0, 2, 0);
-    public SpriteLayer HeadLayer = new SpriteLayer(4, 6, 1);
-    public SpriteLayer ClothesLayer = new SpriteLayer(8, 10, 2);
+
     public TroopAnimation(int frameWidth, int frameHeight, float frameDuration, int totalFrames, bool isLoop) : base(frameWidth, frameHeight, frameDuration, totalFrames, isLoop)
     {
         _currentActiveLayers = _walkDownLayers;
     }
     public void Update(GameTime gameTime, Vector2 direction)
     {
-        setWalkDirection(direction);
+        SetWalkDirection(direction);
         if (direction != Vector2.Zero)
         {
             ElapseTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -46,10 +45,12 @@ public class TroopAnimation : Animation
             CurrentFrame = 0;
         }
     }
+
     public override Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction)
     {
         Update(gameTime, direction);
-        if (_currentActiveLayers == null) return Array.Empty<Rectangle>();
+        if (_currentActiveLayers == null) 
+            return Array.Empty<Rectangle>();
 
         Rectangle[] rects = new Rectangle[_currentActiveLayers.Length];
 
@@ -60,7 +61,7 @@ public class TroopAnimation : Animation
 
         return rects;
     }
-    private void setWalkDirection(Vector2 direction)
+    private void SetWalkDirection(Vector2 direction)
     {
         if (Math.Abs(direction.X) > Math.Abs(direction.Y))
         {
