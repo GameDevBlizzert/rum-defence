@@ -28,7 +28,7 @@ public class TroopAnimation : Animation
     public SpriteLayer BodyLayer = new SpriteLayer(0, 2, 0);
     public SpriteLayer HeadLayer = new SpriteLayer(4, 6, 1);
     public SpriteLayer ClothesLayer = new SpriteLayer(8, 10, 2);
-    public TroopAnimation(int frameWidth, int frameHeight, float frameDuration, int totalFrames, bool isLoop): base(frameWidth, frameHeight, frameDuration, totalFrames, isLoop)
+    public TroopAnimation(int frameWidth, int frameHeight, float frameDuration, int totalFrames, bool isLoop) : base(frameWidth, frameHeight, frameDuration, totalFrames, isLoop)
     {
         _currentActiveLayers = _walkDownLayers;
     }
@@ -43,7 +43,7 @@ public class TroopAnimation : Animation
         else
         {
             ElapseTime = 0;
-            CurrentFrame = 0; 
+            CurrentFrame = 0;
         }
     }
     public override Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction)
@@ -64,15 +64,19 @@ public class TroopAnimation : Animation
     {
         if (Math.Abs(direction.X) > Math.Abs(direction.Y))
         {
-            if (direction.X > 0) {
+            if (direction.X > 0)
+            {
                 _currentActiveLayers = _walkRightLayers;
             }
-            else {
+            else
+            {
                 _currentActiveLayers = _walkLeftLayers;
             }
-        } else
+        }
+        else
         {
-            if (direction.Y > 0) {
+            if (direction.Y > 0)
+            {
                 _currentActiveLayers = _walkDownLayers;
             }
             else
