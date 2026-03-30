@@ -31,6 +31,7 @@ jobs:
         run: dotnet format "Rum Defence.sln" --no-restore
 
       - name: Commit formatting changes
+        if: ${{ github.actor != 'github-actions' }}
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
@@ -38,7 +39,6 @@ jobs:
             git add .
             git commit -m "chore: auto-format code"
             git push
-          fi
 
       - name: Lint (dotnet build with warnings as errors)
         run: dotnet build --no-restore -warnaserror
