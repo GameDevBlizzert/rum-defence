@@ -6,7 +6,7 @@ namespace RumDefence;
 public static class Level2Data
 {
 
-    private static readonly Ship.Data BossShip = new( "Ships/boss_ship", 80f, 10, true, 1f, -90f);
+    private static readonly Ship.Data BossShip = new("Ships/boss_ship", 80f, 10, true, 1f, -90f);
     private static readonly Ship.Data NormalShip = new("Ships/ship_1", 80f, 10, false, 0.8f, -90f);
 
     public static Level Create(Theme theme)

@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Format (auto-fix)
+        run: dotnet format "Rum Defence.sln" --no-restore
+
+      - name: Commit formatting changes
+        if: ${{ github.actor != 'github-actions' }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          if [[ -n $(git status --porcelain) ]]; then
+            git add .
+            git commit -m "chore: auto-format code"
+            git push
+          fi
+
+      - name: Lint (dotnet build with warnings as errors)
+        run: dotnet build --no-restore -warnaserror
+
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Install MonoGame tools
+        run: dotnet tool install -g dotnet-mgcb
+
+      - name: Build content
+        run: mgcb /@:"Content/Content.mgcb"
