@@ -49,7 +49,7 @@ public class TroopAnimation : Animation
     public override Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction)
     {
         Update(gameTime, direction);
-        if (_currentActiveLayers == null) 
+        if (_currentActiveLayers == null)
             return Array.Empty<Rectangle>();
 
         Rectangle[] rects = new Rectangle[_currentActiveLayers.Length];
