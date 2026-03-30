@@ -13,15 +13,17 @@ public class GameScreen : Screen
     private GridRenderer renderer;
     private Level currentLevel;
 
-    private ShipSpawner spawner;
+    public ShipSpawner Spawner { get; private set; }
 
-    private List<Ship> ships = new();
-    private List<Troop> troops = new();
+    public List<Ship> Ships { get; private set; } = new();
+    public List<Troop> Troops { get; private set; } = new();
 
     //remove when hud is done
     private List<CannonTower> testTowers;
 
-    private bool levelCompleted = false;
+    private bool levelCompleted;
+
+    private LevelProgressSystem progress;
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
@@ -39,17 +41,17 @@ public class GameScreen : Screen
 
         renderer = new GridRenderer(currentLevel.Theme);
 
-        spawner = new ShipSpawner(currentLevel, grid);
-
         //remove when hud is done now only spawn at level 3
         testTowers = currentLevel.Id == 3 ? new List<CannonTower>()
         {
-            new (new Vector2(1500, 300), troops),
-            new (new Vector2(1500, 900), troops),
-            new (new Vector2(1700, 500), troops),
+            new (new Vector2(1500, 300), Troops),
+            new (new Vector2(1500, 900), Troops),
+            new (new Vector2(1700, 500), Troops),
 
         } : new();
 
+        Spawner = new ShipSpawner(currentLevel, grid);
+        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
     }
 
     public override void Update(GameTime gameTime)
@@ -62,45 +64,60 @@ public class GameScreen : Screen
             return;
         }
 
-        var newShip = spawner.Update(gameTime);
+        var newShip = Spawner.Update(gameTime);
         if (newShip != null)
         {
-            ships.Add(newShip);
+            Ships.Add(newShip);
         }
 
-        for (int i = ships.Count - 1; i >= 0; i--)
+        for (int i = Ships.Count - 1; i >= 0; i--)
         {
-            ships[i].Update(gameTime);
+            Ships[i].Update(gameTime);
 
-            if (ships[i].SpawnedTroops.Count > 0)
+            if (Ships[i].SpawnedTroops.Count > 0)
             {
-                troops.AddRange(ships[i].SpawnedTroops);
-                ships[i].SpawnedTroops.Clear();
+                Troops.AddRange(Ships[i].SpawnedTroops);
+                Ships[i].SpawnedTroops.Clear();
             }
 
-            if (ships[i].IsFinished)
+            if (Ships[i].IsFinished)
             {
-                ships.RemoveAt(i);
-            }
-        }
-
-        for (int i = troops.Count - 1; i >= 0; i--)
-        {
-            troops[i].Update(gameTime);
-
-            if (troops[i].IsFinished || troops[i].IsDead)
-            {
-                troops.RemoveAt(i);
+                Ships.RemoveAt(i);
             }
         }
 
-        if (!levelCompleted && spawner.IsFinished && ships.Count == 0 && troops.Count == 0)
+        for (int i = Troops.Count - 1; i >= 0; i--)
         {
-            levelCompleted = true;
+            var troop = Troops[i];
+            troop.Update(gameTime);
+
+            if (troop.IsFinished || troop.IsDead)
+            {
+                // TODO: Base the hits on the damage stat of the troop
+                if (troop.IsFinished) progress.TakeHits(1);
+
+                Troops.RemoveAt(i);
+            }
+        }
+
+        progress.Update(gameTime, this);
+
+        // TODO: Do not ignore IsLost after testing
+        levelCompleted = progress.IsWon() /*|| progress.IsLost()*/;
+
+        if (progress.IsWon())
+        {
             UnlockNextLevel();
         }
 
         testTowers.ForEach(x => x.Update(gameTime));
+
+        if (levelCompleted)
+        {
+            // TODO: Show win or lose screen based
+            manager.SetScreen(new MainMenuScreen(manager));
+        }
+
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -109,10 +126,10 @@ public class GameScreen : Screen
 
         renderer.Draw(grid, spriteBatch);
 
-        foreach (var ship in ships)
+        foreach (var ship in Ships)
             ship.Draw(spriteBatch);
 
-        foreach (var troop in troops)
+        foreach (var troop in Troops)
             troop.Draw(spriteBatch);
 
 
