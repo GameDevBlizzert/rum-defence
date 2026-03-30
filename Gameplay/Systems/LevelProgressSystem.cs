@@ -16,7 +16,7 @@ public class LevelProgressSystem : IGameLoopSystem
     /// Indicates the total number of lives the player had at the start of the level.
     /// </summary>
     public int LivesTotal { get; private set; }
-    
+
     /// <summary>
     /// Indicates the number of coins the player has collected so far in the level.
     /// </summary>
@@ -51,7 +51,7 @@ public class LevelProgressSystem : IGameLoopSystem
 
         LivesRemaining = Math.Max(LivesRemaining - hits, 0);
     }
-    
+
     /// <summary>
     /// Add a certain amount of coins to the player's total, increasing their remaining coins accordingly.
     /// </summary>
@@ -63,10 +63,10 @@ public class LevelProgressSystem : IGameLoopSystem
         {
             throw new ArgumentException("Coins cannot be negative");
         }
-        
+
         CoinsRemaining += coins;
     }
-    
+
     /// <summary>
     /// Deduct a certain amount of coins from the player's total, reducing their remaining coins accordingly.
     /// </summary>
@@ -79,12 +79,12 @@ public class LevelProgressSystem : IGameLoopSystem
         {
             throw new ArgumentException("Coins cannot be negative");
         }
-        
+
         if (coins > CoinsRemaining)
         {
             throw new InsufficientBalanceException("Not enough coins remaining to spend");
         }
-        
+
         CoinsRemaining -= coins;
     }
 
@@ -111,7 +111,7 @@ public class LevelProgressSystem : IGameLoopSystem
     public void Update(GameTime gameTime, GameScreen gameScreen)
     {
         if (gameScreen.Spawner.IsFinished &&
-            gameScreen.Ships.Count(s => 
+            gameScreen.Ships.Count(s =>
                 s.State == Ship.ShipState.SailingToDock || s.State == Ship.ShipState.SailingToDock || s.State == Ship.ShipState.Unloading) == 0 &&
             gameScreen.Troops.Count == 0)
             levelWon = true;

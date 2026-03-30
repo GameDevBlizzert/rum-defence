@@ -13,10 +13,10 @@ public class Level
     public bool IsUnlocked;
 
     public Point RumTile { get; private set; }
-    
+
     public int StartingCoinBalance { get; private set; }
     public int StartingLives { get; private set; }
-    
+
 
     public Level(int id, string[] mapData, ITileTheme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0, int startingLives = 10)
     {

@@ -13,16 +13,16 @@ public class GameScreen : Screen
     private GridRenderer renderer;
     private Level currentLevel;
 
-    public ShipSpawner Spawner { get; private set;  }
+    public ShipSpawner Spawner { get; private set; }
 
     public List<Ship> Ships { get; private set; } = new();
-    public List<Troop> Troops { get; private set; }  = new(); 
+    public List<Troop> Troops { get; private set; } = new();
 
     //remove when hud is done
     private List<CannonTower> testTowers;
 
     private bool levelCompleted;
-    
+
     private LevelProgressSystem progress;
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
@@ -51,7 +51,7 @@ public class GameScreen : Screen
         } : new();
 
         Spawner = new ShipSpawner(currentLevel, grid);
-        progress = new (currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
     }
 
     public override void Update(GameTime gameTime)
@@ -88,18 +88,18 @@ public class GameScreen : Screen
 
         for (int i = Troops.Count - 1; i >= 0; i--)
         {
-            var troop = Troops[i]; 
+            var troop = Troops[i];
             troop.Update(gameTime);
 
             if (troop.IsFinished || troop.IsDead)
             {
                 // TODO: Base the hits on the damage stat of the troop
                 if (troop.IsFinished) progress.TakeHits(1);
-                
+
                 Troops.RemoveAt(i);
             }
         }
-        
+
         progress.Update(gameTime, this);
 
         // TODO: Do not ignore IsLost after testing
@@ -117,7 +117,7 @@ public class GameScreen : Screen
             // TODO: Show win or lose screen based
             manager.SetScreen(new MainMenuScreen(manager));
         }
-        
+
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -129,7 +129,7 @@ public class GameScreen : Screen
         foreach (var ship in Ships)
             ship.Draw(spriteBatch);
 
-        foreach (var troop in Troops) 
+        foreach (var troop in Troops)
             troop.Draw(spriteBatch);
 
 
