@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Art/Objects/pirate_grunt.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Objects/pirate_grunt.png
+
 #begin Art/Objects/RumBarrel.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -37,18 +49,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Enemies/enemy_1.png;Art/Themes/Grass/Enemies/enemy_1
 
-#begin Art/Themes/Grass/Enemies/enemy_1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Enemies/enemy_1.png;Art/Themes/Grass/Enemies/enemy_1
-
 #begin Art/Themes/Grass/Environment/1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -60,30 +60,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/1.png;Art/Themes/Grass/Environment/1
-
-#begin Art/Themes/Grass/Environment/1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/1.png;Art/Themes/Grass/Environment/1
-
-#begin Art/Themes/Grass/Environment/2.1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/2.1.png;Art/Themes/Grass/Environment/2.1
 
 #begin Art/Themes/Grass/Environment/2.1.png
 /importer:TextureImporter
@@ -109,18 +85,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/2.2.png;Art/Themes/Grass/Environment/2.2
 
-#begin Art/Themes/Grass/Environment/2.2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/2.2.png;Art/Themes/Grass/Environment/2.2
-
 #begin Art/Themes/Grass/Environment/3.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -132,30 +96,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/3.png;Art/Themes/Grass/Environment/3
-
-#begin Art/Themes/Grass/Environment/3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/3.png;Art/Themes/Grass/Environment/3
-
-#begin Art/Themes/Grass/Environment/4.1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/4.1.png;Art/Themes/Grass/Environment/4.1
 
 #begin Art/Themes/Grass/Environment/4.1.png
 /importer:TextureImporter
@@ -181,18 +121,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/4.2.png;Art/Themes/Grass/Environment/4.2
 
-#begin Art/Themes/Grass/Environment/4.2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/4.2.png;Art/Themes/Grass/Environment/4.2
-
 #begin Art/Themes/Grass/Environment/5.1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -204,30 +132,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/5.1.png;Art/Themes/Grass/Environment/5.1
-
-#begin Art/Themes/Grass/Environment/5.1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/5.1.png;Art/Themes/Grass/Environment/5.1
-
-#begin Art/Themes/Grass/Environment/5.2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/5.2.png;Art/Themes/Grass/Environment/5.2
 
 #begin Art/Themes/Grass/Environment/5.2.png
 /importer:TextureImporter
@@ -253,18 +157,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/5.3.png;Art/Themes/Grass/Environment/5.3
 
-#begin Art/Themes/Grass/Environment/5.3.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/5.3.png;Art/Themes/Grass/Environment/5.3
-
 #begin Art/Themes/Grass/Environment/5.4.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -276,30 +168,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/5.4.png;Art/Themes/Grass/Environment/5.4
-
-#begin Art/Themes/Grass/Environment/5.4.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/5.4.png;Art/Themes/Grass/Environment/5.4
-
-#begin Art/Themes/Grass/Environment/6.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/6.png;Art/Themes/Grass/Environment/6
 
 #begin Art/Themes/Grass/Environment/6.png
 /importer:TextureImporter
@@ -325,18 +193,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/7.png;Art/Themes/Grass/Environment/7
 
-#begin Art/Themes/Grass/Environment/7.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/7.png;Art/Themes/Grass/Environment/7
-
 #begin Art/Themes/Grass/Environment/8.1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -348,30 +204,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/8.1.png;Art/Themes/Grass/Environment/8.1
-
-#begin Art/Themes/Grass/Environment/8.1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/8.1.png;Art/Themes/Grass/Environment/8.1
-
-#begin Art/Themes/Grass/Environment/8.2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/8.2.png;Art/Themes/Grass/Environment/8.2
 
 #begin Art/Themes/Grass/Environment/8.2.png
 /importer:TextureImporter
@@ -397,18 +229,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Environment/9.png;Art/Themes/Grass/Environment/9
 
-#begin Art/Themes/Grass/Environment/9.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Environment/9.png;Art/Themes/Grass/Environment/9
-
 #begin Art/Themes/Grass/Ships/boss_ship.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -420,30 +240,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Ships/boss_ship.png;Art/Themes/Grass/Ships/boss_ship
-
-#begin Art/Themes/Grass/Ships/boss_ship.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Ships/boss_ship.png;Art/Themes/Grass/Ships/boss_ship
-
-#begin Art/Themes/Grass/Ships/ship_1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Ships/ship_1.png;Art/Themes/Grass/Ships/ship_1
 
 #begin Art/Themes/Grass/Ships/ship_1.png
 /importer:TextureImporter
@@ -613,18 +409,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/UI/Buttons/button_blue.png;Art/UI/Buttons/button_blue
 
-#begin Art/UI/Buttons/button_blue.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/UI/Buttons/button_blue.png;Art/UI/Buttons/button_blue
-
 #begin Art/UI/Cursor.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -636,30 +420,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/UI/Cursor.png;Art/UI/Cursor
-
-#begin Art/UI/Cursor.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/UI/Cursor.png;Art/UI/Cursor
-
-#begin Art/UI/Panels/panel_blue.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/UI/Panels/panel_blue.png;Art/UI/Panels/panel_blue
 
 #begin Art/UI/Panels/panel_blue.png
 /importer:TextureImporter
@@ -685,21 +445,10 @@
 /processorParam:TextureFormat=Color
 /build:Art/UI/pixel.png;Art/UI/pixel
 
-#begin Art/UI/pixel.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/UI/pixel.png;Art/UI/pixel
-
-#begin KenneyUIPack/Font/Kenney Future.ttf
+#begin Fonts/KenneyFuture.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/KenneyFuture.spritefont
+
