@@ -62,7 +62,7 @@ namespace RumDefence
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            var cursor = Content.Load<Texture2D>("Art/UI/cursor");
+            var cursor = Content.Load<Texture2D>("Art/UI/Cursor");
             Mouse.SetCursor(MouseCursor.FromTexture2D(cursor, 0, 0));
         }
 
