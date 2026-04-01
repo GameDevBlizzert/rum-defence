@@ -17,6 +17,9 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
+          
+      - name: Change directory
+        run: cd RumDefence
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -27,7 +30,7 @@ jobs:
         run: dotnet restore
 
       - name: Format (auto-fix)
-        run: dotnet format "Rum Defence.sln" --no-restore
+        run: dotnet format "RumDefence.sln" --no-restore
 
       - name: Commit formatting changes
         if: ${{ github.actor != 'github-actions' }}
