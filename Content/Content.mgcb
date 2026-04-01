@@ -37,6 +37,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/Objects/RumBarrel.png;Art/Objects/RumBarrel
 
+#begin Art/Objects/RumBarrel.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Objects/RumBarrel.png;Art/Objects/RumBarrel
+
 #begin Art/Themes/Grass/Enemies/enemy_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -253,6 +265,150 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Ships/ship_1.png;Art/Themes/Grass/Ships/ship_1
 
+#begin Art/Themes/Grass/Walls/corner_damaged.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/corner_damaged.png;Art/Themes/Grass/Walls/corner_damaged
+
+#begin Art/Themes/Grass/Walls/corner_damaged.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/corner_damaged.png;Art/Themes/Grass/Walls/corner_damaged
+
+#begin Art/Themes/Grass/Walls/corner.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/corner.png;Art/Themes/Grass/Walls/corner
+
+#begin Art/Themes/Grass/Walls/corner.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/corner.png;Art/Themes/Grass/Walls/corner
+
+#begin Art/Themes/Grass/Walls/end_damaged.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/end_damaged.png;Art/Themes/Grass/Walls/end_damaged
+
+#begin Art/Themes/Grass/Walls/end_damaged.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/end_damaged.png;Art/Themes/Grass/Walls/end_damaged
+
+#begin Art/Themes/Grass/Walls/end.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/end.png;Art/Themes/Grass/Walls/end
+
+#begin Art/Themes/Grass/Walls/end.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/end.png;Art/Themes/Grass/Walls/end
+
+#begin Art/Themes/Grass/Walls/wall_damaged_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/wall_damaged_1.png;Art/Themes/Grass/Walls/wall_damaged_1
+
+#begin Art/Themes/Grass/Walls/wall_damaged_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/wall_damaged_2.png;Art/Themes/Grass/Walls/wall_damaged_2
+
+#begin Art/Themes/Grass/Walls/wall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/wall.png;Art/Themes/Grass/Walls/wall
+
+#begin Art/Themes/Grass/Walls/wall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/wall.png;Art/Themes/Grass/Walls/wall
+
 #begin Art/Themes/Stone/Enemies/enemy_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -264,6 +420,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Enemies/enemy_1.png;Art/Themes/Stone/Enemies/enemy_1
+
+#begin Art/Themes/Stone/Enemies/enemy_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Enemies/enemy_1.png;Art/Themes/Stone/Enemies/enemy_1
+
+#begin Art/Themes/Stone/Environment/tile_10.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Environment/tile_10.png;Art/Themes/Stone/Environment/tile_10
 
 #begin Art/Themes/Stone/Environment/tile_10.png
 /importer:TextureImporter
@@ -289,6 +469,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Environment/tile_11.png;Art/Themes/Stone/Environment/tile_11
 
+#begin Art/Themes/Stone/Environment/tile_11.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Environment/tile_11.png;Art/Themes/Stone/Environment/tile_11
+
 #begin Art/Themes/Stone/Environment/tile_12.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -300,6 +492,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Environment/tile_12.png;Art/Themes/Stone/Environment/tile_12
+
+#begin Art/Themes/Stone/Environment/tile_12.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Environment/tile_12.png;Art/Themes/Stone/Environment/tile_12
+
+#begin Art/Themes/Stone/Environment/tile_26.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Environment/tile_26.png;Art/Themes/Stone/Environment/tile_26
 
 #begin Art/Themes/Stone/Environment/tile_26.png
 /importer:TextureImporter
@@ -325,6 +541,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Environment/tile_27.png;Art/Themes/Stone/Environment/tile_27
 
+#begin Art/Themes/Stone/Environment/tile_27.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Environment/tile_27.png;Art/Themes/Stone/Environment/tile_27
+
 #begin Art/Themes/Stone/Environment/tile_28.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -336,6 +564,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Environment/tile_28.png;Art/Themes/Stone/Environment/tile_28
+
+#begin Art/Themes/Stone/Environment/tile_28.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Environment/tile_28.png;Art/Themes/Stone/Environment/tile_28
+
+#begin Art/Themes/Stone/Environment/tile_42.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Environment/tile_42.png;Art/Themes/Stone/Environment/tile_42
 
 #begin Art/Themes/Stone/Environment/tile_42.png
 /importer:TextureImporter
@@ -361,6 +613,30 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Environment/tile_43.png;Art/Themes/Stone/Environment/tile_43
 
+#begin Art/Themes/Stone/Environment/tile_43.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Environment/tile_43.png;Art/Themes/Stone/Environment/tile_43
+
+#begin Art/Themes/Stone/Environment/tile_44.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Environment/tile_44.png;Art/Themes/Stone/Environment/tile_44
+
 #begin Art/Themes/Stone/Environment/tile_44.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -384,6 +660,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Ships/boss_ship.png;Art/Themes/Stone/Ships/boss_ship
+
+#begin Art/Themes/Stone/Ships/boss_ship.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Ships/boss_ship.png;Art/Themes/Stone/Ships/boss_ship
+
+#begin Art/Themes/Stone/Ships/ship_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Stone/Ships/ship_1.png;Art/Themes/Stone/Ships/ship_1
 
 #begin Art/Themes/Stone/Ships/ship_1.png
 /importer:TextureImporter

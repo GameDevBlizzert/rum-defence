@@ -30,7 +30,7 @@ public static class MiniMapRenderer
         {
             for (int x = 0; x < width; x++)
             {
-                var texture = theme.GetTexture(map[y, x], x, y);
+                var texture = theme.Tiles.GetTexture(map[y, x], x, y);
                 if (texture == null) continue;
 
                 var rect = new Rectangle(
