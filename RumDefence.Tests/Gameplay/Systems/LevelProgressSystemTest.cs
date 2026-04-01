@@ -25,7 +25,7 @@ public class LevelProgressSystemTest
         levelProgressSystem.TakeHits(hits);
         Assert.Equal(expectedHealth, levelProgressSystem.LivesRemaining);
     }
-    
+
     [Theory]
     [InlineData(10, -3)]
     [InlineData(5, -5)]
@@ -44,7 +44,7 @@ public class LevelProgressSystemTest
     {
         var levelProgressSystem = new LevelProgressSystem(0, startingCoins);
         levelProgressSystem.AddCoins(coinsToAdd);
-        Assert.Equal(expectedCoins, levelProgressSystem.CoinsRemaining); 
+        Assert.Equal(expectedCoins, levelProgressSystem.CoinsRemaining);
     }
 
     [Theory]
@@ -55,16 +55,16 @@ public class LevelProgressSystemTest
         var levelProgressSystem = new LevelProgressSystem(0, startingCoins);
         Assert.Throws<ArgumentException>(() => levelProgressSystem.AddCoins(coinsToAdd));
     }
-    
+
     [Fact]
     public void Constructor_ShouldInitializeLivesAndCoins()
     {
         var levelProgressSystem = new LevelProgressSystem(12, 34);
-    
+
         Assert.Equal(12, levelProgressSystem.LivesRemaining);
         Assert.Equal(34, levelProgressSystem.CoinsRemaining);
     }
-    
+
     [Theory]
     [InlineData(10, 0, 10)]
     [InlineData(0, 5, 0)]
@@ -72,62 +72,62 @@ public class LevelProgressSystemTest
     public void TakeHits_WithBoundaryValues_ShouldClampAtZero(int startingHealth, int hits, int expectedHealth)
     {
         var levelProgressSystem = new LevelProgressSystem(startingHealth, 0);
-    
+
         levelProgressSystem.TakeHits(hits);
-    
+
         Assert.Equal(expectedHealth, levelProgressSystem.LivesRemaining);
     }
-    
+
     [Fact]
     public void TakeHits_CalledMultipleTimes_ShouldAccumulateDamageAndClampAtZero()
     {
         var levelProgressSystem = new LevelProgressSystem(10, 0);
-    
+
         levelProgressSystem.TakeHits(3);
         levelProgressSystem.TakeHits(4);
         levelProgressSystem.TakeHits(10);
-    
+
         Assert.Equal(0, levelProgressSystem.LivesRemaining);
     }
-    
+
     [Theory]
     [InlineData(0, 0, 0)]
     [InlineData(100, 0, 100)]
     public void AddCoins_WithZeroValue_ShouldKeepCoinsUnchanged(int startingCoins, int coinsToAdd, int expectedCoins)
     {
         var levelProgressSystem = new LevelProgressSystem(0, startingCoins);
-    
+
         levelProgressSystem.AddCoins(coinsToAdd);
-    
+
         Assert.Equal(expectedCoins, levelProgressSystem.CoinsRemaining);
     }
-    
+
     [Fact]
     public void AddCoins_CalledMultipleTimes_ShouldAccumulateCoins()
     {
         var levelProgressSystem = new LevelProgressSystem(0, 5);
-    
+
         levelProgressSystem.AddCoins(10);
         levelProgressSystem.AddCoins(15);
         levelProgressSystem.AddCoins(0);
-    
+
         Assert.Equal(30, levelProgressSystem.CoinsRemaining);
     }
-    
+
     [Fact]
     public void AddCoins_AndTakeHits_ShouldUpdateIndependentStateValues()
     {
         var levelProgressSystem = new LevelProgressSystem(10, 20);
-    
+
         levelProgressSystem.TakeHits(4);
         levelProgressSystem.AddCoins(7);
         levelProgressSystem.TakeHits(3);
         levelProgressSystem.AddCoins(8);
-    
+
         Assert.Equal(3, levelProgressSystem.LivesRemaining);
         Assert.Equal(35, levelProgressSystem.CoinsRemaining);
     }
-    
+
     [Theory]
     [InlineData(10, 3, 7)]
     [InlineData(5, 5, 0)]
@@ -138,7 +138,7 @@ public class LevelProgressSystemTest
         levelProgressSystem.SpendCoins(coinsToSpend);
         Assert.Equal(expectedCoins, levelProgressSystem.CoinsRemaining);
     }
-    
+
     [Theory]
     [InlineData(10, -10)]
     [InlineData(5, -3)]
@@ -147,7 +147,7 @@ public class LevelProgressSystemTest
         var levelProgressSystem = new LevelProgressSystem(10, startingCoins);
         Assert.Throws<ArgumentException>(() => levelProgressSystem.SpendCoins(coinsToSpend));
     }
-    
+
     [Theory]
     [InlineData(0, 1)]
     [InlineData(5, 6)]
@@ -157,14 +157,14 @@ public class LevelProgressSystemTest
         var levelProgressSystem = new LevelProgressSystem(10, startingCoins);
         Assert.Throws<InsufficientBalanceException>(() => levelProgressSystem.SpendCoins(coinsToSpend));
     }
-    
+
     [Fact]
     public void IsWon_BeforeUpdate_ShouldReturnFalse()
     {
         var levelProgressSystem = new LevelProgressSystem(10, 0);
         Assert.False(levelProgressSystem.IsWon());
     }
-    
+
     [Theory]
     [InlineData(1, false)]
     [InlineData(0, true)]
@@ -175,7 +175,7 @@ public class LevelProgressSystemTest
         var levelProgressSystem = new LevelProgressSystem(startingLives, 0);
         Assert.Equal(expectedLost, levelProgressSystem.IsLost());
     }
-    
+
     [Fact]
     public void IsLost_AfterTakingHitsToZero_ShouldReturnTrue()
     {
@@ -183,7 +183,7 @@ public class LevelProgressSystemTest
         levelProgressSystem.TakeHits(3);
         Assert.True(levelProgressSystem.IsLost());
     }
-    
+
     [Fact]
     public void IsLost_AfterPartialHits_ShouldReturnFalse()
     {
@@ -191,5 +191,5 @@ public class LevelProgressSystemTest
         levelProgressSystem.TakeHits(2);
         Assert.False(levelProgressSystem.IsLost());
     }
-    
+
 }
