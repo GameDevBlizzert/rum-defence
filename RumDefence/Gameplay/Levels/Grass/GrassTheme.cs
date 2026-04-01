@@ -3,15 +3,25 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
-public class GrassTheme : BaseTheme
+public class GrassTheme : BaseTheme, IWallTheme
 {
-    private Dictionary<int, List<Texture2D>> tileMap;
-
     private string envPrefix = "Art/Themes/Grass/Environment/";
+    private string wallPrefix = "Art/Themes/Grass/Walls/";
     private string shipPrefix = "Art/Themes/Grass/Ships/";
     private string enemyPrefix = "Art/Themes/Grass/Enemies/";
 
+    private Dictionary<int, List<Texture2D>> tileMap;
+
+    public Texture2D Wall { get; private set; }
+    public Texture2D End { get; private set; }
+    public Texture2D Corner { get; private set; }
+
+    private List<Texture2D> wallDamagedList;
+    private List<Texture2D> endDamagedList;
+    private List<Texture2D> cornerDamagedList;
+
     private Dictionary<string, Texture2D> shipMap;
+
     private List<Texture2D> enemies;
 
     public GrassTheme()
@@ -31,6 +41,14 @@ public class GrassTheme : BaseTheme
             { 9, LoadList(envPrefix, "9") }
         };
 
+        Wall = Load(wallPrefix + "wall");
+        End = Load(wallPrefix + "end");
+        Corner = Load(wallPrefix + "corner");
+
+        wallDamagedList = LoadList(wallPrefix, "wall_damaged_1", "wall_damaged_2");
+        endDamagedList = LoadList(wallPrefix, "end_damaged");
+        cornerDamagedList = LoadList(wallPrefix, "corner_damaged");
+
         shipMap = new Dictionary<string, Texture2D>()
         {
             { "ship_1", Load(shipPrefix + "ship_1") },
@@ -49,6 +67,21 @@ public class GrassTheme : BaseTheme
             return null;
 
         return GetSeeded(list, x, y);
+    }
+
+    public Texture2D GetDamagedWall(int x, int y)
+    {
+        return GetSeeded(wallDamagedList, x, y);
+    }
+
+    public Texture2D GetDamagedEnd(int x, int y)
+    {
+        return GetSeeded(endDamagedList, x, y);
+    }
+
+    public Texture2D GetDamagedCorner(int x, int y)
+    {
+        return GetSeeded(cornerDamagedList, x, y);
     }
 
     public override Texture2D GetShip(string name)

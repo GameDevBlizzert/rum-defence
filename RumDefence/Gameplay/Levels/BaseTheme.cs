@@ -6,7 +6,7 @@ namespace RumDefence;
 
 public abstract class BaseTheme : ITileTheme
 {
-    protected Random rng = Random.Shared; 
+    protected Random rng = Random.Shared;
 
     protected Texture2D Load(string fullPath)
     {

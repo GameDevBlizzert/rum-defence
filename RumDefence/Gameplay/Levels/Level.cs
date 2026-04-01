@@ -5,18 +5,18 @@ namespace RumDefence;
 
 public class Level
 {
-    public int Id;
-    public int[,] Map;
-    public ITileTheme Theme;
-    public List<Wave> Waves;
-
-    public bool IsUnlocked;
-
+    public int Id { get; set; }
+    public int[,] Map { get; set; }
+    public Theme Theme;
+    public List<Wave> Waves { get; set; }
+    public bool IsUnlocked { get; set; }
     public Point RumTile { get; private set; }
-    
-    public int StartingCoinBalance;
 
-    public Level(int id, string[] mapData, ITileTheme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0)
+    public int StartingCoinBalance { get; private set; }
+    public int StartingLives { get; private set; }
+
+
+    public Level(int id, string[] mapData, Theme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0, int startingLives = 10)
     {
         Id = id;
         Theme = theme;
@@ -25,6 +25,7 @@ public class Level
 
         Map = ParseMap(mapData);
         StartingCoinBalance = startingCoinBalance;
+        StartingLives = startingLives;
     }
 
     private int[,] ParseMap(string[] data)

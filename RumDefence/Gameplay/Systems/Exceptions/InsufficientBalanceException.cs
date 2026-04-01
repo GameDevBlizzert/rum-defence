@@ -4,7 +4,7 @@ namespace RumDefence.Exceptions;
 
 public class InsufficientBalanceException : Exception
 {
-    
+
     public InsufficientBalanceException() : base("The player does not have enough coins to perform this action.")
     {
     }
@@ -16,5 +16,5 @@ public class InsufficientBalanceException : Exception
     public InsufficientBalanceException(string message, Exception innerException) : base(message, innerException)
     {
     }
-    
+
 }

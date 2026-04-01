@@ -8,8 +8,8 @@ public class SimpleButton : Button
     private Texture2D texture;
     private SpriteFont font;
     private string text;
+    private bool isSelected;
 
-    // 🔹 constructor met size (zoals je al had)
     public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position, Vector2 size)
     {
         this.texture = texture;
@@ -24,7 +24,6 @@ public class SimpleButton : Button
         ));
     }
 
-    // 🔹 constructor zonder size (optioneel)
     public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position)
     {
         this.texture = texture;
@@ -41,7 +40,12 @@ public class SimpleButton : Button
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Color color = isHovering ? Color.LightGray : Color.White;
+        Color color = Color.White;
+
+        if (isSelected)
+            color = Color.Gray;
+        else if (isHovering)
+            color = Color.LightGray;
 
         spriteBatch.Draw(texture, bounds, color);
 
@@ -53,5 +57,10 @@ public class SimpleButton : Button
         );
 
         spriteBatch.DrawString(font, text, textPos, Color.Black);
+    }
+
+    public void SetSelected(bool selected)
+    {
+        isSelected = selected;
     }
 }

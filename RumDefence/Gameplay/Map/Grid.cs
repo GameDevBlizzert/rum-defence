@@ -24,4 +24,17 @@ public class Grid
             gridPos.Y * TileSize + TileSize / 2f
         );
     }
+
+    public Point? WorldToGrid(Vector2 worldPos)
+    {
+        Vector2 local = worldPos - Offset;
+
+        int x = (int)(local.X / TileSize);
+        int y = (int)(local.Y / TileSize);
+
+        if (x < 0 || y < 0 || x >= Width || y >= Height)
+            return null;
+
+        return new Point(x, y);
+    }
 }
