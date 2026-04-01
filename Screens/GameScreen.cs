@@ -19,7 +19,6 @@ public class GameScreen : Screen
 
     private Dictionary<Point, Wall> walls = new();
     private WallRenderer wallRenderer;
-    private bool levelCompleted = false;
 
     public ShipSpawner Spawner { get; private set; }
 
@@ -52,7 +51,7 @@ public class GameScreen : Screen
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
 
-        spawner = new ShipSpawner(currentLevel, grid);
+        Spawner = new ShipSpawner(currentLevel, grid);
 
         hud = new Hud(buildManager);
 
@@ -91,7 +90,7 @@ public class GameScreen : Screen
         UpdateSpawner(gameTime);
         UpdateShips(gameTime);
         UpdateTroops(gameTime);
-        CheckLevelCompletion();
+        CheckLevelCompletion(gameTime);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -102,13 +101,14 @@ public class GameScreen : Screen
 
         wallRenderer.Draw(spriteBatch);
 
-        foreach (var ship in ships)
+        foreach (var ship in Ships)
             ship.Draw(spriteBatch);
 
-        foreach (var troop in troops)
+        foreach (var troop in Troops)
             troop.Draw(spriteBatch);
 
         hud.Draw(spriteBatch);
+        testTowers.ForEach(x => x.Draw(spriteBatch));
     }
 
     private void UnlockNextLevel()
@@ -146,7 +146,7 @@ public class GameScreen : Screen
 
     private void UpdateSpawner(GameTime gameTime)
     {
-        var newShip = spawner.Update(gameTime);
+        var newShip = Spawner.Update(gameTime);
 
         if (newShip != null)
         {
@@ -156,7 +156,7 @@ public class GameScreen : Screen
 
     private void UpdateShips(GameTime gameTime)
     {
-        for (int i = ships.Count - 1; i >= 0; i--)
+        for (int i = Ships.Count - 1; i >= 0; i--)
         {
             Ships[i].Update(gameTime);
 
@@ -175,7 +175,7 @@ public class GameScreen : Screen
 
     private void UpdateTroops(GameTime gameTime)
     {
-        for (int i = troops.Count - 1; i >= 0; i--)
+        for (int i = Troops.Count - 1; i >= 0; i--)
         {
             var troop = Troops[i];
             troop.Update(gameTime);
@@ -190,9 +190,9 @@ public class GameScreen : Screen
         }
     }
 
-    private void CheckLevelCompletion()
+    private void CheckLevelCompletion(GameTime gameTime)
     {
-        if (!levelCompleted && spawner.IsFinished && ships.Count == 0 && troops.Count == 0)
+        if (!levelCompleted && Spawner.IsFinished && Ships.Count == 0 && Troops.Count == 0)
             progress.Update(gameTime, this);
 
         // TODO: Do not ignore IsLost after testing
@@ -213,29 +213,4 @@ public class GameScreen : Screen
 
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        RumGame.Instance.GraphicsDevice.Clear(new Color(30, 144, 255));
-
-        renderer.Draw(grid, spriteBatch);
-
-        foreach (var ship in Ships)
-            ship.Draw(spriteBatch);
-
-        foreach (var troop in Troops)
-            troop.Draw(spriteBatch);
-
-
-        testTowers.ForEach(x => x.Draw(spriteBatch));
-    }
-
-    private void UnlockNextLevel()
-    {
-        int currentIndex = GrassLevels.All.IndexOf(currentLevel);
-
-        if (currentIndex + 1 < GrassLevels.All.Count)
-        {
-            GrassLevels.All[currentIndex + 1].IsUnlocked = true;
-        }
-    }
 }

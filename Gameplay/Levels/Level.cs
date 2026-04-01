@@ -16,7 +16,7 @@ public class Level
     public int StartingLives { get; private set; }
 
 
-    public Level(int id, string[] mapData, ITileTheme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0, int startingLives = 10)
+    public Level(int id, string[] mapData, Theme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0, int startingLives = 10)
     {
         Id = id;
         Theme = theme;
