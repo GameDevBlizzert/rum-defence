@@ -1,0 +1,87 @@
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+
+namespace RumDefence;
+
+public class Troop : Entity
+{
+    private Vector2 target;
+    private TroopAnimation animation;
+
+    private float baseSpeed = 60f;
+    public float SpeedMultiplier { get; set; } = 1f;
+
+    public int Health { get; protected set; } = 100;
+    public bool IsDead => Health <= 0;
+    public bool IsFinished { get; private set; }
+
+    private List<ITroopAbility> abilities = new();
+
+    private static Texture2D pixel;
+
+    public Troop(Vector2 start, Vector2 targetPos)
+    {
+        Position = start;
+        target = targetPos;
+        animation = new(
+            16,
+            16,
+            0.2f,
+            3,
+            true
+        );
+
+        if (pixel == null)
+        {
+            pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
+        }
+
+        // https://foozlecc.itch.io/scallywag-pirates
+        Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Objects/pirate_grunt");
+        origin = Vector2.Zero;
+
+        Size = SizeSystem.Square(10f);
+        ApplySize();
+    }
+
+    public void AddAbility(ITroopAbility ability)
+    {
+        abilities.Add(ability);
+    }
+
+    public override void Update(GameTime gameTime)
+    {
+        if (IsFinished || IsDead) return;
+
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        SpeedMultiplier = 1f;
+
+        foreach (var ability in abilities)
+        {
+            ability.Update(this, gameTime);
+        }
+
+        float speed = baseSpeed * SpeedMultiplier;
+
+        Vector2 dir = target - Position;
+
+        if (dir.Length() < 5f)
+        {
+            IsFinished = true;
+            return;
+        }
+
+        dir.Normalize();
+        sourceRectangles = animation.GetCurrentLayerRectangles(gameTime, dir);
+
+        Position += dir * speed * dt;
+    }
+
+    public void TakeDamage(int amount)
+    {
+        Health -= amount;
+    }
+}
