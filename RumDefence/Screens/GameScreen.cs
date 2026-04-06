@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Rum_Defence.Input;
-using Rum_Defence.Entities.Towers;
 using System;
 using System.Collections.Generic;
 
@@ -180,10 +178,16 @@ public class GameScreen : Screen
             var troop = Troops[i];
             troop.Update(gameTime);
 
+            if (troop.IsDead && !troop.HasDroppedReward)
+            {
+                hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
+                troop.MarkRewardGiven();
+            }
+
             if (troop.IsFinished || troop.IsDead)
             {
-                // TODO: Base the hits on the damage stat of the troop
-                if (troop.IsFinished) progress.TakeHits(1);
+                if (troop.IsFinished)
+                    progress.TakeHits(1);
 
                 Troops.RemoveAt(i);
             }
