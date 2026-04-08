@@ -25,6 +25,9 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore RumDefence/RumDefence.csproj
+        
+      - name: Run tests
+        run: dotnet test RumDefence/RumDefence.Tests/RumDefence.Tests.csproj --no-restore --verbosity normal
 
       - name: Format (auto-fix)
         run: dotnet format RumDefence/RumDefence.sln --no-restore
