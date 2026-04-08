@@ -16,14 +16,14 @@ public abstract class EntityWithHealth : Entity
     /// The initial health of the entity when it is created.
     /// </summary>
     public readonly int InitialHealth;
-    
+
     private readonly Texture2D whitePixelTexture2D;
 
     /// <summary>
     /// The width of the entity as it is rendered on the screen
     /// </summary>
     private readonly int entityRenderedWidth;
-    
+
     /// <summary>
     /// The height of the entity as it is rendered on the screen.
     /// </summary>
@@ -33,24 +33,24 @@ public abstract class EntityWithHealth : Entity
     {
         entityRenderedWidth = renderedWidth;
         entityRenderedHeight = renderedHeight;
-        
+
         InitialHealth = initialHealth;
         Health = initialHealth;
-        
+
         whitePixelTexture2D = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
         whitePixelTexture2D.SetData(new[] { Color.White });
     }
 
     protected EntityWithHealth(int initialHealth = 100)
     {
-        
+
     }
 
     /// <summary>
     /// Returns whether the entity is dead, which is true if Health is 0 or below.
     /// </summary>
     public bool IsDead => Health <= 0;
-    
+
     /// <summary>
     /// Reduces the entity's health by the specified amount.
     /// </summary>
@@ -62,10 +62,10 @@ public abstract class EntityWithHealth : Entity
         {
             throw new ArgumentException("Damage amount must be a positive integer.");
         }
-        
+
         Health -= amount;
     }
-    
+
     /// <summary>
     /// Increases the entity's health by the specified amount.
     /// </summary>
@@ -85,23 +85,23 @@ public abstract class EntityWithHealth : Entity
         base.Draw(spriteBatch);
 
         if (IsDead || InitialHealth <= 0) return;
-        
+
         var healthPercentage = MathHelper.Clamp((float)Health / InitialHealth, 0f, 1f);
-        
+
         const int barHeight = 2;
         const int barYOffset = 5;
-        
+
         var barX = (int)Position.X;
         var barY = (int)(Position.Y + entityRenderedHeight + barYOffset);
         var barWidth = entityRenderedWidth;
         var healthBarWidth = (int)(barWidth * healthPercentage);
-        
+
         var healthRectangle = new Rectangle(0, 0, healthBarWidth, barHeight);
         var backgroundRectangle = new Rectangle(0, 0, barWidth, barHeight);
-        
+
         var healthPosition = new Vector2(barX, barY);
         var backgroundPosition = new Vector2(barX, barY);
-        
+
         spriteBatch.Draw(
             whitePixelTexture2D,
             backgroundPosition,
@@ -113,7 +113,7 @@ public abstract class EntityWithHealth : Entity
             spriteEffect,
             layerDepth
         );
-        
+
         spriteBatch.Draw(
             whitePixelTexture2D,
             healthPosition,
@@ -125,6 +125,6 @@ public abstract class EntityWithHealth : Entity
             spriteEffect,
             layerDepth
         );
-        
+
     }
 }

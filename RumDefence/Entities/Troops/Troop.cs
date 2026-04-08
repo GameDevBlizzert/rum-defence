@@ -77,5 +77,5 @@ public class Troop : EntityWithHealth
 
         Position += dir * speed * dt;
     }
-    
+
 }
