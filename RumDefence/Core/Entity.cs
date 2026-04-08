@@ -49,7 +49,7 @@ public abstract class Entity
             }
         }
     }
-    private void DrawLayer(SpriteBatch spriteBatch, Rectangle? source)
+    protected void DrawLayer(SpriteBatch spriteBatch, Rectangle? source)
     {
         spriteBatch.Draw(
             Texture,

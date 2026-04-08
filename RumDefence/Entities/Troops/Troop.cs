@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
-public class Troop : Entity
+public class Troop : EntityWithHealth
 {
     private Vector2 target;
     private TroopAnimation animation;
@@ -12,15 +12,13 @@ public class Troop : Entity
     private float baseSpeed = 60f;
     public float SpeedMultiplier { get; set; } = 1f;
 
-    public int Health { get; protected set; } = 100;
-    public bool IsDead => Health <= 0;
     public bool IsFinished { get; private set; }
 
     private List<ITroopAbility> abilities = new();
 
     private static Texture2D pixel;
 
-    public Troop(Vector2 start, Vector2 targetPos)
+    public Troop(Vector2 start, Vector2 targetPos) : base(16, 32)
     {
         Position = start;
         target = targetPos;
@@ -79,9 +77,5 @@ public class Troop : Entity
 
         Position += dir * speed * dt;
     }
-
-    public void TakeDamage(int amount)
-    {
-        Health -= amount;
-    }
+    
 }
