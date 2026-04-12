@@ -11,7 +11,8 @@ public class Troop : EntityWithHealth
 
     private float baseSpeed = 60f;
     public float SpeedMultiplier { get; set; } = 1f;
-
+    public int CoinValue { get; set; } = 1;
+    public bool HasDroppedReward { get; private set; }
     public bool IsFinished { get; private set; }
 
     private List<ITroopAbility> abilities = new();
@@ -78,4 +79,13 @@ public class Troop : EntityWithHealth
         Position += dir * speed * dt;
     }
 
+    public void TakeDamage(int amount)
+    {
+        Health -= amount;
+    }
+
+    public void MarkRewardGiven()
+    {
+        HasDroppedReward = true;
+    }
 }
