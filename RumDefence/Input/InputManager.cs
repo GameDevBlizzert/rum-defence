@@ -1,8 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using RumDefence;
 
-namespace Rum_Defence.Input;
+namespace RumDefence;
 
 public class InputManager
 {

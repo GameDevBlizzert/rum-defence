@@ -10,10 +10,13 @@ public class Hud
     private SpriteFont font;
 
     private Rectangle panelRect;
-
     private SimpleButton wallButton;
 
     private BuildManager buildManager;
+
+    private CoinManager coinManager;
+
+    private Vector2 coinUIPosition;
 
     public Hud(BuildManager buildManager)
     {
@@ -47,14 +50,29 @@ public class Hud
         wallButton.OnClick = () =>
         {
             buildManager.SetMode(BuildMode.Wall);
-
-            wallButton.SetSelected(buildManager.GetMode() == BuildMode.Wall);
         };
+
+        coinManager = new CoinManager(GetCoinTargetPosition);
+        coinUIPosition = new Vector2(100, 50);
+    }
+
+    public Vector2 GetCoinTargetPosition()
+    {
+        var text = coinManager.Balance.ToString();
+        var size = font.MeasureString(text);
+
+        return coinUIPosition + size / 2f;
+    }
+
+    public CoinManager GetCoinManager()
+    {
+        return coinManager;
     }
 
     public void Update(GameTime gameTime)
     {
         wallButton.Update(gameTime);
+        coinManager.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -62,5 +80,14 @@ public class Hud
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
         wallButton.Draw(spriteBatch);
+
+        coinManager.Draw(spriteBatch);
+
+        spriteBatch.DrawString(
+            font,
+            coinManager.Balance.ToString(),
+            coinUIPosition,
+            Color.Yellow
+        );
     }
 }

@@ -11,7 +11,8 @@ public class Troop : Entity
 
     private float baseSpeed = 60f;
     public float SpeedMultiplier { get; set; } = 1f;
-
+    public int CoinValue { get; set; } = 1;
+    public bool HasDroppedReward { get; private set; }
     public int Health { get; protected set; } = 100;
     public bool IsDead => Health <= 0;
     public bool IsFinished { get; private set; }
@@ -83,5 +84,10 @@ public class Troop : Entity
     public void TakeDamage(int amount)
     {
         Health -= amount;
+    }
+
+    public void MarkRewardGiven()
+    {
+        HasDroppedReward = true;
     }
 }
