@@ -12,8 +12,10 @@ public class AudioManager
 
     private Dictionary<string, SoundEffect> soundEffects = new();
     private Dictionary<string, Song> songs = new();
+    private List<SoundEffect> footstepSounds = new();
     private Song currentSong;
     private bool isMusicPlaying = false;
+    private Random random = new Random();
 
     public void LoadContent()
     {
@@ -24,6 +26,12 @@ public class AudioManager
         soundEffects["confirmation"] = content.Load<SoundEffect>("Audio/confirmation_002");
         soundEffects["error"] = content.Load<SoundEffect>("Audio/error_008");
         soundEffects["switch"] = content.Load<SoundEffect>("Audio/switch_002");
+
+        // Load footstep sounds
+        for (int i = 0; i < 5; i++)
+        {
+            footstepSounds.Add(content.Load<SoundEffect>($"Audio/footstep_grass_00{i}"));
+        }
 
         // Load all songs
         songs["PineappleUnderTheSea"] = content.Load<Song>("Audio/PineappleUnderTheSea");
@@ -40,6 +48,19 @@ public class AudioManager
         else
         {
             System.Diagnostics.Debug.WriteLine($"Warning: Sound '{soundName}' not found");
+        }
+    }
+
+    public void PlayRandomFootstep()
+    {
+        if (footstepSounds.Count > 0)
+        {
+            int randomIndex = random.Next(footstepSounds.Count);
+            footstepSounds[randomIndex].Play();
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("Warning: No footstep sounds loaded");
         }
     }
 
@@ -97,4 +118,5 @@ public class AudioManager
 
     public bool IsBackgroundMusicPlaying => isMusicPlaying;
 }
+
 

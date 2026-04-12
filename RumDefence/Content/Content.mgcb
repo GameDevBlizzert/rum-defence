@@ -776,6 +776,36 @@
 /processorParam:Quality=Best
 /build:Audio/switch_002.ogg
 
+#begin Audio/footstep_grass_000.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_000.ogg
+
+#begin Audio/footstep_grass_001.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_001.ogg
+
+#begin Audio/footstep_grass_002.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_002.ogg
+
+#begin Audio/footstep_grass_003.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_003.ogg
+
+#begin Audio/footstep_grass_004.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_004.ogg
+
 #begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
 /processor:SongProcessor

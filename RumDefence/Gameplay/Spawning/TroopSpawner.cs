@@ -63,5 +63,8 @@ public class TroopSpawner
         var troop = new Troop(spawnPosition + offset, target);
 
         SpawnedTroops.Add(troop);
+
+        // Play random footstep sound when enemy spawns
+        AudioManager.Instance.PlayRandomFootstep();
     }
 }
