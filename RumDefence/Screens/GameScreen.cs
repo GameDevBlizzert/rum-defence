@@ -180,18 +180,18 @@ public class GameScreen : Screen
 
     private void UpdateTroops(GameTime gameTime)
     {
-        
+
         var untraversable = GetUntraversableTiles();
 
         var updatePaths = !latestUntraverableHashSet.Equals(untraversable);
-        
+
         latestUntraverableHashSet = untraversable;
-        
+
         for (int i = Troops.Count - 1; i >= 0; i--)
         {
             var troop = Troops[i];
             troop.Update(gameTime);
-            
+
             if (updatePaths)
                 troop.UpdatePathfinding(latestUntraverableHashSet);
 
@@ -235,7 +235,7 @@ public class GameScreen : Screen
         }
 
     }
-    
+
     /// <summary>
     /// Get all the tiles troops cannot traverse, including walls and water tiles. Used for pathfinding.
     /// </summary>
@@ -243,7 +243,7 @@ public class GameScreen : Screen
     private HashSet<Point> GetUntraversableTiles()
     {
         var untraversable = new HashSet<Point>();
-        
+
         // add walls
         foreach (var wall in walls.Values)
         {
@@ -256,7 +256,7 @@ public class GameScreen : Screen
             if (tile != null)
                 untraversable.Add(tile.Value);
         }
-        
+
         // add water tiles
         for (int x = 0; x < grid.Width; x++)
         {
@@ -268,7 +268,7 @@ public class GameScreen : Screen
                 }
             }
         }
-        
+
         return untraversable;
     }
 

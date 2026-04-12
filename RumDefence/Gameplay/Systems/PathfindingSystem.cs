@@ -20,11 +20,11 @@ public class PathfindingSystem : IGameLoopSystem
 
     public Vector2 GetNextDirection(Vector2 currentPosition)
     {
-        
+
         // This can happen if the entity is in the same grid cell as the destination
         if (Path.Count == 0)
             return Destination;
-        
+
         var nextPoint = Path.Peek();
         if (Vector2.Distance(currentPosition, nextPoint) < 5f)
         {
@@ -44,15 +44,15 @@ public class PathfindingSystem : IGameLoopSystem
         int[,] map = new int[grid.Width, grid.Height];
 
         for (int i = 0; i < map.GetLength(0); i++)
-        for (int j = 0; j < map.GetLength(1); j++)
-            map[i, j] = int.MaxValue;
+            for (int j = 0; j < map.GetLength(1); j++)
+                map[i, j] = int.MaxValue;
 
         var entityPosition = grid.WorldToGrid(currentPosition);
         var targetPosition = grid.WorldToGrid(Destination);
 
         if (null == entityPosition)
             throw new ArgumentException("Current position is out of grid bounds.");
-        
+
         if (null == targetPosition)
             throw new ArgumentException("Destination is out of grid bounds.");
 
@@ -76,32 +76,32 @@ public class PathfindingSystem : IGameLoopSystem
             {
                 if (untraverableTiles != null && untraverableTiles.Contains(next))
                     continue;
-                
+
                 // Check bounds
                 if (next.X < 0 || next.Y < 0 || next.X >= grid.Width || next.Y >= grid.Height)
                     continue;
-                
+
                 if (next == targetPosition.Value)
                 {
                     map[next.X, next.Y] = map[current.X, current.Y] + 1;
                     tiles.Clear();
                     break;
                 }
-                
+
                 var cost = map[current.X, current.Y] + 1;
-                
+
                 if (cost < map[next.X, next.Y])
                 {
                     map[next.X, next.Y] = cost;
                     tiles.Enqueue(next);
                 }
             }
-            
+
         }
 
         var path = new Stack<Vector2>();
         Point currentPoint = targetPosition.Value;
-        
+
         while (currentPoint != entityPosition.Value)
         {
             path.Push(grid.GridToWorld(currentPoint));
@@ -134,7 +134,7 @@ public class PathfindingSystem : IGameLoopSystem
 
             currentPoint = nextPoint;
         }
-        
+
         Path = new Queue<Vector2>(path);
     }
 }
