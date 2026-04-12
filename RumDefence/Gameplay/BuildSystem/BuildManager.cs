@@ -9,6 +9,8 @@ public class BuildManager
     private Point? hoveredTile;
 
     private Action<Point> onWallPlaced;
+    private Action<Point> onTowerPlaced;
+    private Action<Point> onRemove;
 
     public BuildManager(Grid grid)
     {
@@ -40,10 +42,15 @@ public class BuildManager
         switch (currentMode)
         {
             case BuildMode.Wall:
-                if (CanPlaceWall(p))
-                {
+                if (CanPlaceTower(p))
                     onWallPlaced?.Invoke(p);
-                }
+                break;
+            case BuildMode.CannonTower:
+                if (CanPlaceTower(p))
+                    onTowerPlaced?.Invoke(p);
+                break;
+            case BuildMode.Remove:
+                onRemove?.Invoke(p);
                 break;
         }
     }
@@ -66,18 +73,22 @@ public class BuildManager
         return currentMode;
     }
 
-    private bool CanPlaceWall(Point p)
+    private bool CanPlaceTower(Point p)
     {
-        if (grid.Tiles[p.Y, p.X] != 5)
-            return false;
-
-        // later:
-        // if (playerCoins < wallCost) return false;
-
-        return true;
+        return grid.Tiles[p.Y, p.X] == 5;
     }
     public void SetWallPlacementCallback(Action<Point> callback)
     {
         onWallPlaced = callback;
+    }
+
+    public void SetTowerPlacementCallback(Action<Point> callback)
+    {
+        onTowerPlaced = callback;
+    }
+
+    public void SetRemoveCallback(Action<Point> callback)
+    {
+        onRemove = callback;
     }
 }

@@ -23,8 +23,7 @@ public class GameScreen : Screen
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
 
-    //remove when hud is done
-    private List<CannonTower> testTowers;
+    private Dictionary<Point, BaseTower> placedTowers = new();
 
     private bool levelCompleted;
 
@@ -61,22 +60,29 @@ public class GameScreen : Screen
 
         buildManager.SetWallPlacementCallback(p =>
         {
-            if (!walls.ContainsKey(p))
+            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p))
             {
                 walls[p] = new Wall(p);
-                // Play random impact sound when wall is placed
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
 
-        //remove when hud is done now only spawn at level 3
-        testTowers = currentLevel.Id == 3 ? new List<CannonTower>()
+        buildManager.SetRemoveCallback(p =>
         {
-            new (new Vector2(1500, 300), Troops),
-            new (new Vector2(1500, 900), Troops),
-            new (new Vector2(1700, 500), Troops),
+            bool removed = walls.Remove(p) || placedTowers.Remove(p);
+            if (removed)
+                AudioManager.Instance.PlayRandomImpact();
+        });
 
-        } : new();
+        buildManager.SetTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
+            {
+                placedTowers[p] = new CannonTower(grid.GridToWorld(p), Troops);
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
+
 
         Spawner = new ShipSpawner(currentLevel, grid);
         progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
@@ -110,7 +116,7 @@ public class GameScreen : Screen
             troop.Draw(spriteBatch);
 
         hud.Draw(spriteBatch);
-        testTowers.ForEach(x => x.Draw(spriteBatch));
+        foreach (var tower in placedTowers.Values) tower.Draw(spriteBatch);
     }
 
     private void UnlockNextLevel()
@@ -211,7 +217,7 @@ public class GameScreen : Screen
             UnlockNextLevel();
         }
 
-        testTowers.ForEach(x => x.Update(gameTime));
+        foreach (var tower in placedTowers.Values) tower.Update(gameTime);
 
         if (levelCompleted)
         {

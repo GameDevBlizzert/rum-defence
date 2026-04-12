@@ -9,9 +9,12 @@ public abstract class Button : UIElement
     protected Rectangle bounds;
 
     protected bool isHovering;
+    protected bool isSelected;
     protected bool wasPressed;
 
     public Action OnClick;
+
+    public void SetSelected(bool selected) => isSelected = selected;
 
     public void SetBounds(Rectangle rect)
     {
