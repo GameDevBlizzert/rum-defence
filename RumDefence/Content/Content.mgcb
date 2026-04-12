@@ -782,3 +782,15 @@
 /processorParam:Quality=Best
 /build:Audio/PineappleUnderTheSea.ogg
 
+#begin Audio/WhatCloudsAreMadeOf.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/WhatCloudsAreMadeOf.ogg
+
+#begin Audio/GentleBreeze.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/GentleBreeze.ogg
+

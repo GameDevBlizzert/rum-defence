@@ -11,7 +11,8 @@ public class AudioManager
     public static AudioManager Instance => _instance ??= new AudioManager();
 
     private Dictionary<string, SoundEffect> soundEffects = new();
-    private Song backgroundMusic;
+    private Dictionary<string, Song> songs = new();
+    private Song currentSong;
     private bool isMusicPlaying = false;
 
     public void LoadContent()
@@ -24,8 +25,10 @@ public class AudioManager
         soundEffects["error"] = content.Load<SoundEffect>("Audio/error_008");
         soundEffects["switch"] = content.Load<SoundEffect>("Audio/switch_002");
 
-        // Load background music
-        backgroundMusic = content.Load<Song>("Audio/PineappleUnderTheSea");
+        // Load all songs
+        songs["PineappleUnderTheSea"] = content.Load<Song>("Audio/PineappleUnderTheSea");
+        songs["WhatCloudsAreMadeOf"] = content.Load<Song>("Audio/WhatCloudsAreMadeOf");
+        songs["GentleBreeze"] = content.Load<Song>("Audio/GentleBreeze");
     }
 
     public void PlaySound(string soundName)
@@ -40,14 +43,30 @@ public class AudioManager
         }
     }
 
-    public void PlayBackgroundMusic()
+    public void PlayBackgroundMusic(string songName = "PineappleUnderTheSea")
     {
-        if (!isMusicPlaying && backgroundMusic != null)
+        if (!songs.TryGetValue(songName, out var song))
         {
-            MediaPlayer.Play(backgroundMusic);
-            MediaPlayer.IsRepeating = true;
-            isMusicPlaying = true;
+            System.Diagnostics.Debug.WriteLine($"Warning: Song '{songName}' not found");
+            return;
         }
+
+        // If the same song is already playing, don't restart it
+        if (currentSong == song && isMusicPlaying)
+        {
+            return;
+        }
+
+        // Stop current music if switching to a different song
+        if (isMusicPlaying)
+        {
+            MediaPlayer.Stop();
+        }
+
+        currentSong = song;
+        MediaPlayer.Play(currentSong);
+        MediaPlayer.IsRepeating = true;
+        isMusicPlaying = true;
     }
 
     public void StopBackgroundMusic()
@@ -56,18 +75,26 @@ public class AudioManager
         {
             MediaPlayer.Stop();
             isMusicPlaying = false;
+            currentSong = null;
         }
     }
 
     public void PauseBackgroundMusic()
     {
-        MediaPlayer.Pause();
+        if (isMusicPlaying)
+        {
+            MediaPlayer.Pause();
+        }
     }
 
     public void ResumeBackgroundMusic()
     {
-        MediaPlayer.Resume();
+        if (isMusicPlaying)
+        {
+            MediaPlayer.Resume();
+        }
     }
 
     public bool IsBackgroundMusicPlaying => isMusicPlaying;
 }
+

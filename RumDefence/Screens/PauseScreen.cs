@@ -38,7 +38,9 @@ public class PauseScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        AudioManager.Instance.PauseBackgroundMusic();
+        // Stop game music and play pause theme
+        AudioManager.Instance.StopBackgroundMusic();
+        AudioManager.Instance.PlayBackgroundMusic("GentleBreeze");
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
@@ -53,8 +55,8 @@ public class PauseScreen : Screen
 
         resumeButton.OnClick = () =>
         {
-            // Resume background music
-            AudioManager.Instance.ResumeBackgroundMusic();
+            // Stop pause music and resume game music
+            AudioManager.Instance.PlayBackgroundMusic("PineappleUnderTheSea");
             manager.SetScreen(previousScreen);
         };
 
@@ -65,7 +67,7 @@ public class PauseScreen : Screen
 
         menuButton.OnClick = () =>
         {
-            // Stop background music when going to menu
+            // Stop pause music when going to menu
             AudioManager.Instance.StopBackgroundMusic();
             manager.SetScreen(new ConfirmScreen(
                 manager,
