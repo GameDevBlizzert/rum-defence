@@ -37,6 +37,7 @@ public abstract class Button : UIElement
 
         if (isHovering && !isPressed && wasPressed && IsClickable())
         {
+            AudioManager.Instance.PlaySound("confirmation");
             OnClick?.Invoke();
         }
 

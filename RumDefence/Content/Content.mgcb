@@ -848,3 +848,105 @@
 /processorParam:TextureFormat=Compressed
 /build:Fonts/KenneyFuture.spritefont
 
+#begin Audio/click_004.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/click_004.ogg
+
+#begin Audio/confirmation_002.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/confirmation_002.ogg
+
+#begin Audio/error_008.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/error_008.ogg
+
+#begin Audio/switch_002.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/switch_002.ogg
+
+#begin Audio/footstep_grass_000.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_000.ogg
+
+#begin Audio/footstep_grass_001.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_001.ogg
+
+#begin Audio/footstep_grass_002.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_002.ogg
+
+#begin Audio/footstep_grass_003.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_003.ogg
+
+#begin Audio/footstep_grass_004.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/footstep_grass_004.ogg
+
+#begin Audio/impactMining_000.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_000.ogg
+
+#begin Audio/impactMining_001.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_001.ogg
+
+#begin Audio/impactMining_002.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_002.ogg
+
+#begin Audio/impactMining_003.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_003.ogg
+
+#begin Audio/impactMining_004.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_004.ogg
+
+#begin Audio/PineappleUnderTheSea.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/PineappleUnderTheSea.ogg
+
+#begin Audio/WhatCloudsAreMadeOf.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/WhatCloudsAreMadeOf.ogg
+
+#begin Audio/GentleBreeze.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/GentleBreeze.ogg
+

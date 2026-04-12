@@ -35,6 +35,9 @@ public class ThemeSelectScreen : Screen
         {
             manager.SetScreen(new LevelSelectScreen(manager, GrassLevels.All)); // later StoneLevels
         };
+
+        // Play theme music
+        AudioManager.Instance.PlayBackgroundMusic("WhatCloudsAreMadeOf");
     }
 
     public override void Update(GameTime gameTime)
