@@ -38,6 +38,8 @@ public class PauseScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
+        AudioManager.Instance.PauseBackgroundMusic();
+
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
@@ -51,6 +53,8 @@ public class PauseScreen : Screen
 
         resumeButton.OnClick = () =>
         {
+            // Resume background music
+            AudioManager.Instance.ResumeBackgroundMusic();
             manager.SetScreen(previousScreen);
         };
 
@@ -61,6 +65,8 @@ public class PauseScreen : Screen
 
         menuButton.OnClick = () =>
         {
+            // Stop background music when going to menu
+            AudioManager.Instance.StopBackgroundMusic();
             manager.SetScreen(new ConfirmScreen(
                 manager,
                 this,

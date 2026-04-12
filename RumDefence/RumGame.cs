@@ -64,6 +64,8 @@ namespace RumDefence
 
             var cursor = Content.Load<Texture2D>("Art/UI/Cursor");
             Mouse.SetCursor(MouseCursor.FromTexture2D(cursor, 0, 0));
+
+            AudioManager.Instance.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)

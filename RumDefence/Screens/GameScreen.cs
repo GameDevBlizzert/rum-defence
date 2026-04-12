@@ -80,6 +80,8 @@ public class GameScreen : Screen
 
         Spawner = new ShipSpawner(currentLevel, grid);
         progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+
+        AudioManager.Instance.PlayBackgroundMusic();
     }
 
     public override void Update(GameTime gameTime)
@@ -207,6 +209,8 @@ public class GameScreen : Screen
 
         if (levelCompleted)
         {
+            // Stop background music when leaving game screen
+            AudioManager.Instance.StopBackgroundMusic();
             // TODO: Show win or lose screen based
             manager.SetScreen(new MainMenuScreen(manager));
         }
