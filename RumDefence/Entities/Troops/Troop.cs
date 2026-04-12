@@ -78,12 +78,6 @@ public class Troop : EntityWithHealth
 
         Position += dir * speed * dt;
     }
-
-    public void TakeDamage(int amount)
-    {
-        Health -= amount;
-    }
-
     public void MarkRewardGiven()
     {
         HasDroppedReward = true;
