@@ -17,7 +17,7 @@ public class CoinManager
     public CoinManager(Func<Vector2> getTargetPosition)
     {
         this.getTargetPosition = getTargetPosition;
-        coinTexture = RumGame.Instance.Content.Load<Texture2D>("Art/UI/coin");
+        coinTexture = RumGame.Instance.Content.Load<Texture2D>("Art/UI/Coin");
     }
 
     public void SpawnCoin(Vector2 worldPosition, int amount = 1)
