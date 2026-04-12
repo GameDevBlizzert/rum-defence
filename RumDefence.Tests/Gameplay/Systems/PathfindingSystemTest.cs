@@ -8,7 +8,7 @@ namespace RumDefence.Tests.Gameplay.Systems;
 [TestSubject(typeof(PathfindingSystem))]
 public class PathfindingSystemTest
 {
-    
+
     [Fact]
     public void UpdatePath_WithCurrentPosition_ShouldUpdatePath()
     {
@@ -28,5 +28,5 @@ public class PathfindingSystemTest
         Assert.NotEmpty(pathfindingSystem.Path);
         Assert.Equal(destination, pathfindingSystem.Path.Peek());
     }
-    
+
 }
