@@ -87,7 +87,7 @@ public class Troop : EntityWithHealth
 
         Position += dir * speed * dt;
     }
-    
+
     public void UpdatePathfinding(HashSet<Point> untraversableTiles)
     {
         pathfinding.UpdatePath(Position, RumGame.Instance.CurrentGrid, untraversableTiles);
