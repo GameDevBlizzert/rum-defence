@@ -806,6 +806,36 @@
 /processorParam:Quality=Best
 /build:Audio/footstep_grass_004.ogg
 
+#begin Audio/impactMining_000.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_000.ogg
+
+#begin Audio/impactMining_001.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_001.ogg
+
+#begin Audio/impactMining_002.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_002.ogg
+
+#begin Audio/impactMining_003.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_003.ogg
+
+#begin Audio/impactMining_004.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/impactMining_004.ogg
+
 #begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
 /processor:SongProcessor

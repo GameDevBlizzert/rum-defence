@@ -13,6 +13,7 @@ public class AudioManager
     private Dictionary<string, SoundEffect> soundEffects = new();
     private Dictionary<string, Song> songs = new();
     private List<SoundEffect> footstepSounds = new();
+    private List<SoundEffect> impactSounds = new();
     private Song currentSong;
     private bool isMusicPlaying = false;
     private Random random = new Random();
@@ -31,6 +32,12 @@ public class AudioManager
         for (int i = 0; i < 5; i++)
         {
             footstepSounds.Add(content.Load<SoundEffect>($"Audio/footstep_grass_00{i}"));
+        }
+
+        // Load impact mining sounds
+        for (int i = 0; i < 5; i++)
+        {
+            impactSounds.Add(content.Load<SoundEffect>($"Audio/impactMining_00{i}"));
         }
 
         // Load all songs
@@ -61,6 +68,19 @@ public class AudioManager
         else
         {
             System.Diagnostics.Debug.WriteLine("Warning: No footstep sounds loaded");
+        }
+    }
+
+    public void PlayRandomImpact()
+    {
+        if (impactSounds.Count > 0)
+        {
+            int randomIndex = random.Next(impactSounds.Count);
+            impactSounds[randomIndex].Play();
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("Warning: No impact sounds loaded");
         }
     }
 
@@ -118,5 +138,3 @@ public class AudioManager
 
     public bool IsBackgroundMusicPlaying => isMusicPlaying;
 }
-
-

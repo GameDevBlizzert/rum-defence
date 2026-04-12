@@ -66,6 +66,8 @@ public class GameScreen : Screen
             if (!walls.ContainsKey(p))
             {
                 walls[p] = new Wall(p);
+                // Play random impact sound when wall is placed
+                AudioManager.Instance.PlayRandomImpact();
             }
         });
 
