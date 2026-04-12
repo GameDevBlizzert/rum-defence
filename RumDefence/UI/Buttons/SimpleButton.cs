@@ -41,7 +41,7 @@ public class SimpleButton : Button
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Color color = Color.White; 
+        Color color = Color.White;
 
         if (isSelected)
             color = Color.Multiply(BaseTint, 0.55f);

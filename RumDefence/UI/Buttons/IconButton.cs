@@ -40,9 +40,9 @@ public class IconButton : Button
         spriteBatch.Draw(backgroundTexture, bounds, bgColor);
 
         // Icon centred and scaled
-        int iconSize  = (int)(Math.Min(bounds.Width, bounds.Height) * IconScale);
-        var iconRect  = new Rectangle(
-            bounds.X + (bounds.Width  - iconSize) / 2,
+        int iconSize = (int)(Math.Min(bounds.Width, bounds.Height) * IconScale);
+        var iconRect = new Rectangle(
+            bounds.X + (bounds.Width - iconSize) / 2,
             bounds.Y + (bounds.Height - iconSize) / 2,
             iconSize,
             iconSize

@@ -7,7 +7,7 @@ public class BuildMenu
 {
     private Texture2D panelTexture;
     private Texture2D pixelTexture;
-    
+
     private Rectangle panelRect;
 
     private IconButton wallButton;
@@ -16,33 +16,33 @@ public class BuildMenu
 
     private BuildManager buildManager;
 
-    private const int PanelWidth    = 120;
-    private const int ButtonSize    = 80;
-    private const int ButtonMargin  = 14;
-    private const int HeaderHeight  = 60;
-    private const int LabelHeight   = 28;
+    private const int PanelWidth = 120;
+    private const int ButtonSize = 80;
+    private const int ButtonMargin = 14;
+    private const int HeaderHeight = 60;
+    private const int LabelHeight = 28;
 
     public BuildMenu(BuildManager buildManager)
     {
         this.buildManager = buildManager;
 
-        var content   = RumGame.Instance.Content;
-        panelTexture  = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
+        var content = RumGame.Instance.Content;
+        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
 
-        var wallIcon   = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
+        var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
         var cannonIcon = content.Load<Texture2D>("KenneyPiratePack/PNG/Default size/Ship parts/cannon");
         var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
 
         pixelTexture = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
         pixelTexture.SetData(new[] { Color.White });
 
-        int panelX      = 20;
-        int panelY      = 20;
+        int panelX = 20;
+        int panelY = 20;
         int panelHeight = RumGame.VirtualHeight - 40;
 
-        panelRect  = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
+        panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
 
-        int buttonX      = panelX + (PanelWidth - ButtonSize) / 2;
+        int buttonX = panelX + (PanelWidth - ButtonSize) / 2;
         int sectionStart = panelY + HeaderHeight + LabelHeight + 8;
 
         wallButton = new IconButton(
@@ -72,7 +72,7 @@ public class BuildMenu
             new Vector2(ButtonSize, ButtonSize)
         );
         removeButton.BaseTint = new Color(220, 70, 70);
-        removeButton.OnClick  = () => buildManager.SetMode(BuildMode.Remove);
+        removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
     }
 
     public void Update(GameTime gameTime)
