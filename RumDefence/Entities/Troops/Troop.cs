@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Rum_Defence.Rendering;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -7,7 +8,7 @@ namespace RumDefence;
 public class Troop : Entity
 {
     private Vector2 target;
-    private TroopAnimation animation;
+    protected virtual Animation animation {get; set; }
 
     private float baseSpeed = 60f;
     public float SpeedMultiplier { get; set; } = 1f;
@@ -18,13 +19,11 @@ public class Troop : Entity
 
     private List<ITroopAbility> abilities = new();
 
-    private static Texture2D pixel;
-
-    public Troop(Vector2 start, Vector2 targetPos)
+    public Troop(string spritePath, Vector2 start, Vector2 targetPos)
     {
         Position = start;
         target = targetPos;
-        animation = new(
+        animation = new TroopAnimation(
             16,
             16,
             0.2f,
@@ -32,14 +31,8 @@ public class Troop : Entity
             true
         );
 
-        if (pixel == null)
-        {
-            pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
-        }
-
         // https://foozlecc.itch.io/scallywag-pirates
-        Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Objects/pirate_grunt");
+        Texture = RumGame.Instance.Content.Load<Texture2D>(spritePath);
         origin = Vector2.Zero;
 
         Size = SizeSystem.Square(10f);

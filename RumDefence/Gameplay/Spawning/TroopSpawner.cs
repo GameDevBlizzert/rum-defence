@@ -34,9 +34,11 @@ public class TroopSpawner
         troopsSpawned = 0;
         spawnTimer = 0f;
     }
+    private Vector2 troopTargetDestination => grid.GridToWorld(level.RumTile);
 
     public void Update(GameTime gameTime)
     {
+        Troop troop;
         if (!IsSpawning) return;
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -46,22 +48,28 @@ public class TroopSpawner
         {
             spawnTimer = 0f;
             troopsSpawned++;
-
-            SpawnTroop();
+            if (troopsSpawned < troopsToSpawn)
+            {
+                troop = new Troop("Art/Pirates/pirates-green-sprite-sheet",spawnPosition + GetSpawnOffset(), troopTargetDestination);
+            } else
+            {
+                troop = new BossTroop("Art/Pirates/pirates-green-sprite-sheet",spawnPosition + GetSpawnOffset(), troopTargetDestination);
+            }
+            SpawnTroop(troop);
         }
     }
 
-    private void SpawnTroop()
+    private Vector2 GetSpawnOffset()
     {
-        Vector2 target = grid.GridToWorld(level.RumTile);
-
         Vector2 offset = new Vector2(
             Random.Shared.Next(-10, 10),
             Random.Shared.Next(-10, 10)
         );
+        return offset;
+    }
 
-        var troop = new Troop(spawnPosition + offset, target);
-
+    private void SpawnTroop(Troop troop)
+    {
         SpawnedTroops.Add(troop);
     }
 }
