@@ -255,12 +255,6 @@ public class GameScreen : Screen
             untraversable.Add(wall.GridPos);
         }
 
-        foreach (var tower in testTowers)
-        {
-            var tile = grid.WorldToGrid(tower.Position);
-            if (tile != null)
-                untraversable.Add(tile.Value);
-        }
 
         // add water tiles
         for (int x = 0; x < grid.Width; x++)
