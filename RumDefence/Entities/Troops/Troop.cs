@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Rum_Defence.Rendering;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -8,7 +7,7 @@ namespace RumDefence;
 public class Troop : EntityWithHealth
 {
     private Vector2 target;
-    protected virtual Animation animation { get; set; }
+    protected virtual Animation animation {get; set; }
 
     private float baseSpeed = 60f;
     public float SpeedMultiplier { get; set; } = 1f;

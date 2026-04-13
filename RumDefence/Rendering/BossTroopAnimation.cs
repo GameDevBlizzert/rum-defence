@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
-using Rum_Defence.Rendering;
+
+namespace RumDefence;
 
 public class BossTroopAnimation : TroopAnimation
 {
