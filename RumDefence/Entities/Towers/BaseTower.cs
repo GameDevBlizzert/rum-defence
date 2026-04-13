@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RumDefence;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -17,8 +18,10 @@ public class BaseTower : Entity
     public int Damage { get; set; } = 25;
     public float ProjectileSpeed { get; set; } = 200f;
     public AttackMode AttackMode { get; set; } = AttackMode.Closest;
+    public float RotationSpeed { get; set; } = 5f; // radians per second
 
     private float _fireCooldown = 0f;
+    private float _targetRotation = 0f;
 
     public BaseTower(Vector2 location, List<Troop> troops, string texturePath)
     {
@@ -26,7 +29,8 @@ public class BaseTower : Entity
         Troops = troops;
 
         Texture = RumGame.Instance.Content.Load<Texture2D>(texturePath);
-        origin = Vector2.Zero;
+        origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
+        rotationOffset = MathHelper.Pi;
 
         Size = SizeSystem.Square(1f);
         ApplySize();
@@ -37,7 +41,8 @@ public class BaseTower : Entity
         base.Update(gameTime);
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        //update projectiles
+
+        // update projectiles
         for (int i = _projectiles.Count - 1; i >= 0; i--)
         {
             _projectiles[i].Update(gameTime);
@@ -45,11 +50,21 @@ public class BaseTower : Entity
                 _projectiles.RemoveAt(i);
         }
 
+        // find target every frame so rotation stays smooth
+        Troop target = FindTarget();
+
+        // rotate toward target
+        if (target != null)
+        {
+            Vector2 dir = target.Position - Position;
+            _targetRotation = (float)Math.Atan2(dir.Y, dir.X);
+        }
+        float diff = MathHelper.WrapAngle(_targetRotation - rotation);
+        rotation += diff * Math.Min(1f, RotationSpeed * dt);
+
         // handle firing
         _fireCooldown -= dt;
         if (_fireCooldown > 0f) return;
-
-        Troop target = FindTarget();
         if (target == null) return;
 
         _projectiles.Add(new Projectile(Position, target, ProjectileSpeed, Damage));
