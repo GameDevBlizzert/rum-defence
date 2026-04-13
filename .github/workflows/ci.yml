@@ -7,29 +7,28 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-build:
+  format:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      formatted: ${{ steps.check.outputs.formatted }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
 
-      - name: Restore dependencies
-        run: dotnet restore RumDefence/RumDefence.csproj
+      - run: dotnet restore RumDefence/RumDefence.csproj
 
-      - name: Format (auto-fix)
-        run: dotnet format RumDefence/RumDefence.sln --no-restore
+      - run: dotnet format RumDefence/RumDefence.sln --no-restore
 
       - name: Commit formatting changes
+        id: check
         if: ${{ github.actor != 'github-actions' }}
         run: |
           git config user.name "github-actions"
@@ -38,9 +37,33 @@ jobs:
             git add .
             git commit -m "chore: auto-format code"
             git push
+            echo "formatted=true" >> $GITHUB_OUTPUT
+          else
+            echo "formatted=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Lint (dotnet build with warnings as errors)
+  lint-and-build:
+    needs: format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip if formatting was just applied
+        if: ${{ needs.format.outputs.formatted == 'true' }}
+        run: |
+          echo "Formatting commit was just pushed. The next CI run will lint and build."
+          exit 0
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - run: dotnet restore RumDefence/RumDefence.csproj
+
+      - name: Lint
         run: dotnet build RumDefence/RumDefence.csproj --no-restore -warnaserror
 
       - name: Build project
