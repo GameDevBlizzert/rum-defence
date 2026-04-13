@@ -23,8 +23,8 @@ public class GameScreen : Screen
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
 
-    //remove when hud is done
-    private List<CannonTower> testTowers;
+    private List<BaseTower> towers = new();
+    private HashSet<Point> occupiedTowerTiles = new();
 
     private bool levelCompleted;
 
@@ -71,15 +71,17 @@ public class GameScreen : Screen
             }
         });
 
-        //remove when hud is done now only spawn at level 3
-        // testTowers = currentLevel.Id == 3 ? new List<CannonTower>()
-        // {
-        //     new (new Vector2(1500, 300), Troops),
-        //     new (new Vector2(1500, 900), Troops),
-        //     new (new Vector2(1700, 500), Troops),
-        //
-        // } : new();
-        testTowers = new();
+        buildManager.SetMusketTowerPlacementCallback(p =>
+        {
+            if (occupiedTowerTiles.Add(p))
+                towers.Add(new MusketTower(grid.GridToWorld(p), Troops));
+        });
+
+        buildManager.SetCannonTowerPlacementCallback(p =>
+        {
+            if (occupiedTowerTiles.Add(p))
+                towers.Add(new CannonTower(grid.GridToWorld(p), Troops));
+        });
 
         Spawner = new ShipSpawner(currentLevel, grid);
         progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
@@ -113,7 +115,8 @@ public class GameScreen : Screen
             troop.Draw(spriteBatch);
 
         hud.Draw(spriteBatch);
-        testTowers.ForEach(x => x.Draw(spriteBatch));
+        foreach (var tower in towers)
+            tower.Draw(spriteBatch);
     }
 
     private void UnlockNextLevel()
@@ -222,7 +225,8 @@ public class GameScreen : Screen
             UnlockNextLevel();
         }
 
-        testTowers.ForEach(x => x.Update(gameTime));
+        foreach (var tower in towers)
+            tower.Update(gameTime);
 
         if (levelCompleted)
         {
@@ -247,7 +251,7 @@ public class GameScreen : Screen
             untraversable.Add(wall.GridPos);
         }
 
-        foreach (var tower in testTowers)
+        foreach (var tower in towers)
         {
             var tile = grid.WorldToGrid(tower.Position);
             if (tile != null)
