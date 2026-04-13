@@ -539,7 +539,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/UI/Cursor.png;Art/UI/Cursor
+/build:Art/UI/Cursor.png
 
 #begin Art/UI/Panels/panel_blue.png
 /importer:TextureImporter
@@ -673,4 +673,28 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/KenneyFuture.spritefont
+
+#begin KenneyPiratePack/PNG/Default size/Ship parts/cannon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:KenneyPiratePack/PNG/Default size/Ship parts/cannon.png
+
+#begin KenneyUIPack/PNG/Blue/Default/icon_cross.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:KenneyUIPack/PNG/Blue/Default/icon_cross.png
 

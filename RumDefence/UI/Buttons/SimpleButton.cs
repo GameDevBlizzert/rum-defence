@@ -8,7 +8,8 @@ public class SimpleButton : Button
     private Texture2D texture;
     private SpriteFont font;
     private string text;
-    private bool isSelected;
+
+    public Color BaseTint { get; set; } = Color.White;
 
     public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position, Vector2 size)
     {
@@ -43,9 +44,9 @@ public class SimpleButton : Button
         Color color = Color.White;
 
         if (isSelected)
-            color = Color.Gray;
+            color = Color.Multiply(BaseTint, 0.55f);
         else if (isHovering)
-            color = Color.LightGray;
+            color = Color.Multiply(BaseTint, 0.8f);
 
         spriteBatch.Draw(texture, bounds, color);
 
@@ -59,8 +60,4 @@ public class SimpleButton : Button
         spriteBatch.DrawString(font, text, textPos, Color.Black);
     }
 
-    public void SetSelected(bool selected)
-    {
-        isSelected = selected;
-    }
 }

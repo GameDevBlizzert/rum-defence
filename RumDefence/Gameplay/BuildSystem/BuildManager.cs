@@ -11,6 +11,7 @@ public class BuildManager
     private Action<Point> onWallPlaced;
     private Action<Point> onMusketTowerPlaced;
     private Action<Point> onCannonTowerPlaced;
+    private Action<Point> onRemove;
 
     public BuildManager(Grid grid)
     {
@@ -42,16 +43,21 @@ public class BuildManager
         switch (currentMode)
         {
             case BuildMode.Wall:
-                if (CanPlaceWall(p))
+                if (CanPlace(p))
+                {
                     onWallPlaced?.Invoke(p);
+                }
                 break;
             case BuildMode.MusketTower:
-                if (CanPlaceTower(p))
+                if (CanPlace(p))
                     onMusketTowerPlaced?.Invoke(p);
                 break;
             case BuildMode.CannonTower:
-                if (CanPlaceTower(p))
+                if (CanPlace(p))
                     onCannonTowerPlaced?.Invoke(p);
+                break;
+            case BuildMode.Remove:
+                onRemove?.Invoke(p);
                 break;
         }
     }
@@ -74,7 +80,7 @@ public class BuildManager
         return currentMode;
     }
 
-    private bool CanPlaceWall(Point p)
+    private bool CanPlace(Point p)
     {
         if (grid.Tiles[p.Y, p.X] != TileRules.Center)
             return false;
@@ -82,14 +88,14 @@ public class BuildManager
         return true;
     }
 
-    private bool CanPlaceTower(Point p)
-    {
-        return TileRules.IsLand(grid.Tiles[p.Y, p.X]);
-    }
-
     public void SetWallPlacementCallback(Action<Point> callback)
     {
         onWallPlaced = callback;
+    }
+
+    public void SetRemoveCallback(Action<Point> callback)
+    {
+        onRemove = callback;
     }
 
     public void SetMusketTowerPlacementCallback(Action<Point> callback)

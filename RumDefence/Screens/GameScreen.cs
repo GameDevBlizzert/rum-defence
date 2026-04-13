@@ -23,8 +23,7 @@ public class GameScreen : Screen
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
 
-    private List<BaseTower> towers = new();
-    private HashSet<Point> occupiedTowerTiles = new();
+    private Dictionary<Point, BaseTower> placedTowers = new();
 
     private bool levelCompleted;
 
@@ -63,24 +62,36 @@ public class GameScreen : Screen
 
         buildManager.SetWallPlacementCallback(p =>
         {
-            if (!walls.ContainsKey(p))
+            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p))
             {
                 walls[p] = new Wall(p);
-                // Play random impact sound when wall is placed
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
+
+        buildManager.SetRemoveCallback(p =>
+        {
+            bool removed = walls.Remove(p) || placedTowers.Remove(p);
+            if (removed)
+                AudioManager.Instance.PlayRandomImpact();
+        });
+
+        buildManager.SetCannonTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
+            {
+                placedTowers[p] = new CannonTower(grid.GridToWorld(p), Troops);
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
 
         buildManager.SetMusketTowerPlacementCallback(p =>
         {
-            if (occupiedTowerTiles.Add(p))
-                towers.Add(new MusketTower(grid.GridToWorld(p), Troops));
-        });
-
-        buildManager.SetCannonTowerPlacementCallback(p =>
-        {
-            if (occupiedTowerTiles.Add(p))
-                towers.Add(new CannonTower(grid.GridToWorld(p), Troops));
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
+            {
+                placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                AudioManager.Instance.PlayRandomImpact();
+            }
         });
 
         Spawner = new ShipSpawner(currentLevel, grid);
@@ -115,8 +126,7 @@ public class GameScreen : Screen
             troop.Draw(spriteBatch);
 
         hud.Draw(spriteBatch);
-        foreach (var tower in towers)
-            tower.Draw(spriteBatch);
+        foreach (var tower in placedTowers.Values) tower.Draw(spriteBatch);
     }
 
     private void UnlockNextLevel()
@@ -225,8 +235,7 @@ public class GameScreen : Screen
             UnlockNextLevel();
         }
 
-        foreach (var tower in towers)
-            tower.Update(gameTime);
+        foreach (var tower in placedTowers.Values) tower.Update(gameTime);
 
         if (levelCompleted)
         {
@@ -251,12 +260,12 @@ public class GameScreen : Screen
             untraversable.Add(wall.GridPos);
         }
 
-        foreach (var tower in towers)
-        {
-            var tile = grid.WorldToGrid(tower.Position);
-            if (tile != null)
-                untraversable.Add(tile.Value);
-        }
+        //foreach (var tower in placedTowers)
+        //{
+        //    var tile = grid.WorldToGrid(tower.);
+        //    if (tile != null)
+        //        untraversable.Add(tile.Value);
+        //}
 
         for (int x = 0; x < grid.Width; x++)
         {
