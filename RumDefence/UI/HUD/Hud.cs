@@ -11,6 +11,8 @@ public class Hud
 
     private Rectangle panelRect;
     private SimpleButton wallButton;
+    private SimpleButton musketButton;
+    private SimpleButton cannonButton;
 
     private BuildManager buildManager;
 
@@ -29,8 +31,11 @@ public class Hud
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
 
-        int panelWidth = 400;
-        int panelHeight = 150;
+        var buttonSize = new Vector2(240, 60);
+        int buttonSpacing = 10;
+        int panelPadding = 20;
+        int panelWidth = (int)buttonSize.X + panelPadding * 2;
+        int panelHeight = (int)(buttonSize.Y * 3 + buttonSpacing * 2 + panelPadding * 2);
 
         panelRect = new Rectangle(
             50,
@@ -39,18 +44,29 @@ public class Hud
             panelHeight
         );
 
-        wallButton = new SimpleButton(
-            buttonTexture,
-            font,
-            "Wall",
-            new Vector2(panelRect.X + 50, panelRect.Y + 40),
-            new Vector2(300, 60)
-        );
+        int buttonX = panelRect.X + panelPadding;
+        int buttonStartY = panelRect.Y + panelPadding;
 
-        wallButton.OnClick = () =>
-        {
-            buildManager.SetMode(BuildMode.Wall);
-        };
+        wallButton = new SimpleButton(
+            buttonTexture, font, "Wall",
+            new Vector2(buttonX, buttonStartY),
+            buttonSize
+        );
+        wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
+
+        musketButton = new SimpleButton(
+            buttonTexture, font, "Musket",
+            new Vector2(buttonX, buttonStartY + (int)buttonSize.Y + buttonSpacing),
+            buttonSize
+        );
+        musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
+
+        cannonButton = new SimpleButton(
+            buttonTexture, font, "Cannon",
+            new Vector2(buttonX, buttonStartY + ((int)buttonSize.Y + buttonSpacing) * 2),
+            buttonSize
+        );
+        cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
 
         coinManager = new CoinManager(GetCoinTargetPosition);
         coinUIPosition = new Vector2(100, 50);
@@ -72,6 +88,8 @@ public class Hud
     public void Update(GameTime gameTime)
     {
         wallButton.Update(gameTime);
+        musketButton.Update(gameTime);
+        cannonButton.Update(gameTime);
         coinManager.Update(gameTime);
     }
 
@@ -80,6 +98,8 @@ public class Hud
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
         wallButton.Draw(spriteBatch);
+        musketButton.Draw(spriteBatch);
+        cannonButton.Draw(spriteBatch);
 
         coinManager.Draw(spriteBatch);
 

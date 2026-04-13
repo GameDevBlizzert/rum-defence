@@ -23,8 +23,8 @@ public class GameScreen : Screen
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
 
-    //remove when hud is done
-    private List<CannonTower> testTowers;
+    private List<BaseTower> towers = new();
+    private HashSet<Point> occupiedTowerTiles = new();
 
     private bool levelCompleted;
 
@@ -64,19 +64,21 @@ public class GameScreen : Screen
             if (!walls.ContainsKey(p))
             {
                 walls[p] = new Wall(p);
-                // Play random impact sound when wall is placed
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
 
-        //remove when hud is done now only spawn at level 3
-        testTowers = currentLevel.Id == 3 ? new List<CannonTower>()
+        buildManager.SetMusketTowerPlacementCallback(p =>
         {
-            new (new Vector2(1500, 300), Troops),
-            new (new Vector2(1500, 900), Troops),
-            new (new Vector2(1700, 500), Troops),
+            if (occupiedTowerTiles.Add(p))
+                towers.Add(new MusketTower(grid.GridToWorld(p), Troops));
+        });
 
-        } : new();
+        buildManager.SetCannonTowerPlacementCallback(p =>
+        {
+            if (occupiedTowerTiles.Add(p))
+                towers.Add(new CannonTower(grid.GridToWorld(p), Troops));
+        });
 
         Spawner = new ShipSpawner(currentLevel, grid);
         progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
@@ -110,7 +112,8 @@ public class GameScreen : Screen
             troop.Draw(spriteBatch);
 
         hud.Draw(spriteBatch);
-        testTowers.ForEach(x => x.Draw(spriteBatch));
+        foreach (var tower in towers)
+            tower.Draw(spriteBatch);
     }
 
     private void UnlockNextLevel()
@@ -211,7 +214,8 @@ public class GameScreen : Screen
             UnlockNextLevel();
         }
 
-        testTowers.ForEach(x => x.Update(gameTime));
+        foreach (var tower in towers)
+            tower.Update(gameTime);
 
         if (levelCompleted)
         {

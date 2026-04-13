@@ -1,14 +1,13 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RumDefence;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
 
 public class BaseTower : Entity
 {
-    private static Texture2D _pixel;
-
     protected readonly List<Troop> Troops;
     private readonly List<Projectile> _projectiles = [];
 
@@ -17,21 +16,21 @@ public class BaseTower : Entity
     public int Damage { get; set; } = 25;
     public float ProjectileSpeed { get; set; } = 200f;
     public AttackMode AttackMode { get; set; } = AttackMode.Closest;
+    public float RotationSpeed { get; set; } = 5f; // radians per second
 
     private float _fireCooldown = 0f;
+    private float _targetRotation = 0f;
 
-    public BaseTower(Vector2 location, List<Troop> troops)
+    public BaseTower(Vector2 location, List<Troop> troops, string texturePath)
     {
         Position = location;
         Troops = troops;
 
-        _pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        _pixel.SetData(new[] { Color.Red });
+        Texture = RumGame.Instance.Content.Load<Texture2D>(texturePath);
+        origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
+        rotationOffset = MathHelper.Pi;
 
-        Texture = _pixel;
-        origin = Vector2.Zero;
-
-        Size = SizeSystem.Square(0.3f);
+        Size = SizeSystem.Square(1f);
         ApplySize();
     }
 
@@ -40,7 +39,8 @@ public class BaseTower : Entity
         base.Update(gameTime);
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        //update projectiles
+
+        // update projectiles
         for (int i = _projectiles.Count - 1; i >= 0; i--)
         {
             _projectiles[i].Update(gameTime);
@@ -48,11 +48,21 @@ public class BaseTower : Entity
                 _projectiles.RemoveAt(i);
         }
 
+        // find target every frame so rotation stays smooth
+        Troop target = FindTarget();
+
+        // rotate toward target
+        if (target != null)
+        {
+            Vector2 dir = target.Position - Position;
+            _targetRotation = (float)Math.Atan2(dir.Y, dir.X);
+        }
+        float diff = MathHelper.WrapAngle(_targetRotation - rotation);
+        rotation += diff * Math.Min(1f, RotationSpeed * dt);
+
         // handle firing
         _fireCooldown -= dt;
         if (_fireCooldown > 0f) return;
-
-        Troop target = FindTarget();
         if (target == null) return;
 
         _projectiles.Add(new Projectile(Position, target, ProjectileSpeed, Damage));
