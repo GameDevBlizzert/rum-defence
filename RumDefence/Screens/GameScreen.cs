@@ -133,7 +133,7 @@ public class GameScreen : Screen
     {
         hud.Update(gameTime);
 
-        buildManager.Update(
+        buildManager.Update( 
             input.MousePositionScaled,
             input.IsLeftClick()
         );
