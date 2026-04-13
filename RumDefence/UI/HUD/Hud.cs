@@ -31,8 +31,11 @@ public class Hud
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
 
-        int panelWidth = 620;
-        int panelHeight = 150;
+        var buttonSize = new Vector2(240, 60);
+        int buttonSpacing = 10;
+        int panelPadding = 20;
+        int panelWidth = (int)buttonSize.X + panelPadding * 2;
+        int panelHeight = (int)(buttonSize.Y * 3 + buttonSpacing * 2 + panelPadding * 2);
 
         panelRect = new Rectangle(
             50,
@@ -41,26 +44,26 @@ public class Hud
             panelHeight
         );
 
-        var buttonSize = new Vector2(180, 60);
-        int buttonY = panelRect.Y + 45;
+        int buttonX = panelRect.X + panelPadding;
+        int buttonStartY = panelRect.Y + panelPadding;
 
         wallButton = new SimpleButton(
             buttonTexture, font, "Wall",
-            new Vector2(panelRect.X + 20, buttonY),
+            new Vector2(buttonX, buttonStartY),
             buttonSize
         );
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
 
         musketButton = new SimpleButton(
             buttonTexture, font, "Musket",
-            new Vector2(panelRect.X + 220, buttonY),
+            new Vector2(buttonX, buttonStartY + (int)buttonSize.Y + buttonSpacing),
             buttonSize
         );
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
 
         cannonButton = new SimpleButton(
             buttonTexture, font, "Cannon",
-            new Vector2(panelRect.X + 420, buttonY),
+            new Vector2(buttonX, buttonStartY + ((int)buttonSize.Y + buttonSpacing) * 2),
             buttonSize
         );
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
