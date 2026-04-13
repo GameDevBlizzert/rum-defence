@@ -8,8 +8,6 @@ namespace RumDefence;
 
 public class BaseTower : Entity
 {
-    private static Texture2D _pixel;
-
     protected readonly List<Troop> Troops;
     private readonly List<Projectile> _projectiles = [];
 
