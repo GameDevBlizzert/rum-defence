@@ -63,8 +63,8 @@ public class WallRenderer
             if (down && left) rotation = MathHelper.Pi;
             if (left && up) rotation = -MathHelper.PiOver2;
         }
-        // STRAIGHT + MIDDLE
-        else
+        // STRAIGHT
+        else if (connections == 2)
         {
             texture = wall.IsDamaged
                 ? theme.GetDamagedWall(p.X, p.Y)
@@ -72,6 +72,26 @@ public class WallRenderer
 
             if (left && right)
                 rotation = MathHelper.PiOver2;
+        }
+        // T-JUNCTION
+        else if (connections == 3)
+        {
+            texture = wall.IsDamaged
+                ? theme.GetDamagedTwall(p.X, p.Y)
+                : theme.Twall;
+
+            // Sprite assumed to open toward bottom (up+left+right connected, down missing)
+            if (!down) rotation = 0f;
+            if (!left) rotation = MathHelper.PiOver2;
+            if (!up) rotation = MathHelper.Pi;
+            if (!right) rotation = -MathHelper.PiOver2;
+        }
+        // X-JUNCTION
+        else
+        {
+            texture = wall.IsDamaged
+                ? theme.GetDamagedXwall(p.X, p.Y)
+                : theme.Xwall;
         }
 
         DrawTexture(spriteBatch, texture, p, rotation);
