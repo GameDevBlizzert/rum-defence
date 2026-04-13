@@ -10,7 +10,10 @@ public abstract class EntityWithHealth : Entity
     /// <summary>
     /// The health of the entity. When it reaches 0 or below, the entity is considered dead.
     /// </summary>
-    public int Health { get; protected set; }
+    public int Health
+    {
+        get; protected set;
+    }
 
     /// <summary>
     /// The initial health of the entity when it is created.
