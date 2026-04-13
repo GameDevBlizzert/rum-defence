@@ -16,7 +16,8 @@ public static class Level1Data
             MapData,
             theme,
             Waves,
-            true
+            true,
+            startingCoinBalance: 200
         );
     }
 

@@ -13,6 +13,7 @@ public class IconButton : Button
     private const float IconScale = 0.62f;
 
     public Color BaseTint { get; set; } = Color.White;
+    public bool IsDisabled { get; set; }
 
     public IconButton(Texture2D backgroundTexture, Texture2D iconTexture, Vector2 position, Vector2 size)
     {
@@ -27,14 +28,20 @@ public class IconButton : Button
         ));
     }
 
+    protected override bool IsClickable() => !IsDisabled;
+
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Color bgColor = BaseTint;
+        Color bgColor;
 
-        if (isSelected)
+        if (IsDisabled)
+            bgColor = new Color(60, 60, 60);
+        else if (isSelected)
             bgColor = Color.Multiply(BaseTint, 0.55f);
         else if (isHovering)
             bgColor = Color.Multiply(BaseTint, 0.8f);
+        else
+            bgColor = BaseTint;
 
         // Background
         spriteBatch.Draw(backgroundTexture, bounds, bgColor);
@@ -48,6 +55,7 @@ public class IconButton : Button
             iconSize
         );
 
-        spriteBatch.Draw(iconTexture, iconRect, Color.White);
+        var iconColor = IsDisabled ? new Color(80, 80, 80) : Color.White;
+        spriteBatch.Draw(iconTexture, iconRect, iconColor);
     }
 }

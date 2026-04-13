@@ -9,6 +9,8 @@ public class SimpleButton : Button
     private SpriteFont font;
     private string text;
 
+    public bool IsDisabled { get; set; }
+
     public Color BaseTint { get; set; } = Color.White;
 
     public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position, Vector2 size)
@@ -39,14 +41,20 @@ public class SimpleButton : Button
         ));
     }
 
+    protected override bool IsClickable() => !IsDisabled;
+
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Color color = Color.White;
+        Color color;
 
-        if (isSelected)
-            color = Color.Multiply(BaseTint, 0.55f);
+        if (IsDisabled)
+            color = new Color(80, 80, 80);
+        else if (isSelected)
+            color = Color.Gray;
         else if (isHovering)
             color = Color.Multiply(BaseTint, 0.8f);
+        else
+            color = Color.White;
 
         spriteBatch.Draw(texture, bounds, color);
 
@@ -57,7 +65,8 @@ public class SimpleButton : Button
             bounds.Y + (bounds.Height - textSize.Y) / 2
         );
 
-        spriteBatch.DrawString(font, text, textPos, Color.Black);
+        var textColor = IsDisabled ? Color.DarkGray : Color.Black;
+        spriteBatch.DrawString(font, text, textPos, textColor);
     }
 
 }

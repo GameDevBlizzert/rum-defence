@@ -52,7 +52,9 @@ public class GameScreen : Screen
 
         Spawner = new ShipSpawner(currentLevel, grid);
 
-        hud = new Hud(buildManager);
+        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+
+        hud = new Hud(buildManager, progress);
 
         wallRenderer = new WallRenderer(
             grid,
@@ -62,9 +64,11 @@ public class GameScreen : Screen
 
         buildManager.SetWallPlacementCallback(p =>
         {
-            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p))
+            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.WallCost)
             {
                 walls[p] = new Wall(p);
+                progress.SpendCoins(BuildManager.WallCost);
+                // Play random impact sound when wall is placed
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
@@ -73,29 +77,33 @@ public class GameScreen : Screen
         {
             bool removed = walls.Remove(p) || placedTowers.Remove(p);
             if (removed)
+            {
                 AudioManager.Instance.PlayRandomImpact();
+            }
+
         });
 
         buildManager.SetCannonTowerPlacementCallback(p =>
         {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.CannonTowerCost)
             {
                 placedTowers[p] = new CannonTower(grid.GridToWorld(p), Troops);
+                progress.SpendCoins(BuildManager.CannonTowerCost);
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
 
         buildManager.SetMusketTowerPlacementCallback(p =>
         {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.MusketTowerCost)
             {
                 placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                progress.SpendCoins(BuildManager.MusketTowerCost);
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
 
         Spawner = new ShipSpawner(currentLevel, grid);
-        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
 
         AudioManager.Instance.PlayBackgroundMusic();
     }

@@ -16,6 +16,7 @@ public class BuildMenu
     private IconButton removeButton;
 
     private BuildManager buildManager;
+    private LevelProgressSystem progress;
 
     private const int PanelWidth = 120;
     private const int ButtonSize = 80;
@@ -23,9 +24,10 @@ public class BuildMenu
     private const int HeaderHeight = 60;
     private const int LabelHeight = 28;
 
-    public BuildMenu(BuildManager buildManager)
+    public BuildMenu(BuildManager buildManager, LevelProgressSystem progress)
     {
         this.buildManager = buildManager;
+        this.progress = progress;
 
         var content = RumGame.Instance.Content;
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
@@ -92,6 +94,10 @@ public class BuildMenu
         cannonButton.SetSelected(mode == BuildMode.CannonTower);
         musketButton.SetSelected(mode == BuildMode.MusketTower);
         removeButton.SetSelected(mode == BuildMode.Remove);
+
+        wallButton.IsDisabled = progress.CoinsRemaining < BuildManager.WallCost;
+        cannonButton.IsDisabled = progress.CoinsRemaining < BuildManager.CannonTowerCost;
+        musketButton.IsDisabled = progress.CoinsRemaining < BuildManager.MusketTowerCost;
 
         wallButton.Update(gameTime);
         cannonButton.Update(gameTime);
