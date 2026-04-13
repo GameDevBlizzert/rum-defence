@@ -2,6 +2,7 @@
 {
     None,
     Wall,
-    CannonTower,
+    MusketTower,
+    CannonTower
     Remove
 }

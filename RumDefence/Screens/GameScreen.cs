@@ -29,6 +29,8 @@ public class GameScreen : Screen
 
     private LevelProgressSystem progress;
 
+    private HashSet<Point> latestUntraverableHashSet = new();
+
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
         currentLevel = level;
@@ -74,15 +76,17 @@ public class GameScreen : Screen
                 AudioManager.Instance.PlayRandomImpact();
         });
 
-        buildManager.SetTowerPlacementCallback(p =>
+        buildManager.SetMusketTowerPlacementCallback(p =>
         {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
-            {
-                placedTowers[p] = new CannonTower(grid.GridToWorld(p), Troops);
-                AudioManager.Instance.PlayRandomImpact();
-            }
+            if (occupiedTowerTiles.Add(p))
+                towers.Add(new MusketTower(grid.GridToWorld(p), Troops));
         });
 
+        buildManager.SetCannonTowerPlacementCallback(p =>
+        {
+            if (occupiedTowerTiles.Add(p))
+                towers.Add(new CannonTower(grid.GridToWorld(p), Troops));
+        });
 
         Spawner = new ShipSpawner(currentLevel, grid);
         progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
@@ -183,10 +187,18 @@ public class GameScreen : Screen
 
     private void UpdateTroops(GameTime gameTime)
     {
+        var untraversable = GetUntraversableTiles();
+        var updatePaths = !latestUntraverableHashSet.Equals(untraversable);
+
+        latestUntraverableHashSet = untraversable;
+
         for (int i = Troops.Count - 1; i >= 0; i--)
         {
             var troop = Troops[i];
             troop.Update(gameTime);
+
+            if (updatePaths)
+                troop.UpdatePathfinding(latestUntraverableHashSet);
 
             if (troop.IsDead && !troop.HasDroppedReward)
             {
@@ -227,6 +239,40 @@ public class GameScreen : Screen
             manager.SetScreen(new MainMenuScreen(manager));
         }
 
+    }
+
+    /// <summary>
+    /// Get all the tiles troops cannot traverse, including walls and water tiles. Used for pathfinding.
+    /// </summary>
+    /// <returns>List of untraversable grid tiles</returns>
+    private HashSet<Point> GetUntraversableTiles()
+    {
+        var untraversable = new HashSet<Point>();
+
+        foreach (var wall in walls.Values)
+        {
+            untraversable.Add(wall.GridPos);
+        }
+
+        foreach (var tower in towers)
+        {
+            var tile = grid.WorldToGrid(tower.Position);
+            if (tile != null)
+                untraversable.Add(tile.Value);
+        }
+
+        for (int x = 0; x < grid.Width; x++)
+        {
+            for (int y = 0; y < grid.Height; y++)
+            {
+                if (TileRules.IsWater(grid.Tiles[y, x]))
+                {
+                    untraversable.Add(new Point(x, y));
+                }
+            }
+        }
+
+        return untraversable;
     }
 
 }
