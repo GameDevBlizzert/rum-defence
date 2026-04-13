@@ -12,6 +12,7 @@ public class BuildMenu
 
     private IconButton wallButton;
     private IconButton cannonButton;
+    private IconButton musketButton;
     private IconButton removeButton;
 
     private BuildManager buildManager;
@@ -63,7 +64,17 @@ public class BuildMenu
         );
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
 
-        int removeY = cannonY + ButtonSize + ButtonMargin + LabelHeight + 8;
+        int musketY = cannonY + ButtonSize + ButtonMargin + LabelHeight + 8;
+
+        musketButton = new IconButton(
+            panelTexture,
+            cannonIcon,
+            new Vector2(buttonX, musketY),
+            new Vector2(ButtonSize, ButtonSize)
+        );
+        musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
+
+        int removeY = musketY + ButtonSize + ButtonMargin + LabelHeight + 8;
 
         removeButton = new IconButton(
             panelTexture,
@@ -81,9 +92,11 @@ public class BuildMenu
         wallButton.SetSelected(mode == BuildMode.Wall);
         cannonButton.SetSelected(mode == BuildMode.CannonTower);
         removeButton.SetSelected(mode == BuildMode.Remove);
+        musketButton.SetSelected(mode == BuildMode.MusketTower);
 
         wallButton.Update(gameTime);
         cannonButton.Update(gameTime);
+        musketButton.Update(gameTime);
         removeButton.Update(gameTime);
     }
 
@@ -99,7 +112,10 @@ public class BuildMenu
         int cannonLabelY = sectionStart + LabelHeight + ButtonSize + ButtonMargin + 8;
         cannonButton.Draw(spriteBatch);
 
-        int removeLabelY = cannonLabelY + LabelHeight + ButtonSize + ButtonMargin + 8;
+        int musketLabelY = sectionStart + LabelHeight + ButtonSize + ButtonMargin + 8;
+        musketButton.Draw(spriteBatch);
+
+        int removeLabelY = musketLabelY + LabelHeight + ButtonSize + ButtonMargin + 8;
         removeButton.Draw(spriteBatch);
     }
 }

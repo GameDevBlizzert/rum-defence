@@ -76,11 +76,20 @@ public class GameScreen : Screen
                 AudioManager.Instance.PlayRandomImpact();
         });
 
-        buildManager.SetTowerPlacementCallback(p =>
+        buildManager.SetCannonTowerPlacementCallback(p =>
         {
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
             {
                 placedTowers[p] = new CannonTower(grid.GridToWorld(p), Troops);
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
+
+        buildManager.SetMusketTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
+            {
+                placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
                 AudioManager.Instance.PlayRandomImpact();
             }
         });

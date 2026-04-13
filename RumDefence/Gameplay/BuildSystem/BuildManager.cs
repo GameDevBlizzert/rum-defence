@@ -43,12 +43,16 @@ public class BuildManager
         switch (currentMode)
         {
             case BuildMode.Wall:
-                if (CanPlaceWall(p))
+                if (CanPlaceTower(p))
                     onWallPlaced?.Invoke(p);
                 break;
             case BuildMode.CannonTower:
                 if (CanPlaceTower(p))
-                    onTowerPlaced?.Invoke(p);
+                    onCannonTowerPlaced?.Invoke(p);
+                break;
+            case BuildMode.MusketTower:
+                if (CanPlaceTower(p))
+                    onMusketTowerPlaced?.Invoke(p);
                 break;
             case BuildMode.Remove:
                 onRemove?.Invoke(p);
@@ -80,11 +84,6 @@ public class BuildManager
             return false;
 
         return true;
-    }
-
-    private bool CanPlaceTower(Point p)
-    {
-        return TileRules.IsLand(grid.Tiles[p.Y, p.X]);
     }
 
     public void SetWallPlacementCallback(Action<Point> callback)
