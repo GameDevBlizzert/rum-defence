@@ -7,27 +7,33 @@ public class Hud
 {
     private SpriteFont font;
 
-    private BuildMenu buildMenu;
+
+    private LevelProgressSystem levelProgress;
 
     private CoinManager coinManager;
 
     private Vector2 coinUIPosition;
+    private BuildMenu buildMenu;
+    private BuildManager buildManager;
 
-    public Hud(BuildManager buildManager)
+    public Hud(BuildManager buildManager, LevelProgressSystem levelProgress)
     {
+        this.buildManager = buildManager;
+        this.levelProgress = levelProgress;
+
         var content = RumGame.Instance.Content;
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
-        buildMenu = new BuildMenu(buildManager);
+        buildMenu = new BuildMenu(buildManager, levelProgress);
 
-        coinManager = new CoinManager(GetCoinTargetPosition);
+        coinManager = new CoinManager(GetCoinTargetPosition, levelProgress);
         coinUIPosition = new Vector2(100, 50);
     }
 
     public Vector2 GetCoinTargetPosition()
     {
-        var text = coinManager.Balance.ToString();
+        var text = levelProgress.CoinsRemaining.ToString();
         var size = font.MeasureString(text);
 
         return coinUIPosition + size / 2f;
@@ -52,7 +58,7 @@ public class Hud
 
         spriteBatch.DrawString(
             font,
-            coinManager.Balance.ToString(),
+            levelProgress.CoinsRemaining.ToString(),
             coinUIPosition,
             Color.Yellow
         );
