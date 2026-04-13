@@ -55,7 +55,7 @@ public class GameScreen : Screen
 
         hud = new Hud(buildManager);
 
-        wallRenderer = new WallRenderer(
+        wallRenderer = new WallRenderer( 
             grid,
             currentLevel.Theme.Walls,
             walls
