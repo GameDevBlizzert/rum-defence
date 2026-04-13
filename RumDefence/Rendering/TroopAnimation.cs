@@ -7,10 +7,10 @@ public class TroopAnimation : Animation
 {
     private SpriteLayer[] _currentActiveLayers;
 
-    protected virtual SpriteLayer[] _walkDownLayers {get; set;}
-    protected virtual SpriteLayer[] _walkUpLayers {get; set;}
-    protected virtual SpriteLayer[] _walkRightLayers {get; set;}
-    protected virtual SpriteLayer[] _walkLeftLayers {get; set;}
+    protected virtual SpriteLayer[] _walkDownLayers { get; set; }
+    protected virtual SpriteLayer[] _walkUpLayers { get; set; }
+    protected virtual SpriteLayer[] _walkRightLayers { get; set; }
+    protected virtual SpriteLayer[] _walkLeftLayers { get; set; }
     public TroopAnimation(int frameWidth, int frameHeight, float frameDuration, int totalFrames, bool isLoop) : base(frameWidth, frameHeight, frameDuration, totalFrames, isLoop)
     {
         _currentActiveLayers = _walkDownLayers;
