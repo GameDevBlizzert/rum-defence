@@ -8,6 +8,8 @@ namespace RumDefence;
 
 public class GameScreen : Screen
 {
+
+    private GameTime currentGameTime { get; set; }
     private Grid grid { get; set; }
     private GridRenderer renderer { get; set; }
     private Level currentLevel { get; set; }
@@ -16,8 +18,8 @@ public class GameScreen : Screen
     private Hud hud { get; set; }
 
     private Dictionary<Point, Wall> walls = new();
-    private WallRenderer wallRenderer;
-
+    private WallRenderer wallRenderer { get; set; }
+    private WaterRenderer waterRenderer { get; set; }
     public ShipSpawner Spawner { get; private set; }
 
     public List<Ship> Ships { get; private set; } = new();
@@ -49,6 +51,8 @@ public class GameScreen : Screen
         buildManager = new BuildManager(grid);
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
+
+        waterRenderer = new WaterRenderer(grid);
 
         Spawner = new ShipSpawner(currentLevel, grid);
 
@@ -103,6 +107,8 @@ public class GameScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
+        currentGameTime = gameTime;
+
         if (HandlePause()) return;
         input.Update();
         UpdateBuildSystem(gameTime);
@@ -117,6 +123,11 @@ public class GameScreen : Screen
         RumGame.Instance.GraphicsDevice.Clear(new Color(30, 144, 255));
 
         renderer.Draw(grid, spriteBatch);
+
+        waterRenderer.Draw(spriteBatch, currentGameTime);
+
+        renderer.Draw(grid, spriteBatch);
+        wallRenderer.Draw(spriteBatch);
 
         wallRenderer.Draw(spriteBatch);
 
