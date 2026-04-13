@@ -20,18 +20,15 @@ public class BaseTower : Entity
 
     private float _fireCooldown = 0f;
 
-    public BaseTower(Vector2 location, List<Troop> troops)
+    public BaseTower(Vector2 location, List<Troop> troops, string texturePath)
     {
         Position = location;
         Troops = troops;
 
-        _pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        _pixel.SetData(new[] { Color.Red });
-
-        Texture = _pixel;
+        Texture = RumGame.Instance.Content.Load<Texture2D>(texturePath);
         origin = Vector2.Zero;
 
-        Size = SizeSystem.Square(0.3f);
+        Size = SizeSystem.Square(1f);
         ApplySize();
     }
 
