@@ -5,21 +5,20 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
-public class Troop : Entity
+public class Troop : EntityWithHealth
 {
     private Vector2 target;
     protected virtual Animation animation {get; set; }
 
     private float baseSpeed = 60f;
     public float SpeedMultiplier { get; set; } = 1f;
-
-    public int Health { get; protected set; } = 100;
-    public bool IsDead => Health <= 0;
+    public int CoinValue { get; set; } = 1;
+    public bool HasDroppedReward { get; private set; }
     public bool IsFinished { get; private set; }
 
     private List<ITroopAbility> abilities = new();
 
-    public Troop(string spritePath, Vector2 start, Vector2 targetPos)
+    public Troop(string spritePath, Vector2 start, Vector2 targetPos) : base(16, 32)
     {
         Position = start;
         target = targetPos;
@@ -72,9 +71,8 @@ public class Troop : Entity
 
         Position += dir * speed * dt;
     }
-
-    public void TakeDamage(int amount)
+    public void MarkRewardGiven()
     {
-        Health -= amount;
+        HasDroppedReward = true;
     }
 }

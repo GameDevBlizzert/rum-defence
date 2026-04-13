@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Rum_Defence.Input;
-using Rum_Defence.Entities.Towers;
 using System;
 using System.Collections.Generic;
 
@@ -66,6 +64,8 @@ public class GameScreen : Screen
             if (!walls.ContainsKey(p))
             {
                 walls[p] = new Wall(p);
+                // Play random impact sound when wall is placed
+                AudioManager.Instance.PlayRandomImpact();
             }
         });
 
@@ -80,6 +80,8 @@ public class GameScreen : Screen
 
         Spawner = new ShipSpawner(currentLevel, grid);
         progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+
+        AudioManager.Instance.PlayBackgroundMusic();
     }
 
     public override void Update(GameTime gameTime)
@@ -180,10 +182,16 @@ public class GameScreen : Screen
             var troop = Troops[i];
             troop.Update(gameTime);
 
+            if (troop.IsDead && !troop.HasDroppedReward)
+            {
+                hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
+                troop.MarkRewardGiven();
+            }
+
             if (troop.IsFinished || troop.IsDead)
             {
-                // TODO: Base the hits on the damage stat of the troop
-                if (troop.IsFinished) progress.TakeHits(1);
+                if (troop.IsFinished)
+                    progress.TakeHits(1);
 
                 Troops.RemoveAt(i);
             }
@@ -207,6 +215,8 @@ public class GameScreen : Screen
 
         if (levelCompleted)
         {
+            // Stop background music when leaving game screen
+            AudioManager.Instance.StopBackgroundMusic();
             // TODO: Show win or lose screen based
             manager.SetScreen(new MainMenuScreen(manager));
         }

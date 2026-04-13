@@ -7,6 +7,7 @@ namespace RumDefence;
 public class ScreenManager
 {
     private Screen currentScreen;
+    private MouseState previousMouse;
 
     public void SetScreen(Screen screen)
     {
@@ -29,6 +30,17 @@ public class ScreenManager
 
     public void Update(GameTime gameTime)
     {
+        var currentMouse = Mouse.GetState();
+
+        // Play click sound on any mouse click
+        if (currentMouse.LeftButton == ButtonState.Pressed &&
+            previousMouse.LeftButton == ButtonState.Released)
+        {
+            AudioManager.Instance.PlaySound("click");
+        }
+
+        previousMouse = currentMouse;
+
         currentScreen?.Update(gameTime);
     }
 

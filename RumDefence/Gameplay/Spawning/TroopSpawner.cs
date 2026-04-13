@@ -71,5 +71,8 @@ public class TroopSpawner
     private void SpawnTroop(Troop troop)
     {
         SpawnedTroops.Add(troop);
+
+        // Play random footstep sound when enemy spawns
+        AudioManager.Instance.PlayRandomFootstep();
     }
 }
