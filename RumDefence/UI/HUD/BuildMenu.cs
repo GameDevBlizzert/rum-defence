@@ -12,6 +12,7 @@ public class BuildMenu
 
     private IconButton wallButton;
     private IconButton cannonButton;
+    private IconButton musketButton;
     private IconButton removeButton;
 
     private BuildManager buildManager;
@@ -62,8 +63,17 @@ public class BuildMenu
             new Vector2(ButtonSize, ButtonSize)
         );
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
+        int musketY = cannonY + ButtonSize + ButtonMargin + LabelHeight + 8;
 
-        int removeY = cannonY + ButtonSize + ButtonMargin + LabelHeight + 8;
+        musketButton = new IconButton(
+                  panelTexture,
+                  cannonIcon,
+                  new Vector2(buttonX, musketY),
+                  new Vector2(ButtonSize, ButtonSize)
+              );
+        musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
+
+        int removeY = musketY + ButtonSize + ButtonMargin + LabelHeight + 8;
 
         removeButton = new IconButton(
             panelTexture,
@@ -80,10 +90,12 @@ public class BuildMenu
         var mode = buildManager.GetMode();
         wallButton.SetSelected(mode == BuildMode.Wall);
         cannonButton.SetSelected(mode == BuildMode.CannonTower);
+        musketButton.SetSelected(mode == BuildMode.MusketTower);
         removeButton.SetSelected(mode == BuildMode.Remove);
 
         wallButton.Update(gameTime);
         cannonButton.Update(gameTime);
+        musketButton.Update(gameTime);
         removeButton.Update(gameTime);
     }
 
@@ -93,13 +105,12 @@ public class BuildMenu
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
         // Section labels + buttons
-        int sectionStart = panelRect.Y + HeaderHeight + 8;
         wallButton.Draw(spriteBatch);
 
-        int cannonLabelY = sectionStart + LabelHeight + ButtonSize + ButtonMargin + 8;
         cannonButton.Draw(spriteBatch);
 
-        int removeLabelY = cannonLabelY + LabelHeight + ButtonSize + ButtonMargin + 8;
+        musketButton.Draw(spriteBatch);
+
         removeButton.Draw(spriteBatch);
     }
 }
