@@ -131,10 +131,10 @@ public class PathfindingSystem : IGameLoopSystem
 
             if (nextPoint == currentPoint)
             {
-                Path = new  Queue<Vector2>();
+                Path = new Queue<Vector2>();
                 return;
             }
-                
+
 
             currentPoint = nextPoint;
         }
