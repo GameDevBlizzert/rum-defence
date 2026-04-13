@@ -1,6 +1,8 @@
-﻿namespace RumDefence.Exceptions;
+﻿using System;
 
-public class NoPathPossibleException
+namespace RumDefence.Exceptions;
+
+public class NoPathPossibleException : Exception
 {
     
 }

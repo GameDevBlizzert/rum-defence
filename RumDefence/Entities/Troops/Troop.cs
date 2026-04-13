@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using RumDefence.Exceptions;
 
 namespace RumDefence;
 
@@ -71,14 +72,23 @@ public class Troop : EntityWithHealth
 
         float speed = baseSpeed * SpeedMultiplier;
 
-        Vector2 dir = pathfinding.GetNextDirection(Position);
-
         var troopGridPos = RumGame.Instance.CurrentGrid.WorldToGrid(Position);
         var targetGridPos = RumGame.Instance.CurrentGrid.WorldToGrid(target);
 
         if (troopGridPos == null || targetGridPos == null || troopGridPos.Value == targetGridPos.Value)
         {
             IsFinished = true;
+            return;
+        }
+
+        Vector2 dir;
+
+        try
+        {
+            dir = pathfinding.GetNextDirection(Position);
+        }
+        catch (NoPathPossibleException)
+        {
             return;
         }
 
@@ -110,8 +120,21 @@ public class Troop : EntityWithHealth
         if (showPathfindingDebug)
         {
             Vector2 currentPos = Position;
+            const int dotSize = 8;
+
             foreach (var point in pathfinding.Path)
             {
+                spriteBatch.Draw(
+                    pixel,
+                    new Rectangle(
+                        (int)(point.X - dotSize / 2f),
+                        (int)(point.Y - dotSize / 2f),
+                        dotSize,
+                        dotSize
+                    ),
+                    Color.HotPink
+                );
+
                 Vector2 edge = point - currentPos;
                 float length = edge.Length();
 
@@ -127,7 +150,8 @@ public class Troop : EntityWithHealth
                         Vector2.Zero,
                         new Vector2(length, 2f),
                         SpriteEffects.None,
-                        0f);
+                        0f
+                    );
                 }
 
                 currentPos = point;

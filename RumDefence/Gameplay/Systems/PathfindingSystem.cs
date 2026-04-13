@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using RumDefence.Exceptions;
 
 namespace RumDefence;
 
@@ -21,9 +22,8 @@ public class PathfindingSystem : IGameLoopSystem
     public Vector2 GetNextDirection(Vector2 currentPosition)
     {
 
-        // This can happen if the entity is in the same grid cell as the destination
         if (Path.Count == 0)
-            return Destination;
+            throw new NoPathPossibleException();
 
         var nextPoint = Path.Peek();
         if (Vector2.Distance(currentPosition, nextPoint) < 5f)
@@ -39,7 +39,7 @@ public class PathfindingSystem : IGameLoopSystem
         return direction;
     }
 
-    public void UpdatePath(Vector2 currentPosition, Grid grid, HashSet<Point> untraverableTiles = null)
+    public void UpdatePath(Vector2 currentPosition, Grid grid, HashSet<Point> untraversableTiles = null)
     {
         int[,] map = new int[grid.Width, grid.Height];
 
@@ -74,7 +74,7 @@ public class PathfindingSystem : IGameLoopSystem
 
             foreach (var next in neighbors)
             {
-                if (untraverableTiles != null && untraverableTiles.Contains(next))
+                if (untraversableTiles != null && untraversableTiles.Contains(next))
                     continue;
 
                 // Check bounds
@@ -130,7 +130,11 @@ public class PathfindingSystem : IGameLoopSystem
             }
 
             if (nextPoint == currentPoint)
-                throw new Exception("No path found.");
+            {
+                Path = new  Queue<Vector2>();
+                return;
+            }
+                
 
             currentPoint = nextPoint;
         }

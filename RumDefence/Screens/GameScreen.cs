@@ -180,9 +180,7 @@ public class GameScreen : Screen
 
     private void UpdateTroops(GameTime gameTime)
     {
-
         var untraversable = GetUntraversableTiles();
-
         var updatePaths = !latestUntraverableHashSet.Equals(untraversable);
 
         latestUntraverableHashSet = untraversable;
@@ -244,7 +242,6 @@ public class GameScreen : Screen
     {
         var untraversable = new HashSet<Point>();
 
-        // add walls
         foreach (var wall in walls.Values)
         {
             untraversable.Add(wall.GridPos);
@@ -257,7 +254,6 @@ public class GameScreen : Screen
                 untraversable.Add(tile.Value);
         }
 
-        // add water tiles
         for (int x = 0; x < grid.Width; x++)
         {
             for (int y = 0; y < grid.Height; y++)
