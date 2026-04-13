@@ -493,7 +493,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/Towers/canon-barrel.png
 
-#begin Art/UI/Coin.png
 #begin Art/Towers/musket.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -529,6 +528,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/UI/Coin.png;Art/UI/Coin
+
+#begin Art/UI/Cursor.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/UI/Cursor.png
 
 #begin Art/UI/Panels/panel_blue.png
 /importer:TextureImporter

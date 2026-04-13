@@ -76,16 +76,22 @@ public class GameScreen : Screen
                 AudioManager.Instance.PlayRandomImpact();
         });
 
-        buildManager.SetMusketTowerPlacementCallback(p =>
-        {
-            if (occupiedTowerTiles.Add(p))
-                towers.Add(new MusketTower(grid.GridToWorld(p), Troops));
-        });
-
         buildManager.SetCannonTowerPlacementCallback(p =>
         {
-            if (occupiedTowerTiles.Add(p))
-                towers.Add(new CannonTower(grid.GridToWorld(p), Troops));
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
+            {
+                placedTowers[p] = new CannonTower(grid.GridToWorld(p), Troops);
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
+
+        buildManager.SetMusketTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p))
+            {
+                placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                AudioManager.Instance.PlayRandomImpact();
+            }
         });
 
         Spawner = new ShipSpawner(currentLevel, grid);
@@ -254,12 +260,12 @@ public class GameScreen : Screen
             untraversable.Add(wall.GridPos);
         }
 
-        foreach (var tower in towers)
-        {
-            var tile = grid.WorldToGrid(tower.Position);
-            if (tile != null)
-                untraversable.Add(tile.Value);
-        }
+        //foreach (var tower in placedTowers)
+        //{
+        //    var tile = grid.WorldToGrid(tower.);
+        //    if (tile != null)
+        //        untraversable.Add(tile.Value);
+        //}
 
         for (int x = 0; x < grid.Width; x++)
         {

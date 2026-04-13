@@ -3,6 +3,6 @@
     None,
     Wall,
     MusketTower,
-    CannonTower
+    CannonTower,
     Remove
 }
