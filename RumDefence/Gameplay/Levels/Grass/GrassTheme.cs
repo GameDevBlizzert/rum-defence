@@ -15,10 +15,14 @@ public class GrassTheme : BaseTheme, IWallTheme
     public Texture2D Wall { get; private set; }
     public Texture2D End { get; private set; }
     public Texture2D Corner { get; private set; }
+    public Texture2D Twall { get; private set; }
+    public Texture2D Xwall { get; private set; }
 
     private List<Texture2D> wallDamagedList;
     private List<Texture2D> endDamagedList;
     private List<Texture2D> cornerDamagedList;
+    private List<Texture2D> twallDamagedList;
+    private List<Texture2D> xwallDamagedList;
 
     private Dictionary<string, Texture2D> shipMap;
 
@@ -44,10 +48,14 @@ public class GrassTheme : BaseTheme, IWallTheme
         Wall = Load(wallPrefix + "wall");
         End = Load(wallPrefix + "end");
         Corner = Load(wallPrefix + "corner");
+        Twall = Load(wallPrefix + "Twall");
+        Xwall = Load(wallPrefix + "Xwall");
 
         wallDamagedList = LoadList(wallPrefix, "wall_damaged_1", "wall_damaged_2");
         endDamagedList = LoadList(wallPrefix, "end_damaged");
         cornerDamagedList = LoadList(wallPrefix, "corner_damaged");
+        twallDamagedList = LoadList(wallPrefix, "Twall_damaged");
+        xwallDamagedList = LoadList(wallPrefix, "Xwall_damaged");
 
         shipMap = new Dictionary<string, Texture2D>()
         {
@@ -82,6 +90,16 @@ public class GrassTheme : BaseTheme, IWallTheme
     public Texture2D GetDamagedCorner(int x, int y)
     {
         return GetSeeded(cornerDamagedList, x, y);
+    }
+
+    public Texture2D GetDamagedTwall(int x, int y)
+    {
+        return GetSeeded(twallDamagedList, x, y);
+    }
+
+    public Texture2D GetDamagedXwall(int x, int y)
+    {
+        return GetSeeded(xwallDamagedList, x, y);
     }
 
     public override Texture2D GetShip(string name)
