@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.Exceptions;
 using System;
 using System.Collections.Generic;
 
@@ -66,6 +67,9 @@ public class Ship : Entity
 
     private float baseSpeed;
 
+    private Grid grid;
+    private PathfindingSystem pathfinding;
+
     public int EnemyCount { get; private set; }
 
     public bool IsFinished => State == ShipState.Leaving_ToSea &&
@@ -97,6 +101,8 @@ public class Ship : Entity
         Size = SizeSystem.FromTiles(data.WidthInTiles, data.WidthInTiles);
         ApplySize();
         scale *= data.SizeMultiplier;
+
+        grid = RumGame.Instance.CurrentGrid;
 
         troopSpawner = new TroopSpawner(
             RumGame.Instance.CurrentLevel,
@@ -142,22 +148,99 @@ public class Ship : Entity
     {
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        Vector2 dir = dockTarget - Position;
-        float distance = dir.Length();
+        // Initialize pathfinding once the ship has entered the grid
+        if (pathfinding == null && grid.WorldToGrid(Position) != null)
+            InitShipPathfinding();
 
-        if (dir != Vector2.Zero)
+        Vector2 dir;
+
+        if (pathfinding != null)
+        {
+            try
+            {
+                dir = pathfinding.GetNextDirection(Position);
+            }
+            catch (NoPathPossibleException)
+            {
+                State = ShipState.Docked;
+                return;
+            }
+
+            if (dir == Vector2.Zero)
+            {
+                State = ShipState.Docked;
+                return;
+            }
+        }
+        else
+        {
+            // Still off-screen: move directly toward the dock
+            dir = dockTarget - Position;
+            if (dir.Length() < 5f)
+            {
+                State = ShipState.Docked;
+                return;
+            }
             dir.Normalize();
+        }
 
         float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
         rotation = MathHelper.Lerp(rotation, targetRotation, RotationSpeed * dt);
 
+        float distance = Vector2.Distance(Position, dockTarget);
         float speedFactor = MathHelper.Clamp(distance / DockSlowdownDistance, MinSpeedFactor, 1f);
         float currentSpeed = baseSpeed * speedFactor;
 
         Position += dir * currentSpeed * dt;
+    }
 
-        if (distance < 5f)
-            State = ShipState.Docked;
+    private const float PathNoiseDensity = 0.20f;
+
+    private void InitShipPathfinding()
+    {
+        var rng = new Random();
+
+        // Untraversable for ships = all non-water tiles
+        var untraversable = new HashSet<Point>();
+        for (int x = 0; x < grid.Width; x++)
+        {
+            for (int y = 0; y < grid.Height; y++)
+            {
+                if (!TileRules.IsWater(grid.Tiles[y, x]))
+                {
+                    untraversable.Add(new Point(x, y));
+                }
+                else if (rng.NextDouble() < PathNoiseDensity)
+                {
+                    // Randomly block some water tiles to break up straight paths
+                    untraversable.Add(new Point(x, y));
+                }
+            }
+        }
+
+        // The dock tile and the ship's current entry tile must stay reachable
+        var dockGridPos = grid.WorldToGrid(dockTarget);
+        if (dockGridPos.HasValue)
+            untraversable.Remove(dockGridPos.Value);
+
+        var entryGridPos = grid.WorldToGrid(Position);
+        if (entryGridPos.HasValue)
+            untraversable.Remove(entryGridPos.Value);
+
+        pathfinding = new PathfindingSystem(dockTarget);
+
+        // Fall back to a straight path if noise accidentally blocked all routes
+        if (!TryUpdatePath(Position, untraversable))
+        {
+            untraversable.RemoveWhere(p => TileRules.IsWater(grid.Tiles[p.Y, p.X]));
+            pathfinding.UpdatePath(Position, grid, untraversable);
+        }
+    }
+
+    private bool TryUpdatePath(Vector2 position, HashSet<Point> untraversable)
+    {
+        pathfinding.UpdatePath(position, grid, untraversable);
+        return pathfinding.Path.Count > 0;
     }
 
     // =====================
