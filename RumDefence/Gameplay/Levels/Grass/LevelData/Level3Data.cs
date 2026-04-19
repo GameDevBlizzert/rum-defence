@@ -34,12 +34,12 @@ public static class Level3Data
         ),
 
         CreateWave(1f, 2f,
-            (NormalShip, 4),
+            (NormalShip, 8),
             (BossShip, 4)
         ),
 
         CreateWave(0.8f, 1.5f,
-            (NormalShip, 5),
+            (NormalShip, 10),
             (BossShip, 5)
         )
     };
