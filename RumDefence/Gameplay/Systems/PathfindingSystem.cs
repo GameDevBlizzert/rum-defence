@@ -44,8 +44,8 @@ public class PathfindingSystem : IGameLoopSystem
         int[,] map = new int[grid.Width, grid.Height];
 
         for (int i = 0; i < map.GetLength(0); i++)
-        for (int j = 0; j < map.GetLength(1); j++)
-            map[i, j] = int.MaxValue;
+            for (int j = 0; j < map.GetLength(1); j++)
+                map[i, j] = int.MaxValue;
 
         var entityPosition = grid.WorldToGrid(currentPosition);
         var targetPosition = grid.WorldToGrid(Destination);
@@ -142,9 +142,9 @@ public class PathfindingSystem : IGameLoopSystem
             Path = new Queue<Vector2>(path);
             return;
         }
-        
+
         var pathAsList = path.ToList();
-        
+
         for (int i = 0; i < pathAsList.Count - 2; i++)
         {
             var current = pathAsList[i];

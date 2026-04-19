@@ -84,7 +84,7 @@ public class Grid
             }
 
             if (e2 >= dx) continue;
-            
+
             err += dx;
             y0 += sy;
         }
