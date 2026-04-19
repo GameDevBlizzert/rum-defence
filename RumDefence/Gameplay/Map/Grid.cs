@@ -46,5 +46,5 @@ public class Grid
             return 100_000;
         return 1;
     }
-    
+
 }
