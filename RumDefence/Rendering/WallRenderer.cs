@@ -29,10 +29,10 @@ public class WallRenderer
     {
         var p = wall.GridPos;
 
-        bool up    = HasWall(new Point(p.X,     p.Y - 1));
-        bool down  = HasWall(new Point(p.X,     p.Y + 1));
-        bool left  = HasWall(new Point(p.X - 1, p.Y    ));
-        bool right = HasWall(new Point(p.X + 1, p.Y    ));
+        bool up = HasWall(new Point(p.X, p.Y - 1));
+        bool down = HasWall(new Point(p.X, p.Y + 1));
+        bool left = HasWall(new Point(p.X - 1, p.Y));
+        bool right = HasWall(new Point(p.X + 1, p.Y));
 
         bool nw = HasWall(new Point(p.X - 1, p.Y - 1));
         bool ne = HasWall(new Point(p.X + 1, p.Y - 1));
@@ -47,7 +47,7 @@ public class WallRenderer
         if (cardinalCount == 0 && wall.IsDiagonal)
         {
             bool backslash = nw || se; // \ direction (NW–SE)
-            bool slash     = ne || sw; // / direction (NE–SW)
+            bool slash = ne || sw; // / direction (NE–SW)
 
             if (!backslash && !slash)
             {
@@ -63,27 +63,27 @@ public class WallRenderer
             {
                 // \ direction
                 bool isEnd = !(nw && se);
-                texture  = isEnd ? theme.DiagonalEnd : theme.Diagonal;
+                texture = isEnd ? theme.DiagonalEnd : theme.Diagonal;
                 rotation = isEnd && se ? 0f : MathHelper.Pi;
                 if (!isEnd) rotation = 0f;
 
                 // The diagonal's SE corner is shared with the right cell's SW corner
                 // and the bottom cell's NE corner — fill both.
-                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X + 1, p.Y    ), MathHelper.PiOver2);   // SW corner
-                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X,     p.Y + 1), -MathHelper.PiOver2);  // NE corner
+                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X + 1, p.Y), MathHelper.PiOver2);   // SW corner
+                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X, p.Y + 1), -MathHelper.PiOver2);  // NE corner
             }
             else // slash (/ direction)
             {
                 bool isEnd = !(ne && sw);
-                texture  = isEnd ? theme.DiagonalEnd : theme.Diagonal;
+                texture = isEnd ? theme.DiagonalEnd : theme.Diagonal;
                 rotation = MathHelper.PiOver2;
                 if (isEnd && ne) rotation = MathHelper.PiOver2;
                 if (isEnd && sw) rotation = -MathHelper.PiOver2;
 
                 // The diagonal's SW corner is shared with the left cell's SE corner
                 // and the bottom cell's NW corner — fill both.
-                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X - 1, p.Y    ), 0f);           // SE corner
-                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X,     p.Y + 1), MathHelper.Pi); // NW corner
+                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X - 1, p.Y), 0f);           // SE corner
+                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X, p.Y + 1), MathHelper.Pi); // NW corner
             }
         }
         // SINGLE (cardinal neighbours exist but this is a lone end-cap)
@@ -93,9 +93,9 @@ public class WallRenderer
                 ? theme.GetDamagedEnd(p.X, p.Y)
                 : theme.End;
 
-            if (down)  rotation = 0f;
-            if (left)  rotation = MathHelper.PiOver2;
-            if (up)    rotation = MathHelper.Pi;
+            if (down) rotation = 0f;
+            if (left) rotation = MathHelper.PiOver2;
+            if (up) rotation = MathHelper.Pi;
             if (right) rotation = -MathHelper.PiOver2;
         }
         // CORNER
@@ -105,10 +105,10 @@ public class WallRenderer
                 ? theme.GetDamagedCorner(p.X, p.Y)
                 : theme.Corner;
 
-            if (up   && right) rotation = 0f;
+            if (up && right) rotation = 0f;
             if (right && down) rotation = MathHelper.PiOver2;
-            if (down  && left) rotation = MathHelper.Pi;
-            if (left  && up)   rotation = -MathHelper.PiOver2;
+            if (down && left) rotation = MathHelper.Pi;
+            if (left && up) rotation = -MathHelper.PiOver2;
         }
         // STRAIGHT
         else if (cardinalCount == 2)
@@ -126,9 +126,9 @@ public class WallRenderer
                 ? theme.GetDamagedTwall(p.X, p.Y)
                 : theme.Twall;
 
-            if (!down)  rotation = 0f;
-            if (!left)  rotation = MathHelper.PiOver2;
-            if (!up)    rotation = MathHelper.Pi;
+            if (!down) rotation = 0f;
+            if (!left) rotation = MathHelper.PiOver2;
+            if (!up) rotation = MathHelper.Pi;
             if (!right) rotation = -MathHelper.PiOver2;
         }
         // X-JUNCTION

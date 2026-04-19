@@ -135,7 +135,7 @@ public class ShipSpawner
                 break;
 
             case WavePhase.Holding:
-                    ActivateCurrentWave();
+                ActivateCurrentWave();
                 break;
 
             case WavePhase.Attacking:
