@@ -39,7 +39,7 @@ public class PathfindingSystem : IGameLoopSystem
         return direction;
     }
 
-    public void UpdatePath(Vector2 currentPosition, Grid grid, HashSet<Point> untraversableTiles = null)
+    public void UpdatePath(Vector2 currentPosition, Grid grid)
     {
         int[,] map = new int[grid.Width, grid.Height];
 
@@ -58,8 +58,8 @@ public class PathfindingSystem : IGameLoopSystem
 
         map[entityPosition.Value.X, entityPosition.Value.Y] = 0;
 
-        Queue<Point> tiles = new Queue<Point>();
-        tiles.Enqueue(entityPosition.Value);
+        PriorityQueue<Point, int> tiles = new PriorityQueue<Point, int>();
+        tiles.Enqueue(entityPosition.Value, 0);
 
         while (tiles.Count > 0)
         {
@@ -74,26 +74,23 @@ public class PathfindingSystem : IGameLoopSystem
 
             foreach (var next in neighbors)
             {
-                if (untraversableTiles != null && untraversableTiles.Contains(next))
-                    continue;
-
                 // Check bounds
                 if (next.X < 0 || next.Y < 0 || next.X >= grid.Width || next.Y >= grid.Height)
                     continue;
 
                 if (next == targetPosition.Value)
                 {
-                    map[next.X, next.Y] = map[current.X, current.Y] + 1;
+                    map[next.X, next.Y] = map[current.X, current.Y] + grid.GetTileCost(next);
                     tiles.Clear();
                     break;
                 }
 
-                var cost = map[current.X, current.Y] + 1;
+                var cost = map[current.X, current.Y] + grid.GetTileCost(next);
 
                 if (cost < map[next.X, next.Y])
                 {
                     map[next.X, next.Y] = cost;
-                    tiles.Enqueue(next);
+                    tiles.Enqueue(next, cost + Heuristic(next, targetPosition.Value));
                 }
             }
 
@@ -140,5 +137,10 @@ public class PathfindingSystem : IGameLoopSystem
         }
 
         Path = new Queue<Vector2>(path);
+    }
+
+    private static int Heuristic(Point a, Point b)
+    {
+        return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
     }
 }

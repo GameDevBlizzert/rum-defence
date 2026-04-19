@@ -206,13 +206,16 @@ public class GameScreen : Screen
 
         latestUntraverableHashSet = untraversable;
 
+        if (updatePaths)
+            grid.UntraversableTiles = latestUntraverableHashSet;
+
         for (int i = Troops.Count - 1; i >= 0; i--)
         {
             var troop = Troops[i];
             troop.Update(gameTime);
 
             if (updatePaths)
-                troop.UpdatePathfinding(latestUntraverableHashSet);
+                troop.UpdatePathfinding();
 
             if (troop.IsDead && !troop.HasDroppedReward)
             {
