@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -46,11 +46,13 @@ public class Ship : Entity
     private const float RotationSpeed = 5f;
     private const float LeaveSpeed = 80f;
 
-    private const float BackOffDistance = 100f;
+    private const float BackOffDistance = 1f;
     private const float ExitDistance = 400f;
 
     public enum ShipState
     {
+        SailingToHoldingPosition,
+        HoldingAtSea,
         SailingToDock,
         Docked,
         Unloading,
@@ -58,15 +60,18 @@ public class Ship : Entity
         Leaving_ToSea
     }
 
-    public ShipState State { get; private set; } = ShipState.SailingToDock;
+    public ShipState State { get; private set; } = ShipState.SailingToHoldingPosition;
 
+    private Vector2 holdingPosition;
     private Vector2 dockTarget;
     private Vector2 leaveTarget;
     private Vector2 spawnPosition;
 
     private float baseSpeed;
+    private float advanceDelay;
 
     public int EnemyCount { get; private set; }
+    public CoastTile AssignedCoast { get; private set; }
 
     public bool IsFinished => State == ShipState.Leaving_ToSea &&
                               Vector2.Distance(Position, leaveTarget) < 10f;
@@ -79,7 +84,7 @@ public class Ship : Entity
     // CONSTRUCTOR
     // =====================
 
-    public Ship(Vector2 start, Vector2 target, Data data, Texture2D texture)
+    public Ship(Vector2 start, Vector2 holding, Vector2 target, CoastTile coast, Data data, Texture2D texture)
     {
         Position = start;
         spawnPosition = start;
@@ -89,6 +94,8 @@ public class Ship : Entity
 
         rotationOffset = data.RotationOffset;
 
+        AssignedCoast = coast;
+        holdingPosition = holding;
         dockTarget = target;
         baseSpeed = data.Speed;
 
@@ -112,6 +119,14 @@ public class Ship : Entity
     {
         switch (State)
         {
+            case ShipState.SailingToHoldingPosition:
+                UpdateSailingToHolding(gameTime);
+                break;
+
+            case ShipState.HoldingAtSea:
+                UpdateHoldingAtSea(gameTime);
+                break;
+
             case ShipState.SailingToDock:
                 UpdateSailing(gameTime);
                 break;
@@ -132,6 +147,54 @@ public class Ship : Entity
                 UpdateLeavingToSea(gameTime);
                 break;
         }
+    }
+
+    // =====================
+    // HOLDING
+    // =====================
+
+    private void UpdateSailingToHolding(GameTime gameTime)
+    {
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        Vector2 dir = holdingPosition - Position;
+        float distance = dir.Length();
+
+        if (dir != Vector2.Zero)
+            dir.Normalize();
+
+        float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
+        rotation = MathHelper.Lerp(rotation, targetRotation, RotationSpeed * dt);
+
+        Position += dir * baseSpeed * dt;
+
+        if (distance < 5f)
+            State = ShipState.HoldingAtSea;
+    }
+
+    public void AdvanceToDock(float delay = 0f)
+    {
+        if (State != ShipState.HoldingAtSea && State != ShipState.SailingToHoldingPosition)
+            return;
+
+        if (delay <= 0f)
+        {
+            State = ShipState.SailingToDock;
+        }
+        else
+        {
+            advanceDelay = delay;
+            // ship stays in HoldingAtSea (or finishes sailing there) and ticks down
+        }
+    }
+
+    private void UpdateHoldingAtSea(GameTime gameTime)
+    {
+        if (advanceDelay <= 0f) return;
+
+        advanceDelay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+        if (advanceDelay <= 0f)
+            State = ShipState.SailingToDock;
     }
 
     // =====================
@@ -204,13 +267,36 @@ public class Ship : Entity
 
         if (Vector2.Distance(Position, leaveTarget) < 10f)
         {
-            Vector2 dirToSpawn = spawnPosition - dockTarget;
-            dirToSpawn.Normalize();
+            Vector2 exitDir = Position - dockTarget;
+            if (exitDir != Vector2.Zero) exitDir.Normalize();
 
-            leaveTarget = spawnPosition + dirToSpawn * ExitDistance;
+            leaveTarget = GetScreenExitPoint(Position, exitDir);
 
             State = ShipState.Leaving_ToSea;
         }
+    }
+
+    private Vector2 GetScreenExitPoint(Vector2 from, Vector2 dir)
+    {
+        float tMin = float.MaxValue;
+
+        if (dir.X != 0)
+        {
+            float t = dir.X < 0
+                ? -from.X / dir.X
+                : (RumGame.VirtualWidth - from.X) / dir.X;
+            if (t > 0) tMin = Math.Min(tMin, t);
+        }
+
+        if (dir.Y != 0)
+        {
+            float t = dir.Y < 0
+                ? -from.Y / dir.Y
+                : (RumGame.VirtualHeight - from.Y) / dir.Y;
+            if (t > 0) tMin = Math.Min(tMin, t);
+        }
+
+        return from + dir * tMin;
     }
 
     private void UpdateLeavingToSea(GameTime gameTime)

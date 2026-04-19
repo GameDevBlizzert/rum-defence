@@ -385,6 +385,54 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Walls/Xwall.png;Art/Themes/Grass/Walls/Xwall
 
+#begin Art/Themes/Grass/Walls/single.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/single.png;Art/Themes/Grass/Walls/single
+
+#begin Art/Themes/Grass/Walls/diagonal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/diagonal.png;Art/Themes/Grass/Walls/diagonal
+
+#begin Art/Themes/Grass/Walls/diagonal_end.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/diagonal_end.png;Art/Themes/Grass/Walls/diagonal_end
+
+#begin Art/Themes/Grass/Walls/diagonal_fill.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/diagonal_fill.png;Art/Themes/Grass/Walls/diagonal_fill
+
 #begin Art/Themes/Stone/Enemies/enemy_1.png
 /importer:TextureImporter
 /processor:TextureProcessor

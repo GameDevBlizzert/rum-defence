@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RumDefence;
 
@@ -66,7 +66,7 @@ public class GameScreen : Screen
         {
             if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.WallCost)
             {
-                walls[p] = new Wall(p);
+                walls[p] = new Wall(p, buildManager.DiagonalMode);
                 progress.SpendCoins(BuildManager.WallCost);
                 // Play random impact sound when wall is placed
                 AudioManager.Instance.PlayRandomImpact();
@@ -116,6 +116,7 @@ public class GameScreen : Screen
         UpdateSpawner(gameTime);
         UpdateShips(gameTime);
         UpdateTroops(gameTime);
+        UpdateWaveProgression();
         CheckLevelCompletion(gameTime);
     }
 
@@ -172,12 +173,8 @@ public class GameScreen : Screen
 
     private void UpdateSpawner(GameTime gameTime)
     {
-        var newShip = Spawner.Update(gameTime);
-
-        if (newShip != null)
-        {
-            Ships.Add(newShip);
-        }
+        Spawner.Update(gameTime);
+        Ships.AddRange(Spawner.NewShips);
     }
 
     private void UpdateShips(GameTime gameTime)
@@ -230,29 +227,39 @@ public class GameScreen : Screen
         }
     }
 
+    private void UpdateWaveProgression()
+    {
+        if (Spawner.IsAllWavesComplete) return;
+        if (!Spawner.HasPreloadedWave) return;
+
+        bool attackingShipsRemain = Ships.Any(s =>
+            s.State == Ship.ShipState.SailingToDock ||
+            s.State == Ship.ShipState.Docked ||
+            s.State == Ship.ShipState.Unloading ||
+            s.State == Ship.ShipState.Leaving_BackOff ||
+            s.State == Ship.ShipState.Leaving_ToSea);
+
+        if (!attackingShipsRemain && Troops.Count == 0)
+            Spawner.AdvancePreloadToAttack();
+    }
+
     private void CheckLevelCompletion(GameTime gameTime)
     {
-        if (!levelCompleted && Spawner.IsFinished && Ships.Count == 0 && Troops.Count == 0)
-            progress.Update(gameTime, this);
+        if (!levelCompleted && Spawner.IsAllWavesComplete && Ships.Count == 0 && Troops.Count == 0)
+            progress.SetWon();
 
         // TODO: Do not ignore IsLost after testing
         levelCompleted = progress.IsWon() /*|| progress.IsLost()*/;
-
-        if (progress.IsWon())
-        {
-            UnlockNextLevel();
-        }
 
         foreach (var tower in placedTowers.Values) tower.Update(gameTime);
 
         if (levelCompleted)
         {
-            // Stop background music when leaving game screen
+            UnlockNextLevel();
             AudioManager.Instance.StopBackgroundMusic();
             // TODO: Show win or lose screen based
             manager.SetScreen(new MainMenuScreen(manager));
         }
-
     }
 
     /// <summary>

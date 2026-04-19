@@ -71,6 +71,13 @@ public class BuildManager
         return hoveredTile;
     }
 
+    public bool DiagonalMode { get; private set; } = false;
+
+    public void ToggleDiagonalMode()
+    {
+        DiagonalMode = !DiagonalMode;
+    }
+
     public void SetMode(BuildMode mode)
     {
         if (currentMode == mode)
