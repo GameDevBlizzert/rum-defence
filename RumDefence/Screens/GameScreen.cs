@@ -51,11 +51,12 @@ public class GameScreen : Screen
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
 
+        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+        currentLevel.RumBarrel.OnDamageTaken = amount => progress.TakeHits(amount);
+
         Spawner = new ShipSpawner(currentLevel, grid);
 
-        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
-
-        hud = new Hud(buildManager, progress);
+        hud = new Hud(buildManager, progress, Spawner);
 
         wallRenderer = new WallRenderer(
             grid,
@@ -115,8 +116,6 @@ public class GameScreen : Screen
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
-
-        Spawner = new ShipSpawner(currentLevel, grid);
 
         AudioManager.Instance.PlayBackgroundMusic();
     }

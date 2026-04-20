@@ -1,42 +1,24 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace RumDefence;
 
 public class Hud
 {
-    private SpriteFont font;
-
-
     private LevelProgressSystem levelProgress;
-
     private CoinManager coinManager;
-
-    private Vector2 coinUIPosition;
     private BuildMenu buildMenu;
     private BuildManager buildManager;
+    private WaveHud waveHud;
 
-    public Hud(BuildManager buildManager, LevelProgressSystem levelProgress)
+    public Hud(BuildManager buildManager, LevelProgressSystem levelProgress, ShipSpawner spawner)
     {
         this.buildManager = buildManager;
         this.levelProgress = levelProgress;
 
-        var content = RumGame.Instance.Content;
-
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
-
         buildMenu = new BuildMenu(buildManager, levelProgress);
-
-        coinManager = new CoinManager(GetCoinTargetPosition, levelProgress);
-        coinUIPosition = new Vector2(100, 50);
-    }
-
-    public Vector2 GetCoinTargetPosition()
-    {
-        var text = levelProgress.CoinsRemaining.ToString();
-        var size = font.MeasureString(text);
-
-        return coinUIPosition + size / 2f;
+        coinManager = new CoinManager(buildMenu.GetCoinTargetPosition, levelProgress);
+        waveHud = new WaveHud(spawner);
     }
 
     public CoinManager GetCoinManager()
@@ -53,14 +35,7 @@ public class Hud
     public void Draw(SpriteBatch spriteBatch)
     {
         buildMenu.Draw(spriteBatch);
-
         coinManager.Draw(spriteBatch);
-
-        spriteBatch.DrawString(
-            font,
-            levelProgress.CoinsRemaining.ToString(),
-            coinUIPosition,
-            Color.Yellow
-        );
+        waveHud.Draw(spriteBatch);
     }
 }

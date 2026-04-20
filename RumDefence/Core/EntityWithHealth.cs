@@ -56,7 +56,7 @@ public abstract class EntityWithHealth : Entity
     /// </summary>
     /// <param name="amount">The amount of damage the entity is taking, must be a positive integer</param>
     /// <exception cref="ArgumentException">Thrown if the damage amount is negative</exception>
-    public void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
         if (amount < 0)
         {

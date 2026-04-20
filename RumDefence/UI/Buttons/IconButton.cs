@@ -9,11 +9,12 @@ public class IconButton : Button
     private Texture2D backgroundTexture;
     private Texture2D iconTexture;
 
-    // How much of the button area the icon fills (0.0 - 1.0)
     private const float IconScale = 0.62f;
 
     public Color BaseTint { get; set; } = Color.White;
     public bool IsDisabled { get; set; }
+    public string CostLabel { get; set; }
+    public SpriteFont Font { get; set; }
 
     public IconButton(Texture2D backgroundTexture, Texture2D iconTexture, Vector2 position, Vector2 size)
     {
@@ -43,19 +44,42 @@ public class IconButton : Button
         else
             bgColor = BaseTint;
 
-        // Background
         spriteBatch.Draw(backgroundTexture, bounds, bgColor);
 
-        // Icon centred and scaled
-        int iconSize = (int)(Math.Min(bounds.Width, bounds.Height) * IconScale);
-        var iconRect = new Rectangle(
-            bounds.X + (bounds.Width - iconSize) / 2,
-            bounds.Y + (bounds.Height - iconSize) / 2,
-            iconSize,
-            iconSize
-        );
-
         var iconColor = IsDisabled ? new Color(80, 80, 80) : Color.White;
-        spriteBatch.Draw(iconTexture, iconRect, iconColor);
+
+        if (CostLabel != null && Font != null)
+        {
+            var textSize = Font.MeasureString(CostLabel);
+            const int gap = 4;
+            int iconSize = (int)(Math.Min(bounds.Width, bounds.Height) * IconScale);
+            float totalWidth = iconSize + gap + textSize.X;
+            float startX = bounds.X + (bounds.Width - totalWidth) / 2f;
+            float centerY = bounds.Y + bounds.Height / 2f;
+
+            var iconRect = new Rectangle(
+                (int)startX,
+                (int)(centerY - iconSize / 2f),
+                iconSize,
+                iconSize
+            );
+            spriteBatch.Draw(iconTexture, iconRect, iconColor);
+
+            var labelColor = IsDisabled ? new Color(120, 120, 120) : Color.Yellow;
+            spriteBatch.DrawString(Font, CostLabel,
+                new Vector2(startX + iconSize + gap, centerY - textSize.Y / 2f),
+                labelColor);
+        }
+        else
+        {
+            int iconSize = (int)(Math.Min(bounds.Width, bounds.Height) * IconScale);
+            var iconRect = new Rectangle(
+                bounds.X + (bounds.Width - iconSize) / 2,
+                bounds.Y + (bounds.Height - iconSize) / 2,
+                iconSize,
+                iconSize
+            );
+            spriteBatch.Draw(iconTexture, iconRect, iconColor);
+        }
     }
 }

@@ -7,6 +7,7 @@ public class BuildMenu
 {
     private Texture2D panelTexture;
     private Texture2D pixelTexture;
+    private SpriteFont font;
 
     private Rectangle panelRect;
 
@@ -18,11 +19,16 @@ public class BuildMenu
     private BuildManager buildManager;
     private LevelProgressSystem progress;
 
-    private const int PanelWidth = 120;
-    private const int ButtonSize = 80;
-    private const int ButtonMargin = 14;
-    private const int HeaderHeight = 60;
-    private const int LabelHeight = 28;
+    private HudHealthBar healthBar;
+    private Texture2D coinIcon;
+
+    private int coinAreaY;
+    private int coinIconSize;
+    private int panelX;
+
+    private const int PanelWidth = 180;
+    private const int ButtonWidth = PanelWidth - 20;
+    private const int ButtonHeight = 60;
 
     public BuildMenu(BuildManager buildManager, LevelProgressSystem progress)
     {
@@ -31,6 +37,7 @@ public class BuildMenu
 
         var content = RumGame.Instance.Content;
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
+        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
         var cannonIcon = content.Load<Texture2D>("KenneyPiratePack/PNG/Default size/Ship parts/cannon");
@@ -39,84 +46,99 @@ public class BuildMenu
         pixelTexture = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
         pixelTexture.SetData(new[] { Color.White });
 
-        int panelX = 20;
+        panelX = 20;
         int panelY = 20;
         int panelHeight = RumGame.VirtualHeight - 40;
-
         panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
 
-        int buttonX = panelX + (PanelWidth - ButtonSize) / 2;
-        int sectionStart = panelY + HeaderHeight + LabelHeight + 8;
+        coinIcon = content.Load<Texture2D>("Art/UI/Coin");
 
-        wallButton = new IconButton(
-            panelTexture,
-            wallIcon,
-            new Vector2(buttonX, sectionStart),
-            new Vector2(ButtonSize, ButtonSize)
-        );
-        wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
+        const int barMargin = 8;
+        int fontHeight = (int)font.MeasureString("0").Y;
+        int barHeight = fontHeight + 8;
+        coinIconSize = fontHeight;
+        int coinHeight = fontHeight;
+        const int spacing = 8;
 
-        int cannonY = sectionStart + ButtonSize + ButtonMargin + LabelHeight + 8;
+        int currentY = panelY + 70;
+        int buttonX = panelX + (PanelWidth - ButtonWidth) / 2;
 
-        cannonButton = new IconButton(
-            panelTexture,
-            cannonIcon,
-            new Vector2(buttonX, cannonY),
-            new Vector2(ButtonSize, ButtonSize)
-        );
+        var healthBarBounds = new Rectangle(panelX + barMargin, currentY, PanelWidth - barMargin * 2, barHeight);
+        healthBar = new HudHealthBar(progress, healthBarBounds);
+        currentY += barHeight + spacing;
+
+        coinAreaY = currentY;
+        currentY += coinHeight + spacing;
+
+        cannonButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
-        int musketY = cannonY + ButtonSize + ButtonMargin + LabelHeight + 8;
+        cannonButton.CostLabel = BuildManager.CannonTowerCost.ToString();
+        cannonButton.Font = font;
+        currentY += ButtonHeight + spacing;
 
-        musketButton = new IconButton(
-                  panelTexture,
-                  cannonIcon,
-                  new Vector2(buttonX, musketY),
-                  new Vector2(ButtonSize, ButtonSize)
-              );
+        musketButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
+        musketButton.CostLabel = BuildManager.MusketTowerCost.ToString();
+        musketButton.Font = font;
+        currentY += ButtonHeight + spacing;
 
-        int removeY = musketY + ButtonSize + ButtonMargin + LabelHeight + 8;
+        wallButton = new IconButton(panelTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
+        wallButton.CostLabel = BuildManager.WallCost.ToString();
+        wallButton.Font = font;
+        currentY += ButtonHeight + spacing;
 
-        removeButton = new IconButton(
-            panelTexture,
-            removeIcon,
-            new Vector2(buttonX, removeY),
-            new Vector2(ButtonSize, ButtonSize)
-        );
+        removeButton = new IconButton(panelTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
+    }
+
+    public Vector2 GetCoinTargetPosition()
+    {
+        var size = font.MeasureString(progress.CoinsRemaining.ToString());
+        const int iconTextGap = 4;
+        float totalWidth = coinIconSize + iconTextGap + size.X;
+        float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
+        return new Vector2(coinRowX + coinIconSize / 2f, coinAreaY + coinIconSize / 2f);
     }
 
     public void Update(GameTime gameTime)
     {
         var mode = buildManager.GetMode();
-        wallButton.SetSelected(mode == BuildMode.Wall);
         cannonButton.SetSelected(mode == BuildMode.CannonTower);
         musketButton.SetSelected(mode == BuildMode.MusketTower);
+        wallButton.SetSelected(mode == BuildMode.Wall);
         removeButton.SetSelected(mode == BuildMode.Remove);
 
-        wallButton.IsDisabled = progress.CoinsRemaining < BuildManager.WallCost;
         cannonButton.IsDisabled = progress.CoinsRemaining < BuildManager.CannonTowerCost;
         musketButton.IsDisabled = progress.CoinsRemaining < BuildManager.MusketTowerCost;
+        wallButton.IsDisabled = progress.CoinsRemaining < BuildManager.WallCost;
 
-        wallButton.Update(gameTime);
         cannonButton.Update(gameTime);
         musketButton.Update(gameTime);
+        wallButton.Update(gameTime);
         removeButton.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        // Panel background
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
-        // Section labels + buttons
-        wallButton.Draw(spriteBatch);
+        healthBar.Draw(spriteBatch);
+
+        var coinText = progress.CoinsRemaining.ToString();
+        var coinSize = font.MeasureString(coinText);
+        const int iconTextGap = 4;
+        float totalWidth = coinIconSize + iconTextGap + coinSize.X;
+        float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
+        var iconRect = new Rectangle((int)coinRowX, coinAreaY, coinIconSize, coinIconSize);
+        spriteBatch.Draw(coinIcon, iconRect, Color.White);
+        float textY = coinAreaY + (coinIconSize - coinSize.Y) / 2f;
+        spriteBatch.DrawString(font, coinText, new Vector2(coinRowX + coinIconSize + iconTextGap, textY), Color.Yellow);
 
         cannonButton.Draw(spriteBatch);
-
         musketButton.Draw(spriteBatch);
-
+        wallButton.Draw(spriteBatch);
         removeButton.Draw(spriteBatch);
     }
 }
