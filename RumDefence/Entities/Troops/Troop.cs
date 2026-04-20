@@ -19,6 +19,9 @@ public class Troop : EntityWithHealth, ICollidable
     public bool HasDroppedReward { get; private set; }
     public bool IsFinished { get; private set; }
 
+    public int Damage { get; set; } = 1;
+    private float _attackTimer = 0f;
+
     private List<ITroopAbility> abilities = new();
 
     private static Texture2D pixel;
@@ -85,8 +88,15 @@ public class Troop : EntityWithHealth, ICollidable
         if (IsNearBarrel())
         {
             sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
+            _attackTimer += dt;
+            if (_attackTimer >= 1f)
+            {
+                RumGame.Instance.CurrentLevel?.RumBarrel?.TakeDamage(Damage);
+                _attackTimer -= 1f;
+            }
             return;
         }
+        _attackTimer = 0f;
 
         if (IsFinished) return;
 

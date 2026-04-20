@@ -21,7 +21,7 @@ public class Level
             var grid = RumGame.Instance.CurrentGrid;
             var worldPos = grid.GridToWorld(RumTile);
             var drawPos = worldPos - new Vector2(grid.TileSize / 2f);
-            _rumBarrel = new RumBarrel(drawPos, grid.TileSize);
+            _rumBarrel = new RumBarrel(drawPos, grid.TileSize, StartingLives);
             return _rumBarrel;
         }
     }

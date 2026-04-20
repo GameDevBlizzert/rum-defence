@@ -53,6 +53,7 @@ public class GameScreen : Screen
         Spawner = new ShipSpawner(currentLevel, grid);
 
         progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+        currentLevel.RumBarrel.OnDamageTaken = amount => progress.TakeHits(amount);
 
         hud = new Hud(buildManager, progress);
 
