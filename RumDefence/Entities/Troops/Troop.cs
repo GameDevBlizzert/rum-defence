@@ -35,6 +35,12 @@ public class Troop : EntityWithHealth
             true
         );
 
+        if (pixel == null)
+        {
+            pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
+        }
+
         // https://foozlecc.itch.io/scallywag-pirates
         Texture = RumGame.Instance.Content.Load<Texture2D>(spritePath);
         origin = Vector2.Zero;
