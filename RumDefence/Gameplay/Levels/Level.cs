@@ -12,6 +12,20 @@ public class Level
     public bool IsUnlocked { get; set; }
     public Point RumTile { get; private set; }
 
+    private RumBarrel _rumBarrel;
+    public RumBarrel RumBarrel
+    {
+        get
+        {
+            if (_rumBarrel != null) return _rumBarrel;
+            var grid = RumGame.Instance.CurrentGrid;
+            var worldPos = grid.GridToWorld(RumTile);
+            var drawPos = worldPos - new Vector2(grid.TileSize / 2f);
+            _rumBarrel = new RumBarrel(drawPos, grid.TileSize);
+            return _rumBarrel;
+        }
+    }
+
     public int StartingCoinBalance { get; private set; }
     public int StartingLives { get; private set; }
 

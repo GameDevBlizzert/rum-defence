@@ -6,7 +6,6 @@ namespace RumDefence;
 public class GridRenderer
 {
     private ITileTheme theme;
-    private Texture2D rumTexture;
     private Texture2D pixel;
 
     private BuildManager buildManager;
@@ -18,8 +17,6 @@ public class GridRenderer
         this.buildManager = buildManager;
         this.grid = grid;
 
-
-        rumTexture = RumGame.Instance.Content.Load<Texture2D>("Art/Objects/RumBarrel");
 
         pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
         pixel.SetData(new[] { Color.White });
@@ -49,11 +46,7 @@ public class GridRenderer
 
                 if (level?.RumTile == new Point(x, y))
                 {
-                    spriteBatch.Draw(
-                        rumTexture,
-                        new Rectangle((int)drawPos.X, (int)drawPos.Y, grid.TileSize, grid.TileSize),
-                        Color.White
-                    );
+                    level.RumBarrel.Draw(spriteBatch);
                 }
             }
         }

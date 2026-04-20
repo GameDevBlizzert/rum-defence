@@ -6,10 +6,12 @@ using RumDefence.Exceptions;
 
 namespace RumDefence;
 
-public class Troop : EntityWithHealth
+public class Troop : EntityWithHealth, ICollidable
 {
     private Vector2 target;
     protected virtual Animation animation { get; set; }
+    protected virtual Animation _swordAttackAnimation { get; set; }
+    private Vector2 _lastDir = Vector2.UnitY;
 
     private float baseSpeed = 60f;
     public float SpeedMultiplier { get; set; } = 1f;
@@ -34,6 +36,7 @@ public class Troop : EntityWithHealth
             3,
             true
         );
+        _swordAttackAnimation = new TroopSwordAttackAnimation();
 
         if (pixel == null)
         {
@@ -52,6 +55,15 @@ public class Troop : EntityWithHealth
         ApplySize();
     }
 
+    public Collider Collider
+    {
+        get
+        {
+            var tileSize = RumGame.Instance.CurrentGrid?.TileSize ?? 32;
+            return new CircleCollider(Position, tileSize * 0.75f);
+        }
+    }
+
     public void AddAbility(ITroopAbility ability)
     {
         abilities.Add(ability);
@@ -59,7 +71,7 @@ public class Troop : EntityWithHealth
 
     public override void Update(GameTime gameTime)
     {
-        if (IsFinished || IsDead) return;
+        if (IsDead) return;
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -69,6 +81,14 @@ public class Troop : EntityWithHealth
         {
             ability.Update(this, gameTime);
         }
+
+        if (IsNearBarrel())
+        {
+            sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
+            return;
+        }
+
+        if (IsFinished) return;
 
         float speed = baseSpeed * SpeedMultiplier;
 
@@ -93,9 +113,17 @@ public class Troop : EntityWithHealth
         }
 
         dir.Normalize();
+        _lastDir = dir;
         sourceRectangles = animation.GetCurrentLayerRectangles(gameTime, dir);
 
         Position += dir * speed * dt;
+    }
+
+    private bool IsNearBarrel()
+    {
+        var barrel = RumGame.Instance.CurrentLevel?.RumBarrel;
+        if (barrel == null) return false;
+        return Collider.CheckIntersection(barrel.Collider);
     }
 
     public void UpdatePathfinding(HashSet<Point> untraversableTiles)
