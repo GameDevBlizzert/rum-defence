@@ -136,9 +136,9 @@ public class Troop : EntityWithHealth, ICollidable
         return Collider.CheckIntersection(barrel.Collider);
     }
 
-    public void UpdatePathfinding(HashSet<Point> untraversableTiles)
+    public void UpdatePathfinding()
     {
-        pathfinding.UpdatePath(Position, RumGame.Instance.CurrentGrid, untraversableTiles);
+        pathfinding.UpdatePath(Position, RumGame.Instance.CurrentGrid);
     }
 
     public void MarkRewardGiven()
