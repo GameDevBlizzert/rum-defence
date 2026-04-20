@@ -13,13 +13,15 @@ namespace RumDefence
         /// <summary>
         /// The length of the LinePiece, changing the length moves the end vector to adjust the length.
         /// </summary>
-        public float Length 
-        { 
-            get { 
-                return (End - Start).Length(); 
-            } 
-            set {
-                End = Start + GetDirection() * value; 
+        public float Length
+        {
+            get
+            {
+                return (End - Start).Length();
+            }
+            set
+            {
+                End = Start + GetDirection() * value;
             }
         }
 
@@ -64,7 +66,7 @@ namespace RumDefence
             Start = start;
             End = end;
         }
-        
+
         public LinePieceCollider(Vector2 start, Vector2 direction, float length)
         {
             Start = start;
@@ -194,7 +196,7 @@ namespace RumDefence
         {
             Point topLeft = new Point((int)Math.Min(Start.X, End.X), (int)Math.Min(Start.Y, End.Y));
             Point size = new Point((int)Math.Max(Start.X, End.X), (int)Math.Max(Start.Y, End.X)) - topLeft;
-            return new Rectangle(topLeft,size);
+            return new Rectangle(topLeft, size);
         }
 
 

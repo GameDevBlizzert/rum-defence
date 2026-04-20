@@ -7,15 +7,17 @@ namespace RumDefence
     {
         public float X;
         public float Y;
-        public Vector2 Center 
-        { 
-            get { 
-                return new Vector2(X, Y); 
-            } 
+        public Vector2 Center
+        {
+            get
+            {
+                return new Vector2(X, Y);
+            }
 
-            set { 
-                X = value.X; Y = value.Y; 
-            } 
+            set
+            {
+                X = value.X; Y = value.Y;
+            }
         }
         public float Radius;
 
@@ -27,8 +29,8 @@ namespace RumDefence
         /// <param name="radius">The radius of the circle</param>
         public CircleCollider(float x, float y, float radius)
         {
-            this.X = x; 
-            this.Y = y; 
+            this.X = x;
+            this.Y = y;
             this.Radius = radius;
         }
 
@@ -51,7 +53,7 @@ namespace RumDefence
         /// <returns>true if the coordinates are within the circle.</returns>
         public override bool Contains(Vector2 coordinates)
         {
-            return (Center-coordinates).Length() < Radius;
+            return (Center - coordinates).Length() < Radius;
         }
 
         /// <summary>

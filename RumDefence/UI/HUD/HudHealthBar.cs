@@ -6,7 +6,7 @@ namespace RumDefence;
 public class HudHealthBar
 {
     private readonly LevelProgressSystem progress;
-        
+
     private readonly SpriteFont font;
     private readonly Texture2D pixel;
 
