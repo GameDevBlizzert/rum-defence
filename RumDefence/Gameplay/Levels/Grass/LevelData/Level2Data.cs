@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -57,6 +58,6 @@ public static class Level2Data
             list.Add(new ShipGroup(data, count));
         }
 
-        return new Wave(list, min, max);
+        return new Wave(list, min, max, Random.Shared.Next(0, 10));
     }
 }

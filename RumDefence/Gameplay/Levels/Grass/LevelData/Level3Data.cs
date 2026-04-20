@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -6,7 +7,7 @@ namespace RumDefence;
 public static class Level3Data
 {
 
-    private static readonly Ship.Data BossShip = new("Ships/boss_ship", 80f, 10, true, 1f, -90f);
+    private static readonly Ship.Data BossShip = new("Ships/boss_ship", 80f, 10, true, 2f, -90f);
     private static readonly Ship.Data NormalShip = new("Ships/ship_1", 80f, 10, false, 0.8f, -90f);
 
     public static Level Create(Theme theme)
@@ -23,23 +24,23 @@ public static class Level3Data
 
     private static List<Wave> Waves => new()
     {
-        CreateWave(2f, 4f, (NormalShip, 5)),
+        CreateWave(2f, 4f, (NormalShip, 1)),
 
-        CreateWave(1.5f, 3f, (NormalShip, 10)),
+        CreateWave(1.5f, 3f, (NormalShip, 2)),
 
         CreateWave(1f, 2.5f,
-            (NormalShip, 10),
-            (BossShip, 1)
-        ),
-
-        CreateWave(1f, 2f,
-            (NormalShip, 15),
+            (NormalShip, 3),
             (BossShip, 3)
         ),
 
+        CreateWave(1f, 2f,
+            (NormalShip, 8),
+            (BossShip, 4)
+        ),
+
         CreateWave(0.8f, 1.5f,
-            (NormalShip, 20),
-            (BossShip, 6)
+            (NormalShip, 10),
+            (BossShip, 5)
         )
     };
 
@@ -74,6 +75,6 @@ public static class Level3Data
             list.Add(new ShipGroup(data, count));
         }
 
-        return new Wave(list, min, max);
+        return new Wave(list, min, max, Random.Shared.Next(0, 30));
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 
 namespace RumDefence;
 
@@ -45,5 +46,19 @@ public static class DockSystem
         if (dir.Y > 0) y = RumGame.VirtualHeight + margin;
 
         return new Vector2(x, y);
+    }
+
+    public static Vector2 GetHoldingPosition(Grid grid, CoastTile coast, float lateralOffset = 0f)
+    {
+        Vector2 basePos = grid.GridToWorld(coast.GridPos);
+        Vector2 dir = GetDirection(coast.TileType);
+
+        Vector2 holdPos = basePos + dir * (grid.TileSize * 4f);
+
+        // Offset along the approach axis so ships stagger at different depths from shore
+        float angle = MathF.Atan2(dir.Y, dir.X);
+        Vector2 approachAxis = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
+
+        return holdPos + approachAxis * lateralOffset;
     }
 }

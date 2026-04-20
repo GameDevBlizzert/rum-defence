@@ -12,11 +12,15 @@ public class GrassTheme : BaseTheme, IWallTheme
 
     private Dictionary<int, List<Texture2D>> tileMap;
 
+    public Texture2D Single { get; private set; }
     public Texture2D Wall { get; private set; }
     public Texture2D End { get; private set; }
     public Texture2D Corner { get; private set; }
     public Texture2D Twall { get; private set; }
     public Texture2D Xwall { get; private set; }
+    public Texture2D Diagonal { get; private set; }
+    public Texture2D DiagonalEnd { get; private set; }
+    public Texture2D DiagonalFill { get; private set; }
 
     private List<Texture2D> wallDamagedList;
     private List<Texture2D> endDamagedList;
@@ -45,11 +49,15 @@ public class GrassTheme : BaseTheme, IWallTheme
             { 9, LoadList(envPrefix, "9") }
         };
 
+        Single = Load(wallPrefix + "single");
         Wall = Load(wallPrefix + "wall");
         End = Load(wallPrefix + "end");
         Corner = Load(wallPrefix + "corner");
         Twall = Load(wallPrefix + "Twall");
         Xwall = Load(wallPrefix + "Xwall");
+        Diagonal = Load(wallPrefix + "diagonal");
+        DiagonalEnd = Load(wallPrefix + "diagonal_end");
+        DiagonalFill = Load(wallPrefix + "diagonal_fill");
 
         wallDamagedList = LoadList(wallPrefix, "wall_damaged_1", "wall_damaged_2");
         endDamagedList = LoadList(wallPrefix, "end_damaged");
