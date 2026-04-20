@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using Microsoft.Xna.Framework;
 using RumDefence.Exceptions;
 
 namespace RumDefence;
@@ -108,12 +106,8 @@ public class LevelProgressSystem : IGameLoopSystem
         return LivesRemaining <= 0;
     }
 
-    public void Update(GameTime gameTime, GameScreen gameScreen)
+    public void SetWon()
     {
-        if (gameScreen.Spawner.IsFinished &&
-            gameScreen.Ships.Count(s =>
-                s.State == Ship.ShipState.SailingToDock || s.State == Ship.ShipState.SailingToDock || s.State == Ship.ShipState.Unloading) == 0 &&
-            gameScreen.Troops.Count == 0)
-            levelWon = true;
+        levelWon = true;
     }
 }

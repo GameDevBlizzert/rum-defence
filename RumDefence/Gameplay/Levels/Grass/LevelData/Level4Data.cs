@@ -57,6 +57,6 @@ public static class Level4Data
             list.Add(new ShipGroup(data, count));
         }
 
-        return new Wave(list, min, max);
+        return new Wave(list, min, max, 10);
     }
 }

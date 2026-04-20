@@ -6,7 +6,7 @@ namespace RumDefence;
 public static class Level1Data
 {
 
-    private static readonly Ship.Data BossShip = new("Ships/boss_ship", 80f, 10, true, 1f, -90f);
+    private static readonly Ship.Data BossShip = new("Ships/boss_ship", 90f, 20, true, 2f, -90f);
     private static readonly Ship.Data NormalShip = new("Ships/ship_1", 80f, 10, false, 0.8f, -90f);
 
     public static Level Create(Theme theme)
@@ -23,16 +23,25 @@ public static class Level1Data
 
     private static List<Wave> Waves => new()
     {
-        CreateWave(3f, 5f, (NormalShip, 1)),
-        // CreateWave(3f, 5f, (NormalShip, 2)),
-        CreateWave(2.5f, 4f, (NormalShip, 3)),
-        // CreateWave(2.5f, 4f, (NormalShip, 4)),
-        CreateWave(2f, 3.5f, (NormalShip, 5)),
-        // CreateWave(2f, 3f, (NormalShip, 6)),
-        CreateWave(1.5f, 3f, (NormalShip, 7)),
-        CreateWave(1.5f, 2.5f, (NormalShip, 8)),
-        // CreateWave(1f, 2f, (NormalShip, 9), (BossShip, 1)),
-        // CreateWave(1f, 2f, (NormalShip, 10), (BossShip, 2)),
+        CreateWave(1f, 1f, 10f, (NormalShip, 2)),
+         CreateWave(2f, 20f, 10f, (NormalShip, 3)),
+
+         CreateWave(10f, 15f, 10f, (NormalShip, 10)),
+        //
+         CreateWave(5, 5f, 10f,
+             (NormalShip, 10),
+             (BossShip, 1)
+         ),
+        //
+        // CreateWave(1f, 2f, 8f,
+        //     (NormalShip, 15),
+        //     (BossShip, 3)
+        // ),
+        //
+        // CreateWave(0.8f, 1.5f, 5f,
+        //     (NormalShip, 20),
+        //     (BossShip, 6)
+        // )
     };
 
     private static string[] MapData => new[]
@@ -57,7 +66,7 @@ public static class Level1Data
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
     };
 
-    private static Wave CreateWave(float min, float max, params (Ship.Data data, int count)[] groups)
+    private static Wave CreateWave(float min, float max, float holdTime, params (Ship.Data data, int count)[] groups)
     {
         var list = new List<ShipGroup>();
 
@@ -66,6 +75,6 @@ public static class Level1Data
             list.Add(new ShipGroup(data, count));
         }
 
-        return new Wave(list, min, max);
+        return new Wave(list, min, max, holdTime);
     }
 }
