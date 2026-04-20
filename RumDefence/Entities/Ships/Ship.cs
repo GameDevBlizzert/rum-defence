@@ -73,6 +73,7 @@ public class Ship : Entity
 
     private Grid grid;
     private PathfindingSystem pathfinding;
+    private PathfindingSystem leavingPathfinding;
 
     public int EnemyCount { get; private set; }
     public CoastTile AssignedCoast { get; private set; }
@@ -261,27 +262,8 @@ public class Ship : Entity
 
     private void InitShipPathfinding()
     {
-        var rng = new Random();
+        var untraversable = BuildShipUntraversable();
 
-        // Untraversable for ships = all non-water tiles
-        var untraversable = new HashSet<Point>();
-        for (int x = 0; x < grid.Width; x++)
-        {
-            for (int y = 0; y < grid.Height; y++)
-            {
-                if (!TileRules.IsWater(grid.Tiles[y, x]))
-                {
-                    untraversable.Add(new Point(x, y));
-                }
-                else if (rng.NextDouble() < PathNoiseDensity)
-                {
-                    // Randomly block some water tiles to break up straight paths
-                    untraversable.Add(new Point(x, y));
-                }
-            }
-        }
-
-        // The dock tile and the ship's current entry tile must stay reachable
         var dockGridPos = grid.WorldToGrid(dockTarget);
         if (dockGridPos.HasValue)
             untraversable.Remove(dockGridPos.Value);
@@ -291,9 +273,11 @@ public class Ship : Entity
             untraversable.Remove(entryGridPos.Value);
 
         pathfinding = new PathfindingSystem(dockTarget);
+        grid.UntraversableTiles = untraversable;
+        pathfinding.UpdatePath(Position, grid);
 
-        // Fall back to a straight path if noise accidentally blocked all routes
-        if (!TryUpdatePath(Position, untraversable))
+        // Fall back without noise if noise accidentally blocked all routes
+        if (pathfinding.Path.Count == 0)
         {
             untraversable.RemoveWhere(p => TileRules.IsWater(grid.Tiles[p.Y, p.X]));
             grid.UntraversableTiles = untraversable;
@@ -301,11 +285,36 @@ public class Ship : Entity
         }
     }
 
-    private bool TryUpdatePath(Vector2 position, HashSet<Point> untraversable)
+    private HashSet<Point> BuildShipUntraversable()
     {
-        grid.UntraversableTiles = untraversable;
-        pathfinding.UpdatePath(position, grid);
-        return pathfinding.Path.Count > 0;
+        var untraversable = new HashSet<Point>();
+        for (int x = 0; x < grid.Width; x++)
+            for (int y = 0; y < grid.Height; y++)
+            {
+                if (!TileRules.IsWater(grid.Tiles[y, x]))
+                    untraversable.Add(new Point(x, y));
+                else if (Random.Shared.NextDouble() < PathNoiseDensity)
+                    untraversable.Add(new Point(x, y));
+            }
+        return untraversable;
+    }
+
+    private Vector2 FindGridEdgeExitTile(Vector2 exitDir)
+    {
+        Point? lastWater = null;
+        float step = grid.TileSize * 0.5f;
+        Vector2 pos = Position;
+
+        for (int i = 0; i < 1000; i++)
+        {
+            pos += exitDir * step;
+            var gp = grid.WorldToGrid(pos);
+            if (gp == null) break;
+            if (TileRules.IsWater(grid.Tiles[gp.Value.Y, gp.Value.X]))
+                lastWater = gp;
+        }
+
+        return lastWater.HasValue ? grid.GridToWorld(lastWater.Value) : Position;
     }
 
     // =====================
@@ -352,10 +361,28 @@ public class Ship : Entity
 
         if (Vector2.Distance(Position, leaveTarget) < 10f)
         {
-            Vector2 exitDir = Position - dockTarget;
+            Vector2 exitDir = dockTarget - Position;
             if (exitDir != Vector2.Zero) exitDir.Normalize();
 
             leaveTarget = GetScreenExitPoint(Position, exitDir);
+
+            // Build pathfinding through water to the grid edge
+            if (grid.WorldToGrid(Position) != null)
+            {
+                var exitTileWorld = FindGridEdgeExitTile(exitDir);
+                var untraversable = BuildShipUntraversable();
+                var exitGP = grid.WorldToGrid(exitTileWorld);
+                var currentGP = grid.WorldToGrid(Position);
+                if (exitGP.HasValue) untraversable.Remove(exitGP.Value);
+                if (currentGP.HasValue) untraversable.Remove(currentGP.Value);
+
+                leavingPathfinding = new PathfindingSystem(exitTileWorld);
+                grid.UntraversableTiles = untraversable;
+                leavingPathfinding.UpdatePath(Position, grid);
+
+                if (leavingPathfinding.Path.Count == 0)
+                    leavingPathfinding = null;
+            }
 
             State = ShipState.Leaving_ToSea;
         }
@@ -386,6 +413,26 @@ public class Ship : Entity
 
     private void UpdateLeavingToSea(GameTime gameTime)
     {
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        if (leavingPathfinding != null && grid.WorldToGrid(Position) != null)
+        {
+            try
+            {
+                var dir = leavingPathfinding.GetNextDirection(Position);
+                if (dir != Vector2.Zero)
+                {
+                    float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
+                    rotation = MathHelper.Lerp(rotation, targetRotation, RotationSpeed * dt);
+                    Position += dir * LeaveSpeed * dt;
+                    return;
+                }
+            }
+            catch (NoPathPossibleException) { }
+
+            leavingPathfinding = null;
+        }
+
         MoveTowards(leaveTarget, LeaveSpeed, gameTime);
     }
 
