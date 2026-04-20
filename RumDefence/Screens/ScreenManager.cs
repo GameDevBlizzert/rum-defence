@@ -12,7 +12,11 @@ public class ScreenManager
     public void SetScreen(Screen screen)
     {
         currentScreen = screen;
-        currentScreen.Load();
+        if (!currentScreen.HasBeenLoaded)
+        {
+            currentScreen.Load();
+            currentScreen.MarkAsLoaded();
+        }
     }
 
     public Screen GetCurrentScreen() => currentScreen;
