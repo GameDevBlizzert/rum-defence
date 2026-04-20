@@ -5,19 +5,24 @@ namespace RumDefence;
 
 public class SimpleButton : Button
 {
-    private Texture2D texture;
-    private SpriteFont font;
-    private string text;
+    private FantasyPanel _panel;
+    private SpriteFont _font;
+    private string _text;
+    private bool _isDisabled;
+    private int _borderStyle;
 
-    public bool IsDisabled { get; set; }
-
-    public Color BaseTint { get; set; } = Color.White;
-
-    public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position, Vector2 size)
+    public bool IsDisabled
     {
-        this.texture = texture;
-        this.font = font;
-        this.text = text;
+        get => _isDisabled;
+        set => _isDisabled = value;
+    }
+
+    public SimpleButton(SpriteFont font, string text, Vector2 position, Vector2 size, int borderStyle = 0)
+    {
+        _font = font;
+        _text = text;
+        _borderStyle = borderStyle;
+        _panel = new FantasyPanel(borderStyle);
 
         SetBounds(new Rectangle(
             (int)position.X,
@@ -27,46 +32,72 @@ public class SimpleButton : Button
         ));
     }
 
-    public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position)
+    public SimpleButton(SpriteFont font, string text, Vector2 position, int borderStyle = 0)
     {
-        this.texture = texture;
-        this.font = font;
-        this.text = text;
+        _font = font;
+        _text = text;
+        _borderStyle = borderStyle;
+        _panel = new FantasyPanel(borderStyle);
+
+        var textSize = font.MeasureString(text);
+        var padding = 32;
 
         SetBounds(new Rectangle(
             (int)position.X,
             (int)position.Y,
-            texture.Width,
-            texture.Height
+            (int)textSize.X + padding,
+            (int)textSize.Y + padding
         ));
     }
 
-    protected override bool IsClickable() => !IsDisabled;
+    public override void SetBounds(Rectangle rect)
+    {
+        bounds = rect;
+        Position = new Vector2(rect.X, rect.Y);
+        _panel.SetBounds(rect);
+    }
+
+    protected override bool IsClickable() => !_isDisabled;
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Color color;
+        var textSize = _font.MeasureString(_text);
+        var centerX = bounds.X + (bounds.Width - textSize.X) / 2;
+        var centerY = bounds.Y + (bounds.Height - textSize.Y) / 2;
+        var textPos = new Vector2(centerX, centerY);
 
-        if (IsDisabled)
-            color = new Color(80, 80, 80);
+        if (_isDisabled)
+        {
+            // Disabled: plain text in dark gray
+            spriteBatch.DrawString(_font, _text, textPos, Color.DarkGray);
+        }
         else if (isSelected)
-            color = Color.Gray;
+        {
+            // Active/Selected: white background with border and black text
+            _panel.DrawCenterFill = true;
+            _panel.Tint = Color.White;
+            _panel.Draw(spriteBatch);
+            spriteBatch.DrawString(_font, _text, textPos, Color.Black);
+        }
         else if (isHovering)
-            color = Color.Multiply(BaseTint, 0.8f);
+        {
+            // Hover: show border only with white text
+            _panel.DrawCenterFill = false;
+            _panel.Tint = Color.White;
+            _panel.Draw(spriteBatch);
+            spriteBatch.DrawString(_font, _text, textPos, Color.White);
+        }
         else
-            color = Color.White;
-
-        spriteBatch.Draw(texture, bounds, color);
-
-        var textSize = font.MeasureString(text);
-
-        var textPos = new Vector2(
-            bounds.X + (bounds.Width - textSize.X) / 2,
-            bounds.Y + (bounds.Height - textSize.Y) / 2
-        );
-
-        var textColor = IsDisabled ? Color.DarkGray : Color.Black;
-        spriteBatch.DrawString(font, text, textPos, textColor);
+        {
+            // Normal: plain white text, no background or border
+            spriteBatch.DrawString(_font, _text, textPos, Color.White);
+        }
     }
 
+    public void SetText(string text)
+    {
+        _text = text;
+    }
+
+    public string GetText() => _text;
 }

@@ -5,10 +5,8 @@ namespace RumDefence;
 
 public class MainMenuScreen : Screen
 {
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
-
     private SpriteFont font;
+    private SpriteFont titleFont;
 
     private SimpleButton levelsButton;
     private SimpleButton settingsButton;
@@ -23,15 +21,17 @@ public class MainMenuScreen : Screen
         var content = RumGame.Instance.Content;
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
-
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
+        titleFont = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        levelsButton = new SimpleButton(buttonTexture, font, "Levels", new Vector2(800, 300), new Vector2(300, 100));
-        settingsButton = new SimpleButton(buttonTexture, font, "Settings", new Vector2(800, 450), new Vector2(300, 100));
-        quitButton = new SimpleButton(buttonTexture, font, "Quit", new Vector2(800, 600), new Vector2(300, 100));
+        // Center buttons horizontally
+        int buttonWidth = 400;
+        int buttonCenterX = (RumGame.VirtualWidth - buttonWidth) / 2;
+
+        levelsButton = new SimpleButton(font, "Levels", new Vector2(buttonCenterX, 350), new Vector2(buttonWidth, 120));
+        settingsButton = new SimpleButton(font, "Settings", new Vector2(buttonCenterX, 520), new Vector2(buttonWidth, 120));
+        quitButton = new SimpleButton(font, "Quit", new Vector2(buttonCenterX, 690), new Vector2(buttonWidth, 120));
 
         levelsButton.OnClick = () =>
         {
@@ -66,9 +66,12 @@ public class MainMenuScreen : Screen
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
+        RumGame.Instance.GraphicsDevice.Clear(new Color(30, 30, 30));
 
-        spriteBatch.Draw(panelTexture, panelRect, Color.White);
+        // Draw title
+        var titleSize = titleFont.MeasureString("Rum Defence");
+        var titleX = (RumGame.VirtualWidth - titleSize.X) / 2;
+        spriteBatch.DrawString(titleFont, "Rum Defence", new Vector2(titleX, 80), Color.White);
 
         levelsButton.Draw(spriteBatch);
         settingsButton.Draw(spriteBatch);

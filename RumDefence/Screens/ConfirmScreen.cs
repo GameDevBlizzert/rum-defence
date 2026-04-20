@@ -10,8 +10,6 @@ public class ConfirmScreen : Screen
     private Action onConfirm;
     private Screen previous;
 
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
     private SpriteFont font;
 
     private SimpleButton yesButton;
@@ -31,13 +29,11 @@ public class ConfirmScreen : Screen
         var content = RumGame.Instance.Content;
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
 
         panelRect = new Rectangle(600, 300, 700, 400);
 
-        yesButton = new SimpleButton(buttonTexture, font, "Yes", new Vector2(700, 550), new Vector2(200, 100));
-        noButton = new SimpleButton(buttonTexture, font, "No", new Vector2(1000, 550), new Vector2(200, 100));
+        yesButton = new SimpleButton(font, "Yes", new Vector2(700, 550), new Vector2(200, 100));
+        noButton = new SimpleButton(font, "No", new Vector2(1000, 550), new Vector2(200, 100));
 
         yesButton.OnClick = () =>
         {
@@ -62,9 +58,9 @@ public class ConfirmScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
-        spriteBatch.Draw(panelTexture, panelRect, Color.White);
-
-        spriteBatch.DrawString(font, message, new Vector2(650, 400), Color.Black);
+        var textSize = font.MeasureString(message);
+        var textX = (RumGame.VirtualWidth - textSize.X) / 2;
+        spriteBatch.DrawString(font, message, new Vector2(textX, 400), Color.White);
 
         yesButton.Draw(spriteBatch);
         noButton.Draw(spriteBatch);

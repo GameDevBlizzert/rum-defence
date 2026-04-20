@@ -6,19 +6,18 @@ namespace RumDefence;
 
 public class IconButton : Button
 {
-    private Texture2D backgroundTexture;
+    private FantasyPanel background;
     private Texture2D iconTexture;
 
     // How much of the button area the icon fills (0.0 - 1.0)
     private const float IconScale = 0.62f;
 
-    public Color BaseTint { get; set; } = Color.White;
     public bool IsDisabled { get; set; }
 
-    public IconButton(Texture2D backgroundTexture, Texture2D iconTexture, Vector2 position, Vector2 size)
+    public IconButton(Texture2D iconTexture, Vector2 position, Vector2 size)
     {
-        this.backgroundTexture = backgroundTexture;
         this.iconTexture = iconTexture;
+        background = new FantasyPanel(0);
 
         SetBounds(new Rectangle(
             (int)position.X,
@@ -28,25 +27,17 @@ public class IconButton : Button
         ));
     }
 
+    public override void SetBounds(Rectangle rect)
+    {
+        base.SetBounds(rect);
+        if (background != null)
+            background.SetBounds(rect);
+    }
+
     protected override bool IsClickable() => !IsDisabled;
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Color bgColor;
-
-        if (IsDisabled)
-            bgColor = new Color(60, 60, 60);
-        else if (isSelected)
-            bgColor = Color.Multiply(BaseTint, 0.55f);
-        else if (isHovering)
-            bgColor = Color.Multiply(BaseTint, 0.8f);
-        else
-            bgColor = BaseTint;
-
-        // Background
-        spriteBatch.Draw(backgroundTexture, bounds, bgColor);
-
-        // Icon centred and scaled
         int iconSize = (int)(Math.Min(bounds.Width, bounds.Height) * IconScale);
         var iconRect = new Rectangle(
             bounds.X + (bounds.Width - iconSize) / 2,
@@ -55,7 +46,32 @@ public class IconButton : Button
             iconSize
         );
 
-        var iconColor = IsDisabled ? new Color(80, 80, 80) : Color.White;
-        spriteBatch.Draw(iconTexture, iconRect, iconColor);
+        if (IsDisabled)
+        {
+            // Disabled: plain dark icon
+            var iconColor = new Color(80, 80, 80);
+            spriteBatch.Draw(iconTexture, iconRect, iconColor);
+        }
+        else if (isSelected)
+        {
+            // Active/Selected: white background with border and white icon
+            background.DrawCenterFill = true;
+            background.Tint = Color.White;
+            background.Draw(spriteBatch);
+            spriteBatch.Draw(iconTexture, iconRect, Color.White);
+        }
+        else if (isHovering)
+        {
+            // Hover: show border only with bright icon
+            background.DrawCenterFill = false;
+            background.Tint = Color.White;
+            background.Draw(spriteBatch);
+            spriteBatch.Draw(iconTexture, iconRect, Color.White);
+        }
+        else
+        {
+            // Normal: plain white icon, no background or border
+            spriteBatch.Draw(iconTexture, iconRect, Color.White);
+        }
     }
 }

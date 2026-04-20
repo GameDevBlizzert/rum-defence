@@ -76,7 +76,7 @@ namespace RumDefence
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(new Color(30, 144, 255));
+            GraphicsDevice.Clear(new Color(30, 30, 30));
 
             _screenManager.Draw(_spriteBatch, scaleMatrix);
 
