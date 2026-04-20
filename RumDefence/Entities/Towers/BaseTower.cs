@@ -65,8 +65,13 @@ public class BaseTower : Entity
         if (_fireCooldown > 0f) return;
         if (target == null) return;
 
-        Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, Damage));
+        FireProjectile(target);
         _fireCooldown = 1f / FireRate;
+    }
+
+    protected virtual void FireProjectile(Troop target)
+    {
+        Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, Damage));
     }
 
     private Troop FindTarget()

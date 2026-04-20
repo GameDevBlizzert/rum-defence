@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RumDefence;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -10,6 +11,7 @@ public class CannonTower : BaseTower
     private Texture2D _baseTexture;
     private Texture2D _cannonTexture;
     private Vector2 _cannonOrigin;
+    private Action<Vector2, int> _onProjectileHit;
 
     public CannonTower(Vector2 location, List<Troop> troops) : base(location, troops, "KenneyPiratePack/PNG/Retina/Ship parts/wood (3)")
     {
@@ -25,6 +27,16 @@ public class CannonTower : BaseTower
 
         Size = SizeSystem.Square(0.5f);
         ApplySize();
+    }
+
+    public void SetProjectileHitCallback(Action<Vector2, int> callback)
+    {
+        _onProjectileHit = callback;
+    }
+
+    protected override void FireProjectile(Troop target)
+    {
+        Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, Damage, _onProjectileHit));
     }
 
     public override void Draw(SpriteBatch spriteBatch)
