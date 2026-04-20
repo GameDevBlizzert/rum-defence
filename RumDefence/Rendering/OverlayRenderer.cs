@@ -42,7 +42,7 @@ public class OverlayRenderer
     {
         foreach (var occupiedTile in occupiedTiles.Keys)
         {
-            Color tint = (hoveredTile == occupiedTile) ? Color.Red * 0.8f : Color.Red * 0.4f;
+            Color tint = (hoveredTile == occupiedTile) ? Color.Red : Color.Red * 0.9f;
             DrawOverlayAtTile(spriteBatch, occupiedTile, destroyableOverlay, tint);
         }
     }
