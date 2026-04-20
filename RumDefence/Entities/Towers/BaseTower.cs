@@ -9,7 +9,7 @@ namespace RumDefence;
 public class BaseTower : Entity
 {
     protected readonly List<Troop> Troops;
-    private readonly List<Projectile> _projectiles = [];
+    protected readonly List<Projectile> Projectiles = [];
 
     public float Range { get; set; } = 700f;
     public float FireRate { get; set; } = 1f; // shots per second
@@ -41,11 +41,11 @@ public class BaseTower : Entity
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         // update projectiles
-        for (int i = _projectiles.Count - 1; i >= 0; i--)
+        for (int i = Projectiles.Count - 1; i >= 0; i--)
         {
-            _projectiles[i].Update(gameTime);
-            if (_projectiles[i].IsFinished)
-                _projectiles.RemoveAt(i);
+            Projectiles[i].Update(gameTime);
+            if (Projectiles[i].IsFinished)
+                Projectiles.RemoveAt(i);
         }
 
         // find target every frame so rotation stays smooth
@@ -65,8 +65,13 @@ public class BaseTower : Entity
         if (_fireCooldown > 0f) return;
         if (target == null) return;
 
-        _projectiles.Add(new Projectile(Position, target, ProjectileSpeed, Damage));
+        FireProjectile(target);
         _fireCooldown = 1f / FireRate;
+    }
+
+    protected virtual void FireProjectile(Troop target)
+    {
+        Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, Damage));
     }
 
     private Troop FindTarget()
@@ -103,7 +108,7 @@ public class BaseTower : Entity
     {
         base.Draw(spriteBatch);
 
-        foreach (var proj in _projectiles)
+        foreach (var proj in Projectiles)
             proj.Draw(spriteBatch);
     }
 }

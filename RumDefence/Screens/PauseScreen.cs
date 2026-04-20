@@ -48,6 +48,7 @@ public class PauseScreen : Screen
         }
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
+
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
 
