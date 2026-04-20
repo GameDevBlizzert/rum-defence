@@ -818,3 +818,39 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Utilities/destroyable.png;Art/Themes/Grass/Utilities/destroyable
+
+#begin KenneyPiratePack/PNG/Retina/Ship parts/wood (3).png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:KenneyPiratePack/PNG/Retina/Ship parts/wood (3).png
+
+#begin KenneyPiratePack/PNG/Retina/Ship parts/cannonLoose.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:KenneyPiratePack/PNG/Retina/Ship parts/cannonLoose.png
+
+#begin KenneyPiratePack/PNG/Retina/Ship parts/cannonBall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:KenneyPiratePack/PNG/Retina/Ship parts/cannonBall.png
