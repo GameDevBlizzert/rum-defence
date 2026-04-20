@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using RumDefence.Exceptions;
 
@@ -21,7 +22,6 @@ public class PathfindingSystem : IGameLoopSystem
 
     public Vector2 GetNextDirection(Vector2 currentPosition)
     {
-
         if (Path.Count == 0)
             throw new NoPathPossibleException();
 
@@ -93,7 +93,6 @@ public class PathfindingSystem : IGameLoopSystem
                     tiles.Enqueue(next, cost + Heuristic(next, targetPosition.Value));
                 }
             }
-
         }
 
         var path = new Stack<Vector2>();
@@ -132,11 +131,30 @@ public class PathfindingSystem : IGameLoopSystem
                 return;
             }
 
-
             currentPoint = nextPoint;
         }
 
-        Path = new Queue<Vector2>(path);
+        if (null == grid.UntraversableTiles)
+        {
+            Path = new Queue<Vector2>(path);
+            return;
+        }
+
+        var pathAsList = path.ToList();
+
+        for (int i = 0; i < pathAsList.Count - 2; i++)
+        {
+            var current = pathAsList[i];
+            var next = pathAsList[i + 2];
+            var crossedTiles = grid.GetTilesOnLine(current, next);
+            if (!crossedTiles.Intersect(grid.UntraversableTiles).Any())
+            {
+                pathAsList.RemoveAt(i + 1);
+                i--;
+            }
+        }
+
+        Path = new Queue<Vector2>(pathAsList);
     }
 
     private static int Heuristic(Point a, Point b)

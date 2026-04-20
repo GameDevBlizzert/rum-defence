@@ -9,7 +9,7 @@ namespace RumDefence;
 public class Troop : EntityWithHealth
 {
     private Vector2 target;
-    private TroopAnimation animation;
+    protected virtual Animation animation { get; set; }
 
     private float baseSpeed = 60f;
     public float SpeedMultiplier { get; set; } = 1f;
@@ -23,11 +23,11 @@ public class Troop : EntityWithHealth
 
     private PathfindingSystem pathfinding;
 
-    public Troop(Vector2 start, Vector2 targetPos) : base(16, 32)
+    public Troop(string spritePath, Vector2 start, Vector2 targetPos) : base(16, 32)
     {
         Position = start;
         target = targetPos;
-        animation = new(
+        animation = new TroopAnimation(
             16,
             16,
             0.2f,
@@ -42,7 +42,7 @@ public class Troop : EntityWithHealth
         }
 
         // https://foozlecc.itch.io/scallywag-pirates
-        Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Objects/pirate_grunt");
+        Texture = RumGame.Instance.Content.Load<Texture2D>(spritePath);
         origin = Vector2.Zero;
 
         Size = SizeSystem.Square(10f);
