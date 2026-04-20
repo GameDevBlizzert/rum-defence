@@ -7,7 +7,7 @@ namespace RumDefence;
 public class Explosion : Entity
 {
     private float _lifeTime;
-    private float _maxLifeTime = 0.3f;
+    private float _maxLifeTime = 0.45f;
     private int _explosionIndex;
 
     public bool IsFinished => _lifeTime <= 0;
