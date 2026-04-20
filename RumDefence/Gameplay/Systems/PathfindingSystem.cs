@@ -39,7 +39,7 @@ public class PathfindingSystem : IGameLoopSystem
         return direction;
     }
 
-    public void UpdatePath(Vector2 currentPosition, Grid grid, HashSet<Point> untraversableTiles = null)
+    public void UpdatePath(Vector2 currentPosition, Grid grid)
     {
         int[,] map = new int[grid.Width, grid.Height];
 
@@ -58,8 +58,8 @@ public class PathfindingSystem : IGameLoopSystem
 
         map[entityPosition.Value.X, entityPosition.Value.Y] = 0;
 
-        Queue<Point> tiles = new Queue<Point>();
-        tiles.Enqueue(entityPosition.Value);
+        PriorityQueue<Point, int> tiles = new PriorityQueue<Point, int>();
+        tiles.Enqueue(entityPosition.Value, 0);
 
         while (tiles.Count > 0)
         {
@@ -74,7 +74,7 @@ public class PathfindingSystem : IGameLoopSystem
 
             foreach (var next in neighbors)
             {
-                if (untraversableTiles != null && untraversableTiles.Contains(next))
+                if (grid.UntraversableTiles != null && grid.UntraversableTiles.Contains(next))
                     continue;
 
                 // Check bounds
@@ -83,17 +83,17 @@ public class PathfindingSystem : IGameLoopSystem
 
                 if (next == targetPosition.Value)
                 {
-                    map[next.X, next.Y] = map[current.X, current.Y] + 1;
+                    map[next.X, next.Y] = map[current.X, current.Y] + grid.GetTileCost(next);
                     tiles.Clear();
                     break;
                 }
 
-                var cost = map[current.X, current.Y] + 1;
+                var cost = map[current.X, current.Y] + grid.GetTileCost(next);
 
                 if (cost < map[next.X, next.Y])
                 {
                     map[next.X, next.Y] = cost;
-                    tiles.Enqueue(next);
+                    tiles.Enqueue(next, cost + Heuristic(next, targetPosition.Value));
                 }
             }
         }
@@ -137,7 +137,7 @@ public class PathfindingSystem : IGameLoopSystem
             currentPoint = nextPoint;
         }
 
-        if (null == untraversableTiles)
+        if (null == grid.UntraversableTiles)
         {
             Path = new Queue<Vector2>(path);
             return;
@@ -150,7 +150,7 @@ public class PathfindingSystem : IGameLoopSystem
             var current = pathAsList[i];
             var next = pathAsList[i + 2];
             var crossedTiles = grid.GetTilesOnLine(current, next);
-            if (!crossedTiles.Intersect(untraversableTiles).Any())
+            if (!crossedTiles.Intersect(grid.UntraversableTiles).Any())
             {
                 pathAsList.RemoveAt(i + 1);
                 i--;
@@ -158,5 +158,10 @@ public class PathfindingSystem : IGameLoopSystem
         }
 
         Path = new Queue<Vector2>(pathAsList);
+    }
+
+    private static int Heuristic(Point a, Point b)
+    {
+        return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
     }
 }
