@@ -27,7 +27,8 @@ public class BuildMenu
     private int panelX;
 
     private const int PanelWidth = 180;
-    private const int ButtonSize = 80;
+    private const int ButtonWidth = PanelWidth - 20;
+    private const int ButtonHeight = 60;
 
     public BuildMenu(BuildManager buildManager, LevelProgressSystem progress)
     {
@@ -60,7 +61,7 @@ public class BuildMenu
         const int spacing = 8;
 
         int currentY = panelY + 70;
-        int buttonX = panelX + (PanelWidth - ButtonSize) / 2;
+        int buttonX = panelX + (PanelWidth - ButtonWidth) / 2;
 
         var healthBarBounds = new Rectangle(panelX + barMargin, currentY, PanelWidth - barMargin * 2, barHeight);
         healthBar = new HudHealthBar(progress, healthBarBounds);
@@ -69,19 +70,25 @@ public class BuildMenu
         coinAreaY = currentY;
         currentY += coinHeight + spacing;
 
-        cannonButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonSize, ButtonSize));
+        cannonButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
-        currentY += ButtonSize + spacing;
+        cannonButton.CostLabel = BuildManager.CannonTowerCost.ToString();
+        cannonButton.Font = font;
+        currentY += ButtonHeight + spacing;
 
-        musketButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonSize, ButtonSize));
+        musketButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
-        currentY += ButtonSize + spacing;
+        musketButton.CostLabel = BuildManager.MusketTowerCost.ToString();
+        musketButton.Font = font;
+        currentY += ButtonHeight + spacing;
 
-        wallButton = new IconButton(panelTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonSize, ButtonSize));
+        wallButton = new IconButton(panelTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
-        currentY += ButtonSize + spacing;
+        wallButton.CostLabel = BuildManager.WallCost.ToString();
+        wallButton.Font = font;
+        currentY += ButtonHeight + spacing;
 
-        removeButton = new IconButton(panelTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonSize, ButtonSize));
+        removeButton = new IconButton(panelTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
     }
