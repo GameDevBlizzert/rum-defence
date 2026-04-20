@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace RumDefence;
 
@@ -11,6 +12,7 @@ public class GridRenderer
 
     private BuildManager buildManager;
     private Grid grid;
+    private OverlayRenderer overlayRenderer;
 
     public GridRenderer(ITileTheme theme, BuildManager buildManager, Grid grid)
     {
@@ -23,6 +25,16 @@ public class GridRenderer
 
         pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
         pixel.SetData(new[] { Color.White });
+    }
+
+    public void SetOccupiedTiles(Dictionary<Point, bool> occupiedTiles)
+    {
+        overlayRenderer = new OverlayRenderer(grid, buildManager, occupiedTiles);
+    }
+
+    public OverlayRenderer GetOverlayRenderer()
+    {
+        return overlayRenderer;
     }
 
     public void Draw(Grid grid, SpriteBatch spriteBatch)

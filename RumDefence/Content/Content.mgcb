@@ -794,3 +794,27 @@
 /processorParam:TextureFormat=Color
 /build:KenneyUIPack/PNG/Blue/Default/icon_cross.png
 
+
+#begin Art/Themes/Grass/Utilities/placeable.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Utilities/placeable.png;Art/Themes/Grass/Utilities/placeable
+
+#begin Art/Themes/Grass/Utilities/destroyable.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Utilities/destroyable.png;Art/Themes/Grass/Utilities/destroyable

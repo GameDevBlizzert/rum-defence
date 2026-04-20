@@ -62,11 +62,15 @@ public class GameScreen : Screen
             walls
         );
 
+        var occupiedTiles = new Dictionary<Point, bool>();
+        renderer.SetOccupiedTiles(occupiedTiles);
+
         buildManager.SetWallPlacementCallback(p =>
         {
             if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.WallCost)
             {
                 walls[p] = new Wall(p);
+                occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.WallCost);
                 // Play random impact sound when wall is placed
                 AudioManager.Instance.PlayRandomImpact();
@@ -78,6 +82,7 @@ public class GameScreen : Screen
             bool removed = walls.Remove(p) || placedTowers.Remove(p);
             if (removed)
             {
+                occupiedTiles.Remove(p);
                 AudioManager.Instance.PlayRandomImpact();
             }
 
@@ -88,6 +93,7 @@ public class GameScreen : Screen
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.CannonTowerCost)
             {
                 placedTowers[p] = new CannonTower(grid.GridToWorld(p), Troops);
+                occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.CannonTowerCost);
                 AudioManager.Instance.PlayRandomImpact();
             }
@@ -98,6 +104,7 @@ public class GameScreen : Screen
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.MusketTowerCost)
             {
                 placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.MusketTowerCost);
                 AudioManager.Instance.PlayRandomImpact();
             }
@@ -133,8 +140,16 @@ public class GameScreen : Screen
         foreach (var troop in Troops)
             troop.Draw(spriteBatch);
 
+        foreach (var tower in placedTowers.Values) 
+            tower.Draw(spriteBatch);
+
+        var overlayRenderer = renderer.GetOverlayRenderer();
+        if (overlayRenderer != null)
+        {
+            overlayRenderer.Draw(spriteBatch);
+        }
+
         hud.Draw(spriteBatch);
-        foreach (var tower in placedTowers.Values) tower.Draw(spriteBatch);
     }
 
     private void UnlockNextLevel()
