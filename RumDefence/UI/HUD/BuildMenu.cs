@@ -18,7 +18,9 @@ public class BuildMenu
     private BuildManager buildManager;
     private LevelProgressSystem progress;
 
-    private const int PanelWidth = 120;
+    private HudHealthBar healthBar;
+
+    private const int PanelWidth = 180;
     private const int ButtonSize = 80;
     private const int ButtonMargin = 14;
     private const int HeaderHeight = 60;
@@ -44,6 +46,16 @@ public class BuildMenu
         int panelHeight = RumGame.VirtualHeight - 40;
 
         panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
+
+        const int barMargin = 8;
+        const int barHeight = 30;
+        var healthBarBounds = new Rectangle(
+            panelX + barMargin,
+            panelY + 10 +(HeaderHeight - barHeight) / 2 ,
+            PanelWidth - barMargin * 2,
+            barHeight
+        );
+        healthBar = new HudHealthBar(progress, healthBarBounds);
 
         int buttonX = panelX + (PanelWidth - ButtonSize) / 2;
         int sectionStart = panelY + HeaderHeight + LabelHeight + 8;
@@ -109,6 +121,8 @@ public class BuildMenu
     {
         // Panel background
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
+
+        healthBar.Draw(spriteBatch);
 
         // Section labels + buttons
         wallButton.Draw(spriteBatch);
