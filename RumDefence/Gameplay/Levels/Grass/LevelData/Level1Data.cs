@@ -23,25 +23,16 @@ public static class Level1Data
 
     private static List<Wave> Waves => new()
     {
-        CreateWave(1f, 1f, (NormalShip, 5)),
-        // CreateWave(2f, 4f, (NormalShip, 5)),
-
-        // CreateWave(1.5f, 3f, (NormalShip, 10)),
-        //
-        // CreateWave(1f, 2.5f,
-        //     (NormalShip, 10),
-        //     (BossShip, 1)
-        // ),
-        //
-        // CreateWave(1f, 2f,
-        //     (NormalShip, 15),
-        //     (BossShip, 3)
-        // ),
-        //
-        // CreateWave(0.8f, 1.5f,
-        //     (NormalShip, 20),
-        //     (BossShip, 6)
-        // )
+        CreateWave(3f, 5f, (NormalShip, 1)),
+        // CreateWave(3f, 5f, (NormalShip, 2)),
+        CreateWave(2.5f, 4f, (NormalShip, 3)),
+        // CreateWave(2.5f, 4f, (NormalShip, 4)),
+        CreateWave(2f, 3.5f, (NormalShip, 5)),
+        // CreateWave(2f, 3f, (NormalShip, 6)),
+        CreateWave(1.5f, 3f, (NormalShip, 7)),
+        CreateWave(1.5f, 2.5f, (NormalShip, 8)),
+        // CreateWave(1f, 2f, (NormalShip, 9), (BossShip, 1)),
+        // CreateWave(1f, 2f, (NormalShip, 10), (BossShip, 2)),
     };
 
     private static string[] MapData => new[]

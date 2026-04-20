@@ -9,14 +9,16 @@ public class Hud
     private CoinManager coinManager;
     private BuildMenu buildMenu;
     private BuildManager buildManager;
+    private WaveHud waveHud;
 
-    public Hud(BuildManager buildManager, LevelProgressSystem levelProgress)
+    public Hud(BuildManager buildManager, LevelProgressSystem levelProgress, ShipSpawner spawner)
     {
         this.buildManager = buildManager;
         this.levelProgress = levelProgress;
 
         buildMenu = new BuildMenu(buildManager, levelProgress);
         coinManager = new CoinManager(buildMenu.GetCoinTargetPosition, levelProgress);
+        waveHud = new WaveHud(spawner);
     }
 
     public CoinManager GetCoinManager()
@@ -34,5 +36,6 @@ public class Hud
     {
         buildMenu.Draw(spriteBatch);
         coinManager.Draw(spriteBatch);
+        waveHud.Draw(spriteBatch);
     }
 }

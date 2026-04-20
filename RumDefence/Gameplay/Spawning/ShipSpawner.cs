@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -14,9 +14,16 @@ public class ShipSpawner
     private int currentWaveIndex;
     private float timer;
     private float nextSpawnTime;
-
     private List<ShipGroup> activeGroups;
 
+    private const float WaveInterval = 30f;
+    private float waveCountdown;
+    private bool inCountdown;
+
+    public int CurrentWave => currentWaveIndex + 1;
+    public int TotalWaves { get; private set; }
+    public float WaveCountdown => waveCountdown;
+    public bool IsInCountdown => inCountdown;
     public bool IsFinished { get; private set; }
 
     public ShipSpawner(Level level, Grid grid)
@@ -25,24 +32,31 @@ public class ShipSpawner
         this.grid = grid;
 
         coastTiles = CoastSystem.GetCoastTiles(level.Map);
+        TotalWaves = level.Waves.Count;
 
-        StartWave(0);
+        BeginCountdown();
     }
 
     // =====================
     // WAVE FLOW
     // =====================
 
+    private void BeginCountdown()
+    {
+        inCountdown = true;
+        waveCountdown = WaveInterval;
+    }
+
     private void StartWave(int index)
     {
-        var wave = level.Waves[index];
+        inCountdown = false;
+        timer = 0f;
 
+        var wave = level.Waves[index];
         activeGroups = new List<ShipGroup>();
 
         foreach (var g in wave.ShipGroups)
-        {
             activeGroups.Add(new ShipGroup(g.Data, g.Count));
-        }
 
         SetNextSpawnTime(wave);
     }
@@ -64,7 +78,17 @@ public class ShipSpawner
         if (IsFinished)
             return null;
 
-        timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        if (inCountdown)
+        {
+            waveCountdown -= dt;
+            if (waveCountdown <= 0f)
+                StartWave(currentWaveIndex);
+            return null;
+        }
+
+        timer += dt;
 
         if (timer < nextSpawnTime)
             return null;
@@ -74,7 +98,8 @@ public class ShipSpawner
         var wave = level.Waves[currentWaveIndex];
         var ship = SpawnFromWave(wave);
 
-        SetNextSpawnTime(wave);
+        if (!inCountdown && !IsFinished)
+            SetNextSpawnTime(wave);
 
         return ship;
     }
@@ -92,8 +117,7 @@ public class ShipSpawner
 
         var coast = GetRandomCoast();
 
-        return (Ship)SpawnSystem.CreateShip(level, grid, group.Data, coast
-        );
+        return (Ship)SpawnSystem.CreateShip(level, grid, group.Data, coast);
     }
 
     // =====================
@@ -115,8 +139,8 @@ public class ShipSpawner
 
         if (currentWaveIndex < level.Waves.Count)
         {
-            StartWave(currentWaveIndex);
-            return GetNextGroup();
+            BeginCountdown();
+            return null;
         }
 
         IsFinished = true;
