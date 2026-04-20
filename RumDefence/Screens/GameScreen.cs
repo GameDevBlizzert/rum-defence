@@ -16,10 +16,9 @@ public class GameScreen : Screen
     private Hud hud { get; set; }
 
     private Dictionary<Point, Wall> walls = new();
+
     private WallRenderer wallRenderer;
-
     public ShipSpawner Spawner { get; private set; }
-
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
 
@@ -30,6 +29,7 @@ public class GameScreen : Screen
     private LevelProgressSystem progress;
 
     private HashSet<Point> latestUntraverableHashSet = new();
+
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
@@ -102,8 +102,6 @@ public class GameScreen : Screen
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
-
-        Spawner = new ShipSpawner(currentLevel, grid);
 
         AudioManager.Instance.PlayBackgroundMusic();
     }
@@ -232,27 +230,28 @@ public class GameScreen : Screen
 
     private void CheckLevelCompletion(GameTime gameTime)
     {
-        if (!levelCompleted && Spawner.IsFinished && Ships.Count == 0 && Troops.Count == 0)
-            progress.Update(gameTime, this);
-
-        // TODO: Do not ignore IsLost after testing
-        levelCompleted = progress.IsWon() /*|| progress.IsLost()*/;
-
-        if (progress.IsWon())
+        if (progress.IsLost())
         {
-            UnlockNextLevel();
-        }
-
-        foreach (var tower in placedTowers.Values) tower.Update(gameTime);
-
-        if (levelCompleted)
-        {
-            // Stop background music when leaving game screen
             AudioManager.Instance.StopBackgroundMusic();
-            // TODO: Show win or lose screen based
-            manager.SetScreen(new MainMenuScreen(manager));
+            manager.SetScreen(new GameOverScreen(manager, currentLevel, false));
+            return;
         }
 
+        progress.Update(gameTime, this);
+
+        if (!levelCompleted && progress.IsWon())
+        {
+            levelCompleted = true;
+
+            UnlockNextLevel();
+
+            AudioManager.Instance.StopBackgroundMusic();
+            manager.SetScreen(new GameOverScreen(manager, currentLevel, true));
+            return;
+        }
+
+        foreach (var tower in placedTowers.Values)
+            tower.Update(gameTime);
     }
 
     /// <summary>
