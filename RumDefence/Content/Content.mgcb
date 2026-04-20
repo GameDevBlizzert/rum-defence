@@ -577,18 +577,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Ships/ship_1.png;Art/Themes/Stone/Ships/ship_1
 
-#begin Art/Towers/canon-barrel.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Towers/canon-barrel.png
-
 #begin Art/Towers/musket.png
 /importer:TextureImporter
 /processor:TextureProcessor
