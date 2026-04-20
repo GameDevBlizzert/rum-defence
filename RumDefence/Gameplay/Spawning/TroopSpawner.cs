@@ -54,7 +54,7 @@ public class TroopSpawner
             }
             else
             {
-                troop = new BossTroop("Art/Pirates/pirates-green-sprite-sheet", spawnPosition + GetSpawnOffset(), troopTargetDestination);
+                troop = new BossTroop("Art/Pirates/pirates-red-sprite-sheet", spawnPosition + GetSpawnOffset(), troopTargetDestination);
             }
             SpawnTroop(troop);
         }
