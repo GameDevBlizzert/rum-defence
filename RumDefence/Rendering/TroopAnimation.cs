@@ -7,30 +7,29 @@ public class TroopAnimation : Animation
 {
     private SpriteLayer[] _currentActiveLayers;
 
-    private readonly SpriteLayer[] _walkDownLayers = {
-        new SpriteLayer(0, 2, 0), // Body Down
-        new SpriteLayer(4, 6, 0), // Hat Down
-        new SpriteLayer(8, 10, 0) // Clothes Down
-    };
-    private readonly SpriteLayer[] _walkUpLayers = {
-        new SpriteLayer(0, 2, 1), // Body Up
-        new SpriteLayer(4, 6, 1), // Hat Up
-        new SpriteLayer(8, 10, 1) // Clothes Up
-    };
-    private readonly SpriteLayer[] _walkRightLayers = {
-        new SpriteLayer(0, 2, 2), // Body Right
-        new SpriteLayer(4, 6, 2), // Hat Right
-        new SpriteLayer(8, 10, 2) // Clothes Right
-    };
-    private readonly SpriteLayer[] _walkLeftLayers = {
-        new SpriteLayer(0, 2, 3), // Body Left
-        new SpriteLayer(4, 6, 3), // Hat Left
-        new SpriteLayer(8, 10, 3) // Clothes Left
-    };
-
+    protected virtual SpriteLayer[] _walkDownLayers { get; set; }
+    protected virtual SpriteLayer[] _walkUpLayers { get; set; }
+    protected virtual SpriteLayer[] _walkRightLayers { get; set; }
+    protected virtual SpriteLayer[] _walkLeftLayers { get; set; }
     public TroopAnimation(int frameWidth, int frameHeight, float frameDuration, int totalFrames, bool isLoop) : base(frameWidth, frameHeight, frameDuration, totalFrames, isLoop)
     {
         _currentActiveLayers = _walkDownLayers;
+        _walkDownLayers = [
+            new SpriteLayer(0, 2, 0), // Body Down
+            new SpriteLayer(4, 6, 0), // Hat Down
+        ];
+        _walkUpLayers = [
+            new SpriteLayer(0, 2, 1), // Body Up
+            new SpriteLayer(4, 6, 1), // Hat Up
+        ];
+        _walkRightLayers = [
+            new SpriteLayer(0, 2, 2), // Body Right
+            new SpriteLayer(4, 6, 2), // Hat Right
+        ];
+        _walkLeftLayers = [
+            new SpriteLayer(0, 2, 3), // Body Left
+            new SpriteLayer(4, 6, 3), // Hat Left
+        ];
     }
     public void Update(GameTime gameTime, Vector2 direction)
     {
@@ -62,7 +61,7 @@ public class TroopAnimation : Animation
 
         return rects;
     }
-    private void SetWalkDirection(Vector2 direction)
+    public void SetWalkDirection(Vector2 direction)
     {
         if (Math.Abs(direction.X) > Math.Abs(direction.Y))
         {
