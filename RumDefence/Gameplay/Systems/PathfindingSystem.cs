@@ -74,9 +74,6 @@ public class PathfindingSystem : IGameLoopSystem
 
             foreach (var next in neighbors)
             {
-                if (grid.UntraversableTiles != null && grid.UntraversableTiles.Contains(next))
-                    continue;
-
                 // Check bounds
                 if (next.X < 0 || next.Y < 0 || next.X >= grid.Width || next.Y >= grid.Height)
                     continue;
