@@ -296,13 +296,15 @@ public class Ship : Entity
         if (!TryUpdatePath(Position, untraversable))
         {
             untraversable.RemoveWhere(p => TileRules.IsWater(grid.Tiles[p.Y, p.X]));
-            pathfinding.UpdatePath(Position, grid, untraversable);
+            grid.UntraversableTiles = untraversable;
+            pathfinding.UpdatePath(Position, grid);
         }
     }
 
     private bool TryUpdatePath(Vector2 position, HashSet<Point> untraversable)
     {
-        pathfinding.UpdatePath(position, grid, untraversable);
+        grid.UntraversableTiles = untraversable;
+        pathfinding.UpdatePath(position, grid);
         return pathfinding.Path.Count > 0;
     }
 
