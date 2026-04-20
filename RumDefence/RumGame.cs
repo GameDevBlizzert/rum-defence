@@ -21,6 +21,8 @@ namespace RumDefence
         public Grid CurrentGrid { get; set; }
         public Level CurrentLevel { get; set; }
 
+        private bool wasActive = true;
+
         public RumGame()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -37,16 +39,12 @@ namespace RumDefence
             Instance = this;
         }
 
-        private void OnResize(object sender, System.EventArgs e)
-        {
-            UpdateScaleMatrix();
-        }
+        private void OnResize(object sender, System.EventArgs e) => UpdateScaleMatrix();
 
         private void UpdateScaleMatrix()
         {
             float scaleX = (float)GraphicsDevice.Viewport.Width / VirtualWidth;
             float scaleY = (float)GraphicsDevice.Viewport.Height / VirtualHeight;
-
             scaleMatrix = Matrix.CreateScale(scaleX, scaleY, 1f);
         }
 
@@ -69,7 +67,36 @@ namespace RumDefence
 
         protected override void Update(GameTime gameTime)
         {
+            if (wasActive && !IsActive) // Focus lost
+            {
+                AudioManager.Instance.SuspendAudio();
+
+                if (_screenManager != null)
+                {
+                    Screen current = _screenManager.GetCurrentScreen();
+                    if (current is GameScreen)
+                    {
+                        _screenManager.SetScreen(new PauseScreen(_screenManager, current, focusLoss: true));
+                    }
+                }
+            }
+
+            if (!wasActive && IsActive) // Focus regained
+            {
+                AudioManager.Instance.ResumeAudio();
+            }
+
+            wasActive = IsActive;
+
+            // Block game logic when window is inactive.
+            if (!IsActive)
+            {
+                base.Update(gameTime);
+                return;
+            }
+
             _screenManager.Update(gameTime);
+            AudioManager.Instance.Update();
 
             base.Update(gameTime);
         }
@@ -79,7 +106,6 @@ namespace RumDefence
             GraphicsDevice.Clear(new Color(30, 30, 30));
 
             _screenManager.Draw(_spriteBatch, scaleMatrix);
-
             base.Draw(gameTime);
         }
     }

@@ -15,6 +15,8 @@ public class ScreenManager
         currentScreen.Load();
     }
 
+    public Screen GetCurrentScreen() => currentScreen;
+
     public static Vector2 GetMousePositionScaled()
     {
         var mouse = Mouse.GetState();
