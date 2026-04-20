@@ -6,7 +6,7 @@ namespace RumDefence;
 
 public class CannonTower : BaseTower
 {
-    public CannonTower(Vector2 location, List<Troop> troops) : base(location, troops)
+    public CannonTower(Vector2 location, List<Troop> troops) : base(location, troops, "Art/Towers/canon-barrel")
     {
         Range = 700f;
         FireRate = 1.5f;

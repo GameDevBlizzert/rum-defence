@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace RumDefence;
 
@@ -11,12 +12,13 @@ public class CoinManager
 
     private Texture2D coinTexture;
     private Func<Vector2> getTargetPosition;
+    private readonly LevelProgressSystem progress;
 
-    public int Balance { get; private set; }
 
-    public CoinManager(Func<Vector2> getTargetPosition)
+    public CoinManager(Func<Vector2> getTargetPosition, LevelProgressSystem progress)
     {
         this.getTargetPosition = getTargetPosition;
+        this.progress = progress;
         coinTexture = RumGame.Instance.Content.Load<Texture2D>("Art/UI/Coin");
     }
 
@@ -36,7 +38,7 @@ public class CoinManager
 
             if (coins[i].IsFinished)
             {
-                Balance++;
+                progress.AddCoins(1);
                 coins.RemoveAt(i);
             }
         }

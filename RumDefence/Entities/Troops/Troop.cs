@@ -1,6 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using RumDefence.Exceptions;
 
 namespace RumDefence;
 
@@ -16,6 +18,10 @@ public class Troop : EntityWithHealth
     public bool IsFinished { get; private set; }
 
     private List<ITroopAbility> abilities = new();
+
+    private static Texture2D pixel;
+
+    private PathfindingSystem pathfinding;
 
     public Troop(string spritePath, Vector2 start, Vector2 targetPos) : base(16, 32)
     {
@@ -34,6 +40,9 @@ public class Troop : EntityWithHealth
         origin = Vector2.Zero;
 
         Size = SizeSystem.Square(10f);
+
+        pathfinding = new(target);
+
         ApplySize();
     }
 
@@ -57,11 +66,23 @@ public class Troop : EntityWithHealth
 
         float speed = baseSpeed * SpeedMultiplier;
 
-        Vector2 dir = target - Position;
+        var troopGridPos = RumGame.Instance.CurrentGrid.WorldToGrid(Position);
+        var targetGridPos = RumGame.Instance.CurrentGrid.WorldToGrid(target);
 
-        if (dir.Length() < 5f)
+        if (troopGridPos == null || targetGridPos == null || troopGridPos.Value == targetGridPos.Value)
         {
             IsFinished = true;
+            return;
+        }
+
+        Vector2 dir;
+
+        try
+        {
+            dir = pathfinding.GetNextDirection(Position);
+        }
+        catch (NoPathPossibleException)
+        {
             return;
         }
 
@@ -70,8 +91,65 @@ public class Troop : EntityWithHealth
 
         Position += dir * speed * dt;
     }
+
+    public void UpdatePathfinding(HashSet<Point> untraversableTiles)
+    {
+        pathfinding.UpdatePath(Position, RumGame.Instance.CurrentGrid, untraversableTiles);
+    }
+
     public void MarkRewardGiven()
     {
         HasDroppedReward = true;
+    }
+
+
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        base.Draw(spriteBatch);
+
+        bool showPathfindingDebug = bool.Parse(
+            Environment.GetEnvironmentVariable("SHOW_PATHFINDING") ?? "false"
+        );
+
+        if (showPathfindingDebug)
+        {
+            Vector2 currentPos = Position;
+            const int dotSize = 8;
+
+            foreach (var point in pathfinding.Path)
+            {
+                spriteBatch.Draw(
+                    pixel,
+                    new Rectangle(
+                        (int)(point.X - dotSize / 2f),
+                        (int)(point.Y - dotSize / 2f),
+                        dotSize,
+                        dotSize
+                    ),
+                    Color.HotPink
+                );
+
+                Vector2 edge = point - currentPos;
+                float length = edge.Length();
+
+                if (length > 0.001f)
+                {
+                    float rotation = (float)Math.Atan2(edge.Y, edge.X);
+                    spriteBatch.Draw(
+                        pixel,
+                        currentPos,
+                        null,
+                        Color.HotPink,
+                        rotation,
+                        Vector2.Zero,
+                        new Vector2(length, 2f),
+                        SpriteEffects.None,
+                        0f
+                    );
+                }
+
+                currentPos = point;
+            }
+        }
     }
 }

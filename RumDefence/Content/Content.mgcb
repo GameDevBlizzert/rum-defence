@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/Objects/pirate_grunt.png;Art/Objects/pirate_grunt
+/build:Art/Objects/pirate_grunt.png
 
 #begin Art/Objects/RumBarrel.png
 /importer:TextureImporter
@@ -35,7 +35,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/Objects/RumBarrel.png
+/build:Art/Objects/RumBarrel.png;Art/Objects/RumBarrel
 
 #begin Art/Pirates/pirates-blue-sprite-sheet.png
 /importer:TextureImporter
@@ -84,30 +84,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Pirates/pirates-red-sprite-sheet.png
-
-#begin Art/Pirates/pirates-white-sprite-sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Pirates/pirates-white-sprite-sheet.png
-
-#begin Art/Pirates/pirates-yellow-sprite-sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Pirates/pirates-yellow-sprite-sheet.png
 
 #begin Art/Themes/Grass/Enemies/enemy_1.png
 /importer:TextureImporter
@@ -373,6 +349,30 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Walls/end.png;Art/Themes/Grass/Walls/end
 
+#begin Art/Themes/Grass/Walls/Twall_damaged.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/Twall_damaged.png;Art/Themes/Grass/Walls/Twall_damaged
+
+#begin Art/Themes/Grass/Walls/Twall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/Twall.png;Art/Themes/Grass/Walls/Twall
+
 #begin Art/Themes/Grass/Walls/wall_damaged_1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -408,6 +408,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Walls/wall.png;Art/Themes/Grass/Walls/wall
+
+#begin Art/Themes/Grass/Walls/Xwall_damaged.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/Xwall_damaged.png;Art/Themes/Grass/Walls/Xwall_damaged
+
+#begin Art/Themes/Grass/Walls/Xwall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/Xwall.png;Art/Themes/Grass/Walls/Xwall
 
 #begin Art/Themes/Stone/Enemies/enemy_1.png
 /importer:TextureImporter
@@ -552,6 +576,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Ships/ship_1.png;Art/Themes/Stone/Ships/ship_1
+
+#begin Art/Towers/canon-barrel.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Towers/canon-barrel.png
+
+#begin Art/Towers/musket.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Towers/musket.png
 
 #begin Art/UI/Buttons/button_blue.png
 /importer:TextureImporter
@@ -721,4 +769,28 @@
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
 /build:Fonts/KenneyFuture.spritefont
+
+#begin KenneyPiratePack/PNG/Default size/Ship parts/cannon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:KenneyPiratePack/PNG/Default size/Ship parts/cannon.png
+
+#begin KenneyUIPack/PNG/Blue/Default/icon_cross.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:KenneyUIPack/PNG/Blue/Default/icon_cross.png
 

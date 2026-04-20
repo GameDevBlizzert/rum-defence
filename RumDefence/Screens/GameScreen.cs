@@ -23,12 +23,13 @@ public class GameScreen : Screen
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
 
-    //remove when hud is done
-    private List<CannonTower> testTowers;
+    private Dictionary<Point, BaseTower> placedTowers = new();
 
     private bool levelCompleted;
 
     private LevelProgressSystem progress;
+
+    private HashSet<Point> latestUntraverableHashSet = new();
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
@@ -51,7 +52,9 @@ public class GameScreen : Screen
 
         Spawner = new ShipSpawner(currentLevel, grid);
 
-        hud = new Hud(buildManager);
+        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+
+        hud = new Hud(buildManager, progress);
 
         wallRenderer = new WallRenderer(
             grid,
@@ -61,25 +64,46 @@ public class GameScreen : Screen
 
         buildManager.SetWallPlacementCallback(p =>
         {
-            if (!walls.ContainsKey(p))
+            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.WallCost)
             {
                 walls[p] = new Wall(p);
+                progress.SpendCoins(BuildManager.WallCost);
                 // Play random impact sound when wall is placed
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
 
-        //remove when hud is done now only spawn at level 3
-        testTowers = currentLevel.Id == 3 ? new List<CannonTower>()
+        buildManager.SetRemoveCallback(p =>
         {
-            new (new Vector2(1500, 300), Troops),
-            new (new Vector2(1500, 900), Troops),
-            new (new Vector2(1700, 500), Troops),
+            bool removed = walls.Remove(p) || placedTowers.Remove(p);
+            if (removed)
+            {
+                AudioManager.Instance.PlayRandomImpact();
+            }
 
-        } : new();
+        });
+
+        buildManager.SetCannonTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.CannonTowerCost)
+            {
+                placedTowers[p] = new CannonTower(grid.GridToWorld(p), Troops);
+                progress.SpendCoins(BuildManager.CannonTowerCost);
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
+
+        buildManager.SetMusketTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.MusketTowerCost)
+            {
+                placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                progress.SpendCoins(BuildManager.MusketTowerCost);
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
 
         Spawner = new ShipSpawner(currentLevel, grid);
-        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
 
         AudioManager.Instance.PlayBackgroundMusic();
     }
@@ -110,7 +134,7 @@ public class GameScreen : Screen
             troop.Draw(spriteBatch);
 
         hud.Draw(spriteBatch);
-        testTowers.ForEach(x => x.Draw(spriteBatch));
+        foreach (var tower in placedTowers.Values) tower.Draw(spriteBatch);
     }
 
     private void UnlockNextLevel()
@@ -177,10 +201,18 @@ public class GameScreen : Screen
 
     private void UpdateTroops(GameTime gameTime)
     {
+        var untraversable = GetUntraversableTiles();
+        var updatePaths = !latestUntraverableHashSet.Equals(untraversable);
+
+        latestUntraverableHashSet = untraversable;
+
         for (int i = Troops.Count - 1; i >= 0; i--)
         {
             var troop = Troops[i];
             troop.Update(gameTime);
+
+            if (updatePaths)
+                troop.UpdatePathfinding(latestUntraverableHashSet);
 
             if (troop.IsDead && !troop.HasDroppedReward)
             {
@@ -211,7 +243,7 @@ public class GameScreen : Screen
             UnlockNextLevel();
         }
 
-        testTowers.ForEach(x => x.Update(gameTime));
+        foreach (var tower in placedTowers.Values) tower.Update(gameTime);
 
         if (levelCompleted)
         {
@@ -221,6 +253,40 @@ public class GameScreen : Screen
             manager.SetScreen(new MainMenuScreen(manager));
         }
 
+    }
+
+    /// <summary>
+    /// Get all the tiles troops cannot traverse, including walls and water tiles. Used for pathfinding.
+    /// </summary>
+    /// <returns>List of untraversable grid tiles</returns>
+    private HashSet<Point> GetUntraversableTiles()
+    {
+        var untraversable = new HashSet<Point>();
+
+        foreach (var wall in walls.Values)
+        {
+            untraversable.Add(wall.GridPos);
+        }
+
+        //foreach (var tower in placedTowers)
+        //{
+        //    var tile = grid.WorldToGrid(tower.);
+        //    if (tile != null)
+        //        untraversable.Add(tile.Value);
+        //}
+
+        for (int x = 0; x < grid.Width; x++)
+        {
+            for (int y = 0; y < grid.Height; y++)
+            {
+                if (TileRules.IsWater(grid.Tiles[y, x]))
+                {
+                    untraversable.Add(new Point(x, y));
+                }
+            }
+        }
+
+        return untraversable;
     }
 
 }
