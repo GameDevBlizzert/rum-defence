@@ -38,7 +38,7 @@ public class HudHealthBar
         spriteBatch.Draw(pixel, fillRect, barColor);
 
         // Label: "X / Y"
-        var label = $"{progress.LivesRemaining} / {progress.LivesTotal}";
+        var label = $"{progress.LivesRemaining}";
         var labelSize = font.MeasureString(label);
         var labelPos = new Vector2(
             barBounds.X + (barBounds.Width - labelSize.X) / 2f,
