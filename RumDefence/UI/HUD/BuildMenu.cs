@@ -20,8 +20,10 @@ public class BuildMenu
     private LevelProgressSystem progress;
 
     private HudHealthBar healthBar;
+    private Texture2D coinIcon;
 
     private int coinAreaY;
+    private int coinIconSize;
     private int panelX;
 
     private const int PanelWidth = 180;
@@ -48,9 +50,12 @@ public class BuildMenu
         int panelHeight = RumGame.VirtualHeight - 40;
         panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
 
+        coinIcon = content.Load<Texture2D>("Art/UI/Coin");
+
         const int barMargin = 8;
         int fontHeight = (int)font.MeasureString("0").Y;
         int barHeight = fontHeight + 8;
+        coinIconSize = fontHeight;
         int coinHeight = fontHeight;
         const int spacing = 8;
 
@@ -84,8 +89,10 @@ public class BuildMenu
     public Vector2 GetCoinTargetPosition()
     {
         var size = font.MeasureString(progress.CoinsRemaining.ToString());
-        float drawX = panelX + (PanelWidth - size.X) / 2f;
-        return new Vector2(drawX + size.X / 2f, coinAreaY + size.Y / 2f);
+        const int iconTextGap = 4;
+        float totalWidth = coinIconSize + iconTextGap + size.X;
+        float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
+        return new Vector2(coinRowX + coinIconSize / 2f, coinAreaY + coinIconSize / 2f);
     }
 
     public void Update(GameTime gameTime)
@@ -114,8 +121,13 @@ public class BuildMenu
 
         var coinText = progress.CoinsRemaining.ToString();
         var coinSize = font.MeasureString(coinText);
-        float coinDrawX = panelX + (PanelWidth - coinSize.X) / 2f;
-        spriteBatch.DrawString(font, coinText, new Vector2(coinDrawX, coinAreaY), Color.Yellow);
+        const int iconTextGap = 4;
+        float totalWidth = coinIconSize + iconTextGap + coinSize.X;
+        float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
+        var iconRect = new Rectangle((int)coinRowX, coinAreaY, coinIconSize, coinIconSize);
+        spriteBatch.Draw(coinIcon, iconRect, Color.White);
+        float textY = coinAreaY + (coinIconSize - coinSize.Y) / 2f;
+        spriteBatch.DrawString(font, coinText, new Vector2(coinRowX + coinIconSize + iconTextGap, textY), Color.Yellow);
 
         cannonButton.Draw(spriteBatch);
         musketButton.Draw(spriteBatch);
