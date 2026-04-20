@@ -70,6 +70,7 @@ namespace RumDefence
         protected override void Update(GameTime gameTime)
         {
             _screenManager.Update(gameTime);
+            AudioManager.Instance.Update();
 
             base.Update(gameTime);
         }

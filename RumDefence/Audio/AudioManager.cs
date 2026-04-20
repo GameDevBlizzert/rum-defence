@@ -137,4 +137,14 @@ public class AudioManager
     }
 
     public bool IsBackgroundMusicPlaying => isMusicPlaying;
+
+    public void Update()
+    {
+        // If music should be playing but has stopped, replay it
+        if (isMusicPlaying && currentSong != null && MediaPlayer.State == MediaState.Stopped)
+        {
+            MediaPlayer.Play(currentSong);
+            MediaPlayer.IsRepeating = true;
+        }
+    }
 }
