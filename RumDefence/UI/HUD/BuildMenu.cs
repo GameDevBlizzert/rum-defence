@@ -5,9 +5,8 @@ namespace RumDefence;
 
 public class BuildMenu
 {
+    private Texture2D panelTexture;
     private Texture2D pixelTexture;
-    private FantasyPanel panelBorder;
-    private FantasyPanel panelBackground;
 
     private Rectangle panelRect;
 
@@ -19,7 +18,7 @@ public class BuildMenu
     private BuildManager buildManager;
     private LevelProgressSystem progress;
 
-    private const int PanelWidth = 200;
+    private const int PanelWidth = 120;
     private const int ButtonSize = 80;
     private const int ButtonMargin = 14;
     private const int HeaderHeight = 60;
@@ -31,6 +30,7 @@ public class BuildMenu
         this.progress = progress;
 
         var content = RumGame.Instance.Content;
+        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
 
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
         var cannonIcon = content.Load<Texture2D>("KenneyPiratePack/PNG/Default size/Ship parts/cannon");
@@ -44,23 +44,12 @@ public class BuildMenu
         int panelHeight = RumGame.VirtualHeight - 40;
 
         panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
-        
-        // Background: draw full panel in black (corners, edges, and center)
-        panelBackground = new FantasyPanel(0);
-        panelBackground.SetBounds(panelRect);
-        panelBackground.DrawCenterFill = true;
-        panelBackground.Tint = Color.Black;
-        
-        // Border: draw only the border outline in white (no center fill)
-        panelBorder = new FantasyPanel(0);
-        panelBorder.SetBounds(panelRect);
-        panelBorder.DrawCenterFill = false;
-        panelBorder.Tint = Color.White;
 
         int buttonX = panelX + (PanelWidth - ButtonSize) / 2;
         int sectionStart = panelY + HeaderHeight + LabelHeight + 8;
 
         wallButton = new IconButton(
+            panelTexture,
             wallIcon,
             new Vector2(buttonX, sectionStart),
             new Vector2(ButtonSize, ButtonSize)
@@ -70,6 +59,7 @@ public class BuildMenu
         int cannonY = sectionStart + ButtonSize + ButtonMargin + LabelHeight + 8;
 
         cannonButton = new IconButton(
+            panelTexture,
             cannonIcon,
             new Vector2(buttonX, cannonY),
             new Vector2(ButtonSize, ButtonSize)
@@ -78,6 +68,7 @@ public class BuildMenu
         int musketY = cannonY + ButtonSize + ButtonMargin + LabelHeight + 8;
 
         musketButton = new IconButton(
+                  panelTexture,
                   cannonIcon,
                   new Vector2(buttonX, musketY),
                   new Vector2(ButtonSize, ButtonSize)
@@ -87,10 +78,12 @@ public class BuildMenu
         int removeY = musketY + ButtonSize + ButtonMargin + LabelHeight + 8;
 
         removeButton = new IconButton(
+            panelTexture,
             removeIcon,
             new Vector2(buttonX, removeY),
             new Vector2(ButtonSize, ButtonSize)
         );
+        removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
     }
 
@@ -114,9 +107,8 @@ public class BuildMenu
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        // Panel background (black) then border (white)
-        panelBackground.Draw(spriteBatch);
-        panelBorder.Draw(spriteBatch);
+        // Panel background
+        spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
         // Section labels + buttons
         wallButton.Draw(spriteBatch);

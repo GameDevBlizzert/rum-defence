@@ -8,6 +8,8 @@ public class PauseScreen : Screen
     private Screen previousScreen;
     private bool pausedDueToFocusLoss;
 
+    private Texture2D panelTexture;
+    private Texture2D buttonTexture;
     private SpriteFont font;
 
     private SimpleButton resumeButton;
@@ -47,15 +49,14 @@ public class PauseScreen : Screen
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
+        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
+
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        // Center buttons horizontally
-        int buttonWidth = 300;
-        int buttonCenterX = (RumGame.VirtualWidth - buttonWidth) / 2;
-
-        resumeButton = new SimpleButton(font, "Resume", new Vector2(buttonCenterX, 300), new Vector2(buttonWidth, 100));
-        settingsButton = new SimpleButton(font, "Settings", new Vector2(buttonCenterX, 450), new Vector2(buttonWidth, 100));
-        menuButton = new SimpleButton(font, "Main Menu", new Vector2(buttonCenterX, 600), new Vector2(buttonWidth, 100));
+        resumeButton = new SimpleButton(buttonTexture, font, "Resume", new Vector2(800, 300), new Vector2(300, 100));
+        settingsButton = new SimpleButton(buttonTexture, font, "Settings", new Vector2(800, 450), new Vector2(300, 100));
+        menuButton = new SimpleButton(buttonTexture, font, "Main Menu", new Vector2(800, 600), new Vector2(300, 100));
 
         resumeButton.OnClick = () =>
         {
@@ -96,6 +97,8 @@ public class PauseScreen : Screen
             GetPixel(spriteBatch),
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.3f);
+
+        spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
         resumeButton.Draw(spriteBatch);
         settingsButton.Draw(spriteBatch);

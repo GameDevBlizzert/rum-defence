@@ -82,7 +82,7 @@ public class LevelSelectScreen : Screen
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        RumGame.Instance.GraphicsDevice.Clear(new Color(30, 30, 30));
+        RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
 
         int startIndex = currentPage * levelsPerPage;
 

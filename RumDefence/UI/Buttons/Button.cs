@@ -16,7 +16,7 @@ public abstract class Button : UIElement
 
     public void SetSelected(bool selected) => isSelected = selected;
 
-    public virtual void SetBounds(Rectangle rect)
+    public void SetBounds(Rectangle rect)
     {
         bounds = rect;
         Position = new Vector2(rect.X, rect.Y);

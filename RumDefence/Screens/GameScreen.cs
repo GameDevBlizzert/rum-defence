@@ -140,7 +140,7 @@ public class GameScreen : Screen
         foreach (var troop in Troops)
             troop.Draw(spriteBatch);
 
-        foreach (var tower in placedTowers.Values)
+        foreach (var tower in placedTowers.Values) 
             tower.Draw(spriteBatch);
 
         var overlayRenderer = renderer.GetOverlayRenderer();
