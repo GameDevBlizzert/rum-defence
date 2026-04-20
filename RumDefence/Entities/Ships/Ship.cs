@@ -171,7 +171,7 @@ public class Ship : Entity
             dir.Normalize();
 
         float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
-        rotation = MathHelper.Lerp(rotation, targetRotation, RotationSpeed * dt);
+        rotation += MathHelper.WrapAngle(targetRotation - rotation) * RotationSpeed * dt;
 
         Position += dir * baseSpeed * dt;
 
@@ -249,7 +249,7 @@ public class Ship : Entity
         }
 
         float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
-        rotation = MathHelper.Lerp(rotation, targetRotation, RotationSpeed * dt);
+        rotation += MathHelper.WrapAngle(targetRotation - rotation) * RotationSpeed * dt;
 
         float distance = Vector2.Distance(Position, dockTarget);
         float speedFactor = MathHelper.Clamp(distance / DockSlowdownDistance, MinSpeedFactor, 1f);
@@ -423,7 +423,7 @@ public class Ship : Entity
                 if (dir != Vector2.Zero)
                 {
                     float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
-                    rotation = MathHelper.Lerp(rotation, targetRotation, RotationSpeed * dt);
+                    rotation += MathHelper.WrapAngle(targetRotation - rotation) * RotationSpeed * dt;
                     Position += dir * LeaveSpeed * dt;
                     return;
                 }
@@ -450,7 +450,7 @@ public class Ship : Entity
             dir.Normalize();
 
         float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
-        rotation = MathHelper.Lerp(rotation, targetRotation, RotationSpeed * dt);
+        rotation += MathHelper.WrapAngle(targetRotation - rotation) * RotationSpeed * dt;
 
         Position += dir * speed * dt;
     }
