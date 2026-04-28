@@ -17,10 +17,24 @@ public class GameOverScreen : Screen
     private Level level;
     private bool isWin;
 
-    public GameOverScreen(ScreenManager manager, Level level, bool isWin) : base(manager)
+    private int wavesSurvived;
+    private int coins;
+    private int lives;
+
+    public GameOverScreen(
+        ScreenManager manager,
+        Level level,
+        bool isWin,
+        int wavesSurvived,
+        int coins,
+        int lives
+    ) : base(manager)
     {
-        this.level = level;   
-        this.isWin = isWin;  
+        this.level = level;
+        this.isWin = isWin;
+        this.wavesSurvived = wavesSurvived;
+        this.coins = coins;
+        this.lives = lives;
     }
 
     public override void Load()
@@ -37,7 +51,7 @@ public class GameOverScreen : Screen
             buttonTexture,
             font,
             "Retry",
-            new Vector2(800, 450),
+            new Vector2(panelRect.Center.X - 150, panelRect.Y + 450),
             new Vector2(300, 100)
         );
 
@@ -45,7 +59,7 @@ public class GameOverScreen : Screen
             buttonTexture,
             font,
             "Menu",
-            new Vector2(800, 600),
+            new Vector2(panelRect.Center.X - 150, panelRect.Y + 580),
             new Vector2(300, 100)
         );
 
@@ -70,19 +84,42 @@ public class GameOverScreen : Screen
     {
         RumGame.Instance.GraphicsDevice.Clear(Color.Black);
 
+        // panel
         spriteBatch.Draw(panelTexture, panelRect, Color.White);
 
-        var text = isWin ? "YOU WIN" : "GAME OVER";
-        var size = font.MeasureString(text);
+        // titel
+        var title = isWin ? "YOU WIN!" : "GAME OVER";
+        var titleSize = font.MeasureString(title);
 
-        var textPos = new Vector2(
-            panelRect.Center.X - size.X / 2,
-            panelRect.Y + 100
+        var titlePos = new Vector2(
+            panelRect.Center.X - titleSize.X / 2,
+            panelRect.Y + 80
         );
 
-        spriteBatch.DrawString(font, text, textPos, Color.White);
+        spriteBatch.DrawString(font, title, titlePos, Color.White);
 
+        // stats
+        int startY = panelRect.Y + 220;
+        int spacing = 50;
+
+        DrawCenteredText(spriteBatch, $"Waves survived: {wavesSurvived}", startY);
+        DrawCenteredText(spriteBatch, $"Coins: {coins}", startY + spacing);
+        DrawCenteredText(spriteBatch, $"Lives left: {lives}", startY + spacing * 2);
+
+        // buttons
         retryButton.Draw(spriteBatch);
         menuButton.Draw(spriteBatch);
+    }
+
+    private void DrawCenteredText(SpriteBatch spriteBatch, string text, float y)
+    {
+        var size = font.MeasureString(text);
+
+        var pos = new Vector2(
+            panelRect.Center.X - size.X / 2,
+            y
+        );
+
+        spriteBatch.DrawString(font, text, pos, Color.White);
     }
 }

@@ -127,4 +127,9 @@ public class ShipSpawner
     {
         return coastTiles[rng.Next(coastTiles.Count)];
     }
+
+    public int GetCurrentWaveIndex()
+    {
+        return currentWaveIndex;
+    }
 }

@@ -30,7 +30,6 @@ public class GameScreen : Screen
 
     private HashSet<Point> latestUntraverableHashSet = new();
 
-
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
         currentLevel = level;
@@ -233,7 +232,14 @@ public class GameScreen : Screen
         if (progress.IsLost())
         {
             AudioManager.Instance.StopBackgroundMusic();
-            manager.SetScreen(new GameOverScreen(manager, currentLevel, false));
+            manager.SetScreen(new GameOverScreen(
+                manager,
+                currentLevel,
+                false,
+                Spawner.GetCurrentWaveIndex(),
+                progress.CoinsRemaining,
+                progress.LivesRemaining
+            ));
             return;
         }
 
@@ -246,7 +252,14 @@ public class GameScreen : Screen
             UnlockNextLevel();
 
             AudioManager.Instance.StopBackgroundMusic();
-            manager.SetScreen(new GameOverScreen(manager, currentLevel, true));
+            manager.SetScreen(new GameOverScreen(
+                manager,
+                currentLevel,
+                true,
+                Spawner.GetCurrentWaveIndex(),
+                progress.CoinsRemaining,
+                progress.LivesRemaining
+            ));
             return;
         }
 
