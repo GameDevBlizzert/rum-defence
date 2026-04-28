@@ -14,7 +14,9 @@ public class BossTroop : Troop
             3,
             true
         );
+        _swordAttackAnimation = new BossTroopSwordAttackAnimation();
         Health = 300;
+        Damage = 10;
         SpeedMultiplier = 0.5f;
         Size = SizeSystem.Square(12f);
         ApplySize();

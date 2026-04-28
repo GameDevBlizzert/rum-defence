@@ -13,7 +13,7 @@ public class Projectile : Entity
 
     public bool IsFinished { get; private set; }
 
-    private static Texture2D _pixel;
+    private static Texture2D _cannonBall;
 
     public Projectile(Vector2 start, Troop target, float speed, int damage)
     {
@@ -23,15 +23,14 @@ public class Projectile : Entity
         Position = start;
         _lastKnownPosition = target.Position;
 
-        if (_pixel == null)
+        if (_cannonBall == null)
         {
-            _pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-            _pixel.SetData(new[] { Color.Orange });
+            _cannonBall = RumGame.Instance.Content.Load<Texture2D>("KenneyPiratePack/PNG/Retina/Ship parts/cannonBall");
         }
 
-        Texture = _pixel;
-        origin = Vector2.Zero;
-        Size = SizeSystem.Square(0.12f);
+        Texture = _cannonBall;
+        origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
+        Size = SizeSystem.Square(0.25f);
         ApplySize();
     }
 

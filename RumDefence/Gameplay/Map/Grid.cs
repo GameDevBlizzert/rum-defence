@@ -1,5 +1,5 @@
-﻿using System;
 using System.Collections.Generic;
+using System;
 using Microsoft.Xna.Framework;
 
 namespace RumDefence;
@@ -7,6 +7,7 @@ namespace RumDefence;
 public class Grid
 {
     public int[,] Tiles;
+    public HashSet<Point> UntraversableTiles { get; set; } = new();
 
     public int Width => Tiles.GetLength(1);
     public int Height => Tiles.GetLength(0);
@@ -39,6 +40,14 @@ public class Grid
 
         return new Point(x, y);
     }
+
+    public int GetTileCost(Point tile)
+    {
+        if (UntraversableTiles.Contains(tile))
+            return 100_000;
+        return 1;
+    }
+
 
     /// <summary>
     /// Finds the tiles on a given line using Bresenham's line algorithm.

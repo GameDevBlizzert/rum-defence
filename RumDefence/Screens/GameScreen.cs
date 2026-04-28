@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RumDefence;
 
@@ -23,6 +23,7 @@ public class GameScreen : Screen
     public List<Troop> Troops { get; private set; } = new();
 
     private Dictionary<Point, BaseTower> placedTowers = new();
+    private List<Explosion> explosions = new();
 
     private bool levelCompleted;
 
@@ -49,11 +50,12 @@ public class GameScreen : Screen
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
 
+        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+        currentLevel.RumBarrel.OnDamageTaken = amount => progress.TakeHits(amount);
+
         Spawner = new ShipSpawner(currentLevel, grid);
 
-        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
-
-        hud = new Hud(buildManager, progress);
+        hud = new Hud(buildManager, progress, Spawner);
 
         wallRenderer = new WallRenderer(
             grid,
@@ -61,11 +63,15 @@ public class GameScreen : Screen
             walls
         );
 
+        var occupiedTiles = new Dictionary<Point, bool>();
+        renderer.SetOccupiedTiles(occupiedTiles);
+
         buildManager.SetWallPlacementCallback(p =>
         {
             if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.WallCost)
             {
                 walls[p] = new Wall(p);
+                occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.WallCost);
                 // Play random impact sound when wall is placed
                 AudioManager.Instance.PlayRandomImpact();
@@ -77,6 +83,7 @@ public class GameScreen : Screen
             bool removed = walls.Remove(p) || placedTowers.Remove(p);
             if (removed)
             {
+                occupiedTiles.Remove(p);
                 AudioManager.Instance.PlayRandomImpact();
             }
 
@@ -86,7 +93,13 @@ public class GameScreen : Screen
         {
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.CannonTowerCost)
             {
-                placedTowers[p] = new CannonTower(grid.GridToWorld(p), Troops);
+                var cannon = new CannonTower(grid.GridToWorld(p), Troops);
+                cannon.SetProjectileHitCallback((pos, explosionIndex) =>
+                {
+                    explosions.Add(new Explosion(pos, explosionIndex));
+                });
+                placedTowers[p] = cannon;
+                occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.CannonTowerCost);
                 AudioManager.Instance.PlayRandomImpact();
             }
@@ -97,6 +110,7 @@ public class GameScreen : Screen
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.MusketTowerCost)
             {
                 placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.MusketTowerCost);
                 AudioManager.Instance.PlayRandomImpact();
             }
@@ -113,7 +127,24 @@ public class GameScreen : Screen
         UpdateSpawner(gameTime);
         UpdateShips(gameTime);
         UpdateTroops(gameTime);
+        UpdateTowers(gameTime);
+        UpdateWaveProgression();
         CheckLevelCompletion(gameTime);
+    }
+
+    private void UpdateTowers(GameTime gameTime)
+    {
+        // Update all towers
+        foreach (var tower in placedTowers.Values)
+            tower.Update(gameTime);
+
+        // Update and remove finished explosions
+        for (int i = explosions.Count - 1; i >= 0; i--)
+        {
+            explosions[i].Update(gameTime);
+            if (explosions[i].IsFinished)
+                explosions.RemoveAt(i);
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -130,8 +161,20 @@ public class GameScreen : Screen
         foreach (var troop in Troops)
             troop.Draw(spriteBatch);
 
+        foreach (var tower in placedTowers.Values)
+            tower.Draw(spriteBatch);
+
+        // Draw explosions
+        foreach (var explosion in explosions)
+            explosion.Draw(spriteBatch);
+
+        var overlayRenderer = renderer.GetOverlayRenderer();
+        if (overlayRenderer != null)
+        {
+            overlayRenderer.Draw(spriteBatch);
+        }
+
         hud.Draw(spriteBatch);
-        foreach (var tower in placedTowers.Values) tower.Draw(spriteBatch);
     }
 
     private void UnlockNextLevel()
@@ -169,12 +212,8 @@ public class GameScreen : Screen
 
     private void UpdateSpawner(GameTime gameTime)
     {
-        var newShip = Spawner.Update(gameTime);
-
-        if (newShip != null)
-        {
-            Ships.Add(newShip);
-        }
+        Spawner.Update(gameTime);
+        Ships.AddRange(Spawner.NewShips);
     }
 
     private void UpdateShips(GameTime gameTime)
@@ -203,13 +242,16 @@ public class GameScreen : Screen
 
         latestUntraverableHashSet = untraversable;
 
+        if (updatePaths)
+            grid.UntraversableTiles = latestUntraverableHashSet;
+
         for (int i = Troops.Count - 1; i >= 0; i--)
         {
             var troop = Troops[i];
             troop.Update(gameTime);
 
             if (updatePaths)
-                troop.UpdatePathfinding(latestUntraverableHashSet);
+                troop.UpdatePathfinding();
 
             if (troop.IsDead && !troop.HasDroppedReward)
             {
@@ -225,6 +267,22 @@ public class GameScreen : Screen
                 Troops.RemoveAt(i);
             }
         }
+    }
+
+    private void UpdateWaveProgression()
+    {
+        if (Spawner.IsAllWavesComplete) return;
+        if (!Spawner.HasPreloadedWave) return;
+
+        bool attackingShipsRemain = Ships.Any(s =>
+            s.State == Ship.ShipState.SailingToDock ||
+            s.State == Ship.ShipState.Docked ||
+            s.State == Ship.ShipState.Unloading ||
+            s.State == Ship.ShipState.Leaving_BackOff ||
+            s.State == Ship.ShipState.Leaving_ToSea);
+
+        if (!attackingShipsRemain && Troops.Count == 0)
+            Spawner.AdvancePreloadToAttack();
     }
 
     private void CheckLevelCompletion(GameTime gameTime)
@@ -244,6 +302,8 @@ public class GameScreen : Screen
         }
 
         progress.Update(gameTime, this);
+        if (!levelCompleted && Spawner.IsAllWavesComplete && Ships.Count == 0 && Troops.Count == 0)
+            progress.SetWon();
 
         if (!levelCompleted && progress.IsWon())
         {
@@ -251,6 +311,9 @@ public class GameScreen : Screen
 
             UnlockNextLevel();
 
+        if (levelCompleted)
+        {
+            UnlockNextLevel();
             AudioManager.Instance.StopBackgroundMusic();
             manager.SetScreen(new GameOverScreen(
                 manager,
@@ -262,9 +325,6 @@ public class GameScreen : Screen
             ));
             return;
         }
-
-        foreach (var tower in placedTowers.Values)
-            tower.Update(gameTime);
     }
 
     /// <summary>

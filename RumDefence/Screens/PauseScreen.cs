@@ -6,6 +6,7 @@ namespace RumDefence;
 public class PauseScreen : Screen
 {
     private Screen previousScreen;
+    private bool pausedDueToFocusLoss;
 
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
@@ -16,12 +17,12 @@ public class PauseScreen : Screen
     private SimpleButton menuButton;
 
     private Rectangle panelRect;
-
     private Texture2D pixel;
 
-    public PauseScreen(ScreenManager manager, Screen previous) : base(manager)
+    public PauseScreen(ScreenManager manager, Screen previous, bool focusLoss = false) : base(manager)
     {
         previousScreen = previous;
+        pausedDueToFocusLoss = focusLoss;
     }
 
     private Texture2D GetPixel(SpriteBatch spriteBatch)
@@ -38,9 +39,13 @@ public class PauseScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        // Stop game music and play pause theme
-        AudioManager.Instance.StopBackgroundMusic();
-        AudioManager.Instance.PlayBackgroundMusic("GentleBreeze");
+        // Only switch to pause music when the player manually paused.
+        // For focus-loss pauses, audio is already suspended by RumGame —
+        // we leave it alone so ResumeAudio() can restore it perfectly.
+        if (!pausedDueToFocusLoss)
+        {
+            AudioManager.Instance.PlayBackgroundMusic("GentleBreeze");
+        }
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
@@ -55,7 +60,7 @@ public class PauseScreen : Screen
 
         resumeButton.OnClick = () =>
         {
-            // Stop pause music and resume game music
+            // Return to the game — restore gameplay music.
             AudioManager.Instance.PlayBackgroundMusic("PineappleUnderTheSea");
             manager.SetScreen(previousScreen);
         };
@@ -67,7 +72,6 @@ public class PauseScreen : Screen
 
         menuButton.OnClick = () =>
         {
-            // Stop pause music when going to menu
             AudioManager.Instance.StopBackgroundMusic();
             manager.SetScreen(new ConfirmScreen(
                 manager,
@@ -89,7 +93,8 @@ public class PauseScreen : Screen
     {
         previousScreen.Draw(spriteBatch);
 
-        spriteBatch.Draw(GetPixel(spriteBatch),
+        spriteBatch.Draw(
+            GetPixel(spriteBatch),
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.3f);
 
@@ -98,6 +103,5 @@ public class PauseScreen : Screen
         resumeButton.Draw(spriteBatch);
         settingsButton.Draw(spriteBatch);
         menuButton.Draw(spriteBatch);
-
     }
 }
