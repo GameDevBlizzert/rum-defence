@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework;
 using RumDefence.Exceptions;
 
 namespace RumDefence;
@@ -110,16 +109,21 @@ public class LevelProgressSystem : IGameLoopSystem
     {
         return LivesRemaining <= 0;
     }
+
+    /// <summary>
+    /// Manually set the level as won.
+    /// </summary>
     public void SetWon()
+    {
+        levelWon = true;
+    }
+
     /// <summary>
     /// Updates the level progress system.
     /// Checks if the win condition has been met.
     /// </summary>
     public void Update(GameTime gameTime, GameScreen gameScreen)
-    public void Update(GameTime gameTime, GameScreen gameScreen)
-        levelWon = true;
-    }
-}
+    {
         // - Spawner finished (no more enemies spawning)
         // - No ships left in the game
         // - No troops left in the game

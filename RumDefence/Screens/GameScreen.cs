@@ -86,7 +86,6 @@ public class GameScreen : Screen
                 occupiedTiles.Remove(p);
                 AudioManager.Instance.PlayRandomImpact();
             }
-
         });
 
         buildManager.SetCannonTowerPlacementCallback(p =>
@@ -98,6 +97,7 @@ public class GameScreen : Screen
                 {
                     explosions.Add(new Explosion(pos, explosionIndex));
                 });
+
                 placedTowers[p] = cannon;
                 occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.CannonTowerCost);
@@ -122,6 +122,7 @@ public class GameScreen : Screen
     public override void Update(GameTime gameTime)
     {
         if (HandlePause()) return;
+
         input.Update();
         UpdateBuildSystem(gameTime);
         UpdateSpawner(gameTime);
@@ -152,7 +153,6 @@ public class GameScreen : Screen
         RumGame.Instance.GraphicsDevice.Clear(new Color(30, 144, 255));
 
         renderer.Draw(grid, spriteBatch);
-
         wallRenderer.Draw(spriteBatch);
 
         foreach (var ship in Ships)
@@ -287,6 +287,7 @@ public class GameScreen : Screen
 
     private void CheckLevelCompletion(GameTime gameTime)
     {
+        // Lose condition
         if (progress.IsLost())
         {
             AudioManager.Instance.StopBackgroundMusic();
@@ -302,6 +303,8 @@ public class GameScreen : Screen
         }
 
         progress.Update(gameTime, this);
+
+        // Win condition
         if (!levelCompleted && Spawner.IsAllWavesComplete && Ships.Count == 0 && Troops.Count == 0)
             progress.SetWon();
 
@@ -310,11 +313,8 @@ public class GameScreen : Screen
             levelCompleted = true;
 
             UnlockNextLevel();
-
-        if (levelCompleted)
-        {
-            UnlockNextLevel();
             AudioManager.Instance.StopBackgroundMusic();
+
             manager.SetScreen(new GameOverScreen(
                 manager,
                 currentLevel,
@@ -340,13 +340,6 @@ public class GameScreen : Screen
             untraversable.Add(wall.GridPos);
         }
 
-        //foreach (var tower in placedTowers)
-        //{
-        //    var tile = grid.WorldToGrid(tower.);
-        //    if (tile != null)
-        //        untraversable.Add(tile.Value);
-        //}
-
         for (int x = 0; x < grid.Width; x++)
         {
             for (int y = 0; y < grid.Height; y++)
@@ -360,5 +353,4 @@ public class GameScreen : Screen
 
         return untraversable;
     }
-
 }
