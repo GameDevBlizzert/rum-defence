@@ -293,11 +293,11 @@ public class GameScreen : Screen
             AudioManager.Instance.StopBackgroundMusic();
             manager.SetScreen(new GameOverScreen(
                 manager,
+                this, 
                 currentLevel,
                 false,
                 Spawner.GetCurrentWaveIndex(),
-                progress.CoinsRemaining,
-                progress.LivesRemaining
+                progress.CoinsRemaining
             ));
             return;
         }
@@ -317,11 +317,11 @@ public class GameScreen : Screen
 
             manager.SetScreen(new GameOverScreen(
                 manager,
+                this,
                 currentLevel,
                 true,
                 Spawner.GetCurrentWaveIndex(),
-                progress.CoinsRemaining,
-                progress.LivesRemaining
+                progress.CoinsRemaining
             ));
             return;
         }

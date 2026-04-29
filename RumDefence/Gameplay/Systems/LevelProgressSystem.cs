@@ -97,6 +97,8 @@ public class LevelProgressSystem : IGameLoopSystem
     /// <returns>A boolean indicating if the level is won or not</returns>
     public bool IsWon()
     {
+        if (IsLost()) return false;
+
         return levelWon;
     }
 
