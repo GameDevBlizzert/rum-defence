@@ -293,7 +293,7 @@ public class GameScreen : Screen
             AudioManager.Instance.StopBackgroundMusic();
             manager.SetScreen(new GameOverScreen(
                 manager,
-                this, 
+                this,
                 currentLevel,
                 false,
                 Spawner.GetCurrentWaveIndex(),
