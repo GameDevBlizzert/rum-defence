@@ -27,6 +27,7 @@ public class Troop : EntityWithHealth, ICollidable
     private static Texture2D pixel;
 
     private PathfindingSystem pathfinding;
+    public bool NeedsPathInit { get; private set; } = true;
 
     public Troop(string spritePath, Vector2 start, Vector2 targetPos) : base(16, 32)
     {
@@ -138,7 +139,9 @@ public class Troop : EntityWithHealth, ICollidable
 
     public void UpdatePathfinding()
     {
-        pathfinding.UpdatePath(Position, RumGame.Instance.CurrentGrid);
+        NeedsPathInit = false;
+        var grid = RumGame.Instance.CurrentGrid;
+        pathfinding.UpdatePath(Position, grid, grid.UntraversableTiles);
     }
 
     public void MarkRewardGiven()
