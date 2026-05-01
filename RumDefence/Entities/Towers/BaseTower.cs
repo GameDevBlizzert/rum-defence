@@ -90,7 +90,7 @@ public class BaseTower : Entity
             {
                 AttackMode.Closest => dist,
                 AttackMode.Strongest => -troop.Health, // highest HP = lowest value
-                AttackMode.First => dist,          // TODO: replace with path progress location of the rum
+                AttackMode.First => (troop.Path != null && troop.Path.Count > 0 ? (troop.Path.Count * 1000f) + Vector2.Distance(troop.Position, troop.Path.Peek()) : dist),
                 _ => dist
             };
 
