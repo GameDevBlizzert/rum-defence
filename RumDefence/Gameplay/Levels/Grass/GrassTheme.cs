@@ -9,7 +9,7 @@ public class GrassTheme : BaseTheme, IWallTheme
     private string wallPrefix = "Art/Themes/Grass/Walls/";
     private string shipPrefix = "Art/Themes/Grass/Ships/";
     private string enemyPrefix = "Art/Themes/Grass/Enemies/";
-    private string decorationPrefix = "Art/Themes/Decorations";
+    private string decorationPrefix = "Art/Themes/Decorations/";
 
     private Dictionary<int, List<Texture2D>> tileMap;
 
