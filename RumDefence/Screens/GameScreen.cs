@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,23 +15,18 @@ public class GameScreen : Screen
     private BuildManager buildManager { get; set; }
     private InputManager input { get; set; }
     private Hud hud { get; set; }
-
-    private Dictionary<Point, Wall> walls = new();
-    private WallRenderer wallRenderer;
-
+    private Dictionary<Point, Wall> walls { get; set; } = new();
+    private WallRenderer wallRenderer { get; set; }
+    private Dictionary<Point, BaseTower> placedTowers { get; set; } = new();
+    private List<Explosion> explosions { get; set; } = new();
     public ShipSpawner Spawner { get; private set; }
-
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
-
-    private Dictionary<Point, BaseTower> placedTowers = new();
-    private List<Explosion> explosions = new();
-
-    private bool levelCompleted;
-
-    private LevelProgressSystem progress;
-
-    private HashSet<Point> latestUntraverableHashSet = new();
+    private bool levelCompleted { get; set; }
+    private LevelProgressSystem progress { get; set; }
+    private HashSet<Point> latestUntraverableHashSet { get; set; } = new();
+    private Texture2D[] decorationTextures { get; set; }
+    private Random rng { get; set; } = new();
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
@@ -39,83 +35,9 @@ public class GameScreen : Screen
 
     public override void Load()
     {
-        grid = new Grid(currentLevel.Map);
-
-        RumGame.Instance.CurrentGrid = grid;
-        RumGame.Instance.CurrentLevel = currentLevel;
-
-        GridSystem.CalculateLayout(grid);
-
-        input = new InputManager();
-        buildManager = new BuildManager(grid);
-
-        renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
-
-        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
-        currentLevel.RumBarrel.OnDamageTaken = amount => progress.TakeHits(amount);
-
-        Spawner = new ShipSpawner(currentLevel, grid);
-
-        hud = new Hud(buildManager, progress, Spawner);
-
-        wallRenderer = new WallRenderer(
-            grid,
-            currentLevel.Theme.Walls,
-            walls
-        );
-
-        var occupiedTiles = new Dictionary<Point, bool>();
-        renderer.SetOccupiedTiles(occupiedTiles);
-
-        buildManager.SetWallPlacementCallback(p =>
-        {
-            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.WallCost)
-            {
-                walls[p] = new Wall(p);
-                occupiedTiles[p] = true;
-                progress.SpendCoins(BuildManager.WallCost);
-                // Play random impact sound when wall is placed
-                AudioManager.Instance.PlayRandomImpact();
-            }
-        });
-
-        buildManager.SetRemoveCallback(p =>
-        {
-            bool removed = walls.Remove(p) || placedTowers.Remove(p);
-            if (removed)
-            {
-                occupiedTiles.Remove(p);
-                AudioManager.Instance.PlayRandomImpact();
-            }
-
-        });
-
-        buildManager.SetCannonTowerPlacementCallback(p =>
-        {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.CannonTowerCost)
-            {
-                var cannon = new CannonTower(grid.GridToWorld(p), Troops);
-                cannon.SetProjectileHitCallback((pos, explosionIndex) =>
-                {
-                    explosions.Add(new Explosion(pos, explosionIndex));
-                });
-                placedTowers[p] = cannon;
-                occupiedTiles[p] = true;
-                progress.SpendCoins(BuildManager.CannonTowerCost);
-                AudioManager.Instance.PlayRandomImpact();
-            }
-        });
-
-        buildManager.SetMusketTowerPlacementCallback(p =>
-        {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.MusketTowerCost)
-            {
-                placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
-                occupiedTiles[p] = true;
-                progress.SpendCoins(BuildManager.MusketTowerCost);
-                AudioManager.Instance.PlayRandomImpact();
-            }
-        });
+        InitializeGrid();
+        InitializeSystems();
+        InitializeBuildCallbacks();
 
         AudioManager.Instance.PlayBackgroundMusic();
     }
@@ -165,9 +87,11 @@ public class GameScreen : Screen
         foreach (var tower in placedTowers.Values)
             tower.Draw(spriteBatch);
 
-        // Draw explosions
         foreach (var explosion in explosions)
             explosion.Draw(spriteBatch);
+
+        foreach (var deco in currentLevel.Decorations)
+            deco.Draw(spriteBatch, grid);
 
         var overlayRenderer = renderer.GetOverlayRenderer();
         if (overlayRenderer != null)
@@ -335,6 +259,98 @@ public class GameScreen : Screen
         }
 
         return untraversable;
+    }
+
+    private void InitializeGrid()
+    {
+        grid = new Grid(currentLevel.Map);
+
+        RumGame.Instance.CurrentGrid = grid;
+        RumGame.Instance.CurrentLevel = currentLevel;
+
+        GridSystem.CalculateLayout(grid);
+    }
+
+    private void InitializeSystems()
+    {
+        input = new InputManager();
+        buildManager = new BuildManager(grid);
+
+        renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
+
+        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+        currentLevel.RumBarrel.OnDamageTaken = amount => progress.TakeHits(amount);
+
+        Spawner = new ShipSpawner(currentLevel, grid);
+
+        hud = new Hud(buildManager, progress, Spawner);
+
+        wallRenderer = new WallRenderer(
+            grid,
+            currentLevel.Theme.Walls,
+            walls
+        );
+    }
+
+    private void InitializeBuildCallbacks()
+    {
+        var occupiedTiles = new Dictionary<Point, bool>();
+        renderer.SetOccupiedTiles(occupiedTiles);
+
+        buildManager.SetWallPlacementCallback(p =>
+        {
+            currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
+
+            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.WallCost)
+            {
+                walls[p] = new Wall(p);
+                occupiedTiles[p] = true;
+                progress.SpendCoins(BuildManager.WallCost);
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
+
+        buildManager.SetRemoveCallback(p =>
+        {
+            bool removed = walls.Remove(p) || placedTowers.Remove(p);
+            if (removed)
+            {
+                occupiedTiles.Remove(p);
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
+
+        buildManager.SetCannonTowerPlacementCallback(p =>
+        {
+            currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
+
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.CannonTowerCost)
+            {
+                var cannon = new CannonTower(grid.GridToWorld(p), Troops);
+                cannon.SetProjectileHitCallback((pos, explosionIndex) =>
+                {
+                    explosions.Add(new Explosion(pos, explosionIndex));
+                });
+
+                placedTowers[p] = cannon;
+                occupiedTiles[p] = true;
+                progress.SpendCoins(BuildManager.CannonTowerCost);
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
+
+        buildManager.SetMusketTowerPlacementCallback(p =>
+        {
+            currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
+
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.MusketTowerCost)
+            {
+                placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                occupiedTiles[p] = true;
+                progress.SpendCoins(BuildManager.MusketTowerCost);
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        });
     }
 
 }

@@ -9,6 +9,7 @@ public class GrassTheme : BaseTheme, IWallTheme
     private string wallPrefix = "Art/Themes/Grass/Walls/";
     private string shipPrefix = "Art/Themes/Grass/Ships/";
     private string enemyPrefix = "Art/Themes/Grass/Enemies/";
+    private string decorationPrefix = "Art/Themes/Decorations";
 
     private Dictionary<int, List<Texture2D>> tileMap;
 
@@ -27,6 +28,7 @@ public class GrassTheme : BaseTheme, IWallTheme
     private List<Texture2D> cornerDamagedList;
     private List<Texture2D> twallDamagedList;
     private List<Texture2D> xwallDamagedList;
+    private List<Texture2D> decorations;
 
     private Dictionary<string, Texture2D> shipMap;
 
@@ -47,6 +49,25 @@ public class GrassTheme : BaseTheme, IWallTheme
             { 7, LoadList(envPrefix, "7") },
             { 8, LoadList(envPrefix, "8.1", "8.2") },
             { 9, LoadList(envPrefix, "9") }
+        };
+
+        decorations = new List<Texture2D>()
+        {
+            // ROCKS
+            Load(decorationPrefix + "Rock_01"),
+            Load(decorationPrefix + "Rock_02"),
+            Load(decorationPrefix + "Rock_03"),
+            Load(decorationPrefix + "Rock_Moss_01"),
+            Load(decorationPrefix + "Rock_Moss_02"),
+            Load(decorationPrefix + "Rock_Moss_03"),
+
+            // TREES
+            Load(decorationPrefix + "Tree_01"),
+            Load(decorationPrefix + "Tree_02"),
+
+            // BUSHES
+            Load(decorationPrefix + "Bush_Small_01"),
+            Load(decorationPrefix + "Bush_Small_02"),
         };
 
         Single = Load(wallPrefix + "single");
@@ -121,5 +142,15 @@ public class GrassTheme : BaseTheme, IWallTheme
     public override Texture2D GetRandomEnemy()
     {
         return GetRandom(enemies);
+    }
+
+    public override List<Texture2D> GetDecorations()
+    {
+        return decorations;
+    }
+
+    public override float GetDecorationDensity()
+    {
+        return 0.2f;
     }
 }

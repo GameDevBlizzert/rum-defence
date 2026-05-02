@@ -11,8 +11,10 @@ public class Level
     public List<Wave> Waves { get; set; }
     public bool IsUnlocked { get; set; }
     public Point RumTile { get; private set; }
-
-    private RumBarrel _rumBarrel;
+    public List<DecorationManager.Decoration> Decorations { get; private set; }
+    private RumBarrel _rumBarrel { get; set; }
+    public int StartingCoinBalance { get; private set; }
+    public int StartingLives { get; private set; }
     public RumBarrel RumBarrel
     {
         get
@@ -26,8 +28,6 @@ public class Level
         }
     }
 
-    public int StartingCoinBalance { get; private set; }
-    public int StartingLives { get; private set; }
 
 
     public Level(int id, string[] mapData, Theme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0, int startingLives = 100)
@@ -36,8 +36,8 @@ public class Level
         Theme = theme;
         Waves = waves;
         IsUnlocked = unlocked;
-
         Map = ParseMap(mapData);
+        Decorations = DecorationManager.Generate(this);
         StartingCoinBalance = startingCoinBalance;
         StartingLives = startingLives;
     }
