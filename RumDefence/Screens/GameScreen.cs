@@ -22,6 +22,13 @@ public class GameScreen : Screen
     public ShipSpawner Spawner { get; private set; }
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
+    private bool levelCompleted { get; set; }
+    private LevelProgressSystem progress { get; set; }
+    private HashSet<Point> latestUntraverableHashSet { get; set; } = new();
+    private Texture2D[] decorationTextures { get; set; }
+    private Random rng { get; set; } = new();
+    private BaseTower selectedTower { get; set; } = null;
+    private Texture2D pixel { get; set; }
 
     private Dictionary<Point, BaseTower> placedTowers = new();
     private List<Explosion> explosions = new();
@@ -33,8 +40,6 @@ public class GameScreen : Screen
     private LevelProgressSystem progress;
 
     private HashSet<Point> latestUntraverableHashSet = new();
-
-    private Texture2D pixel;
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
