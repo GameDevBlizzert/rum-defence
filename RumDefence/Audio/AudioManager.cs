@@ -14,6 +14,7 @@ public class AudioManager
     private Dictionary<string, Song> songs = new();
     private List<SoundEffect> footstepSounds = new();
     private List<SoundEffect> impactSounds = new();
+    private List<SoundEffect> explosionSounds = new();
 
     private Song currentSong;
     private string currentSongName;
@@ -33,12 +34,16 @@ public class AudioManager
         soundEffects["error"] = content.Load<SoundEffect>("Audio/error_008");
         soundEffects["switch"] = content.Load<SoundEffect>("Audio/switch_002");
         soundEffects["lose"] = content.Load<SoundEffect>("Audio/lose");
+        soundEffects["shoot"] = content.Load<SoundEffect>("Audio/shoot");
 
         for (int i = 0; i < 5; i++)
             footstepSounds.Add(content.Load<SoundEffect>($"Audio/footstep_grass_00{i}"));
 
         for (int i = 0; i < 5; i++)
             impactSounds.Add(content.Load<SoundEffect>($"Audio/impactMining_00{i}"));
+
+        explosionSounds.Add(content.Load<SoundEffect>("Audio/explosion_quick"));
+        explosionSounds.Add(content.Load<SoundEffect>("Audio/explosion_small"));
 
         songs["PineappleUnderTheSea"] = content.Load<Song>("Audio/PineappleUnderTheSea");
         songs["WhatCloudsAreMadeOf"] = content.Load<Song>("Audio/WhatCloudsAreMadeOf");
@@ -67,6 +72,14 @@ public class AudioManager
             impactSounds[random.Next(impactSounds.Count)].Play();
         else
             System.Diagnostics.Debug.WriteLine("Warning: No impact sounds loaded");
+    }
+
+    public void PlayRandomExplosion()
+    {
+        if (explosionSounds.Count > 0)
+            explosionSounds[random.Next(explosionSounds.Count)].Play();
+        else
+            System.Diagnostics.Debug.WriteLine("Warning: No explosion sounds loaded");
     }
 
     public void PlayBackgroundMusic(string songName = "PineappleUnderTheSea")

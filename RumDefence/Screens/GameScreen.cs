@@ -241,7 +241,7 @@ public class GameScreen : Screen
     private void UpdateTroops(GameTime gameTime)
     {
         var untraversable = GetUntraversableTiles();
-        var updatePaths = !latestUntraverableHashSet.Equals(untraversable);
+        var updatePaths = !latestUntraverableHashSet.SetEquals(untraversable);
 
         latestUntraverableHashSet = untraversable;
 
@@ -253,7 +253,7 @@ public class GameScreen : Screen
             var troop = Troops[i];
             troop.Update(gameTime);
 
-            if (updatePaths)
+            if (updatePaths || troop.NeedsPathInit)
                 troop.UpdatePathfinding();
 
             if (troop.IsDead && !troop.HasDroppedReward)
