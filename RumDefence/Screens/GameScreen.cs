@@ -29,17 +29,8 @@ public class GameScreen : Screen
     private Random rng { get; set; } = new();
     private BaseTower selectedTower { get; set; } = null;
     private Texture2D pixel { get; set; }
-
-    private Dictionary<Point, BaseTower> placedTowers = new();
-    private List<Explosion> explosions = new();
-
-    private BaseTower selectedTower = null;
-
-    private bool levelCompleted;
-
-    private LevelProgressSystem progress;
-
-    private HashSet<Point> latestUntraverableHashSet = new();
+    private Dictionary<Point, BaseTower> placedTowers { get; set; } = new();
+    private List<Explosion> explosions { get; set; } = new();
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
