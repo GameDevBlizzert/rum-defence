@@ -257,7 +257,7 @@ public class GameScreen : Screen
     private void UpdateTroops(GameTime gameTime)
     {
         var untraversable = GetUntraversableTiles();
-        var updatePaths = !latestUntraverableHashSet.SequenceEqual(untraversable); // Fix comparison and typo if there was any in actual code, wait let me check what was there.
+        var updatePaths = !latestUntraverableHashSet.Equals(untraversable); 
 
         latestUntraverableHashSet = untraversable;
 
