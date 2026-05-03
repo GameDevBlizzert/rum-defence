@@ -24,24 +24,11 @@ public static class Level3Data
 
     private static List<Wave> Waves => new()
     {
-        CreateWave(2f, 4f, (NormalShip, 1)),
-
-        CreateWave(1.5f, 3f, (NormalShip, 2)),
-
-        CreateWave(1f, 2.5f,
-            (NormalShip, 3),
-            (BossShip, 3)
-        ),
-
-        CreateWave(1f, 2f,
-            (NormalShip, 8),
-            (BossShip, 4)
-        ),
-
-        CreateWave(0.8f, 1.5f,
-            (NormalShip, 10),
-            (BossShip, 5)
-        )
+        CreateWave(4f, (NormalShip, 1)),
+        CreateWave(6f, (NormalShip, 2)),
+        CreateWave(10f, (NormalShip, 3), (BossShip, 3)),
+        CreateWave(18f, (NormalShip, 8), (BossShip, 4)),
+        CreateWave(17f, (NormalShip, 10), (BossShip, 5)),
     };
 
     private static string[] MapData => new[]
@@ -66,15 +53,13 @@ public static class Level3Data
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5"
     };
 
-    private static Wave CreateWave(float min, float max, params (Ship.Data data, int count)[] groups)
+    private static Wave CreateWave(float waveDuration, params (Ship.Data data, int count)[] groups)
     {
         var list = new List<ShipGroup>();
 
         foreach (var (data, count) in groups)
-        {
             list.Add(new ShipGroup(data, count));
-        }
 
-        return new Wave(list, min, max, Random.Shared.Next(0, 30));
+        return new Wave(list, waveDuration);
     }
 }

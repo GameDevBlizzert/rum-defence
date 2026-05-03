@@ -28,9 +28,7 @@ public class WaveHud
         string waveText = $"Wave {spawner.CurrentWave} / {spawner.TotalWaves}";
         string subText = spawner.IsFinished
             ? "All waves complete!"
-            : spawner.IsInCountdown
-                ? $"Next wave in: {(int)Math.Ceiling(spawner.WaveCountdown)} sec"
-                : "Incoming!";
+            : $"{(int)spawner.WaveTimeRemaining} sec";
 
         var waveSize = font.MeasureString(waveText);
         var subSize = font.MeasureString(subText);
@@ -47,7 +45,7 @@ public class WaveHud
         float waveY = panelY + PanelPaddingY;
         spriteBatch.DrawString(font, waveText, new Vector2(waveX, waveY), Color.White);
 
-        Color subColor = spawner.IsInCountdown ? Color.Yellow : new Color(255, 100, 100);
+        Color subColor = spawner.IsFinished ? Color.White : Color.Yellow;
         float subX = panelX + (panelWidth - subSize.X) / 2f;
         float subY = waveY + waveSize.Y + LineSpacing;
         spriteBatch.DrawString(font, subText, new Vector2(subX, subY), subColor);

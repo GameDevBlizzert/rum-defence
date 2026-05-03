@@ -23,7 +23,7 @@ public static class Level4Data
 
     private static List<Wave> Waves => new()
     {
-        CreateWave(1f, 1f, (NormalShip, 1)),
+        CreateWave(5f, (NormalShip, 1)),
     };
 
     private static string[] MapData => new[]
@@ -48,15 +48,13 @@ public static class Level4Data
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
     };
 
-    private static Wave CreateWave(float min, float max, params (Ship.Data data, int count)[] groups)
+    private static Wave CreateWave(float waveDuration, params (Ship.Data data, int count)[] groups)
     {
         var list = new List<ShipGroup>();
 
         foreach (var (data, count) in groups)
-        {
             list.Add(new ShipGroup(data, count));
-        }
 
-        return new Wave(list, min, max, 10);
+        return new Wave(list, waveDuration);
     }
 }

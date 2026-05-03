@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RumDefence;
 
@@ -129,7 +128,6 @@ public class GameScreen : Screen
         UpdateShips(gameTime);
         UpdateTroops(gameTime);
         UpdateTowers(gameTime);
-        UpdateWaveProgression();
         CheckLevelCompletion(gameTime);
     }
 
@@ -268,22 +266,6 @@ public class GameScreen : Screen
                 Troops.RemoveAt(i);
             }
         }
-    }
-
-    private void UpdateWaveProgression()
-    {
-        if (Spawner.IsAllWavesComplete) return;
-        if (!Spawner.HasPreloadedWave) return;
-
-        bool attackingShipsRemain = Ships.Any(s =>
-            s.State == Ship.ShipState.SailingToDock ||
-            s.State == Ship.ShipState.Docked ||
-            s.State == Ship.ShipState.Unloading ||
-            s.State == Ship.ShipState.Leaving_BackOff ||
-            s.State == Ship.ShipState.Leaving_ToSea);
-
-        if (!attackingShipsRemain && Troops.Count == 0)
-            Spawner.AdvancePreloadToAttack();
     }
 
     private void CheckLevelCompletion(GameTime gameTime)

@@ -23,25 +23,10 @@ public static class Level1Data
 
     private static List<Wave> Waves => new()
     {
-        CreateWave(1f, 1f, 10f, (NormalShip, 2)),
-         CreateWave(2f, 20f, 10f, (NormalShip, 3)),
-
-         CreateWave(10f, 15f, 10f, (NormalShip, 10)),
-        //
-         CreateWave(5, 5f, 10f,
-             (NormalShip, 10),
-             (BossShip, 1)
-         ),
-        //
-        // CreateWave(1f, 2f, 8f,
-        //     (NormalShip, 15),
-        //     (BossShip, 3)
-        // ),
-        //
-        // CreateWave(0.8f, 1.5f, 5f,
-        //     (NormalShip, 20),
-        //     (BossShip, 6)
-        // )
+        CreateWave(30f, (NormalShip, 2)),
+        CreateWave(30f, (NormalShip, 3)),
+        CreateWave(45f, (NormalShip, 5)),
+        CreateWave(60f, (NormalShip, 6), (BossShip, 1)),
     };
 
     private static string[] MapData => new[]
@@ -66,15 +51,13 @@ public static class Level1Data
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
     };
 
-    private static Wave CreateWave(float min, float max, float holdTime, params (Ship.Data data, int count)[] groups)
+    private static Wave CreateWave(float waveDuration, params (Ship.Data data, int count)[] groups)
     {
         var list = new List<ShipGroup>();
 
         foreach (var (data, count) in groups)
-        {
             list.Add(new ShipGroup(data, count));
-        }
 
-        return new Wave(list, min, max, holdTime);
+        return new Wave(list, waveDuration);
     }
 }

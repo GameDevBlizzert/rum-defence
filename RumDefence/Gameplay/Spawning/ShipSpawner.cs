@@ -1,7 +1,6 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RumDefence;
 
@@ -9,269 +8,91 @@ public class ShipSpawner
 {
     private readonly Level level;
     private readonly Grid grid;
+    private readonly List<Wave> waves;
     private readonly List<CoastTile> coastTiles;
-    private readonly Random rng = new();
 
-    // =====================
-    // CURRENT WAVE (hold timer → attack coast)
-    // =====================
+    private int waveIndex = 0;
+    private float spawnTimer = 0f;
+    private float nextSpawnInterval = 0f;
+    private float spawnInterval = 0f;
+    private int spawnCount = 0;
+    private float waveElapsed = 0f;
 
-    private int currentWaveIndex;
-    private WavePhase phase;
-    private List<ShipGroup> activeGroups;
-    private List<Ship> currentWaveShips = new();
-    private float spawnTimer;
-    private float nextSpawnTime;
+    private readonly Queue<Ship.Data> spawnQueue = new();
 
-    // =====================
-    // PRELOAD (next wave pre-spawns to holding while current attacks)
-    // =====================
-
-    private int preloadWaveIndex;
-    private bool isPreloading;
-    private List<ShipGroup> preloadGroups;
-    private List<Ship> preloadShips = new();
-    private float preloadSpawnTimer;
-    private float preloadNextSpawnTime;
-
-    // =====================
-    // PUBLIC
-    // =====================
-
-    /// <summary>Ships spawned this frame — drain in GameScreen every update.</summary>
     public List<Ship> NewShips { get; } = new();
 
-    /// <summary>True once the last wave has been set in motion and no preload remains.</summary>
-    public bool IsAllWavesComplete { get; private set; }
-
-    /// <summary>
-    /// True while a preloaded wave exists (spawning or fully waiting at sea).
-    /// GameScreen uses this to know when to call AdvancePreloadToAttack().
-    /// </summary>
-    public bool HasPreloadedWave => isPreloading || preloadShips.Count > 0;
-
-    private enum WavePhase { Spawning, Holding, Attacking }
-
-    private const float WaveInterval = 30f;
-    private float waveCountdown;
-    private bool inCountdown;
-
-    public int CurrentWave => currentWaveIndex + 1;
-    public int TotalWaves { get; private set; }
-    public float WaveCountdown => waveCountdown;
-    public bool IsInCountdown => inCountdown;
-    public bool IsFinished => IsAllWavesComplete;
+    public int CurrentWave => Math.Min(waveIndex + 1, TotalWaves);
+    public int TotalWaves => waves.Count;
+    public float WaveDuration => IsFinished ? 0f : waves[waveIndex].WaveDuration;
+    public float WaveTimeRemaining => IsFinished ? 0f : Math.Max(0f, WaveDuration - waveElapsed);
+    public bool IsFinished => waveIndex >= waves.Count;
+    public bool IsAllWavesComplete => IsFinished;
 
     public ShipSpawner(Level level, Grid grid)
     {
         this.level = level;
         this.grid = grid;
+        waves = level.Waves;
         coastTiles = CoastSystem.GetCoastTiles(level.Map);
-        TotalWaves = level.Waves.Count;
-        BeginCountdown();
+
+        if (waves.Count > 0)
+            StartSpawning();
     }
-
-    // =====================
-    // WAVE FLOW
-    // =====================
-
-    private void BeginCountdown()
-    {
-        inCountdown = true;
-        waveCountdown = WaveInterval;
-    }
-
-    private void StartWave(int index)
-    {
-        inCountdown = false;
-
-        currentWaveIndex = index;
-        var wave = level.Waves[index];
-
-        activeGroups = CopyGroups(wave.ShipGroups);
-        currentWaveShips = new List<Ship>();
-        phase = WavePhase.Spawning;
-        spawnTimer = 0f;
-        SetSpawnTime(wave, ref nextSpawnTime);
-    }
-
-    private void StartPreload(int index)
-    {
-        preloadWaveIndex = index;
-        var wave = level.Waves[index];
-
-        preloadGroups = CopyGroups(wave.ShipGroups);
-        preloadShips = new List<Ship>();
-        isPreloading = true;
-        preloadSpawnTimer = 0f;
-        SetSpawnTime(wave, ref preloadNextSpawnTime);
-    }
-
-    /// <summary>
-    /// Called by GameScreen when the current attacking wave is cleared
-    /// (no attacking ships + no troops alive).
-    /// Advances preloaded ships to the coast and begins loading the wave after.
-    /// </summary>
-    public void AdvancePreloadToAttack()
-    {
-        float cumulativeDelay = 0f;
-        foreach (var s in preloadShips)
-        {
-            cumulativeDelay += MinStaggerInterval + (float)rng.NextDouble() * (MaxStaggerInterval - MinStaggerInterval);
-            s.AdvanceToDock(cumulativeDelay);
-        }
-
-        preloadShips.Clear();
-        isPreloading = false;
-
-        int nextPreload = preloadWaveIndex + 1;
-        if (nextPreload < level.Waves.Count)
-            StartPreload(nextPreload);
-        else
-            IsAllWavesComplete = true;
-    }
-
-    // =====================
-    // UPDATE
-    // =====================
 
     public void Update(GameTime gameTime)
     {
         NewShips.Clear();
-
-        if (IsAllWavesComplete) return;
+        if (IsFinished) return;
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        if (inCountdown)
-        {
-            waveCountdown -= dt;
-            if (waveCountdown <= 0f)
-                StartWave(currentWaveIndex);
-            return;
-        }
-
-        var wave = level.Waves[currentWaveIndex];
-
-        switch (phase)
-        {
-            case WavePhase.Spawning:
-                UpdateCurrentWaveSpawning(dt, wave);
-                break;
-
-            case WavePhase.Holding:
-                ActivateCurrentWave();
-                break;
-
-            case WavePhase.Attacking:
-                UpdatePreloadSpawning(dt);
-                break;
-        }
-    }
-
-    private void UpdateCurrentWaveSpawning(float dt, Wave wave)
-    {
+        waveElapsed += dt;
         spawnTimer += dt;
-        if (spawnTimer < nextSpawnTime) return;
+        if (spawnTimer >= nextSpawnInterval && spawnQueue.Count > 0)
+        {
+            SpawnNextShip();
+            spawnTimer = 0f;
+            nextSpawnInterval = spawnInterval;
+        }
+
+        if (spawnQueue.Count == 0)
+        {
+            waveIndex++;
+            if (waveIndex < waves.Count)
+                StartSpawning();
+        }
+    }
+
+    private void StartSpawning()
+    {
+        spawnQueue.Clear();
+        spawnCount = 0;
         spawnTimer = 0f;
+        nextSpawnInterval = 0f;
+        waveElapsed = 0f;
 
-        var ship = SpawnShip(activeGroups);
-        if (ship == null) return;
+        var wave = waves[waveIndex];
+        foreach (var group in wave.ShipGroups)
+            for (int i = 0; i < group.Count; i++)
+                spawnQueue.Enqueue(group.Data);
 
-        currentWaveShips.Add(ship);
+        int totalShips = spawnQueue.Count;
+        spawnInterval = totalShips > 0 ? wave.WaveDuration / totalShips : 0f;
+    }
+
+    private void SpawnNextShip()
+    {
+        if (coastTiles.Count == 0) return;
+
+        var data = spawnQueue.Dequeue();
+        var coast = coastTiles[spawnCount % coastTiles.Count];
+        float lateralOffset = (spawnCount / coastTiles.Count) * 30f;
+
+        var ship = (Ship)SpawnSystem.CreateShip(level, grid, data, coast, lateralOffset);
+        ship.AdvanceToDock();
+        spawnCount++;
+
         NewShips.Add(ship);
-
-        if (activeGroups.All(g => g.Count <= 0))
-            phase = WavePhase.Holding;
-        else
-            SetSpawnTime(wave, ref nextSpawnTime);
-    }
-
-    private void ActivateCurrentWave()
-    {
-        foreach (var s in currentWaveShips)
-            s.AdvanceToDock();
-
-        phase = WavePhase.Attacking;
-
-        int nextPreload = currentWaveIndex + 1;
-        if (nextPreload < level.Waves.Count)
-            StartPreload(nextPreload);
-        else
-            IsAllWavesComplete = true;
-    }
-
-    private void UpdatePreloadSpawning(float dt)
-    {
-        if (!isPreloading) return;
-
-        preloadSpawnTimer += dt;
-        var wave = level.Waves[preloadWaveIndex];
-        if (preloadSpawnTimer < preloadNextSpawnTime) return;
-        preloadSpawnTimer = 0f;
-
-        var ship = SpawnShip(preloadGroups);
-        if (ship == null) return;
-
-        preloadShips.Add(ship);
-        NewShips.Add(ship);
-
-        if (preloadGroups.All(g => g.Count <= 0))
-            isPreloading = false;
-        else
-            SetSpawnTime(wave, ref preloadNextSpawnTime);
-    }
-
-    // =====================
-    // SPAWNING
-    // =====================
-
-    private const float MinStaggerInterval = 2f;
-    private const float MaxStaggerInterval = 6f;
-    private const float MaxLateralOffset = 140f;
-
-    private Ship SpawnShip(List<ShipGroup> groups)
-    {
-        var available = groups.FindAll(g => g.Count > 0);
-        if (available.Count == 0) return null;
-
-        var group = available[rng.Next(available.Count)];
-        group.Count--;
-
-        float lateral = ((float)rng.NextDouble() * 2f - 1f) * MaxLateralOffset;
-        return (Ship)SpawnSystem.CreateShip(level, grid, group.Data, GetRandomCoast(), lateral);
-    }
-
-    // =====================
-    // HELPERS
-    // =====================
-
-    private void SetSpawnTime(Wave wave, ref float target)
-    {
-        target = (float)(
-            rng.NextDouble() * (wave.MaxSpawnTime - wave.MinSpawnTime)
-            + wave.MinSpawnTime
-        );
-    }
-
-    private List<ShipGroup> CopyGroups(List<ShipGroup> source)
-    {
-        var copy = new List<ShipGroup>();
-        foreach (var g in source)
-            copy.Add(new ShipGroup(g.Data, g.Count));
-        return copy;
-    }
-
-    private CoastTile GetRandomCoast()
-    {
-        var occupied = new HashSet<Point>();
-        foreach (var s in currentWaveShips)
-            if (!s.IsFinished) occupied.Add(s.AssignedCoast.GridPos);
-        foreach (var s in preloadShips)
-            if (!s.IsFinished) occupied.Add(s.AssignedCoast.GridPos);
-
-        var free = coastTiles.FindAll(c => !occupied.Contains(c.GridPos));
-        var pool = free.Count > 0 ? free : coastTiles;
-        return pool[rng.Next(pool.Count)];
     }
 }
