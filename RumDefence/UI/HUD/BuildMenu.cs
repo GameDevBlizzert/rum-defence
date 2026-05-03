@@ -72,13 +72,13 @@ public class BuildMenu
 
         cannonButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
-        cannonButton.CostLabel = BuildManager.CannonTowerCost.ToString();
+        cannonButton.CostLabel = TowerFactory.Cannon.Cost.ToString();
         cannonButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         musketButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
-        musketButton.CostLabel = BuildManager.MusketTowerCost.ToString();
+        musketButton.CostLabel = TowerFactory.Musket.Cost.ToString();
         musketButton.Font = font;
         currentY += ButtonHeight + spacing;
 
@@ -110,8 +110,8 @@ public class BuildMenu
         wallButton.SetSelected(mode == BuildMode.Wall);
         removeButton.SetSelected(mode == BuildMode.Remove);
 
-        cannonButton.IsDisabled = progress.CoinsRemaining < BuildManager.CannonTowerCost;
-        musketButton.IsDisabled = progress.CoinsRemaining < BuildManager.MusketTowerCost;
+        cannonButton.IsDisabled = progress.CoinsRemaining < TowerFactory.Cannon.Cost;
+        musketButton.IsDisabled = progress.CoinsRemaining < TowerFactory.Musket.Cost;
         wallButton.IsDisabled = progress.CoinsRemaining < BuildManager.WallCost;
 
         cannonButton.Update(gameTime);
