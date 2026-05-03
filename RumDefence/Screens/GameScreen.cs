@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace RumDefence;
 
@@ -81,10 +82,27 @@ public class GameScreen : Screen
 
         buildManager.SetRemoveCallback(p =>
         {
-            bool removed = walls.Remove(p) || placedTowers.Remove(p);
-            if (removed)
+            int refundAmount = 0;
+
+            if (walls.ContainsKey(p))
+            {
+                refundAmount = (int)Math.Ceiling(BuildManager.WallCost * 0.8f);
+                walls.Remove(p);
+            }
+            else if (placedTowers.TryGetValue(p, out BaseTower tower))
+            {
+                if (tower is CannonTower)
+                    refundAmount = (int)Math.Ceiling(BuildManager.CannonTowerCost * 0.8f);
+                else if (tower is MusketTower)
+                    refundAmount = (int)Math.Ceiling(BuildManager.MusketTowerCost * 0.8f);
+
+                placedTowers.Remove(p);
+            }
+
+            if (refundAmount > 0)
             {
                 occupiedTiles.Remove(p);
+                progress.AddCoins(refundAmount);
                 AudioManager.Instance.PlayRandomImpact();
             }
 
