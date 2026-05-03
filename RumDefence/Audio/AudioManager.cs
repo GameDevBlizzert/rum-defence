@@ -15,6 +15,7 @@ public class AudioManager
     private List<SoundEffect> footstepSounds = new();
     private List<SoundEffect> impactSounds = new();
     private List<SoundEffect> explosionSounds = new();
+    private List<SoundEffect> knifeSounds = new();
 
     private Song currentSong;
     private string currentSongName;
@@ -43,6 +44,9 @@ public class AudioManager
 
         explosionSounds.Add(content.Load<SoundEffect>("Audio/explosion_quick"));
         explosionSounds.Add(content.Load<SoundEffect>("Audio/explosion_small"));
+
+        knifeSounds.Add(content.Load<SoundEffect>("Audio/knifeSlice"));
+        knifeSounds.Add(content.Load<SoundEffect>("Audio/knifeSlice2"));
 
         songs["PineappleUnderTheSea"] = content.Load<Song>("Audio/PineappleUnderTheSea");
         songs["WhatCloudsAreMadeOf"] = content.Load<Song>("Audio/WhatCloudsAreMadeOf");
@@ -79,6 +83,14 @@ public class AudioManager
             explosionSounds[random.Next(explosionSounds.Count)].Play();
         else
             System.Diagnostics.Debug.WriteLine("Warning: No explosion sounds loaded");
+    }
+
+    public void PlayRandomKnifeSlice()
+    {
+        if (knifeSounds.Count > 0)
+            knifeSounds[random.Next(knifeSounds.Count)].Play();
+        else
+            System.Diagnostics.Debug.WriteLine("Warning: No knife sounds loaded");
     }
 
     public void PlayBackgroundMusic(string songName = "PineappleUnderTheSea")

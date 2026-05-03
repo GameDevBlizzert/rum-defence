@@ -799,6 +799,18 @@
 /processorParam:Quality=Best
 /build:Audio/shoot.ogg
 
+#begin Audio/knifeSlice.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/knifeSlice.ogg
+
+#begin Audio/knifeSlice2.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/knifeSlice2.ogg
+
 #begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
 /processor:SongProcessor

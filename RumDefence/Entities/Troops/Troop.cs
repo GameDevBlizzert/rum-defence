@@ -93,6 +93,7 @@ public class Troop : EntityWithHealth, ICollidable
             if (_attackTimer >= 1f)
             {
                 RumGame.Instance.CurrentLevel?.RumBarrel?.TakeDamage(Damage);
+                AudioManager.Instance.PlayRandomKnifeSlice();
                 _attackTimer -= 1f;
             }
             return;
