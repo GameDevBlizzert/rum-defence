@@ -92,27 +92,27 @@ public class GameScreen : Screen
 
         buildManager.SetCannonTowerPlacementCallback(p =>
         {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.CannonTowerCost)
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= TowerFactory.Cannon.Cost)
             {
-                var cannon = new CannonTower(grid.GridToWorld(p), Troops);
-                cannon.SetProjectileHitCallback((pos, explosionIndex) =>
-                {
-                    explosions.Add(new Explosion(pos, explosionIndex));
-                });
-                placedTowers[p] = cannon;
+                placedTowers[p] = TowerFactory.Create(
+                    TowerFactory.Cannon,
+                    grid.GridToWorld(p),
+                    Troops,
+                    (pos, explosionIndex) => explosions.Add(new Explosion(pos, explosionIndex))
+                );
                 occupiedTiles[p] = true;
-                progress.SpendCoins(BuildManager.CannonTowerCost);
+                progress.SpendCoins(TowerFactory.Cannon.Cost);
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
 
         buildManager.SetMusketTowerPlacementCallback(p =>
         {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.MusketTowerCost)
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= TowerFactory.Musket.Cost)
             {
-                placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                placedTowers[p] = TowerFactory.Create(TowerFactory.Musket, grid.GridToWorld(p), Troops);
                 occupiedTiles[p] = true;
-                progress.SpendCoins(BuildManager.MusketTowerCost);
+                progress.SpendCoins(TowerFactory.Musket.Cost);
                 AudioManager.Instance.PlayRandomImpact();
             }
         });
