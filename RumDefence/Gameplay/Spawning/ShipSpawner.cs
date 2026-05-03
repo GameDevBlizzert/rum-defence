@@ -280,4 +280,10 @@ public class ShipSpawner
         var pool = free.Count > 0 ? free : coastTiles;
         return pool[rng.Next(pool.Count)];
     }
+
+
+    public int GetCurrentWaveIndex()
+    {
+        return currentWaveIndex;
+    }
 }
