@@ -811,6 +811,12 @@
 /processorParam:Quality=Best
 /build:Audio/knifeSlice2.ogg
 
+#begin Audio/arrive.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/arrive.ogg
+
 #begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
 /processor:SongProcessor
