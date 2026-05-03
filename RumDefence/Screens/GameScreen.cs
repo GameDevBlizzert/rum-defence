@@ -56,6 +56,7 @@ public class GameScreen : Screen
         Spawner = new ShipSpawner(currentLevel, grid);
 
         hud = new Hud(buildManager, progress, Spawner);
+        hud.OnMenuRequested = () => manager.SetScreen(new PauseScreen(manager, this));
 
         wallRenderer = new WallRenderer(
             grid,

@@ -15,6 +15,9 @@ public class BuildMenu
     private IconButton cannonButton;
     private IconButton musketButton;
     private IconButton removeButton;
+    private IconButton menuButton;
+
+    public System.Action OnMenuRequested;
 
     private BuildManager buildManager;
     private LevelProgressSystem progress;
@@ -97,6 +100,30 @@ public class BuildMenu
         removeButton.BackgroundSourceRect = panelSourceRect;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
+
+        int menuButtonY = panelY + panelHeight - ButtonHeight - 20;
+        var hamburgerIcon = CreateHamburgerIcon(RumGame.Instance.GraphicsDevice);
+        menuButton = new IconButton(panelTexture, hamburgerIcon, new Vector2(buttonX, menuButtonY), new Vector2(ButtonWidth, ButtonHeight));
+        menuButton.BackgroundSourceRect = panelSourceRect;
+        menuButton.OnClick = () => OnMenuRequested?.Invoke();
+    }
+
+    private static Texture2D CreateHamburgerIcon(GraphicsDevice graphicsDevice)
+    {
+        const int w = 30, h = 20;
+        var data = new Color[w * h];
+
+        int[] barStartYs = { 2, 8, 14 };
+        const int barHeight = 4;
+
+        foreach (int barY in barStartYs)
+            for (int y = barY; y < barY + barHeight; y++)
+                for (int x = 0; x < w; x++)
+                    data[y * w + x] = Color.White;
+
+        var tex = new Texture2D(graphicsDevice, w, h);
+        tex.SetData(data);
+        return tex;
     }
 
     public Vector2 GetCoinTargetPosition()
@@ -124,6 +151,7 @@ public class BuildMenu
         musketButton.Update(gameTime);
         wallButton.Update(gameTime);
         removeButton.Update(gameTime);
+        menuButton.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -146,5 +174,6 @@ public class BuildMenu
         musketButton.Draw(spriteBatch);
         wallButton.Draw(spriteBatch);
         removeButton.Draw(spriteBatch);
+        menuButton.Draw(spriteBatch);
     }
 }

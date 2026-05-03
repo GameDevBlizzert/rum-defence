@@ -21,6 +21,11 @@ public class Hud
         waveHud = new WaveHud(spawner);
     }
 
+    public System.Action OnMenuRequested
+    {
+        set => buildMenu.OnMenuRequested = value;
+    }
+
     public CoinManager GetCoinManager()
     {
         return coinManager;

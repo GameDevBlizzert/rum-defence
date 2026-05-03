@@ -40,7 +40,7 @@ public class MainMenuScreen : Screen
 
         settingsButton.OnClick = () =>
         {
-            System.Diagnostics.Debug.WriteLine("Settings clicked");
+            manager.SetScreen(new SettingsScreen(manager, this));
         };
 
         quitButton.OnClick = () =>
