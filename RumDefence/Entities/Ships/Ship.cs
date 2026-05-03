@@ -324,6 +324,7 @@ public class Ship : Entity
     private void StartUnloading()
     {
         troopSpawner.StartSpawning(Position, EnemyCount);
+        AudioManager.Instance.PlaySound("arrive");
         State = ShipState.Unloading;
     }
 
