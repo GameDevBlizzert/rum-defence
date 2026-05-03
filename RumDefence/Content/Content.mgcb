@@ -793,6 +793,12 @@
 /processorParam:Quality=Best
 /build:Audio/explosion_small.ogg
 
+#begin Audio/shoot.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/shoot.ogg
+
 #begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
 /processor:SongProcessor
