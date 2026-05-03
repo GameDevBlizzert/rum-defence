@@ -14,6 +14,7 @@ public class AudioManager
     private Dictionary<string, Song> songs = new();
     private List<SoundEffect> footstepSounds = new();
     private List<SoundEffect> impactSounds = new();
+    private List<SoundEffect> explosionSounds = new();
 
     private Song currentSong;
     private string currentSongName;
@@ -38,6 +39,9 @@ public class AudioManager
 
         for (int i = 0; i < 5; i++)
             impactSounds.Add(content.Load<SoundEffect>($"Audio/impactMining_00{i}"));
+
+        explosionSounds.Add(content.Load<SoundEffect>("Audio/explosion_quick"));
+        explosionSounds.Add(content.Load<SoundEffect>("Audio/explosion_small"));
 
         songs["PineappleUnderTheSea"] = content.Load<Song>("Audio/PineappleUnderTheSea");
         songs["WhatCloudsAreMadeOf"] = content.Load<Song>("Audio/WhatCloudsAreMadeOf");
@@ -66,6 +70,14 @@ public class AudioManager
             impactSounds[random.Next(impactSounds.Count)].Play();
         else
             System.Diagnostics.Debug.WriteLine("Warning: No impact sounds loaded");
+    }
+
+    public void PlayRandomExplosion()
+    {
+        if (explosionSounds.Count > 0)
+            explosionSounds[random.Next(explosionSounds.Count)].Play();
+        else
+            System.Diagnostics.Debug.WriteLine("Warning: No explosion sounds loaded");
     }
 
     public void PlayBackgroundMusic(string songName = "PineappleUnderTheSea")

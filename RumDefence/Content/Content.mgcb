@@ -781,6 +781,18 @@
 /processorParam:Quality=Best
 /build:Audio/impactMining_004.ogg
 
+#begin Audio/explosion_quick.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/explosion_quick.ogg
+
+#begin Audio/explosion_small.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/explosion_small.ogg
+
 #begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
 /processor:SongProcessor
