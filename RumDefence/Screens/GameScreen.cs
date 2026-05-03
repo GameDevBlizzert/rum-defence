@@ -26,7 +26,7 @@ public class GameScreen : Screen
 
     private Dictionary<Point, BaseTower> placedTowers = new();
     private List<Explosion> explosions = new();
-    
+
     private BaseTower selectedTower = null;
 
     private bool levelCompleted;
@@ -208,7 +208,7 @@ public class GameScreen : Screen
 
         foreach (var tower in placedTowers.Values)
             tower.Draw(spriteBatch);
-            
+
         // Draw range of selected tower
         if (selectedTower != null)
         {
@@ -247,7 +247,7 @@ public class GameScreen : Screen
         }
 
         hud.SetSelectedTower(selectedTower);
-        
+
         hud.Update(gameTime);
 
         // Handle HUD Upgrade interaction

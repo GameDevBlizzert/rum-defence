@@ -20,7 +20,7 @@ public class Hud
         buildMenu = new BuildMenu(buildManager, levelProgress);
         coinManager = new CoinManager(buildMenu.GetCoinTargetPosition, levelProgress);
         waveHud = new WaveHud(spawner);
-        
+
         upgradeMenu = new UpgradeMenu(levelProgress);
     }
 
@@ -35,7 +35,7 @@ public class Hud
         coinManager.Update(gameTime);
         upgradeMenu.Update(gameTime);
     }
-    
+
     public void SetSelectedTower(BaseTower tower)
     {
         upgradeMenu.SelectedTower = tower;
@@ -56,7 +56,7 @@ public class Hud
         buildMenu.Draw(spriteBatch);
         coinManager.Draw(spriteBatch);
         waveHud.Draw(spriteBatch);
-        
+
         var hovered = buildManager.GetHoveredTile();
         // The game screen handles tracking current selection, we update the UpgradeMenu separately.
         upgradeMenu.Draw(spriteBatch);

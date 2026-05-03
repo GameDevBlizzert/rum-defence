@@ -30,19 +30,12 @@ public class BaseTower : Entity
     public float CurrentFireRate => (BaseFireRate + (CurrentLevel * FireRateUpgradeFlat)) * (1f + (CurrentLevel * FireRateUpgradePercent));
     public int CurrentDamage => (int)((BaseDamage + (CurrentLevel * DamageUpgradeFlat)) * (1f + (CurrentLevel * DamageUpgradePercent)));
 
-    [Obsolete("Use CurrentRange instead")]
-    public float Range { get { return CurrentRange; } set { BaseRange = value; } }
-    [Obsolete("Use CurrentFireRate instead")]
-    public float FireRate { get { return CurrentFireRate; } set { BaseFireRate = value; } }
-    [Obsolete("Use CurrentDamage instead")]
-    public int Damage { get { return CurrentDamage; } set { BaseDamage = value; } }
-
     public float ProjectileSpeed { get; set; } = 200f;
     public AttackMode AttackMode { get; set; } = AttackMode.Closest;
     public float RotationSpeed { get; set; } = 5f; // radians per second
-    
+
     public int BaseUpgradeCost { get; set; } = 50;
-    
+
     public int GetUpgradeCost() 
     {
         return (int)(BaseUpgradeCost * Math.Pow(1.5, CurrentLevel));
