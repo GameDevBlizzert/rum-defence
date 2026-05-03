@@ -15,11 +15,22 @@ public class CannonTower : BaseTower
 
     public CannonTower(Vector2 location, List<Troop> troops) : base(location, troops, "KenneyPiratePack/PNG/Retina/Ship parts/wood (3)")
     {
-        Range = 700f;
-        FireRate = 1.5f;
-        Damage = 40;
+        BaseRange = 400f;
+        RangeUpgradeFlat = 25f;
+        RangeUpgradePercent = 0.05f;
+
+        BaseFireRate = 0.5f;
+        FireRateUpgradeFlat = 0f;
+        FireRateUpgradePercent = 0.15f;
+
+        BaseDamage = 40;
+        DamageUpgradeFlat = 10;
+        DamageUpgradePercent = 0.2f;
+
         ProjectileSpeed = 300f;
         AttackMode = AttackMode.Closest;
+
+        BaseUpgradeCost = 100;
 
         _baseTexture = Texture;
         _cannonTexture = RumGame.Instance.Content.Load<Texture2D>("KenneyPiratePack/PNG/Retina/Ship parts/cannonLoose");
@@ -36,7 +47,7 @@ public class CannonTower : BaseTower
 
     protected override void FireProjectile(Troop target)
     {
-        Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, Damage, _onProjectileHit));
+        Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, CurrentDamage, _onProjectileHit));
     }
 
     public override void Draw(SpriteBatch spriteBatch)

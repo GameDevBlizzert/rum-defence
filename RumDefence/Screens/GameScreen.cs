@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -25,12 +26,16 @@ public class GameScreen : Screen
 
     private Dictionary<Point, BaseTower> placedTowers = new();
     private List<Explosion> explosions = new();
+    
+    private BaseTower selectedTower = null;
 
     private bool levelCompleted;
 
     private LevelProgressSystem progress;
 
     private HashSet<Point> latestUntraverableHashSet = new();
+
+    private Texture2D pixel;
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
@@ -39,6 +44,9 @@ public class GameScreen : Screen
 
     public override void Load()
     {
+        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
+        pixel.SetData(new[] { Color.White });
+
         grid = new Grid(currentLevel.Map);
 
         RumGame.Instance.CurrentGrid = grid;
@@ -103,6 +111,9 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.CannonTowerCost);
                 AudioManager.Instance.PlayRandomImpact();
+                // Select newly placed tower
+                selectedTower = cannon;
+                buildManager.SetMode(BuildMode.None); // Auto select without button
             }
         });
 
@@ -110,10 +121,26 @@ public class GameScreen : Screen
         {
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.MusketTowerCost)
             {
-                placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                var musket = new MusketTower(grid.GridToWorld(p), Troops);
+                placedTowers[p] = musket;
                 occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.MusketTowerCost);
                 AudioManager.Instance.PlayRandomImpact();
+                // Select newly placed tower
+                selectedTower = musket;
+                buildManager.SetMode(BuildMode.None); // Auto select without button
+            }
+        });
+
+        buildManager.SetSelectCallback(p =>
+        {
+            if (placedTowers.TryGetValue(p, out BaseTower tower))
+            {
+                selectedTower = tower;
+            }
+            else
+            {
+                selectedTower = null;
             }
         });
 
@@ -164,6 +191,12 @@ public class GameScreen : Screen
 
         foreach (var tower in placedTowers.Values)
             tower.Draw(spriteBatch);
+            
+        // Draw range of selected tower
+        if (selectedTower != null)
+        {
+            DrawCircle(spriteBatch, selectedTower.Position, selectedTower.CurrentRange, Color.White * 0.2f);
+        }
 
         // Draw explosions
         foreach (var explosion in explosions)
@@ -190,12 +223,43 @@ public class GameScreen : Screen
 
     private void UpdateBuildSystem(GameTime gameTime)
     {
+        // If mode is reset to something else (e.g. wall building), clear selection
+        if (buildManager.GetMode() != BuildMode.None)
+        {
+            selectedTower = null;
+        }
+
+        hud.SetSelectedTower(selectedTower);
+        
         hud.Update(gameTime);
 
-        buildManager.Update(
-            input.MousePositionScaled,
-            input.IsLeftClick()
-        );
+        // Handle HUD Upgrade interaction
+        if (selectedTower != null && hud.WasUpgradeClicked())
+        {
+            if (progress.CoinsRemaining >= selectedTower.GetUpgradeCost() && selectedTower.CanUpgrade)
+            {
+                progress.SpendCoins(selectedTower.GetUpgradeCost());
+                selectedTower.ApplyUpgrade();
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        }
+
+        // Only process tile clicks if the mouse is NOT over the upgrade menu
+        if (!hud.IsMouseOverUpgradeMenu(input.MousePositionScaled))
+        {
+            buildManager.Update(
+                input.MousePositionScaled,
+                input.IsLeftClick()
+            );
+        }
+        else
+        {
+            // Still update the hovering logic so visuals don't freeze, but consume the click
+            buildManager.Update(
+                input.MousePositionScaled,
+                false // forcefully tell buildManager it's NOT a click because the UI consumed it
+            );
+        }
     }
 
     private bool HandlePause()
@@ -337,4 +401,35 @@ public class GameScreen : Screen
         return untraversable;
     }
 
+    private void DrawCircle(SpriteBatch spriteBatch, Vector2 center, float radius, Color color)
+    {
+        int points = 32;
+        float step = MathHelper.TwoPi / points;
+
+        for (int i = 0; i < points; i++)
+        {
+            float angle1 = i * step;
+            float angle2 = (i + 1) * step;
+
+            Vector2 p1 = new Vector2((float)Math.Cos(angle1), (float)Math.Sin(angle1)) * radius;
+            Vector2 p2 = new Vector2((float)Math.Cos(angle2), (float)Math.Sin(angle2)) * radius;
+
+            DrawLine(spriteBatch, center + p1, center + p2, color, 2);
+        }
+    }
+
+    private void DrawLine(SpriteBatch spriteBatch, Vector2 start, Vector2 end, Color color, float thickness)
+    {
+        Vector2 edge = end - start;
+        float angle = (float)Math.Atan2(edge.Y, edge.X);
+
+        spriteBatch.Draw(pixel,
+            new Rectangle((int)start.X, (int)start.Y, (int)edge.Length(), (int)thickness),
+            null,
+            color,
+            angle,
+            new Vector2(0, 0.5f),
+            SpriteEffects.None,
+            0);
+    }
 }

@@ -18,7 +18,7 @@ public static class Level3Data
             theme,
             Waves,
             true,
-            startingCoinBalance: 200
+            startingCoinBalance: 20000
         );
     }
 

@@ -32,6 +32,14 @@ public class OverlayRenderer
         {
             DrawDestroyableOverlay(spriteBatch, hovered);
         }
+        else if (mode == BuildMode.None)
+        {
+            if (hovered != null && IsOccupied(hovered.Value))
+            {
+                // Optionally highlight hover over occupided tiles to select them
+                DrawOverlayAtTile(spriteBatch, hovered.Value, placeableOverlay, Color.Cyan * 0.7f);
+            }
+        }
         else if (mode != BuildMode.None)
         {
             DrawPlaceableOverlays(spriteBatch);
