@@ -35,7 +35,7 @@ public class BaseTower : Entity
     public float RotationSpeed { get; set; } = 5f; // radians per second
 
     public int BaseUpgradeCost { get; set; } = 50;
-    
+
     public int GetUpgradeCost()
     {
         return (int)(BaseUpgradeCost * Math.Pow(1.5, CurrentLevel));
