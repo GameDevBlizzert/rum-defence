@@ -74,7 +74,7 @@ public class UpgradeMenu
         float titleScale = 0.8f;
         spriteBatch.DrawString(font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Color.White, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
-// Draw stats
+        //Draw stats
         var startY = panelRect.Y + 70;
         var spacing = 35;
         var color = Color.LightGray;
