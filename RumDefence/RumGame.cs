@@ -67,7 +67,13 @@ namespace RumDefence
 
         protected override void Update(GameTime gameTime)
         {
-            if (wasActive && !IsActive) // Focus lost
+            // Used for disabling behavior while using the debugger
+            bool pauseOnBlurDisabled = bool.Parse(
+                System.Environment.GetEnvironmentVariable("DISABLE_PAUSE_ON_BLUR") ?? "false"
+            );
+            bool active = IsActive || pauseOnBlurDisabled;
+
+            if (wasActive && !active) // Focus lost
             {
                 AudioManager.Instance.SuspendAudio();
 
@@ -81,15 +87,15 @@ namespace RumDefence
                 }
             }
 
-            if (!wasActive && IsActive) // Focus regained
+            if (!wasActive && active) // Focus regained
             {
                 AudioManager.Instance.ResumeAudio();
             }
 
-            wasActive = IsActive;
+            wasActive = active;
 
             // Block game logic when window is inactive.
-            if (!IsActive)
+            if (!active)
             {
                 base.Update(gameTime);
                 return;

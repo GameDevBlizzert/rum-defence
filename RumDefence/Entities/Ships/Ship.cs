@@ -273,15 +273,13 @@ public class Ship : Entity
             untraversable.Remove(entryGridPos.Value);
 
         pathfinding = new PathfindingSystem(dockTarget);
-        grid.UntraversableTiles = untraversable;
-        pathfinding.UpdatePath(Position, grid);
+        pathfinding.UpdatePath(Position, grid, untraversable);
 
         // Fall back without noise if noise accidentally blocked all routes
         if (pathfinding.Path.Count == 0)
         {
             untraversable.RemoveWhere(p => TileRules.IsWater(grid.Tiles[p.Y, p.X]));
-            grid.UntraversableTiles = untraversable;
-            pathfinding.UpdatePath(Position, grid);
+            pathfinding.UpdatePath(Position, grid, untraversable);
         }
     }
 
@@ -377,8 +375,7 @@ public class Ship : Entity
                 if (currentGP.HasValue) untraversable.Remove(currentGP.Value);
 
                 leavingPathfinding = new PathfindingSystem(exitTileWorld);
-                grid.UntraversableTiles = untraversable;
-                leavingPathfinding.UpdatePath(Position, grid);
+                leavingPathfinding.UpdatePath(Position, grid, untraversable);
 
                 if (leavingPathfinding.Path.Count == 0)
                     leavingPathfinding = null;
