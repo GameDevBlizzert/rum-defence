@@ -87,6 +87,37 @@ public class TroopAnimation : Animation
         }
     }
 }
+public class TroopDyingAnimation : Animation
+{
+    private SpriteLayer[] _layers = [
+        new (0, 3, 18),
+        new (4, 7, 18),
+    ];
+
+    public bool IsFinished { get; private set; }
+
+    public TroopDyingAnimation() : base(16, 16, 0.15f, 4, false) { }
+
+    public override Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction)
+    {
+        if (!IsFinished)
+        {
+            ElapseTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            CurrentFrame = (int)(ElapseTime / FrameDuration);
+            if (CurrentFrame >= FrameTotal)
+            {
+                CurrentFrame = FrameTotal - 1;
+                IsFinished = true;
+            }
+        }
+
+        Rectangle[] rects = new Rectangle[_layers.Length];
+        for (int i = 0; i < _layers.Length; i++)
+            rects[i] = _layers[i].GetSourceRectangle(CurrentFrame, FrameWidth, FrameHeight);
+        return rects;
+    }
+}
+
 public class TroopSwordAttackAnimation : TroopAnimation
 {
     public TroopSwordAttackAnimation() : base(16, 16, 0.15f, 3, true)

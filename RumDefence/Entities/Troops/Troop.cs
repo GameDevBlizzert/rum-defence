@@ -26,6 +26,9 @@ public class Troop : EntityWithHealth, ICollidable
 
     private static Texture2D pixel;
 
+    private TroopDyingAnimation _dyingAnimation = new();
+
+    public bool CanBeRemoved { get; private set; }
     public bool NeedsPathInit { get; private set; } = true;
     protected PathfindingSystem pathfinding;
     public Queue<Vector2> Path => pathfinding?.Path;
@@ -76,7 +79,13 @@ public class Troop : EntityWithHealth, ICollidable
 
     public override void Update(GameTime gameTime)
     {
-        if (IsDead) return;
+        if (IsDead)
+        {
+            sourceRectangles = _dyingAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
+            if (_dyingAnimation.IsFinished)
+                CanBeRemoved = true;
+            return;
+        }
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
