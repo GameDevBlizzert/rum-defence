@@ -72,6 +72,7 @@ public class BaseTower : Entity
     protected virtual void FireProjectile(Troop target)
     {
         Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, Damage));
+        AudioManager.Instance.PlaySound("shoot");
     }
 
     private Troop FindTarget()

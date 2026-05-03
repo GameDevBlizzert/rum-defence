@@ -145,7 +145,13 @@ public class ShipSpawner
 
         if (inCountdown)
         {
-            waveCountdown -= dt;
+            bool waveTimerDisabled = bool.Parse(
+                Environment.GetEnvironmentVariable("DISABLE_WAVE_TIMER") ?? "false"
+            );
+            if (waveTimerDisabled)
+                waveCountdown = 0f;
+            else
+                waveCountdown -= dt;
             if (waveCountdown <= 0f)
                 StartWave(currentWaveIndex);
             return;
