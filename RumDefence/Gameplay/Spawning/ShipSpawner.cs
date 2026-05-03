@@ -48,7 +48,13 @@ public class ShipSpawner
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         waveElapsed += dt;
-        spawnTimer += dt;
+            bool waveTimerDisabled = bool.Parse(
+                Environment.GetEnvironmentVariable("DISABLE_WAVE_TIMER") ?? "false"
+            );
+            if (waveTimerDisabled)
+                waveCountdown = 0f;
+            else
+            spawnTimer += dt;
         if (spawnTimer >= nextSpawnInterval && spawnQueue.Count > 0)
         {
             SpawnNextShip();
