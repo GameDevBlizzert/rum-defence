@@ -35,6 +35,7 @@ public class AudioManager
         soundEffects["error"] = content.Load<SoundEffect>("Audio/error_008");
         soundEffects["switch"] = content.Load<SoundEffect>("Audio/switch_002");
         soundEffects["shoot"] = content.Load<SoundEffect>("Audio/shoot");
+        soundEffects["coin"] = content.Load<SoundEffect>("Audio/coin");
         soundEffects["arrive"] = content.Load<SoundEffect>("Audio/arrive");
 
         for (int i = 0; i < 5; i++)

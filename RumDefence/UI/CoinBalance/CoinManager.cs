@@ -39,6 +39,7 @@ public class CoinManager
             if (coins[i].IsFinished)
             {
                 progress.AddCoins(1);
+                AudioManager.Instance.PlaySound("coin");
                 coins.RemoveAt(i);
             }
         }
