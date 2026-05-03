@@ -39,7 +39,7 @@ public class PathfindingSystem : IGameLoopSystem
         return direction;
     }
 
-    public void UpdatePath(Vector2 currentPosition, Grid grid)
+    public void UpdatePath(Vector2 currentPosition, Grid grid, HashSet<Point> untraversableTiles)
     {
         int[,] map = new int[grid.Width, grid.Height];
 
@@ -80,12 +80,12 @@ public class PathfindingSystem : IGameLoopSystem
 
                 if (next == targetPosition.Value)
                 {
-                    map[next.X, next.Y] = map[current.X, current.Y] + grid.GetTileCost(next);
+                    map[next.X, next.Y] = map[current.X, current.Y] + grid.GetTileCost(next, untraversableTiles);
                     tiles.Clear();
                     break;
                 }
 
-                var cost = map[current.X, current.Y] + grid.GetTileCost(next);
+                var cost = map[current.X, current.Y] + grid.GetTileCost(next, untraversableTiles);
 
                 if (cost < map[next.X, next.Y])
                 {
@@ -134,7 +134,7 @@ public class PathfindingSystem : IGameLoopSystem
             currentPoint = nextPoint;
         }
 
-        if (null == grid.UntraversableTiles)
+        if (untraversableTiles == null)
         {
             Path = new Queue<Vector2>(path);
             return;
@@ -147,7 +147,7 @@ public class PathfindingSystem : IGameLoopSystem
             var current = pathAsList[i];
             var next = pathAsList[i + 2];
             var crossedTiles = grid.GetTilesOnLine(current, next);
-            if (!crossedTiles.Intersect(grid.UntraversableTiles).Any())
+            if (!crossedTiles.Intersect(untraversableTiles).Any())
             {
                 pathAsList.RemoveAt(i + 1);
                 i--;

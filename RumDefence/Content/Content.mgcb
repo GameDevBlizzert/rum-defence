@@ -985,6 +985,90 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Walls/Twall_damaged.png;Art/Themes/Grass/Walls/Twall_damaged
 
+#begin Art/Themes/Grass/Walls/diagonal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/diagonal.png;Art/Themes/Grass/Walls/diagonal
+
+#begin Art/Themes/Grass/Walls/end_damaged.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/Twall.png;Art/Themes/Grass/Walls/Twall
+
+#begin Art/Themes/Grass/Walls/Twall.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/Twall.png;Art/Themes/Grass/Walls/Twall
+
+#begin Art/Themes/Grass/Walls/wall_damaged_1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/wall_damaged_1.png;Art/Themes/Grass/Walls/wall_damaged_1
+
+#begin Art/Themes/Grass/Walls/end.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/wall_damaged_1.png;Art/Themes/Grass/Walls/wall_damaged_1
+
+#begin Art/Themes/Grass/Walls/wall_damaged_2.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/wall_damaged_2.png;Art/Themes/Grass/Walls/wall_damaged_2
+
+#begin Art/Themes/Grass/Walls/single.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Walls/single.png;Art/Themes/Grass/Walls/single
+
 #begin Art/Themes/Grass/Walls/Twall_damaged.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -996,90 +1080,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Walls/Twall_damaged.png;Art/Themes/Grass/Walls/Twall_damaged
-
-#begin Art/Themes/Grass/Walls/Twall.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Walls/Twall.png;Art/Themes/Grass/Walls/Twall
-
-#begin Art/Themes/Grass/Walls/Twall.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Walls/Twall.png;Art/Themes/Grass/Walls/Twall
-
-#begin Art/Themes/Grass/Walls/wall_damaged_1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Walls/wall_damaged_1.png;Art/Themes/Grass/Walls/wall_damaged_1
-
-#begin Art/Themes/Grass/Walls/wall_damaged_1.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Walls/wall_damaged_1.png;Art/Themes/Grass/Walls/wall_damaged_1
-
-#begin Art/Themes/Grass/Walls/wall_damaged_2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Walls/wall_damaged_2.png;Art/Themes/Grass/Walls/wall_damaged_2
-
-#begin Art/Themes/Grass/Walls/wall_damaged_2.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Walls/wall_damaged_2.png;Art/Themes/Grass/Walls/wall_damaged_2
-
-#begin Art/Themes/Grass/Walls/wall.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Themes/Grass/Walls/wall.png;Art/Themes/Grass/Walls/wall
 
 #begin Art/Themes/Grass/Walls/wall.png
 /importer:TextureImporter
@@ -1657,6 +1657,24 @@
 /processorParam:Quality=Best
 /build:Audio/impactMining_004.ogg
 
+#begin Audio/explosion_quick.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/explosion_quick.ogg
+
+#begin Audio/explosion_small.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/explosion_small.ogg
+
+#begin Audio/shoot.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/shoot.ogg
+
 #begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
 /processor:SongProcessor
@@ -1695,6 +1713,7 @@
 /build:KenneyPiratePack/PNG/Default size/Ship parts/cannon.png
 
 #begin KenneyPiratePack/PNG/Retina/Effects/explosion1.png
+#begin KenneyPiratePack/PNG/Retina/Effects/explosion1.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1705,7 +1724,9 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:KenneyPiratePack/PNG/Retina/Effects/explosion1.png
+/build:KenneyPiratePack/PNG/Retina/Effects/explosion1.png
 
+#begin KenneyPiratePack/PNG/Retina/Effects/explosion2.png
 #begin KenneyPiratePack/PNG/Retina/Effects/explosion2.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1717,7 +1738,9 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:KenneyPiratePack/PNG/Retina/Effects/explosion2.png
+/build:KenneyPiratePack/PNG/Retina/Effects/explosion2.png
 
+#begin KenneyPiratePack/PNG/Retina/Effects/explosion3.png
 #begin KenneyPiratePack/PNG/Retina/Effects/explosion3.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1729,7 +1752,9 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:KenneyPiratePack/PNG/Retina/Effects/explosion3.png
+/build:KenneyPiratePack/PNG/Retina/Effects/explosion3.png
 
+#begin KenneyPiratePack/PNG/Retina/Ship parts/cannonBall.png
 #begin KenneyPiratePack/PNG/Retina/Ship parts/cannonBall.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1740,6 +1765,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
+/build:KenneyPiratePack/PNG/Retina/Ship parts/cannonBall.png
 /build:KenneyPiratePack/PNG/Retina/Ship parts/cannonBall.png
 
 #begin KenneyPiratePack/PNG/Retina/Ship parts/cannonLoose.png
@@ -1755,6 +1781,7 @@
 /build:KenneyPiratePack/PNG/Retina/Ship parts/cannonLoose.png
 
 #begin KenneyPiratePack/PNG/Retina/Ship parts/wood (3).png
+#begin KenneyPiratePack/PNG/Retina/Ship parts/wood (3).png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -1765,7 +1792,9 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:KenneyPiratePack/PNG/Retina/Ship parts/wood (3).png
+/build:KenneyPiratePack/PNG/Retina/Ship parts/wood (3).png
 
+#begin KenneyUIPack/PNG/Blue/Default/icon_cross.png
 #begin KenneyUIPack/PNG/Blue/Default/icon_cross.png
 /importer:TextureImporter
 /processor:TextureProcessor

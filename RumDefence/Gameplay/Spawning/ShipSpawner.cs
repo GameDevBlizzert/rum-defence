@@ -145,7 +145,13 @@ public class ShipSpawner
 
         if (inCountdown)
         {
-            waveCountdown -= dt;
+            bool waveTimerDisabled = bool.Parse(
+                Environment.GetEnvironmentVariable("DISABLE_WAVE_TIMER") ?? "false"
+            );
+            if (waveTimerDisabled)
+                waveCountdown = 0f;
+            else
+                waveCountdown -= dt;
             if (waveCountdown <= 0f)
                 StartWave(currentWaveIndex);
             return;
@@ -273,5 +279,11 @@ public class ShipSpawner
         var free = coastTiles.FindAll(c => !occupied.Contains(c.GridPos));
         var pool = free.Count > 0 ? free : coastTiles;
         return pool[rng.Next(pool.Count)];
+    }
+
+
+    public int GetCurrentWaveIndex()
+    {
+        return currentWaveIndex;
     }
 }

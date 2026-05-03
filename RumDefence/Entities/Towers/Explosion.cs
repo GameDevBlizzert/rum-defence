@@ -32,6 +32,8 @@ public class Explosion : Entity
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
         Size = SizeSystem.Square(0.6f);
         ApplySize();
+
+        AudioManager.Instance.PlayRandomExplosion();
     }
 
     public override void Update(GameTime gameTime)
