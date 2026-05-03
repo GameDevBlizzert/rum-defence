@@ -266,7 +266,7 @@ public class GameScreen : Screen
                     progress.TakeHits(1);
 
                 if (troop.CanBeRemoved)
-                    Troops.RemoveAt(i);                
+                    Troops.RemoveAt(i);
             }
         }
     }
