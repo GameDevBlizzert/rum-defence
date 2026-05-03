@@ -4,6 +4,20 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
+public enum TowerType { Musket, Cannon }
+
+public record TowerData(
+    TowerType Type,
+    string TexturePath,
+    string OverlayTexturePath,
+    float Range,
+    float FireRate,
+    int Damage,
+    float ProjectileSpeed,
+    AttackMode AttackMode,
+    int Cost
+);
+
 public static class TowerFactory
 {
     public static readonly TowerData Musket = new(
@@ -12,10 +26,10 @@ public static class TowerFactory
         OverlayTexturePath: null,
         Range: 500f,
         FireRate: 3f,
-        Damage: 15,
+        Damage: 10,
         ProjectileSpeed: 500f,
         AttackMode: AttackMode.First,
-        Cost: 75
+        Cost: 25
     );
 
     public static readonly TowerData Cannon = new(
@@ -23,11 +37,11 @@ public static class TowerFactory
         TexturePath: "KenneyPiratePack/PNG/Retina/Ship parts/wood (3)",
         OverlayTexturePath: "KenneyPiratePack/PNG/Retina/Ship parts/cannonLoose",
         Range: 700f,
-        FireRate: 1.5f,
-        Damage: 40,
+        FireRate: 0.5f,
+        Damage: 50,
         ProjectileSpeed: 300f,
         AttackMode: AttackMode.Closest,
-        Cost: 85
+        Cost: 100
     );
 
     public static BaseTower Create(

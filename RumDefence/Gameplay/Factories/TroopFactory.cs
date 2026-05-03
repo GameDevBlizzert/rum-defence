@@ -2,6 +2,17 @@ using Microsoft.Xna.Framework;
 
 namespace RumDefence;
 
+public record TroopData(
+    string SpritePath,
+    int Health,
+    float BaseSpeed,
+    int Damage,
+    int CoinValue,
+    float Size,
+    float InitialSpeedMultiplier,
+    bool IsBoss = false
+);
+
 public static class TroopFactory
 {
     public static readonly TroopData Regular = new(
@@ -9,17 +20,17 @@ public static class TroopFactory
         Health: 100,
         BaseSpeed: 60f,
         Damage: 1,
-        CoinValue: 1,
+        CoinValue: 10,
         Size: 10f,
         InitialSpeedMultiplier: 1f
     );
 
     public static readonly TroopData Boss = new(
         SpritePath: "Art/Pirates/pirates-red-sprite-sheet",
-        Health: 300,
+        Health: 500,
         BaseSpeed: 60f,
         Damage: 10,
-        CoinValue: 1,
+        CoinValue: 100,
         Size: 12f,
         InitialSpeedMultiplier: 0.5f,
         IsBoss: true
