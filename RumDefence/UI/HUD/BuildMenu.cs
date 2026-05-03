@@ -36,7 +36,7 @@ public class BuildMenu
         this.progress = progress;
 
         var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
+        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
@@ -70,25 +70,31 @@ public class BuildMenu
         coinAreaY = currentY;
         currentY += coinHeight + spacing;
 
+        var panelSourceRect = new Rectangle(0, 0, 128, 128);
+
         cannonButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        cannonButton.BackgroundSourceRect = panelSourceRect;
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
         cannonButton.CostLabel = TowerFactory.Cannon.Cost.ToString();
         cannonButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         musketButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        musketButton.BackgroundSourceRect = panelSourceRect;
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
         musketButton.CostLabel = TowerFactory.Musket.Cost.ToString();
         musketButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         wallButton = new IconButton(panelTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        wallButton.BackgroundSourceRect = panelSourceRect;
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
         wallButton.CostLabel = BuildManager.WallCost.ToString();
         wallButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         removeButton = new IconButton(panelTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        removeButton.BackgroundSourceRect = panelSourceRect;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
     }
@@ -122,7 +128,7 @@ public class BuildMenu
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(panelTexture, panelRect, Color.White);
+        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         healthBar.Draw(spriteBatch);
 

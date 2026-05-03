@@ -15,6 +15,7 @@ public class IconButton : Button
     public bool IsDisabled { get; set; }
     public string CostLabel { get; set; }
     public SpriteFont Font { get; set; }
+    public Rectangle? BackgroundSourceRect { get; set; }
 
     public IconButton(Texture2D backgroundTexture, Texture2D iconTexture, Vector2 position, Vector2 size)
     {
@@ -44,7 +45,7 @@ public class IconButton : Button
         else
             bgColor = BaseTint;
 
-        spriteBatch.Draw(backgroundTexture, bounds, bgColor);
+        NineSlice.Draw(spriteBatch, backgroundTexture, bounds, BackgroundSourceRect, 20, bgColor);
 
         var iconColor = IsDisabled ? new Color(80, 80, 80) : Color.White;
 
