@@ -29,7 +29,6 @@ public class Level
     public int StartingCoinBalance { get; private set; }
     public int StartingLives { get; private set; }
 
-
     public Level(int id, string[] mapData, Theme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0, int startingLives = 100)
     {
         Id = id;
@@ -61,7 +60,7 @@ public class Level
                 if (cell == "#")
                 {
                     RumTile = new Point(x, y);
-                    map[y, x] = TileRules.Center;
+                    map[y, x] = 1;
                 }
                 else
                 {
