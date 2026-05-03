@@ -95,7 +95,7 @@ public class GameScreen : Screen
                     refundAmount = (int)Math.Ceiling(BuildManager.CannonTowerCost * 0.8f);
                 else if (tower is MusketTower)
                     refundAmount = (int)Math.Ceiling(BuildManager.MusketTowerCost * 0.8f);
-                
+
                 placedTowers.Remove(p);
             }
 
