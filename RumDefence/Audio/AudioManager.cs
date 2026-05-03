@@ -32,6 +32,7 @@ public class AudioManager
         soundEffects["confirmation"] = content.Load<SoundEffect>("Audio/confirmation_002");
         soundEffects["error"] = content.Load<SoundEffect>("Audio/error_008");
         soundEffects["switch"] = content.Load<SoundEffect>("Audio/switch_002");
+        soundEffects["lose"] = content.Load<SoundEffect>("Audio/lose");
 
         for (int i = 0; i < 5; i++)
             footstepSounds.Add(content.Load<SoundEffect>($"Audio/footstep_grass_00{i}"));

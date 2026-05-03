@@ -72,4 +72,9 @@ public class Level
 
         return map;
     }
+
+    public void ResetRuntimeState()
+    {
+        _rumBarrel = null;
+    }
 }

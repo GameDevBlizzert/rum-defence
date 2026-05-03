@@ -39,6 +39,8 @@ public class GameScreen : Screen
 
     public override void Load()
     {
+        currentLevel.ResetRuntimeState();
+
         grid = new Grid(currentLevel.Map);
 
         RumGame.Instance.CurrentGrid = grid;
@@ -291,15 +293,23 @@ public class GameScreen : Screen
         if (!levelCompleted && Spawner.IsAllWavesComplete && Ships.Count == 0 && Troops.Count == 0)
             progress.SetWon();
 
-        // TODO: Do not ignore IsLost after testing
-        levelCompleted = progress.IsWon() /*|| progress.IsLost()*/;
+        var hasLost = progress.IsLost();
+        var hasWon = progress.IsWon();
+
+        levelCompleted = hasWon || hasLost;
 
         if (levelCompleted)
         {
-            UnlockNextLevel();
             AudioManager.Instance.StopBackgroundMusic();
-            // TODO: Show win or lose screen based
-            manager.SetScreen(new MainMenuScreen(manager));
+
+            if (hasWon)
+            {
+                UnlockNextLevel();
+                manager.SetScreen(new MainMenuScreen(manager));
+                return;
+            }
+
+            manager.SetScreen(new GameOverScreen(manager, currentLevel));
         }
     }
 
