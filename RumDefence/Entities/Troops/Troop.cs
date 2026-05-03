@@ -26,10 +26,11 @@ public class Troop : EntityWithHealth, ICollidable
 
     private static Texture2D pixel;
 
-    private PathfindingSystem pathfinding;
     private TroopDyingAnimation _dyingAnimation = new();
 
     public bool CanBeRemoved { get; private set; }
+    protected PathfindingSystem pathfinding;
+    public Queue<Vector2> Path => pathfinding?.Path;
 
     public Troop(string spritePath, Vector2 start, Vector2 targetPos) : base(16, 32)
     {
