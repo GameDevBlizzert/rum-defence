@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace RumDefence;
 
@@ -17,10 +18,9 @@ public class GameScreen : Screen
     private Hud hud { get; set; }
 
     private Dictionary<Point, Wall> walls = new();
+
     private WallRenderer wallRenderer;
-
     public ShipSpawner Spawner { get; private set; }
-
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
 
@@ -89,13 +89,29 @@ public class GameScreen : Screen
 
         buildManager.SetRemoveCallback(p =>
         {
-            bool removed = walls.Remove(p) || placedTowers.Remove(p);
-            if (removed)
+            int refundAmount = 0;
+
+            if (walls.ContainsKey(p))
             {
-                occupiedTiles.Remove(p);
-                AudioManager.Instance.PlayRandomImpact();
+                refundAmount = (int)Math.Ceiling(BuildManager.WallCost * 0.8f);
+                walls.Remove(p);
+            }
+            else if (placedTowers.TryGetValue(p, out BaseTower tower))
+            {
+                if (tower is CannonTower)
+                    refundAmount = (int)Math.Ceiling(BuildManager.CannonTowerCost * 0.8f);
+                else if (tower is MusketTower)
+                    refundAmount = (int)Math.Ceiling(BuildManager.MusketTowerCost * 0.8f);
+
+                placedTowers.Remove(p);
             }
 
+            if (refundAmount > 0)
+            {
+                occupiedTiles.Remove(p);
+                progress.AddCoins(refundAmount);
+                AudioManager.Instance.PlayRandomImpact();
+            }
         });
 
         buildManager.SetCannonTowerPlacementCallback(p =>
@@ -107,6 +123,7 @@ public class GameScreen : Screen
                 {
                     explosions.Add(new Explosion(pos, explosionIndex));
                 });
+
                 placedTowers[p] = cannon;
                 occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.CannonTowerCost);
@@ -150,6 +167,7 @@ public class GameScreen : Screen
     public override void Update(GameTime gameTime)
     {
         if (HandlePause()) return;
+
         input.Update();
         UpdateBuildSystem(gameTime);
         UpdateSpawner(gameTime);
@@ -180,7 +198,6 @@ public class GameScreen : Screen
         RumGame.Instance.GraphicsDevice.Clear(new Color(30, 144, 255));
 
         renderer.Draw(grid, spriteBatch);
-
         wallRenderer.Draw(spriteBatch);
 
         foreach (var ship in Ships)
@@ -303,7 +320,7 @@ public class GameScreen : Screen
     private void UpdateTroops(GameTime gameTime)
     {
         var untraversable = GetUntraversableTiles();
-        var updatePaths = !latestUntraverableHashSet.Equals(untraversable);
+        var updatePaths = !latestUntraverableHashSet.SetEquals(untraversable);
 
         latestUntraverableHashSet = untraversable;
 
@@ -315,7 +332,7 @@ public class GameScreen : Screen
             var troop = Troops[i];
             troop.Update(gameTime);
 
-            if (updatePaths)
+            if (updatePaths || troop.NeedsPathInit)
                 troop.UpdatePathfinding();
 
             if (troop.IsDead && !troop.HasDroppedReward)
@@ -329,7 +346,8 @@ public class GameScreen : Screen
                 if (troop.IsFinished)
                     progress.TakeHits(1);
 
-                Troops.RemoveAt(i);
+                if (troop.CanBeRemoved)
+                    Troops.RemoveAt(i);
             }
         }
     }
@@ -352,18 +370,43 @@ public class GameScreen : Screen
 
     private void CheckLevelCompletion(GameTime gameTime)
     {
+        // Lose condition
+        if (progress.IsLost())
+        {
+            AudioManager.Instance.StopBackgroundMusic();
+            manager.SetScreen(new GameOverScreen(
+                manager,
+                this,
+                currentLevel,
+                false,
+                Spawner.GetCurrentWaveIndex(),
+                progress.CoinsRemaining
+            ));
+            return;
+        }
+
+        progress.Update(gameTime, this);
+
+        // Win condition
         if (!levelCompleted && Spawner.IsAllWavesComplete && Ships.Count == 0 && Troops.Count == 0)
             progress.SetWon();
 
-        // TODO: Do not ignore IsLost after testing
-        levelCompleted = progress.IsWon() /*|| progress.IsLost()*/;
-
-        if (levelCompleted)
+        if (!levelCompleted && progress.IsWon())
         {
+            levelCompleted = true;
+
             UnlockNextLevel();
             AudioManager.Instance.StopBackgroundMusic();
-            // TODO: Show win or lose screen based
-            manager.SetScreen(new MainMenuScreen(manager));
+
+            manager.SetScreen(new GameOverScreen(
+                manager,
+                this,
+                currentLevel,
+                true,
+                Spawner.GetCurrentWaveIndex(),
+                progress.CoinsRemaining
+            ));
+            return;
         }
     }
 
@@ -379,13 +422,6 @@ public class GameScreen : Screen
         {
             untraversable.Add(wall.GridPos);
         }
-
-        //foreach (var tower in placedTowers)
-        //{
-        //    var tile = grid.WorldToGrid(tower.);
-        //    if (tile != null)
-        //        untraversable.Add(tile.Value);
-        //}
 
         for (int x = 0; x < grid.Width; x++)
         {
