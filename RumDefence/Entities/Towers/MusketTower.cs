@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
+
 namespace RumDefence;
 
 public class MusketTower : BaseTower
@@ -27,27 +28,38 @@ public class MusketTower : BaseTower
         ProjectileSpeed = 500f;
         AttackMode = AttackMode.First;
 
-        // The sprite sheet is 128×64 (2 cells of 64×64). SizeSystem.ToScale uses the
-        // full texture width, so we double the scale to match one cell to one grid tile.
-        scale *= 2f;
+        // Sprite sheet is 512px wide (4 cells of 128px). Scale to one cell = one grid tile.
+        scale *= 8f;
 
-        // Rotation origin must be the center of one cell (64×64), not the full texture.
-        origin = new Vector2(32f, 32f);
+        // Rotation origin is the center of one 128×128 cell.
+        origin = new Vector2(64f, 64f);
     }
 
-    public override void Update(GameTime gameTime)
+    public override void Draw(SpriteBatch spriteBatch)
     {
-        base.Update(gameTime);
-
-        // Derive a direction vector from the current rotation so the animation can
-        // decide whether to show the left/right cell or the up/down cell.
         Vector2 dir = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation));
-        sourceRectangles = _animation.GetCurrentLayerRectangles(gameTime, dir);
-
-        // Cell 0 faces left; flip vertically when the tower is pointing right.
         bool facingHorizontal = Math.Abs(dir.X) >= Math.Abs(dir.Y);
-        spriteEffect = facingHorizontal && dir.X > 0
+        SpriteEffects musketEffect = facingHorizontal && dir.X > 0
             ? SpriteEffects.FlipVertically
             : SpriteEffects.None;
+
+        // Barrel background — static, never rotates
+        spriteBatch.Draw(Texture, Position, _animation.GetBarrelInnerRectangle(),
+            color, 0f, origin, scale, SpriteEffects.None, layerDepth);
+
+        // Pirate — directional frames, never rotates
+        spriteBatch.Draw(Texture, Position, _animation.GetPirateRectangle(dir),
+            color, 0f, origin, scale, SpriteEffects.None, layerDepth + 0.02f);
+
+        // Barrel background — static, never rotates
+        spriteBatch.Draw(Texture, Position, _animation.GetBarrelOuterRectangle(),
+            color, 0f, origin, scale, SpriteEffects.None, layerDepth + 0.03f);
+
+        // Musket — rotates toward target
+        spriteBatch.Draw(Texture, Position, _animation.GetMusketRectangle(dir),
+            color, rotation + rotationOffset, origin, scale, musketEffect, layerDepth + 0.04f);
+
+        foreach (var proj in Projectiles)
+            proj.Draw(spriteBatch);
     }
 }

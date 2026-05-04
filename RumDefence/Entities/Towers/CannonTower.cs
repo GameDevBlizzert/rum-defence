@@ -1,6 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using RumDefence;
 using System;
 using System.Collections.Generic;
 
@@ -8,10 +7,11 @@ namespace RumDefence;
 
 public class CannonTower : BaseTower
 {
-    private Texture2D _baseTexture;
-    private Texture2D _cannonTexture;
-    private Vector2 _cannonOrigin;
     private Action<Vector2, int> _onProjectileHit;
+
+    private float _recoilTimer = float.MaxValue;
+    private const float RecoilDuration = 0.35f;
+    private const float RecoilDistance = 16f;
 
     public CannonTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
@@ -29,18 +29,9 @@ public class CannonTower : BaseTower
 
         ProjectileSpeed = 300f;
         AttackMode = AttackMode.Closest;
-
         BaseUpgradeCost = 100;
 
-        _baseTexture = Texture;
-
-        if (data.OverlayTexturePath != null)
-            _cannonTexture = RumGame.Instance.Content.Load<Texture2D>(data.OverlayTexturePath);
-
-        _cannonOrigin = new Vector2(_cannonTexture.Width / 2f, _cannonTexture.Height / 2f);
-
-        Size = SizeSystem.Square(0.5f);
-        ApplySize();
+        scale *= 1.4f;
     }
 
     public void SetProjectileHitCallback(Action<Vector2, int> callback)
@@ -51,37 +42,39 @@ public class CannonTower : BaseTower
     protected override void FireProjectile(Troop target)
     {
         Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, CurrentDamage, _onProjectileHit));
+        _recoilTimer = 0f;
+    }
+
+    public override void Update(GameTime gameTime)
+    {
+        base.Update(gameTime);
+        _recoilTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        // Draw base layer (wood)
+        Vector2 drawPos = Position;
+        if (_recoilTimer < RecoilDuration)
+        {
+            float t = _recoilTimer / RecoilDuration;
+            // Quadratic ease-out: snaps back quickly then eases to rest
+            float recoilAmount = RecoilDistance * (1f - t) * (1f - t);
+            Vector2 backward = new Vector2(-(float)Math.Cos(rotation), -(float)Math.Sin(rotation));
+            drawPos = Position + backward * recoilAmount;
+        }
+
         spriteBatch.Draw(
-            _baseTexture,
-            Position,
+            Texture,
+            drawPos,
             null,
             color,
-            0f,
+            rotation + rotationOffset,
             origin,
             scale,
             spriteEffect,
             layerDepth
         );
 
-        // Draw rotating cannon on top
-        spriteBatch.Draw(
-            _cannonTexture,
-            Position,
-            null,
-            color,
-            rotation,
-            _cannonOrigin,
-            scale,
-            spriteEffect,
-            layerDepth + 0.01f
-        );
-
-        // Draw projectiles
         foreach (var proj in Projectiles)
             proj.Draw(spriteBatch);
     }
