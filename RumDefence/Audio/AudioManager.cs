@@ -78,34 +78,62 @@ public class AudioManager
 
     public void PlaySound(string soundName)
     {
-        if (soundEffects.TryGetValue(soundName, out var sound))
-            sound.Play();
-        else
-            System.Diagnostics.Debug.WriteLine($"Warning: Sound '{soundName}' not found");
+        try
+        {
+            if (soundEffects.TryGetValue(soundName, out var sound))
+                sound.Play();
+            else
+                System.Diagnostics.Debug.WriteLine($"Warning: Sound '{soundName}' not found");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to play sound '{soundName}': {ex}");
+        }
     }
 
     public void PlayRandomFootstep()
     {
-        if (footstepSounds.Count > 0)
-            footstepSounds[random.Next(footstepSounds.Count)].Play();
-        else
-            System.Diagnostics.Debug.WriteLine("Warning: No footstep sounds loaded");
+        try
+        {
+            if (footstepSounds.Count > 0)
+                footstepSounds[random.Next(footstepSounds.Count)].Play();
+            else
+                System.Diagnostics.Debug.WriteLine("Warning: No footstep sounds loaded");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to play random footstep: {ex}");
+        }
     }
 
     public void PlayRandomImpact()
     {
-        if (impactSounds.Count > 0)
-            impactSounds[random.Next(impactSounds.Count)].Play();
-        else
-            System.Diagnostics.Debug.WriteLine("Warning: No impact sounds loaded");
+        try
+        {
+            if (impactSounds.Count > 0)
+                impactSounds[random.Next(impactSounds.Count)].Play();
+            else
+                System.Diagnostics.Debug.WriteLine("Warning: No impact sounds loaded");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to play random impact: {ex}");
+        }
     }
 
     public void PlayRandomExplosion()
     {
-        if (explosionSounds.Count > 0)
-            explosionSounds[random.Next(explosionSounds.Count)].Play();
-        else
-            System.Diagnostics.Debug.WriteLine("Warning: No explosion sounds loaded");
+        try
+        {
+            if (explosionSounds.Count > 0)
+                explosionSounds[random.Next(explosionSounds.Count)].Play();
+            else
+                System.Diagnostics.Debug.WriteLine("Warning: No explosion sounds loaded");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to play random explosion: {ex}");
+        }
     }
 
     public void PlayBackgroundMusic(string songName = "PineappleUnderTheSea")
@@ -126,12 +154,19 @@ public class AudioManager
         if (isSuspended) return;
 
         // Same song already playing, nothing to do.
-        if (MediaPlayer.State == MediaState.Playing && MediaPlayer.Queue.ActiveSong == song)
-            return;
+        try
+        {
+            if (MediaPlayer.State == MediaState.Playing && MediaPlayer.Queue.ActiveSong == song)
+                return;
 
-        MediaPlayer.Stop();
-        MediaPlayer.Play(currentSong);
-        MediaPlayer.IsRepeating = true;
+            MediaPlayer.Stop();
+            MediaPlayer.Play(currentSong);
+            MediaPlayer.IsRepeating = true;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to play background music '{songName}': {ex}");
+        }
     }
 
     public void StopBackgroundMusic()
@@ -140,7 +175,14 @@ public class AudioManager
         isSuspended = false;
         currentSong = null;
         currentSongName = null;
-        MediaPlayer.Stop();
+        try
+        {
+            MediaPlayer.Stop();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to stop background music: {ex}");
+        }
     }
 
     public void SuspendAudio()
@@ -148,8 +190,15 @@ public class AudioManager
         if (isSuspended) return;   // already suspended
         isSuspended = true;
 
-        if (isMusicActive && MediaPlayer.State == MediaState.Playing)
-            MediaPlayer.Pause();
+        try
+        {
+            if (isMusicActive && MediaPlayer.State == MediaState.Playing)
+                MediaPlayer.Pause();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to suspend audio: {ex}");
+        }
     }
 
     public void ResumeAudio()
@@ -157,29 +206,50 @@ public class AudioManager
         if (!isSuspended) return;
         isSuspended = false;
 
-        if (isMusicActive && currentSong != null)
+        try
         {
-            if (MediaPlayer.State == MediaState.Paused)
-                MediaPlayer.Resume();
-            else
+            if (isMusicActive && currentSong != null)
             {
-                // MediaPlayer state was lost (some platforms stop on focus loss)
-                MediaPlayer.Play(currentSong);
-                MediaPlayer.IsRepeating = true;
+                if (MediaPlayer.State == MediaState.Paused)
+                    MediaPlayer.Resume();
+                else
+                {
+                    // MediaPlayer state was lost (some platforms stop on focus loss)
+                    MediaPlayer.Play(currentSong);
+                    MediaPlayer.IsRepeating = true;
+                }
             }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to resume audio: {ex}");
         }
     }
 
     public void PauseBackgroundMusic()
     {
-        if (isMusicActive && MediaPlayer.State == MediaState.Playing)
-            MediaPlayer.Pause();
+        try
+        {
+            if (isMusicActive && MediaPlayer.State == MediaState.Playing)
+                MediaPlayer.Pause();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to pause background music: {ex}");
+        }
     }
 
     public void ResumeBackgroundMusic()
     {
-        if (isMusicActive && MediaPlayer.State == MediaState.Paused)
-            MediaPlayer.Resume();
+        try
+        {
+            if (isMusicActive && MediaPlayer.State == MediaState.Paused)
+                MediaPlayer.Resume();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to resume background music: {ex}");
+        }
     }
 
     public bool IsBackgroundMusicPlaying => isMusicActive && !isSuspended;
@@ -189,10 +259,17 @@ public class AudioManager
         // Don't auto-restart while suspended or when music is intentionally off.
         if (!isMusicActive || isSuspended || currentSong == null) return;
 
-        if (MediaPlayer.State == MediaState.Stopped)
+        try
         {
-            MediaPlayer.Play(currentSong);
-            MediaPlayer.IsRepeating = true;
+            if (MediaPlayer.State == MediaState.Stopped)
+            {
+                MediaPlayer.Play(currentSong);
+                MediaPlayer.IsRepeating = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to update background music: {ex}");
         }
     }
 }
