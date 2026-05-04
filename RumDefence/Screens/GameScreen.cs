@@ -99,9 +99,9 @@ public class GameScreen : Screen
             else if (placedTowers.TryGetValue(p, out BaseTower tower))
             {
                 if (tower is CannonTower)
-                    refundAmount = (int)Math.Ceiling(BuildManager.CannonTowerCost * 0.8f);
+                    refundAmount = (int)Math.Ceiling(TowerFactory.Cannon.Cost * 0.8f);
                 else if (tower is MusketTower)
-                    refundAmount = (int)Math.Ceiling(BuildManager.MusketTowerCost * 0.8f);
+                    refundAmount = (int)Math.Ceiling(TowerFactory.Musket.Cost * 0.8f);
 
                 placedTowers.Remove(p);
             }
@@ -128,7 +128,7 @@ public class GameScreen : Screen
                 progress.SpendCoins(TowerFactory.Cannon.Cost);
                 AudioManager.Instance.PlayRandomImpact();
                 // Select newly placed tower
-                selectedTower = cannon;
+                selectedTower = placedTowers[p];
                 buildManager.SetMode(BuildMode.None); // Auto select without button
             }
         });
@@ -137,12 +137,12 @@ public class GameScreen : Screen
         {
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= TowerFactory.Musket.Cost)
             {
-                placedTowers[p] = new MusketTower(grid.GridToWorld(p), Troops);
+                placedTowers[p] = TowerFactory.Create(TowerFactory.Musket, grid.GridToWorld(p), Troops);
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Musket.Cost);
                 AudioManager.Instance.PlayRandomImpact();
                 // Select newly placed tower
-                selectedTower = musket;
+                selectedTower = placedTowers[p];
                 buildManager.SetMode(BuildMode.None); // Auto select without button
             }
         });
@@ -360,7 +360,7 @@ public class GameScreen : Screen
                 this,
                 currentLevel,
                 false,
-                Spawner.GetCurrentWaveIndex(),
+                Spawner.CurrentWave,
                 progress.CoinsRemaining
             ));
             return;
@@ -384,7 +384,7 @@ public class GameScreen : Screen
                 this,
                 currentLevel,
                 true,
-                Spawner.GetCurrentWaveIndex(),
+                Spawner.CurrentWave,
                 progress.CoinsRemaining
             ));
             return;

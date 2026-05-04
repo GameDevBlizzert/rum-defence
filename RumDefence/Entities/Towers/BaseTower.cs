@@ -59,9 +59,9 @@ public class BaseTower : Entity
         Position = location;
         Troops = troops;
 
-        Range = data.Range;
-        FireRate = data.FireRate;
-        Damage = data.Damage;
+        BaseRange = data.Range;
+        BaseFireRate = data.FireRate;
+        BaseDamage = data.Damage;
         ProjectileSpeed = data.ProjectileSpeed;
         AttackMode = data.AttackMode;
 

@@ -48,13 +48,7 @@ public class ShipSpawner
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         waveElapsed += dt;
-            bool waveTimerDisabled = bool.Parse(
-                Environment.GetEnvironmentVariable("DISABLE_WAVE_TIMER") ?? "false"
-            );
-            if (waveTimerDisabled)
-                waveCountdown = 0f;
-            else
-            spawnTimer += dt;
+        spawnTimer += dt;
         if (spawnTimer >= nextSpawnInterval && spawnQueue.Count > 0)
         {
             SpawnNextShip();
@@ -62,7 +56,10 @@ public class ShipSpawner
             nextSpawnInterval = spawnInterval;
         }
 
-        if (spawnQueue.Count == 0)
+        bool waveTimerDisabled = bool.Parse(
+            Environment.GetEnvironmentVariable("DISABLE_WAVE_TIMER") ?? "false"
+        );
+        if (spawnQueue.Count == 0 && (waveTimerDisabled || waveElapsed >= WaveDuration))
         {
             waveIndex++;
             if (waveIndex < waves.Count)
