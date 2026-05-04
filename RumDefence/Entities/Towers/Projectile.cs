@@ -6,20 +6,20 @@ namespace RumDefence;
 
 public class Projectile : Entity
 {
-    private readonly Troop _target;
     private readonly float _speed;
-    private readonly int _damage;
     private Vector2 _lastKnownPosition;
 
+    public Troop Target { get; }
+    public int Damage { get; }
     public bool IsFinished { get; private set; }
 
     private static Texture2D _cannonBall;
 
     public Projectile(Vector2 start, Troop target, float speed, int damage)
     {
-        _target = target;
+        Target = target;
         _speed = speed;
-        _damage = damage;
+        Damage = damage;
         Position = start;
         _lastKnownPosition = target.Position;
 
@@ -38,16 +38,16 @@ public class Projectile : Entity
     {
         if (IsFinished) return;
 
-        if (!(_target.IsDead || _target.IsFinished))
-            _lastKnownPosition = _target.Position;
+        if (!(Target.IsDead || Target.IsFinished))
+            _lastKnownPosition = Target.Position;
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         Vector2 dir = _lastKnownPosition - Position;
 
         if (dir.Length() < 6f)
         {
-            if (!_target.IsDead && !_target.IsFinished)
-                _target.TakeDamage(_damage);
+            if (!Target.IsDead && !Target.IsFinished)
+                Target.TakeDamage(Damage);
 
             IsFinished = true;
             return;
