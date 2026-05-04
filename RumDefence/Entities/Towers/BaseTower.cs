@@ -114,6 +114,15 @@ public class BaseTower : Entity
         Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, CurrentDamage));
     }
 
+    private int GetPendingDamage(Troop troop)
+    {
+        int pending = 0;
+        foreach (var proj in Projectiles)
+            if (proj.Target == troop)
+                pending += proj.Damage;
+        return pending;
+    }
+
     private Troop FindTarget()
     {
         Troop best = null;
@@ -126,10 +135,12 @@ public class BaseTower : Entity
             float dist = Vector2.Distance(Position, troop.Position);
             if (dist > CurrentRange) continue;
 
+            if (troop.Health - GetPendingDamage(troop) <= 0) continue;
+
             float value = AttackMode switch
             {
                 AttackMode.Closest => dist,
-                AttackMode.Strongest => -troop.Health, // highest HP = lowest value
+                AttackMode.Strongest => -troop.Health,
                 AttackMode.First => (troop.Path != null && troop.Path.Count > 0 ? (troop.Path.Count * 1000f) + Vector2.Distance(troop.Position, troop.Path.Peek()) : dist),
                 _ => dist
             };
