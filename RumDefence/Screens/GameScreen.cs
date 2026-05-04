@@ -336,16 +336,19 @@ public class GameScreen : Screen
             {
                 hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
                 troop.MarkRewardGiven();
+                Spawner.NotifyTroopDefeated();
             }
 
-            if (troop.IsFinished || troop.IsDead)
+            if (troop.IsFinished && !troop.IsDead)
             {
-                if (troop.IsFinished)
-                    progress.TakeHits(1);
-
-                if (troop.CanBeRemoved)
-                    Troops.RemoveAt(i);
+                progress.TakeHits(1);
+                Spawner.NotifyTroopDefeated();
+                Troops.RemoveAt(i);
+                continue;
             }
+
+            if (troop.IsDead && troop.CanBeRemoved)
+                Troops.RemoveAt(i);
         }
     }
 

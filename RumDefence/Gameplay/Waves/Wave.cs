@@ -5,11 +5,15 @@ namespace RumDefence;
 public class Wave
 {
     public List<ShipGroup> ShipGroups { get; }
-    public float WaveDuration { get; }
+    public float MinSpawnTime { get; }
+    public float MaxSpawnTime { get; }
+    public float HoldingTime { get; }
 
-    public Wave(List<ShipGroup> groups, float waveDuration)
+    public Wave(List<ShipGroup> groups, float minSpawnTime, float maxSpawnTime, float holdingTime = 0f)
     {
         ShipGroups = groups;
-        WaveDuration = waveDuration;
+        MinSpawnTime = minSpawnTime;
+        MaxSpawnTime = maxSpawnTime;
+        HoldingTime = holdingTime;
     }
 }

@@ -10,13 +10,12 @@ public class ShipSpawner
     private readonly Grid grid;
     private readonly List<Wave> waves;
     private readonly List<CoastTile> coastTiles;
+    private readonly Random random = new Random();
 
     private int waveIndex = 0;
     private float spawnTimer = 0f;
     private float nextSpawnInterval = 0f;
-    private float spawnInterval = 0f;
     private int spawnCount = 0;
-    private float waveElapsed = 0f;
 
     private readonly Queue<Ship.Data> spawnQueue = new();
 
@@ -24,10 +23,14 @@ public class ShipSpawner
 
     public int CurrentWave => Math.Min(waveIndex + 1, TotalWaves);
     public int TotalWaves => waves.Count;
-    public float WaveDuration => IsFinished ? 0f : waves[waveIndex].WaveDuration;
-    public float WaveTimeRemaining => IsFinished ? 0f : Math.Max(0f, WaveDuration - waveElapsed);
     public bool IsFinished => waveIndex >= waves.Count;
     public bool IsAllWavesComplete => IsFinished;
+
+    public int TotalTroopsInWave { get; private set; }
+    public int TroopsDefeatedInWave { get; private set; }
+    public float WaveTroopProgress => TotalTroopsInWave > 0
+        ? MathHelper.Clamp((float)TroopsDefeatedInWave / TotalTroopsInWave, 0f, 1f)
+        : 0f;
 
     public ShipSpawner(Level level, Grid grid)
     {
@@ -40,6 +43,11 @@ public class ShipSpawner
             StartSpawning();
     }
 
+    public void NotifyTroopDefeated()
+    {
+        TroopsDefeatedInWave++;
+    }
+
     public void Update(GameTime gameTime)
     {
         NewShips.Clear();
@@ -47,19 +55,16 @@ public class ShipSpawner
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        waveElapsed += dt;
         spawnTimer += dt;
         if (spawnTimer >= nextSpawnInterval && spawnQueue.Count > 0)
         {
             SpawnNextShip();
             spawnTimer = 0f;
-            nextSpawnInterval = spawnInterval;
         }
 
-        bool waveTimerDisabled = bool.Parse(
-            Environment.GetEnvironmentVariable("DISABLE_WAVE_TIMER") ?? "false"
-        );
-        if (spawnQueue.Count == 0 && (waveTimerDisabled || waveElapsed >= WaveDuration))
+        bool allShipsSpawned = spawnQueue.Count == 0;
+        bool allTroopsDefeated = TotalTroopsInWave == 0 || TroopsDefeatedInWave >= TotalTroopsInWave;
+        if (allShipsSpawned && allTroopsDefeated)
         {
             waveIndex++;
             if (waveIndex < waves.Count)
@@ -73,15 +78,16 @@ public class ShipSpawner
         spawnCount = 0;
         spawnTimer = 0f;
         nextSpawnInterval = 0f;
-        waveElapsed = 0f;
+        TotalTroopsInWave = 0;
+        TroopsDefeatedInWave = 0;
 
         var wave = waves[waveIndex];
         foreach (var group in wave.ShipGroups)
+        {
             for (int i = 0; i < group.Count; i++)
                 spawnQueue.Enqueue(group.Data);
-
-        int totalShips = spawnQueue.Count;
-        spawnInterval = totalShips > 0 ? wave.WaveDuration / totalShips : 0f;
+            TotalTroopsInWave += group.Data.EnemyCount * group.Count;
+        }
     }
 
     private void SpawnNextShip()
@@ -93,8 +99,11 @@ public class ShipSpawner
         float lateralOffset = (spawnCount / coastTiles.Count) * 30f;
 
         var ship = (Ship)SpawnSystem.CreateShip(level, grid, data, coast, lateralOffset);
-        ship.AdvanceToDock();
+        ship.AdvanceToDock(waves[waveIndex].HoldingTime);
         spawnCount++;
+
+        var wave = waves[waveIndex];
+        nextSpawnInterval = (float)(random.NextDouble() * (wave.MaxSpawnTime - wave.MinSpawnTime) + wave.MinSpawnTime);
 
         NewShips.Add(ship);
     }
