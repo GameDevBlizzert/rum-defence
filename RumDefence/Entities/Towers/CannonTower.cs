@@ -31,8 +31,7 @@ public class CannonTower : BaseTower
         AttackMode = AttackMode.Closest;
         BaseUpgradeCost = 100;
 
-        Size = SizeSystem.Square(1f);
-        ApplySize();
+        scale *= 1.4f;
     }
 
     public void SetProjectileHitCallback(Action<Vector2, int> callback)
