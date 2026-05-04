@@ -11,12 +11,45 @@ public class BaseTower : Entity
     protected readonly List<Troop> Troops;
     protected readonly List<Projectile> Projectiles = [];
 
-    public float Range { get; set; } = 700f;
-    public float FireRate { get; set; } = 1f; // shots per second
-    public int Damage { get; set; } = 25;
+    public int CurrentLevel { get; protected set; } = 0;
+    public int MaxLevel { get; protected set; } = 3;
+
+    protected float BaseRange = 700f;
+    protected float RangeUpgradeFlat = 50f;
+    protected float RangeUpgradePercent = 0.1f;
+
+    protected float BaseFireRate = 1f; // shots per second
+    protected float FireRateUpgradeFlat = 0f;
+    protected float FireRateUpgradePercent = 0.2f;
+
+    protected int BaseDamage = 25;
+    protected int DamageUpgradeFlat = 5;
+    protected float DamageUpgradePercent = 0.1f;
+
+    public float CurrentRange => (BaseRange + (CurrentLevel * RangeUpgradeFlat)) * (1f + (CurrentLevel * RangeUpgradePercent));
+    public float CurrentFireRate => (BaseFireRate + (CurrentLevel * FireRateUpgradeFlat)) * (1f + (CurrentLevel * FireRateUpgradePercent));
+    public int CurrentDamage => (int)((BaseDamage + (CurrentLevel * DamageUpgradeFlat)) * (1f + (CurrentLevel * DamageUpgradePercent)));
+
     public float ProjectileSpeed { get; set; } = 200f;
     public AttackMode AttackMode { get; set; } = AttackMode.Closest;
     public float RotationSpeed { get; set; } = 5f; // radians per second
+
+    public int BaseUpgradeCost { get; set; } = 50;
+
+    public int GetUpgradeCost()
+    {
+        return (int)(BaseUpgradeCost * Math.Pow(1.5, CurrentLevel));
+    }
+
+    public bool CanUpgrade => CurrentLevel < MaxLevel;
+
+    public virtual void ApplyUpgrade()
+    {
+        if (CanUpgrade)
+        {
+            CurrentLevel++;
+        }
+    }
 
     private float _fireCooldown = 0f;
     private float _targetRotation = 0f;
@@ -72,13 +105,13 @@ public class BaseTower : Entity
         if (target == null) return;
 
         FireProjectile(target);
-        _fireCooldown = 1f / FireRate;
+        _fireCooldown = 1f / CurrentFireRate;
     }
 
     protected virtual void FireProjectile(Troop target)
     {
-        Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, Damage));
         AudioManager.Instance.PlaySound("shoot");
+        Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, CurrentDamage));
     }
 
     private Troop FindTarget()
@@ -91,7 +124,7 @@ public class BaseTower : Entity
             if (troop.IsDead || troop.IsFinished) continue;
 
             float dist = Vector2.Distance(Position, troop.Position);
-            if (dist > Range) continue;
+            if (dist > CurrentRange) continue;
 
             float value = AttackMode switch
             {

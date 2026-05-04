@@ -15,6 +15,23 @@ public class CannonTower : BaseTower
 
     public CannonTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
+        BaseRange = 400f;
+        RangeUpgradeFlat = 25f;
+        RangeUpgradePercent = 0.05f;
+
+        BaseFireRate = 0.5f;
+        FireRateUpgradeFlat = 0f;
+        FireRateUpgradePercent = 0.15f;
+
+        BaseDamage = 40;
+        DamageUpgradeFlat = 10;
+        DamageUpgradePercent = 0.2f;
+
+        ProjectileSpeed = 300f;
+        AttackMode = AttackMode.Closest;
+
+        BaseUpgradeCost = 100;
+
         _baseTexture = Texture;
 
         if (data.OverlayTexturePath != null)
@@ -33,7 +50,7 @@ public class CannonTower : BaseTower
 
     protected override void FireProjectile(Troop target)
     {
-        Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, Damage, _onProjectileHit));
+        Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, CurrentDamage, _onProjectileHit));
     }
 
     public override void Draw(SpriteBatch spriteBatch)

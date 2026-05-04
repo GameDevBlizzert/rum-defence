@@ -10,6 +10,12 @@ public class MusketTower : BaseTower
 
     public MusketTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
+        Range = 500f;
+        FireRate = 3f;
+        Damage = 15;
+        ProjectileSpeed = 500f;
+        AttackMode = AttackMode.First;
+
         // The sprite sheet is 128×64 (2 cells of 64×64). SizeSystem.ToScale uses the
         // full texture width, so we double the scale to match one cell to one grid tile.
         scale *= 2f;
