@@ -45,8 +45,8 @@ public class GameOverScreen : Screen
         var content = RumGame.Instance.Content;
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
+        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         // pixel voor overlay
         pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
@@ -124,7 +124,7 @@ public class GameOverScreen : Screen
             panelHeight
         );
 
-        spriteBatch.Draw(panelTexture, panelRect, Color.White);
+        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         // 4. titel
         var title = isWin ? "YOU WIN!" : "GAME OVER";

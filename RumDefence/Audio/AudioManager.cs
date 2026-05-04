@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
 using System;
@@ -15,6 +16,29 @@ public class AudioManager
     private List<SoundEffect> footstepSounds = new();
     private List<SoundEffect> impactSounds = new();
     private List<SoundEffect> explosionSounds = new();
+
+    private float musicVolume = 0.5f;
+    private float soundVolume = 1.0f;
+
+    public float MusicVolume
+    {
+        get => musicVolume;
+        set
+        {
+            musicVolume = MathHelper.Clamp(value, 0f, 1f);
+            MediaPlayer.Volume = musicVolume;
+        }
+    }
+
+    public float SoundVolume
+    {
+        get => soundVolume;
+        set
+        {
+            soundVolume = MathHelper.Clamp(value, 0f, 1f);
+            SoundEffect.MasterVolume = soundVolume;
+        }
+    }
 
     private Song currentSong;
     private string currentSongName;
@@ -47,6 +71,9 @@ public class AudioManager
         songs["PineappleUnderTheSea"] = content.Load<Song>("Audio/PineappleUnderTheSea");
         songs["WhatCloudsAreMadeOf"] = content.Load<Song>("Audio/WhatCloudsAreMadeOf");
         songs["GentleBreeze"] = content.Load<Song>("Audio/GentleBreeze");
+
+        MediaPlayer.Volume = musicVolume;
+        SoundEffect.MasterVolume = soundVolume;
     }
 
     public void PlaySound(string soundName)

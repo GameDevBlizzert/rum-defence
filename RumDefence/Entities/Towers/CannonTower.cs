@@ -13,7 +13,7 @@ public class CannonTower : BaseTower
     private Vector2 _cannonOrigin;
     private Action<Vector2, int> _onProjectileHit;
 
-    public CannonTower(Vector2 location, List<Troop> troops) : base(location, troops, "KenneyPiratePack/PNG/Retina/Ship parts/wood (3)")
+    public CannonTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
         BaseRange = 400f;
         RangeUpgradeFlat = 25f;
@@ -33,7 +33,10 @@ public class CannonTower : BaseTower
         BaseUpgradeCost = 100;
 
         _baseTexture = Texture;
-        _cannonTexture = RumGame.Instance.Content.Load<Texture2D>("KenneyPiratePack/PNG/Retina/Ship parts/cannonLoose");
+
+        if (data.OverlayTexturePath != null)
+            _cannonTexture = RumGame.Instance.Content.Load<Texture2D>(data.OverlayTexturePath);
+
         _cannonOrigin = new Vector2(_cannonTexture.Width / 2f, _cannonTexture.Height / 2f);
 
         Size = SizeSystem.Square(0.5f);

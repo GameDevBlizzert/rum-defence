@@ -5,8 +5,6 @@ using System;
 public class BuildManager
 {
     public const int WallCost = 10;
-    public const int MusketTowerCost = 75;
-    public const int CannonTowerCost = 85;
 
     private Grid grid;
     private BuildMode currentMode = BuildMode.None;

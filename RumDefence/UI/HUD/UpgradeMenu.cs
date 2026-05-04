@@ -25,8 +25,8 @@ public class UpgradeMenu
         this.progress = progress;
 
         var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
-        var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
+        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
+        var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
         int width = 340;
@@ -63,7 +63,7 @@ public class UpgradeMenu
         if (SelectedTower == null)
             return;
 
-        spriteBatch.Draw(panelTexture, panelRect, Color.White);
+        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         // Draw title
         var title = "TOWER";

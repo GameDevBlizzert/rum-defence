@@ -8,7 +8,7 @@ public class MusketTower : BaseTower
 {
     private readonly MusketAnimation _animation = new MusketAnimation();
 
-    public MusketTower(Vector2 location, List<Troop> troops) : base(location, troops, "Art/Towers/musket")
+    public MusketTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
         BaseRange = 500f;
         RangeUpgradeFlat = 50f;

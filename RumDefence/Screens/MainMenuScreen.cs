@@ -24,8 +24,8 @@ public class MainMenuScreen : Screen
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
+        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         panelRect = new Rectangle(500, 200, 900, 700);
 
@@ -40,7 +40,7 @@ public class MainMenuScreen : Screen
 
         settingsButton.OnClick = () =>
         {
-            System.Diagnostics.Debug.WriteLine("Settings clicked");
+            manager.SetScreen(new SettingsScreen(manager, this));
         };
 
         quitButton.OnClick = () =>
@@ -68,7 +68,7 @@ public class MainMenuScreen : Screen
     {
         RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        spriteBatch.Draw(panelTexture, panelRect, Color.White);
+        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         levelsButton.Draw(spriteBatch);
         settingsButton.Draw(spriteBatch);

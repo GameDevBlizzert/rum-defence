@@ -54,12 +54,18 @@ public class BaseTower : Entity
     private float _fireCooldown = 0f;
     private float _targetRotation = 0f;
 
-    public BaseTower(Vector2 location, List<Troop> troops, string texturePath)
+    public BaseTower(TowerData data, Vector2 location, List<Troop> troops)
     {
         Position = location;
         Troops = troops;
 
-        Texture = RumGame.Instance.Content.Load<Texture2D>(texturePath);
+        BaseRange = data.Range;
+        BaseFireRate = data.FireRate;
+        BaseDamage = data.Damage;
+        ProjectileSpeed = data.ProjectileSpeed;
+        AttackMode = data.AttackMode;
+
+        Texture = RumGame.Instance.Content.Load<Texture2D>(data.TexturePath);
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
         rotationOffset = MathHelper.Pi;
 

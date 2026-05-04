@@ -13,6 +13,8 @@ public class WaveHud
     private const int PanelPaddingX = 24;
     private const int PanelPaddingY = 10;
     private const int LineSpacing = 6;
+    private const int BarHeight = 18;
+    private const int BarMinWidth = 120;
 
     public WaveHud(ShipSpawner spawner)
     {
@@ -26,17 +28,18 @@ public class WaveHud
     public void Draw(SpriteBatch spriteBatch)
     {
         string waveText = $"Wave {spawner.CurrentWave} / {spawner.TotalWaves}";
-        string subText = spawner.IsFinished
-            ? "All waves complete!"
-            : spawner.IsInCountdown
-                ? $"Next wave in: {(int)Math.Ceiling(spawner.WaveCountdown)} sec"
-                : "Incoming!";
+        float progress = spawner.IsFinished ? 1f : spawner.WaveTroopProgress;
+        string pctText = spawner.IsFinished ? "All waves complete!" : $"{(int)(progress * 100)}%";
 
         var waveSize = font.MeasureString(waveText);
-        var subSize = font.MeasureString(subText);
+        var pctSize = font.MeasureString(pctText);
 
-        float panelWidth = Math.Max(waveSize.X, subSize.X) + PanelPaddingX * 2;
-        float panelHeight = waveSize.Y + LineSpacing + subSize.Y + PanelPaddingY * 2;
+        float innerWidth = spawner.IsFinished
+            ? Math.Max(waveSize.X, pctSize.X)
+            : Math.Max(Math.Max(waveSize.X, BarMinWidth), pctSize.X);
+
+        float panelWidth = innerWidth + PanelPaddingX * 2;
+        float panelHeight = waveSize.Y + LineSpacing + (spawner.IsFinished ? pctSize.Y : BarHeight) + PanelPaddingY * 2;
         float panelX = (RumGame.VirtualWidth - panelWidth) / 2f;
         float panelY = 20f;
 
@@ -47,9 +50,29 @@ public class WaveHud
         float waveY = panelY + PanelPaddingY;
         spriteBatch.DrawString(font, waveText, new Vector2(waveX, waveY), Color.White);
 
-        Color subColor = spawner.IsInCountdown ? Color.Yellow : new Color(255, 100, 100);
-        float subX = panelX + (panelWidth - subSize.X) / 2f;
-        float subY = waveY + waveSize.Y + LineSpacing;
-        spriteBatch.DrawString(font, subText, new Vector2(subX, subY), subColor);
+        float contentY = waveY + waveSize.Y + LineSpacing;
+
+        if (spawner.IsFinished)
+        {
+            float pctX = panelX + (panelWidth - pctSize.X) / 2f;
+            spriteBatch.DrawString(font, pctText, new Vector2(pctX, contentY), Color.White);
+        }
+        else
+        {
+            float barX = panelX + PanelPaddingX;
+            float barWidth = panelWidth - PanelPaddingX * 2;
+
+            var barBgRect = new Rectangle((int)barX, (int)contentY, (int)barWidth, BarHeight);
+            var barFillRect = new Rectangle((int)barX, (int)contentY, (int)(barWidth * progress), BarHeight);
+
+            spriteBatch.Draw(pixel, barBgRect, new Color(60, 60, 0));
+            spriteBatch.Draw(pixel, barFillRect, Color.Yellow);
+
+            var pctPos = new Vector2(
+                barX + (barWidth - pctSize.X) / 2f,
+                contentY + (BarHeight - pctSize.Y) / 2f
+            );
+            spriteBatch.DrawString(font, pctText, pctPos, Color.White);
+        }
     }
 }

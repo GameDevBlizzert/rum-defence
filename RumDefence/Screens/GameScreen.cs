@@ -64,6 +64,7 @@ public class GameScreen : Screen
         Spawner = new ShipSpawner(currentLevel, grid);
 
         hud = new Hud(buildManager, progress, Spawner);
+        hud.OnMenuRequested = () => manager.SetScreen(new PauseScreen(manager, this));
 
         wallRenderer = new WallRenderer(
             grid,
@@ -98,9 +99,9 @@ public class GameScreen : Screen
             else if (placedTowers.TryGetValue(p, out BaseTower tower))
             {
                 if (tower is CannonTower)
-                    refundAmount = (int)Math.Ceiling(BuildManager.CannonTowerCost * 0.8f);
+                    refundAmount = (int)Math.Ceiling(TowerFactory.Cannon.Cost * 0.8f);
                 else if (tower is MusketTower)
-                    refundAmount = (int)Math.Ceiling(BuildManager.MusketTowerCost * 0.8f);
+                    refundAmount = (int)Math.Ceiling(TowerFactory.Musket.Cost * 0.8f);
 
                 placedTowers.Remove(p);
             }
@@ -115,35 +116,33 @@ public class GameScreen : Screen
 
         buildManager.SetCannonTowerPlacementCallback(p =>
         {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.CannonTowerCost)
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= TowerFactory.Cannon.Cost)
             {
-                var cannon = new CannonTower(grid.GridToWorld(p), Troops);
-                cannon.SetProjectileHitCallback((pos, explosionIndex) =>
-                {
-                    explosions.Add(new Explosion(pos, explosionIndex));
-                });
-
-                placedTowers[p] = cannon;
+                placedTowers[p] = TowerFactory.Create(
+                    TowerFactory.Cannon,
+                    grid.GridToWorld(p),
+                    Troops,
+                    (pos, explosionIndex) => explosions.Add(new Explosion(pos, explosionIndex))
+                );
                 occupiedTiles[p] = true;
-                progress.SpendCoins(BuildManager.CannonTowerCost);
+                progress.SpendCoins(TowerFactory.Cannon.Cost);
                 AudioManager.Instance.PlayRandomImpact();
                 // Select newly placed tower
-                selectedTower = cannon;
+                selectedTower = placedTowers[p];
                 buildManager.SetMode(BuildMode.None); // Auto select without button
             }
         });
 
         buildManager.SetMusketTowerPlacementCallback(p =>
         {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.MusketTowerCost)
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= TowerFactory.Musket.Cost)
             {
-                var musket = new MusketTower(grid.GridToWorld(p), Troops);
-                placedTowers[p] = musket;
+                placedTowers[p] = TowerFactory.Create(TowerFactory.Musket, grid.GridToWorld(p), Troops);
                 occupiedTiles[p] = true;
-                progress.SpendCoins(BuildManager.MusketTowerCost);
+                progress.SpendCoins(TowerFactory.Musket.Cost);
                 AudioManager.Instance.PlayRandomImpact();
                 // Select newly placed tower
-                selectedTower = musket;
+                selectedTower = placedTowers[p];
                 buildManager.SetMode(BuildMode.None); // Auto select without button
             }
         });
@@ -173,7 +172,6 @@ public class GameScreen : Screen
         UpdateShips(gameTime);
         UpdateTroops(gameTime);
         UpdateTowers(gameTime);
-        UpdateWaveProgression();
         CheckLevelCompletion(gameTime);
     }
 
@@ -338,33 +336,20 @@ public class GameScreen : Screen
             {
                 hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
                 troop.MarkRewardGiven();
+                Spawner.NotifyTroopDefeated();
             }
 
-            if (troop.IsFinished || troop.IsDead)
+            if (troop.IsFinished && !troop.IsDead)
             {
-                if (troop.IsFinished)
-                    progress.TakeHits(1);
-
-                if (troop.CanBeRemoved)
-                    Troops.RemoveAt(i);
+                progress.TakeHits(1);
+                Spawner.NotifyTroopDefeated();
+                Troops.RemoveAt(i);
+                continue;
             }
+
+            if (troop.IsDead && troop.CanBeRemoved)
+                Troops.RemoveAt(i);
         }
-    }
-
-    private void UpdateWaveProgression()
-    {
-        if (Spawner.IsAllWavesComplete) return;
-        if (!Spawner.HasPreloadedWave) return;
-
-        bool attackingShipsRemain = Ships.Any(s =>
-            s.State == Ship.ShipState.SailingToDock ||
-            s.State == Ship.ShipState.Docked ||
-            s.State == Ship.ShipState.Unloading ||
-            s.State == Ship.ShipState.Leaving_BackOff ||
-            s.State == Ship.ShipState.Leaving_ToSea);
-
-        if (!attackingShipsRemain && Troops.Count == 0)
-            Spawner.AdvancePreloadToAttack();
     }
 
     private void CheckLevelCompletion(GameTime gameTime)
@@ -378,7 +363,7 @@ public class GameScreen : Screen
                 this,
                 currentLevel,
                 false,
-                Spawner.GetCurrentWaveIndex(),
+                Spawner.CurrentWave,
                 progress.CoinsRemaining
             ));
             return;
@@ -402,7 +387,7 @@ public class GameScreen : Screen
                 this,
                 currentLevel,
                 true,
-                Spawner.GetCurrentWaveIndex(),
+                Spawner.CurrentWave,
                 progress.CoinsRemaining
             ));
             return;

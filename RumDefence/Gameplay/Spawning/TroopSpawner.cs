@@ -38,7 +38,6 @@ public class TroopSpawner
 
     public void Update(GameTime gameTime)
     {
-        Troop troop;
         if (!IsSpawning) return;
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -48,15 +47,8 @@ public class TroopSpawner
         {
             spawnTimer = 0f;
             troopsSpawned++;
-            if (troopsSpawned < troopsToSpawn)
-            {
-                troop = new Troop("Art/Pirates/pirates-green-sprite-sheet", spawnPosition + GetSpawnOffset(), troopTargetDestination);
-            }
-            else
-            {
-                troop = new BossTroop("Art/Pirates/pirates-red-sprite-sheet", spawnPosition + GetSpawnOffset(), troopTargetDestination);
-            }
-            SpawnTroop(troop);
+            var data = troopsSpawned < troopsToSpawn ? TroopFactory.Regular : TroopFactory.Boss;
+            SpawnTroop(TroopFactory.Create(data, spawnPosition + GetSpawnOffset(), troopTargetDestination));
         }
     }
 
