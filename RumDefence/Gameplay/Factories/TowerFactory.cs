@@ -34,8 +34,8 @@ public static class TowerFactory
 
     public static readonly TowerData Cannon = new(
         Type: TowerType.Cannon,
-        TexturePath: "KenneyPiratePack/PNG/Retina/Ship parts/wood (3)",
-        OverlayTexturePath: "KenneyPiratePack/PNG/Retina/Ship parts/cannonLoose",
+        TexturePath: "Art/Towers/cannon",
+        OverlayTexturePath: null,
         Range: 700f,
         FireRate: 0.5f,
         Damage: 50,

@@ -649,6 +649,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Stone/Ships/ship_1.png;Art/Themes/Stone/Ships/ship_1
 
+#begin Art/Towers/cannon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Towers/cannon.png
+
 #begin Art/Towers/musket.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -763,6 +775,18 @@
 /processorParam:Quality=Best
 /build:Audio/error_008.ogg
 
+#begin Audio/explosion_quick.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/explosion_quick.ogg
+
+#begin Audio/explosion_small.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/explosion_small.ogg
+
 #begin Audio/footstep_grass_000.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
@@ -829,29 +853,17 @@
 /processorParam:Quality=Best
 /build:Audio/impactMining_004.ogg
 
-#begin Audio/explosion_quick.ogg
+#begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
-/processor:SoundEffectProcessor
+/processor:SongProcessor
 /processorParam:Quality=Best
-/build:Audio/explosion_quick.ogg
-
-#begin Audio/explosion_small.ogg
-/importer:OggImporter
-/processor:SoundEffectProcessor
-/processorParam:Quality=Best
-/build:Audio/explosion_small.ogg
+/build:Audio/PineappleUnderTheSea.ogg
 
 #begin Audio/shoot.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Audio/shoot.ogg
-
-#begin Audio/PineappleUnderTheSea.ogg
-/importer:OggImporter
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Audio/PineappleUnderTheSea.ogg
 
 #begin Audio/switch_002.ogg
 /importer:OggImporter
