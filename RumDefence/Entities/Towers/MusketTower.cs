@@ -11,8 +11,19 @@ public class MusketTower : BaseTower
     public MusketTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
         BaseRange = 500f;
+        RangeUpgradeFlat = 50f;
+        RangeUpgradePercent = 0.1f;
+
         BaseFireRate = 3f;
-        BaseDamage = 15;
+        FireRateUpgradeFlat = 1f;
+        FireRateUpgradePercent = 0.05f;
+
+        BaseDamage = 10;
+        DamageUpgradeFlat = 5;
+        DamageUpgradePercent = 0.1f;
+
+        BaseUpgradeCost = 75;
+
         ProjectileSpeed = 500f;
         AttackMode = AttackMode.First;
 
