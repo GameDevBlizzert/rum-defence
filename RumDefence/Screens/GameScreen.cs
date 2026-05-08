@@ -34,6 +34,8 @@ public class GameScreen : Screen
 
     private HashSet<Point> latestUntraverableHashSet = new();
 
+    private Dictionary<Point, bool> occupiedTiles = new();
+
     private Texture2D pixel;
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
@@ -72,7 +74,6 @@ public class GameScreen : Screen
             walls
         );
 
-        var occupiedTiles = new Dictionary<Point, bool>();
         renderer.SetOccupiedTiles(occupiedTiles);
 
         buildManager.SetWallPlacementCallback(p =>
@@ -174,6 +175,7 @@ public class GameScreen : Screen
         UpdateSpawner(gameTime);
         UpdateShips(gameTime);
         UpdateTroops(gameTime);
+        UpdateWalls();
         UpdateTowers(gameTime);
         CheckLevelCompletion(gameTime);
     }
@@ -218,6 +220,8 @@ public class GameScreen : Screen
         // Draw explosions
         foreach (var explosion in explosions)
             explosion.Draw(spriteBatch);
+
+        DrawWallHealthBars(spriteBatch);
 
         var overlayRenderer = renderer.GetOverlayRenderer();
         if (overlayRenderer != null)
@@ -306,6 +310,8 @@ public class GameScreen : Screen
 
             if (Ships[i].SpawnedTroops.Count > 0)
             {
+                foreach (var troop in Ships[i].SpawnedTroops)
+                    troop.GetWallAt = p => walls.TryGetValue(p, out var w) ? w : null;
                 Troops.AddRange(Ships[i].SpawnedTroops);
                 Ships[i].SpawnedTroops.Clear();
             }
@@ -395,6 +401,40 @@ public class GameScreen : Screen
                 progress.CoinsRemaining
             ));
             return;
+        }
+    }
+
+    private void UpdateWalls()
+    {
+        foreach (var key in walls.Keys.ToList())
+        {
+            if (walls[key].IsDestroyed)
+            {
+                walls.Remove(key);
+                occupiedTiles.Remove(key);
+            }
+        }
+    }
+
+    private void DrawWallHealthBars(SpriteBatch spriteBatch)
+    {
+        const int barHeight = 3;
+        const int barYOffset = 4;
+
+        foreach (var wall in walls.Values)
+        {
+            if (!wall.IsDamaged) continue;
+
+            var center = grid.GridToWorld(wall.GridPos);
+            int barWidth = grid.TileSize;
+            int barX = (int)(center.X - barWidth / 2f);
+            int barY = (int)(center.Y + grid.TileSize / 2f + barYOffset);
+
+            float pct = (float)wall.Health / Wall.MaxHealth;
+            int healthWidth = (int)(barWidth * pct);
+
+            spriteBatch.Draw(pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
+            spriteBatch.Draw(pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
         }
     }
 

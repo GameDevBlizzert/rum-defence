@@ -33,6 +33,8 @@ public class Troop : EntityWithHealth, ICollidable
     protected PathfindingSystem pathfinding;
     public Queue<Vector2> Path => pathfinding?.Path;
 
+    public Func<Point, Wall> GetWallAt { get; set; }
+
     public Troop(TroopData data, Vector2 start, Vector2 targetPos) : base(16, 32)
     {
         Position = start;
@@ -108,8 +110,6 @@ public class Troop : EntityWithHealth, ICollidable
             }
             return;
         }
-        _attackTimer = 0f;
-
         if (IsFinished) return;
 
         float speed = baseSpeed * SpeedMultiplier;
@@ -122,6 +122,33 @@ public class Troop : EntityWithHealth, ICollidable
             IsFinished = true;
             return;
         }
+
+        // If the next waypoint in the path is a wall, stop and attack it
+        if (GetWallAt != null && pathfinding.Path.Count > 0)
+        {
+            var grid = RumGame.Instance.CurrentGrid;
+            var nextGrid = grid.WorldToGrid(pathfinding.Path.Peek());
+            if (nextGrid.HasValue)
+            {
+                var wall = GetWallAt(nextGrid.Value);
+                if (wall != null && !wall.IsDestroyed)
+                {
+                    var wallDir = pathfinding.Path.Peek() - Position;
+                    if (wallDir != Vector2.Zero) wallDir.Normalize();
+                    _lastDir = wallDir;
+                    sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
+                    _attackTimer += dt;
+                    if (_attackTimer >= 1f)
+                    {
+                        wall.TakeDamage(Damage);
+                        _attackTimer -= 1f;
+                    }
+                    return;
+                }
+            }
+        }
+
+        _attackTimer = 0f;
 
         Vector2 dir;
 
