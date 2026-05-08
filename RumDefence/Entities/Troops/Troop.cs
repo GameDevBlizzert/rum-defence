@@ -33,13 +33,12 @@ public class Troop : EntityWithHealth, ICollidable
     protected PathfindingSystem pathfinding;
     public Queue<Vector2> Path => pathfinding?.Path;
 
-    public Troop(TroopData data, Vector2 start, Vector2 targetPos) : base(16, 32)
+    public Troop(TroopData data, Vector2 start, Vector2 targetPos) : base(16, 32, data.Health)
     {
         Position = start;
         target = targetPos;
 
         baseSpeed = data.BaseSpeed;
-        Health = data.Health;
         Damage = data.Damage;
         CoinValue = data.CoinValue;
         SpeedMultiplier = data.InitialSpeedMultiplier;
