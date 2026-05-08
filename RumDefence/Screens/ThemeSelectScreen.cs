@@ -18,7 +18,7 @@ public class ThemeSelectScreen : Screen
         var content = RumGame.Instance.Content;
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         grassButton = new SimpleButton(buttonTexture, font, "Grass",
             new Vector2(800, 400), new Vector2(300, 100));

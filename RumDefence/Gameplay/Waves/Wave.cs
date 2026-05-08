@@ -1,20 +1,19 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace RumDefence;
 
 public class Wave
 {
     public List<ShipGroup> ShipGroups { get; }
-
     public float MinSpawnTime { get; }
     public float MaxSpawnTime { get; }
-    public float HoldTime { get; }
+    public float HoldingTime { get; }
 
-    public Wave(List<ShipGroup> groups, float minTime, float maxTime, float holdTime)
+    public Wave(List<ShipGroup> groups, float minSpawnTime, float maxSpawnTime, float holdingTime = 0f)
     {
         ShipGroups = groups;
-        MinSpawnTime = minTime;
-        MaxSpawnTime = maxTime;
-        HoldTime = holdTime;
+        MinSpawnTime = minSpawnTime;
+        MaxSpawnTime = maxSpawnTime;
+        HoldingTime = holdingTime;
     }
 }

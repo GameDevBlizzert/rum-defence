@@ -56,7 +56,7 @@ public class SimpleButton : Button
         else
             color = Color.White;
 
-        spriteBatch.Draw(texture, bounds, color);
+        NineSlice.Draw(spriteBatch, texture, bounds, null, 10, color);
 
         var textSize = font.MeasureString(text);
 

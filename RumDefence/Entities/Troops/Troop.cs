@@ -13,7 +13,7 @@ public class Troop : EntityWithHealth, ICollidable
     protected virtual Animation _swordAttackAnimation { get; set; }
     private Vector2 _lastDir = Vector2.UnitY;
 
-    private float baseSpeed = 60f;
+    private float baseSpeed;
     public float SpeedMultiplier { get; set; } = 1f;
     public int CoinValue { get; set; } = 1;
     public bool HasDroppedReward { get; private set; }
@@ -33,17 +33,18 @@ public class Troop : EntityWithHealth, ICollidable
     protected PathfindingSystem pathfinding;
     public Queue<Vector2> Path => pathfinding?.Path;
 
-    public Troop(string spritePath, Vector2 start, Vector2 targetPos) : base(16, 32)
+    public Troop(TroopData data, Vector2 start, Vector2 targetPos) : base(16, 32)
     {
         Position = start;
         target = targetPos;
-        animation = new TroopAnimation(
-            16,
-            16,
-            0.2f,
-            3,
-            true
-        );
+
+        baseSpeed = data.BaseSpeed;
+        Health = data.Health;
+        Damage = data.Damage;
+        CoinValue = data.CoinValue;
+        SpeedMultiplier = data.InitialSpeedMultiplier;
+
+        animation = new TroopAnimation(16, 16, 0.2f, 3, true);
         _swordAttackAnimation = new TroopSwordAttackAnimation();
 
         if (pixel == null)
@@ -53,10 +54,10 @@ public class Troop : EntityWithHealth, ICollidable
         }
 
         // https://foozlecc.itch.io/scallywag-pirates
-        Texture = RumGame.Instance.Content.Load<Texture2D>(spritePath);
+        Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
         origin = Vector2.Zero;
 
-        Size = SizeSystem.Square(10f);
+        Size = SizeSystem.Square(data.Size);
 
         pathfinding = new(target);
 

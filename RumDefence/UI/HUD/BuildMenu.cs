@@ -15,6 +15,9 @@ public class BuildMenu
     private IconButton cannonButton;
     private IconButton musketButton;
     private IconButton removeButton;
+    private IconButton menuButton;
+
+    public System.Action OnMenuRequested;
 
     private BuildManager buildManager;
     private LevelProgressSystem progress;
@@ -36,7 +39,7 @@ public class BuildMenu
         this.progress = progress;
 
         var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
+        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
@@ -70,27 +73,57 @@ public class BuildMenu
         coinAreaY = currentY;
         currentY += coinHeight + spacing;
 
+        var panelSourceRect = new Rectangle(0, 0, 128, 128);
+
         cannonButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        cannonButton.BackgroundSourceRect = panelSourceRect;
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
-        cannonButton.CostLabel = BuildManager.CannonTowerCost.ToString();
+        cannonButton.CostLabel = TowerFactory.Cannon.Cost.ToString();
         cannonButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         musketButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        musketButton.BackgroundSourceRect = panelSourceRect;
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
-        musketButton.CostLabel = BuildManager.MusketTowerCost.ToString();
+        musketButton.CostLabel = TowerFactory.Musket.Cost.ToString();
         musketButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         wallButton = new IconButton(panelTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        wallButton.BackgroundSourceRect = panelSourceRect;
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
         wallButton.CostLabel = BuildManager.WallCost.ToString();
         wallButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         removeButton = new IconButton(panelTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        removeButton.BackgroundSourceRect = panelSourceRect;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
+
+        int menuButtonY = panelY + panelHeight - ButtonHeight - 20;
+        var hamburgerIcon = CreateHamburgerIcon(RumGame.Instance.GraphicsDevice);
+        menuButton = new IconButton(panelTexture, hamburgerIcon, new Vector2(buttonX, menuButtonY), new Vector2(ButtonWidth, ButtonHeight));
+        menuButton.BackgroundSourceRect = panelSourceRect;
+        menuButton.OnClick = () => OnMenuRequested?.Invoke();
+    }
+
+    private static Texture2D CreateHamburgerIcon(GraphicsDevice graphicsDevice)
+    {
+        const int w = 30, h = 20;
+        var data = new Color[w * h];
+
+        int[] barStartYs = { 2, 8, 14 };
+        const int barHeight = 4;
+
+        foreach (int barY in barStartYs)
+            for (int y = barY; y < barY + barHeight; y++)
+                for (int x = 0; x < w; x++)
+                    data[y * w + x] = Color.White;
+
+        var tex = new Texture2D(graphicsDevice, w, h);
+        tex.SetData(data);
+        return tex;
     }
 
     public Vector2 GetCoinTargetPosition()
@@ -110,19 +143,20 @@ public class BuildMenu
         wallButton.SetSelected(mode == BuildMode.Wall);
         removeButton.SetSelected(mode == BuildMode.Remove);
 
-        cannonButton.IsDisabled = progress.CoinsRemaining < BuildManager.CannonTowerCost;
-        musketButton.IsDisabled = progress.CoinsRemaining < BuildManager.MusketTowerCost;
+        cannonButton.IsDisabled = progress.CoinsRemaining < TowerFactory.Cannon.Cost;
+        musketButton.IsDisabled = progress.CoinsRemaining < TowerFactory.Musket.Cost;
         wallButton.IsDisabled = progress.CoinsRemaining < BuildManager.WallCost;
 
         cannonButton.Update(gameTime);
         musketButton.Update(gameTime);
         wallButton.Update(gameTime);
         removeButton.Update(gameTime);
+        menuButton.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(panelTexture, panelRect, Color.White);
+        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         healthBar.Draw(spriteBatch);
 
@@ -140,5 +174,6 @@ public class BuildMenu
         musketButton.Draw(spriteBatch);
         wallButton.Draw(spriteBatch);
         removeButton.Draw(spriteBatch);
+        menuButton.Draw(spriteBatch);
     }
 }

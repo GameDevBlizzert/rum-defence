@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 using RumDefence.Exceptions;
 
 namespace RumDefence;
@@ -87,18 +88,23 @@ public class LevelProgressSystem : IGameLoopSystem
     }
 
     /// <summary>
-    /// Return wheter the level is won or not.
-    /// A level is considered won if all ship waves and bosses have been defeated.
+    /// Return whether the level is won or not.
+    /// A level is considered won if:
+    /// - All waves have finished spawning
+    /// - There are no ships left
+    /// - There are no troops left
     /// </summary>
     /// <returns>A boolean indicating if the level is won or not</returns>
     public bool IsWon()
     {
-        // TODO: Add other relevant checks
+        if (IsLost()) return false;
+
         return levelWon;
     }
 
     /// <summary>
-    /// Return whether the level is lost or not. A level is considered lost if the player loses all their lives.
+    /// Return whether the level is lost or not.
+    /// A level is considered lost if the player loses all their lives.
     /// </summary>
     /// <returns>A boolean indicating if the level is lost or not</returns>
     public bool IsLost()
@@ -106,8 +112,28 @@ public class LevelProgressSystem : IGameLoopSystem
         return LivesRemaining <= 0;
     }
 
+    /// <summary>
+    /// Manually set the level as won.
+    /// </summary>
     public void SetWon()
     {
         levelWon = true;
+    }
+
+    /// <summary>
+    /// Updates the level progress system.
+    /// Checks if the win condition has been met.
+    /// </summary>
+    public void Update(GameTime gameTime, GameScreen gameScreen)
+    {
+        // - Spawner finished (no more enemies spawning)
+        // - No ships left in the game
+        // - No troops left in the game
+        if (gameScreen.Spawner.IsFinished &&
+            gameScreen.Ships.Count == 0 &&
+            gameScreen.Troops.Count == 0)
+        {
+            levelWon = true;
+        }
     }
 }

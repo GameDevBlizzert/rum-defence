@@ -31,8 +31,8 @@ public class ConfirmScreen : Screen
         var content = RumGame.Instance.Content;
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel_blue");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_blue");
+        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         panelRect = new Rectangle(600, 300, 700, 400);
 
@@ -62,7 +62,7 @@ public class ConfirmScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
-        spriteBatch.Draw(panelTexture, panelRect, Color.White);
+        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         spriteBatch.DrawString(font, message, new Vector2(650, 400), Color.Black);
 

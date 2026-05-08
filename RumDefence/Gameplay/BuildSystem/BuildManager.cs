@@ -5,8 +5,6 @@ using System;
 public class BuildManager
 {
     public const int WallCost = 10;
-    public const int MusketTowerCost = 75;
-    public const int CannonTowerCost = 85;
 
     private Grid grid;
     private BuildMode currentMode = BuildMode.None;
@@ -16,6 +14,7 @@ public class BuildManager
     private Action<Point> onMusketTowerPlaced;
     private Action<Point> onCannonTowerPlaced;
     private Action<Point> onRemove;
+    private Action<Point> onSelect;
 
     public BuildManager(Grid grid)
     {
@@ -24,12 +23,6 @@ public class BuildManager
 
     public void Update(Vector2 mousePosition, bool isClick)
     {
-        if (currentMode == BuildMode.None)
-        {
-            hoveredTile = null;
-            return;
-        }
-
         hoveredTile = grid.WorldToGrid(mousePosition);
 
         if (hoveredTile == null) return;
@@ -62,6 +55,9 @@ public class BuildManager
                 break;
             case BuildMode.Remove:
                 onRemove?.Invoke(p);
+                break;
+            case BuildMode.None:
+                onSelect?.Invoke(p);
                 break;
         }
     }
@@ -117,5 +113,10 @@ public class BuildManager
     public void SetCannonTowerPlacementCallback(Action<Point> callback)
     {
         onCannonTowerPlaced = callback;
+    }
+
+    public void SetSelectCallback(Action<Point> callback)
+    {
+        onSelect = callback;
     }
 }
