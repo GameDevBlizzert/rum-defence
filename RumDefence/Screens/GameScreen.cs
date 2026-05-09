@@ -54,7 +54,7 @@ public class GameScreen : Screen
         GridSystem.CalculateLayout(grid);
 
         input = new InputManager();
-        buildManager = new BuildManager(grid);
+        buildManager = new BuildManager(grid, currentLevel.RumTile);
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
 
@@ -77,7 +77,8 @@ public class GameScreen : Screen
 
         buildManager.SetWallPlacementCallback(p =>
         {
-            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) && progress.CoinsRemaining >= BuildManager.WallCost)
+            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) &&
+                progress.CoinsRemaining >= BuildManager.WallCost)
             {
                 walls[p] = new Wall(p);
                 occupiedTiles[p] = true;
@@ -116,7 +117,8 @@ public class GameScreen : Screen
 
         buildManager.SetCannonTowerPlacementCallback(p =>
         {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= TowerFactory.Cannon.Cost)
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
+                progress.CoinsRemaining >= TowerFactory.Cannon.Cost)
             {
                 placedTowers[p] = TowerFactory.Create(
                     TowerFactory.Cannon,
@@ -135,7 +137,8 @@ public class GameScreen : Screen
 
         buildManager.SetMusketTowerPlacementCallback(p =>
         {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) && progress.CoinsRemaining >= TowerFactory.Musket.Cost)
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
+                progress.CoinsRemaining >= TowerFactory.Musket.Cost)
             {
                 placedTowers[p] = TowerFactory.Create(TowerFactory.Musket, grid.GridToWorld(p), Troops);
                 occupiedTiles[p] = true;
@@ -343,8 +346,9 @@ public class GameScreen : Screen
             {
                 progress.TakeHits(1);
                 Spawner.NotifyTroopDefeated();
-                Troops.RemoveAt(i);
-                continue;
+
+                if (troop.CanBeRemoved)
+                    Troops.RemoveAt(i);
             }
 
             if (troop.IsDead && troop.CanBeRemoved)
