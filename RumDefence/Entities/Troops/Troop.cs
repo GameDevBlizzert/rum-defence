@@ -55,7 +55,7 @@ public class Troop : EntityWithHealth, ICollidable
 
         // https://foozlecc.itch.io/scallywag-pirates
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
-        origin = new Vector2(8, 8); // center of the 16x16 sprite frame
+        origin = new Vector2(animation.FrameHeight / 2, animation.FrameWidth / 2);
 
         Size = SizeSystem.Square(data.Size);
 
