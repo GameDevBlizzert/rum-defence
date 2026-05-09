@@ -9,6 +9,7 @@ public class GrassTheme : BaseTheme, IWallTheme
     private string wallPrefix = "Art/Themes/Grass/Walls/";
     private string shipPrefix = "Art/Themes/Grass/Ships/";
     private string enemyPrefix = "Art/Themes/Grass/Enemies/";
+    private string decorationPrefix = "Art/Themes/Grass/Decorations/";
 
     private Dictionary<int, List<Texture2D>> tileMap;
 
@@ -27,6 +28,10 @@ public class GrassTheme : BaseTheme, IWallTheme
     private List<Texture2D> cornerDamagedList;
     private List<Texture2D> twallDamagedList;
     private List<Texture2D> xwallDamagedList;
+    private List<Texture2D> decorations;
+    private List<Texture2D> rocks;
+    private List<Texture2D> trees;
+    private List<Texture2D> bushes;
 
     private Dictionary<string, Texture2D> shipMap;
 
@@ -64,6 +69,29 @@ public class GrassTheme : BaseTheme, IWallTheme
         cornerDamagedList = LoadList(wallPrefix, "corner_damaged");
         twallDamagedList = LoadList(wallPrefix, "Twall_damaged");
         xwallDamagedList = LoadList(wallPrefix, "Xwall_damaged");
+
+        rocks = new List<Texture2D>()
+        {
+            Load(decorationPrefix + "Rock_01"),
+            Load(decorationPrefix + "Rock_02"),
+            Load(decorationPrefix + "Rock_03"),
+            Load(decorationPrefix + "Rock_Moss_01"),
+            Load(decorationPrefix + "Rock_Moss_02"),
+            Load(decorationPrefix + "Rock_Moss_03"),
+        };
+
+                trees = new List<Texture2D>()
+        {
+            Load(decorationPrefix + "Tree_01"),
+            Load(decorationPrefix + "Tree_02"),
+            Load(decorationPrefix + "Tree_03"),
+        };
+
+                bushes = new List<Texture2D>()
+        {
+            Load(decorationPrefix + "Bush_Small_01"),
+            Load(decorationPrefix + "Bush_Small_02"),
+        };
 
         shipMap = new Dictionary<string, Texture2D>()
         {
@@ -122,4 +150,14 @@ public class GrassTheme : BaseTheme, IWallTheme
     {
         return GetRandom(enemies);
     }
+
+    public override List<Texture2D> GetDecorations() => decorations;
+
+    public override float GetDecorationDensity() => 0.2f;
+
+    public override List<Texture2D> GetRocks() => rocks;
+
+    public override List<Texture2D> GetTrees() => trees;
+
+    public override List<Texture2D> GetBushes() => bushes;
 }
