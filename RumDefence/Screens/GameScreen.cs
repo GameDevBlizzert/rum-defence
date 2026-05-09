@@ -54,7 +54,7 @@ public class GameScreen : Screen
         GridSystem.CalculateLayout(grid);
 
         input = new InputManager();
-        buildManager = new BuildManager(grid);
+        buildManager = new BuildManager(grid, currentLevel.RumTile);
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
 

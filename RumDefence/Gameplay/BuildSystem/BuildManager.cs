@@ -7,6 +7,7 @@ public class BuildManager
     public const int WallCost = 10;
 
     private Grid grid;
+    private Point targetTile;
     private BuildMode currentMode = BuildMode.None;
     private Point? hoveredTile;
 
@@ -16,9 +17,10 @@ public class BuildManager
     private Action<Point> onRemove;
     private Action<Point> onSelect;
 
-    public BuildManager(Grid grid)
+    public BuildManager(Grid grid, Point targetTile)
     {
         this.grid = grid;
+        this.targetTile = targetTile;
     }
 
     public void Update(Vector2 mousePosition, bool isClick)
@@ -90,6 +92,9 @@ public class BuildManager
     private bool CanPlace(Point p)
     {
         if (grid.Tiles[p.Y, p.X] != TileRules.Center)
+            return false;
+
+        if (p == targetTile)
             return false;
 
         return true;
