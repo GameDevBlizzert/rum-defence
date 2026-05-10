@@ -161,5 +161,31 @@ public class BaseTower : Entity
 
         foreach (var proj in Projectiles)
             proj.Draw(spriteBatch);
+
+        DrawLevelLabel(spriteBatch);
+    }
+
+    public virtual void DrawLevelLabel(SpriteBatch spriteBatch)
+    {
+        var gap = new Vector2(10, 0);
+        for (int i = 0; i <= MaxLevel; i++)
+        {
+            var rect = new Rectangle(0, 0, 8, 16);
+            var color = Color.DarkRed;
+            if (i <= CurrentLevel)
+                color = Color.Yellow;
+
+            spriteBatch.Draw(
+                Primitives.Pixel,
+                Position + new Vector2(rect.Width, 0) * i + gap * i,
+                rect,
+                color,
+                0f,
+                origin,
+                1f,
+                SpriteEffects.None,
+                layerDepth + 0.1f
+            );
+        }
     }
 }
