@@ -35,13 +35,12 @@ public class Troop : EntityWithHealth, ICollidable
 
     public Func<Point, Wall> GetWallAt { get; set; }
 
-    public Troop(TroopData data, Vector2 start, Vector2 targetPos) : base(16, 32)
+    public Troop(TroopData data, Vector2 start, Vector2 targetPos) : base(16, 32, data.Health)
     {
         Position = start;
         target = targetPos;
 
         baseSpeed = data.BaseSpeed;
-        Health = data.Health;
         Damage = data.Damage;
         CoinValue = data.CoinValue;
         SpeedMultiplier = data.InitialSpeedMultiplier;
@@ -57,7 +56,7 @@ public class Troop : EntityWithHealth, ICollidable
 
         // https://foozlecc.itch.io/scallywag-pirates
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
-        origin = Vector2.Zero;
+        origin = new Vector2(animation.FrameHeight / 2, animation.FrameWidth / 2);
 
         Size = SizeSystem.Square(data.Size);
 
