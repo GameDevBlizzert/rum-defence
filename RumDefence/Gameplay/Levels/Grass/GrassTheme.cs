@@ -80,14 +80,14 @@ public class GrassTheme : BaseTheme, IWallTheme
             Load(decorationPrefix + "Rock_Moss_03"),
         };
 
-                trees = new List<Texture2D>()
+        trees = new List<Texture2D>()
         {
             Load(decorationPrefix + "Tree_01"),
             Load(decorationPrefix + "Tree_02"),
             Load(decorationPrefix + "Tree_03"),
         };
 
-                bushes = new List<Texture2D>()
+        bushes = new List<Texture2D>()
         {
             Load(decorationPrefix + "Bush_Small_01"),
             Load(decorationPrefix + "Bush_Small_02"),
