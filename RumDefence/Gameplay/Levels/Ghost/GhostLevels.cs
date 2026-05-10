@@ -10,7 +10,7 @@ public static class GhostLevels
     private static Theme theme = new Theme
     {
         Tiles = ghost,
-        Walls = grass 
+        Walls = grass
     };
 
     public static List<Level> All = new()
