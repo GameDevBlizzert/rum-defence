@@ -36,8 +36,6 @@ public class GameScreen : Screen
 
     private Dictionary<Point, bool> occupiedTiles = new();
 
-    private Texture2D pixel;
-
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
         currentLevel = level;
@@ -45,9 +43,6 @@ public class GameScreen : Screen
 
     public override void Load()
     {
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
-
         grid = new Grid(currentLevel.Map);
 
         RumGame.Instance.CurrentGrid = grid;
@@ -433,8 +428,8 @@ public class GameScreen : Screen
             float pct = (float)wall.Health / Wall.MaxHealth;
             int healthWidth = (int)(barWidth * pct);
 
-            spriteBatch.Draw(pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
-            spriteBatch.Draw(pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
         }
     }
 
@@ -487,7 +482,7 @@ public class GameScreen : Screen
         Vector2 edge = end - start;
         float angle = (float)Math.Atan2(edge.Y, edge.X);
 
-        spriteBatch.Draw(pixel,
+        spriteBatch.Draw(Primitives.Pixel,
             new Rectangle((int)start.X, (int)start.Y, (int)edge.Length(), (int)thickness),
             null,
             color,

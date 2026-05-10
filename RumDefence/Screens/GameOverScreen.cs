@@ -7,7 +7,6 @@ public class GameOverScreen : Screen
 {
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
-    private Texture2D pixel;
     private SpriteFont font;
 
     private SimpleButton retryButton;
@@ -47,10 +46,6 @@ public class GameOverScreen : Screen
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
-        // pixel voor overlay
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
 
         Vector2 buttonSize = new Vector2(300, 100);
 
@@ -108,7 +103,7 @@ public class GameOverScreen : Screen
 
         // 2. overlay
         spriteBatch.Draw(
-            pixel,
+            Primitives.Pixel,
             new Rectangle(0, 0, screenWidth, screenHeight),
             Color.Black * 0.6f
         );

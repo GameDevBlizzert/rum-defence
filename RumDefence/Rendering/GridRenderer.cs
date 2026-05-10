@@ -7,7 +7,6 @@ namespace RumDefence;
 public class GridRenderer
 {
     private ITileTheme theme;
-    private Texture2D pixel;
 
     private BuildManager buildManager;
     private Grid grid;
@@ -20,8 +19,6 @@ public class GridRenderer
         this.grid = grid;
 
 
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
     }
 
     public void SetOccupiedTiles(Dictionary<Point, bool> occupiedTiles)
@@ -90,6 +87,6 @@ public class GridRenderer
             grid.TileSize
         );
 
-        spriteBatch.Draw(pixel, rect, Color.Gray * 0.5f);
+        spriteBatch.Draw(Primitives.Pixel, rect, Color.Gray * 0.5f);
     }
 }

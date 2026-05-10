@@ -58,7 +58,7 @@ public class ConfirmScreen : Screen
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(GetPixel(spriteBatch),
+        spriteBatch.Draw(Primitives.Pixel,
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
@@ -70,14 +70,4 @@ public class ConfirmScreen : Screen
         noButton.Draw(spriteBatch);
     }
 
-    private Texture2D pixel;
-    private Texture2D GetPixel(SpriteBatch spriteBatch)
-    {
-        if (pixel == null)
-        {
-            pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
-        }
-        return pixel;
-    }
 }

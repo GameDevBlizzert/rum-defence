@@ -6,7 +6,6 @@ namespace RumDefence;
 public class BuildMenu
 {
     private Texture2D panelTexture;
-    private Texture2D pixelTexture;
     private SpriteFont font;
 
     private Rectangle panelRect;
@@ -45,9 +44,6 @@ public class BuildMenu
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
         var cannonIcon = content.Load<Texture2D>("KenneyPiratePack/PNG/Default size/Ship parts/cannon");
         var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
-
-        pixelTexture = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixelTexture.SetData(new[] { Color.White });
 
         panelX = 20;
         int panelY = 20;

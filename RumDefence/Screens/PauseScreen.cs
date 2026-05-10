@@ -17,22 +17,11 @@ public class PauseScreen : Screen
     private SimpleButton menuButton;
 
     private Rectangle panelRect;
-    private Texture2D pixel;
 
     public PauseScreen(ScreenManager manager, Screen previous, bool focusLoss = false) : base(manager)
     {
         previousScreen = previous;
         pausedDueToFocusLoss = focusLoss;
-    }
-
-    private Texture2D GetPixel(SpriteBatch spriteBatch)
-    {
-        if (pixel == null)
-        {
-            pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
-        }
-        return pixel;
     }
 
     public override void Load()
@@ -94,7 +83,7 @@ public class PauseScreen : Screen
         previousScreen.Draw(spriteBatch);
 
         spriteBatch.Draw(
-            GetPixel(spriteBatch),
+            Primitives.Pixel,
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.3f);
 

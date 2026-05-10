@@ -10,7 +10,6 @@ public class SettingsScreen : Screen
 
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
-    private Texture2D pixel;
     private SpriteFont font;
 
     private SimpleButton backButton;
@@ -34,9 +33,6 @@ public class SettingsScreen : Screen
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
 
         panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
 
@@ -89,7 +85,7 @@ public class SettingsScreen : Screen
         else
             RumGame.Instance.GraphicsDevice.Clear(Color.DarkSlateGray);
 
-        spriteBatch.Draw(pixel,
+        spriteBatch.Draw(Primitives.Pixel,
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
@@ -115,16 +111,16 @@ public class SettingsScreen : Screen
         var pctSize = font.MeasureString(pct);
         spriteBatch.DrawString(font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Color.Black);
 
-        spriteBatch.Draw(pixel, track, new Color(170, 170, 170));
+        spriteBatch.Draw(Primitives.Pixel, track, new Color(170, 170, 170));
 
         int filledWidth = (int)(track.Width * value);
         if (filledWidth > 0)
-            spriteBatch.Draw(pixel, new Rectangle(track.X, track.Y, filledWidth, track.Height), new Color(70, 130, 200));
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y, filledWidth, track.Height), new Color(70, 130, 200));
 
         int thumbSize = 28;
         int thumbX = track.X + filledWidth - thumbSize / 2;
         int thumbY = track.Y + track.Height / 2 - thumbSize / 2;
-        spriteBatch.Draw(pixel, new Rectangle(thumbX, thumbY, thumbSize, thumbSize), Color.White);
-        spriteBatch.Draw(pixel, new Rectangle(thumbX + 3, thumbY + 3, thumbSize - 6, thumbSize - 6), new Color(40, 100, 180));
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX, thumbY, thumbSize, thumbSize), Color.White);
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX + 3, thumbY + 3, thumbSize - 6, thumbSize - 6), new Color(40, 100, 180));
     }
 }

@@ -8,13 +8,11 @@ public class LevelButton : Button
 {
     private Level level;
 
-    private Texture2D pixel;
     private SpriteFont font;
 
-    public LevelButton(Level level, Texture2D pixel, SpriteFont font)
+    public LevelButton(Level level, SpriteFont font)
     {
         this.level = level;
-        this.pixel = pixel;
         this.font = font;
     }
 
@@ -34,7 +32,7 @@ public class LevelButton : Button
             ? new Color(220, 220, 220)
             : new Color(180, 180, 180);
 
-        spriteBatch.Draw(pixel, bounds, borderColor);
+        spriteBatch.Draw(Primitives.Pixel,bounds, borderColor);
 
         Rectangle panel = new Rectangle(
             bounds.X + 4,
@@ -43,7 +41,7 @@ public class LevelButton : Button
             bounds.Height - 8
         );
 
-        spriteBatch.Draw(pixel, panel, panelColor);
+        spriteBatch.Draw(Primitives.Pixel,panel, panelColor);
 
         int mapWidth = 340;
         int mapHeight = 200;
@@ -66,7 +64,7 @@ public class LevelButton : Button
 
         if (!level.IsUnlocked)
         {
-            spriteBatch.Draw(pixel, bounds, Color.Black * 0.5f);
+            spriteBatch.Draw(Primitives.Pixel,bounds, Color.Black * 0.5f);
         }
     }
 
