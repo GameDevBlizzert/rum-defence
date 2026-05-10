@@ -92,6 +92,7 @@ public class GameScreen : Screen
             if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) &&
                 progress.CoinsRemaining >= BuildManager.WallCost)
             {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
                 walls[p] = new Wall(p);
                 occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.WallCost);
@@ -132,6 +133,7 @@ public class GameScreen : Screen
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
                 progress.CoinsRemaining >= TowerFactory.Cannon.Cost)
             {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
                 placedTowers[p] = TowerFactory.Create(
                     TowerFactory.Cannon,
                     grid.GridToWorld(p),
@@ -152,6 +154,7 @@ public class GameScreen : Screen
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
                 progress.CoinsRemaining >= TowerFactory.Musket.Cost)
             {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
                 placedTowers[p] = TowerFactory.Create(TowerFactory.Musket, grid.GridToWorld(p), Troops);
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Musket.Cost);
@@ -227,6 +230,9 @@ public class GameScreen : Screen
 
         foreach (var tower in placedTowers.Values)
             tower.Draw(spriteBatch);
+
+        foreach (var deco in currentLevel.Decorations)
+            deco.Draw(spriteBatch, grid);
 
         // Draw range of selected tower
         if (selectedTower != null)

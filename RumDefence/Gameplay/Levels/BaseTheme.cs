@@ -39,6 +39,31 @@ public abstract class BaseTheme : ITileTheme
         return list[localRng.Next(list.Count)];
     }
 
+    public virtual List<Texture2D> GetDecorations()
+    {
+        return new List<Texture2D>();
+    }
+
+    public virtual float GetDecorationDensity()
+    {
+        return 0.2f;
+    }
+
+    public virtual List<Texture2D> GetRocks()
+    {
+        return new List<Texture2D>();
+    }
+
+    public virtual List<Texture2D> GetTrees()
+    {
+        return new List<Texture2D>();
+    }
+
+    public virtual List<Texture2D> GetBushes()
+    {
+        return new List<Texture2D>();
+    }
+
     public virtual Ship.Data GetShipData(string type)
     {
         return null;
