@@ -7,6 +7,13 @@ using System.Linq;
 
 namespace RumDefence;
 
+public enum GamePlaybackState
+{
+    Normal,
+    FastForward,
+    Paused
+}
+
 public class GameScreen : Screen
 {
     private Grid grid { get; set; }
@@ -38,6 +45,8 @@ public class GameScreen : Screen
 
     private Texture2D pixel;
 
+    private GamePlaybackState playbackState = GamePlaybackState.Normal;
+
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
         currentLevel = level;
@@ -66,6 +75,8 @@ public class GameScreen : Screen
         Spawner = new ShipSpawner(currentLevel, grid);
 
         hud = new Hud(buildManager, progress, Spawner);
+        hud.SetPlaybackState(playbackState);
+        hud.OnSpeedRequested = CyclePlaybackState;
         hud.OnMenuRequested = () => manager.SetScreen(new PauseScreen(manager, this));
 
         wallRenderer = new WallRenderer(
@@ -172,12 +183,18 @@ public class GameScreen : Screen
 
         input.Update();
         UpdateBuildSystem(gameTime);
-        UpdateSpawner(gameTime);
-        UpdateShips(gameTime);
-        UpdateTroops(gameTime);
+
+        if (playbackState == GamePlaybackState.Paused)
+            return;
+
+        var gameplayGameTime = GetGameplayGameTime(gameTime);
+
+        UpdateSpawner(gameplayGameTime);
+        UpdateShips(gameplayGameTime);
+        UpdateTroops(gameplayGameTime);
         UpdateWalls();
-        UpdateTowers(gameTime);
-        CheckLevelCompletion(gameTime);
+        UpdateTowers(gameplayGameTime);
+        CheckLevelCompletion(gameplayGameTime);
     }
 
     private void UpdateTowers(GameTime gameTime)
@@ -251,8 +268,12 @@ public class GameScreen : Screen
         }
 
         hud.SetSelectedTower(selectedTower);
+        hud.SetPlaybackState(playbackState);
 
-        hud.Update(gameTime);
+        hud.Update(GetGameplayGameTime(gameTime));
+
+        if (playbackState == GamePlaybackState.Paused)
+            return;
 
         // Handle HUD Upgrade interaction
         if (selectedTower != null && hud.WasUpgradeClicked())
@@ -281,6 +302,31 @@ public class GameScreen : Screen
                 false // forcefully tell buildManager it's NOT a click because the UI consumed it
             );
         }
+    }
+
+    private GameTime GetGameplayGameTime(GameTime gameTime)
+    {
+        float scale = playbackState switch
+        {
+            GamePlaybackState.FastForward => 2f,
+            GamePlaybackState.Paused => 0f,
+            _ => 1f
+        };
+
+        long elapsedTicks = (long)(gameTime.ElapsedGameTime.Ticks * scale);
+        return new GameTime(gameTime.TotalGameTime, TimeSpan.FromTicks(elapsedTicks));
+    }
+
+    private void CyclePlaybackState()
+    {
+        playbackState = playbackState switch
+        {
+            GamePlaybackState.Normal => GamePlaybackState.FastForward,
+            GamePlaybackState.FastForward => GamePlaybackState.Paused,
+            _ => GamePlaybackState.Normal
+        };
+
+        hud.SetPlaybackState(playbackState);
     }
 
     private bool HandlePause()
