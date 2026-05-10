@@ -35,7 +35,7 @@ public class ThemeSelectScreen : Screen
 
         stoneButton.OnClick = () =>
         {
-            manager.SetScreen(new LevelSelectScreen(manager, GhostLevels.All)); 
+            manager.SetScreen(new LevelSelectScreen(manager, GhostLevels.All));
         };
 
         // Play theme music
