@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 
@@ -11,14 +10,20 @@ public class AudioManager
     private static AudioManager _instance;
     public static AudioManager Instance => _instance ??= new AudioManager();
 
-    private Dictionary<string, SoundEffect> soundEffects = new();
-    private Dictionary<string, Song> songs = new();
-    private List<SoundEffect> footstepSounds = new();
-    private List<SoundEffect> impactSounds = new();
-    private List<SoundEffect> explosionSounds = new();
+    private readonly Dictionary<string, SoundEffect> soundEffects = new();
+    private readonly Dictionary<string, SoundEffect> musicTracks = new();
+    private readonly List<SoundEffect> footstepSounds = new();
+    private readonly List<SoundEffect> impactSounds = new();
+    private readonly List<SoundEffect> explosionSounds = new();
 
     private float musicVolume = 0.5f;
     private float soundVolume = 1.0f;
+
+    private SoundEffect currentMusicTrack;
+    private SoundEffectInstance currentMusicInstance;
+    private bool isMusicActive;
+    private bool isSuspended;
+    private readonly Random random = new();
 
     public float MusicVolume
     {
@@ -26,7 +31,9 @@ public class AudioManager
         set
         {
             musicVolume = MathHelper.Clamp(value, 0f, 1f);
-            MediaPlayer.Volume = musicVolume;
+
+            if (currentMusicInstance != null)
+                currentMusicInstance.Volume = musicVolume;
         }
     }
 
@@ -39,15 +46,6 @@ public class AudioManager
             SoundEffect.MasterVolume = soundVolume;
         }
     }
-
-    private Song currentSong;
-    private string currentSongName;
-
-    private bool isMusicActive = false;
-
-    private bool isSuspended = false;
-
-    private Random random = new Random();
 
     public void LoadContent()
     {
@@ -68,11 +66,10 @@ public class AudioManager
         explosionSounds.Add(content.Load<SoundEffect>("Audio/explosion_quick"));
         explosionSounds.Add(content.Load<SoundEffect>("Audio/explosion_small"));
 
-        songs["PineappleUnderTheSea"] = content.Load<Song>("Audio/PineappleUnderTheSea");
-        songs["WhatCloudsAreMadeOf"] = content.Load<Song>("Audio/WhatCloudsAreMadeOf");
-        songs["GentleBreeze"] = content.Load<Song>("Audio/GentleBreeze");
+        musicTracks["PineappleUnderTheSea"] = content.Load<SoundEffect>("Audio/PineappleUnderTheSea");
+        musicTracks["WhatCloudsAreMadeOf"] = content.Load<SoundEffect>("Audio/WhatCloudsAreMadeOf");
+        musicTracks["GentleBreeze"] = content.Load<SoundEffect>("Audio/GentleBreeze");
 
-        MediaPlayer.Volume = musicVolume;
         SoundEffect.MasterVolume = soundVolume;
     }
 
@@ -138,30 +135,24 @@ public class AudioManager
 
     public void PlayBackgroundMusic(string songName = "PineappleUnderTheSea")
     {
-        if (!songs.TryGetValue(songName, out var song))
+        if (!musicTracks.TryGetValue(songName, out var track))
         {
-            System.Diagnostics.Debug.WriteLine($"Warning: Song '{songName}' not found");
+            System.Diagnostics.Debug.WriteLine($"Warning: Music track '{songName}' not found");
             return;
         }
 
-        // Always record intent, even if currently suspended.
-        currentSongName = songName;
-        currentSong = song;
+        currentMusicTrack = track;
         isMusicActive = true;
 
-        // If the window is suspended, don't actually start the MediaPlayer;
-        // SuspendAudio / ResumeAudio will handle it.
-        if (isSuspended) return;
-
-        // Same song already playing, nothing to do.
         try
         {
-            if (MediaPlayer.State == MediaState.Playing && MediaPlayer.Queue.ActiveSong == song)
+            if (isSuspended)
                 return;
 
-            MediaPlayer.Stop();
-            MediaPlayer.Play(currentSong);
-            MediaPlayer.IsRepeating = true;
+            if (currentMusicInstance != null && currentMusicInstance.State == SoundState.Playing)
+                return;
+
+            StartCurrentMusic();
         }
         catch (Exception ex)
         {
@@ -173,27 +164,21 @@ public class AudioManager
     {
         isMusicActive = false;
         isSuspended = false;
-        currentSong = null;
-        currentSongName = null;
-        try
-        {
-            MediaPlayer.Stop();
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Warning: Failed to stop background music: {ex}");
-        }
+        currentMusicTrack = null;
+        DisposeCurrentMusicInstance();
     }
 
     public void SuspendAudio()
     {
-        if (isSuspended) return;   // already suspended
+        if (isSuspended)
+            return;
+
         isSuspended = true;
 
         try
         {
-            if (isMusicActive && MediaPlayer.State == MediaState.Playing)
-                MediaPlayer.Pause();
+            if (isMusicActive && currentMusicInstance != null && currentMusicInstance.State == SoundState.Playing)
+                currentMusicInstance.Pause();
         }
         catch (Exception ex)
         {
@@ -203,22 +188,20 @@ public class AudioManager
 
     public void ResumeAudio()
     {
-        if (!isSuspended) return;
+        if (!isSuspended)
+            return;
+
         isSuspended = false;
 
         try
         {
-            if (isMusicActive && currentSong != null)
-            {
-                if (MediaPlayer.State == MediaState.Paused)
-                    MediaPlayer.Resume();
-                else
-                {
-                    // MediaPlayer state was lost (some platforms stop on focus loss)
-                    MediaPlayer.Play(currentSong);
-                    MediaPlayer.IsRepeating = true;
-                }
-            }
+            if (!isMusicActive || currentMusicTrack == null)
+                return;
+
+            if (currentMusicInstance != null && currentMusicInstance.State == SoundState.Paused)
+                currentMusicInstance.Resume();
+            else
+                StartCurrentMusic();
         }
         catch (Exception ex)
         {
@@ -230,8 +213,8 @@ public class AudioManager
     {
         try
         {
-            if (isMusicActive && MediaPlayer.State == MediaState.Playing)
-                MediaPlayer.Pause();
+            if (isMusicActive && currentMusicInstance != null && currentMusicInstance.State == SoundState.Playing)
+                currentMusicInstance.Pause();
         }
         catch (Exception ex)
         {
@@ -243,8 +226,13 @@ public class AudioManager
     {
         try
         {
-            if (isMusicActive && MediaPlayer.State == MediaState.Paused)
-                MediaPlayer.Resume();
+            if (!isMusicActive || currentMusicTrack == null)
+                return;
+
+            if (currentMusicInstance != null && currentMusicInstance.State == SoundState.Paused)
+                currentMusicInstance.Resume();
+            else
+                StartCurrentMusic();
         }
         catch (Exception ex)
         {
@@ -252,24 +240,54 @@ public class AudioManager
         }
     }
 
-    public bool IsBackgroundMusicPlaying => isMusicActive && !isSuspended;
+    public bool IsBackgroundMusicPlaying => isMusicActive && !isSuspended && currentMusicInstance != null && currentMusicInstance.State == SoundState.Playing;
 
     public void Update()
     {
-        // Don't auto-restart while suspended or when music is intentionally off.
-        if (!isMusicActive || isSuspended || currentSong == null) return;
+        if (!isMusicActive || isSuspended || currentMusicTrack == null)
+            return;
 
         try
         {
-            if (MediaPlayer.State == MediaState.Stopped)
-            {
-                MediaPlayer.Play(currentSong);
-                MediaPlayer.IsRepeating = true;
-            }
+            if (currentMusicInstance == null || currentMusicInstance.State == SoundState.Stopped)
+                StartCurrentMusic();
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Warning: Failed to update background music: {ex}");
+        }
+    }
+
+    private void StartCurrentMusic()
+    {
+        DisposeCurrentMusicInstance();
+
+        if (currentMusicTrack == null)
+            return;
+
+        currentMusicInstance = currentMusicTrack.CreateInstance();
+        currentMusicInstance.IsLooped = true;
+        currentMusicInstance.Volume = musicVolume;
+        currentMusicInstance.Play();
+    }
+
+    private void DisposeCurrentMusicInstance()
+    {
+        if (currentMusicInstance == null)
+            return;
+
+        try
+        {
+            currentMusicInstance.Stop();
+            currentMusicInstance.Dispose();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Warning: Failed to dispose current music instance: {ex}");
+        }
+        finally
+        {
+            currentMusicInstance = null;
         }
     }
 }
