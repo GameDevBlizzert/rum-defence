@@ -46,7 +46,11 @@ public class GrassTheme : BaseTheme, IWallTheme
             { 6, LoadList(envPrefix, "6") },
             { 7, LoadList(envPrefix, "7") },
             { 8, LoadList(envPrefix, "8.1", "8.2") },
-            { 9, LoadList(envPrefix, "9") }
+            { 9, LoadList(envPrefix, "9") },
+            { 10, LoadList(envPrefix, "10") },
+            { 11, LoadList(envPrefix, "11") },
+            { 12, LoadList(envPrefix, "12") },
+            { 13, LoadList(envPrefix, "13") }
         };
 
         Single = Load(wallPrefix + "single");
