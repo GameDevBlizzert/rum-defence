@@ -30,22 +30,34 @@ public static class MiniMapRenderer
         {
             for (int x = 0; x < width; x++)
             {
-                var texture = theme.Tiles.GetTexture(map[y, x], x, y);
+                Texture2D texture;
+
+                if (map[y, x] == 0)
+                {
+                    texture = theme.Tiles.GetTexture(0, x, y);
+                }
+                else
+                {
+                    int mapped = TileSystem.GetTile(map, level.RumTile, x, y);
+                    texture = theme.Tiles.GetTexture(mapped, x, y);
+                }
+
                 if (texture == null) continue;
 
+                float px = area.X + x * tileWidth;
+                float py = area.Y + y * tileHeight;
+
                 var rect = new Rectangle(
-                    (int)(area.X + x * tileWidth),
-                    (int)(area.Y + y * tileHeight),
-                    (int)tileWidth + 1,
-                    (int)tileHeight + 1
+                    (int)px,
+                    (int)py,
+                    (int)Math.Ceiling(tileWidth),
+                    (int)Math.Ceiling(tileHeight)
                 );
 
                 spriteBatch.Draw(texture, rect, Color.White);
             }
         }
     }
-
-
 
     private static Texture2D GetPixel(SpriteBatch spriteBatch)
     {

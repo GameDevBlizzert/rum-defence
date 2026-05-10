@@ -12,34 +12,14 @@ public class Ship : Entity
     // DATA
     // =====================
 
-    public class Data
+    public record Data
     {
-        public string Texture;
-        public float Speed;
-        public int EnemyCount;
-        public bool IsBoss;
-        public float SizeMultiplier;
-        public float RotationOffset;
-        public float WidthInTiles;
-
-        public Data(
-            string texture,
-            float speed,
-            int enemyCount,
-            bool isBoss = false,
-            float sizeMultiplier = 1f,
-            float rotationOffsetDegrees = 0f,
-            float widthInTiles = 1f
-        )
-        {
-            Texture = texture;
-            Speed = speed;
-            EnemyCount = enemyCount;
-            IsBoss = isBoss;
-            SizeMultiplier = sizeMultiplier;
-            RotationOffset = MathHelper.ToRadians(rotationOffsetDegrees);
-            WidthInTiles = widthInTiles;
-        }
+        public string Texture { get; init; } = "";
+        public float Speed { get; init; }
+        public bool IsBoss { get; init; } = false;
+        public float SizeMultiplier { get; init; } = 1f;
+        public float RotationOffsetDegrees { get; init; } = 0f;
+        public float WidthInTiles { get; init; } = 1f;
     }
 
     private const float DockSlowdownDistance = 150f;
@@ -70,12 +50,13 @@ public class Ship : Entity
 
     private float baseSpeed;
     private float advanceDelay;
+    private float troopSpawnDelay;
 
     private Grid grid;
     private PathfindingSystem pathfinding;
     private PathfindingSystem leavingPathfinding;
 
-    public int EnemyCount { get; private set; }
+    public IReadOnlyList<TroopGroup> Troops { get; private set; }
     public CoastTile AssignedCoast { get; private set; }
 
     public bool IsFinished => State == ShipState.Leaving_ToSea &&
@@ -89,7 +70,7 @@ public class Ship : Entity
     // CONSTRUCTOR
     // =====================
 
-    public Ship(Vector2 start, Vector2 holding, Vector2 target, CoastTile coast, Data data, Texture2D texture)
+    public Ship(Vector2 start, Vector2 holding, Vector2 target, CoastTile coast, Data data, Texture2D texture, IReadOnlyList<TroopGroup> troops, float troopSpawnDelay)
     {
         Position = start;
         spawnPosition = start;
@@ -97,14 +78,15 @@ public class Ship : Entity
         Texture = texture;
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
 
-        rotationOffset = data.RotationOffset;
+        rotationOffset = MathHelper.ToRadians(data.RotationOffsetDegrees);
 
         AssignedCoast = coast;
         holdingPosition = holding;
         dockTarget = target;
         baseSpeed = data.Speed;
 
-        EnemyCount = data.EnemyCount;
+        Troops = troops;
+        this.troopSpawnDelay = troopSpawnDelay;
 
         Size = SizeSystem.FromTiles(data.WidthInTiles, data.WidthInTiles);
         ApplySize();
@@ -321,7 +303,7 @@ public class Ship : Entity
 
     private void StartUnloading()
     {
-        troopSpawner.StartSpawning(Position, EnemyCount);
+        troopSpawner.StartSpawning(Position, Troops, troopSpawnDelay);
         State = ShipState.Unloading;
     }
 

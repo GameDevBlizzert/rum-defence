@@ -7,6 +7,13 @@ using System.Linq;
 
 namespace RumDefence;
 
+public enum GamePlaybackState
+{
+    Normal,
+    FastForward,
+    Paused
+}
+
 public class GameScreen : Screen
 {
     private Grid grid { get; set; }
@@ -34,7 +41,11 @@ public class GameScreen : Screen
 
     private HashSet<Point> latestUntraverableHashSet = new();
 
+    private Dictionary<Point, bool> occupiedTiles = new();
+
     private Texture2D pixel;
+
+    private GamePlaybackState playbackState = GamePlaybackState.Normal;
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
@@ -64,6 +75,8 @@ public class GameScreen : Screen
         Spawner = new ShipSpawner(currentLevel, grid);
 
         hud = new Hud(buildManager, progress, Spawner);
+        hud.SetPlaybackState(playbackState);
+        hud.OnSpeedRequested = CyclePlaybackState;
         hud.OnMenuRequested = () => manager.SetScreen(new PauseScreen(manager, this));
 
         wallRenderer = new WallRenderer(
@@ -72,7 +85,6 @@ public class GameScreen : Screen
             walls
         );
 
-        var occupiedTiles = new Dictionary<Point, bool>();
         renderer.SetOccupiedTiles(occupiedTiles);
 
         buildManager.SetWallPlacementCallback(p =>
@@ -174,11 +186,18 @@ public class GameScreen : Screen
 
         input.Update();
         UpdateBuildSystem(gameTime);
-        UpdateSpawner(gameTime);
-        UpdateShips(gameTime);
-        UpdateTroops(gameTime);
-        UpdateTowers(gameTime);
-        CheckLevelCompletion(gameTime);
+
+        if (playbackState == GamePlaybackState.Paused)
+            return;
+
+        var gameplayGameTime = GetGameplayGameTime(gameTime);
+
+        UpdateSpawner(gameplayGameTime);
+        UpdateShips(gameplayGameTime);
+        UpdateTroops(gameplayGameTime);
+        UpdateWalls();
+        UpdateTowers(gameplayGameTime);
+        CheckLevelCompletion(gameplayGameTime);
     }
 
     private void UpdateTowers(GameTime gameTime)
@@ -225,6 +244,8 @@ public class GameScreen : Screen
         foreach (var explosion in explosions)
             explosion.Draw(spriteBatch);
 
+        DrawWallHealthBars(spriteBatch);
+
         var overlayRenderer = renderer.GetOverlayRenderer();
         if (overlayRenderer != null)
         {
@@ -232,16 +253,6 @@ public class GameScreen : Screen
         }
 
         hud.Draw(spriteBatch);
-    }
-
-    private void UnlockNextLevel()
-    {
-        int currentIndex = GrassLevels.All.IndexOf(currentLevel);
-
-        if (currentIndex + 1 < GrassLevels.All.Count)
-        {
-            GrassLevels.All[currentIndex + 1].IsUnlocked = true;
-        }
     }
 
     private void UpdateBuildSystem(GameTime gameTime)
@@ -253,8 +264,12 @@ public class GameScreen : Screen
         }
 
         hud.SetSelectedTower(selectedTower);
+        hud.SetPlaybackState(playbackState);
 
-        hud.Update(gameTime);
+        hud.Update(GetGameplayGameTime(gameTime));
+
+        if (playbackState == GamePlaybackState.Paused)
+            return;
 
         // Handle HUD Upgrade interaction
         if (selectedTower != null && hud.WasUpgradeClicked())
@@ -285,6 +300,31 @@ public class GameScreen : Screen
         }
     }
 
+    private GameTime GetGameplayGameTime(GameTime gameTime)
+    {
+        float scale = playbackState switch
+        {
+            GamePlaybackState.FastForward => 2f,
+            GamePlaybackState.Paused => 0f,
+            _ => 1f
+        };
+
+        long elapsedTicks = (long)(gameTime.ElapsedGameTime.Ticks * scale);
+        return new GameTime(gameTime.TotalGameTime, TimeSpan.FromTicks(elapsedTicks));
+    }
+
+    private void CyclePlaybackState()
+    {
+        playbackState = playbackState switch
+        {
+            GamePlaybackState.Normal => GamePlaybackState.FastForward,
+            GamePlaybackState.FastForward => GamePlaybackState.Paused,
+            _ => GamePlaybackState.Normal
+        };
+
+        hud.SetPlaybackState(playbackState);
+    }
+
     private bool HandlePause()
     {
         var keyboard = Keyboard.GetState();
@@ -312,12 +352,15 @@ public class GameScreen : Screen
 
             if (Ships[i].SpawnedTroops.Count > 0)
             {
+                foreach (var troop in Ships[i].SpawnedTroops)
+                    troop.GetWallAt = p => walls.TryGetValue(p, out var w) ? w : null;
                 Troops.AddRange(Ships[i].SpawnedTroops);
                 Ships[i].SpawnedTroops.Clear();
             }
 
             if (Ships[i].IsFinished)
             {
+                Spawner.NotifyShipDeparted(Ships[i].AssignedCoast);
                 Ships.RemoveAt(i);
             }
         }
@@ -389,7 +432,6 @@ public class GameScreen : Screen
         {
             levelCompleted = true;
 
-            UnlockNextLevel();
             AudioManager.Instance.StopBackgroundMusic();
 
             manager.SetScreen(new GameOverScreen(
@@ -401,6 +443,40 @@ public class GameScreen : Screen
                 progress.CoinsRemaining
             ));
             return;
+        }
+    }
+
+    private void UpdateWalls()
+    {
+        foreach (var key in walls.Keys.ToList())
+        {
+            if (walls[key].IsDestroyed)
+            {
+                walls.Remove(key);
+                occupiedTiles.Remove(key);
+            }
+        }
+    }
+
+    private void DrawWallHealthBars(SpriteBatch spriteBatch)
+    {
+        const int barHeight = 3;
+        const int barYOffset = 4;
+
+        foreach (var wall in walls.Values)
+        {
+            if (!wall.IsDamaged) continue;
+
+            var center = grid.GridToWorld(wall.GridPos);
+            int barWidth = grid.TileSize;
+            int barX = (int)(center.X - barWidth / 2f);
+            int barY = (int)(center.Y + grid.TileSize / 2f + barYOffset);
+
+            float pct = (float)wall.Health / Wall.MaxHealth;
+            int healthWidth = (int)(barWidth * pct);
+
+            spriteBatch.Draw(pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
+            spriteBatch.Draw(pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
         }
     }
 

@@ -63,6 +63,11 @@ public abstract class BaseTheme : ITileTheme
     {
         return new List<Texture2D>();
     }
+    
+    public virtual Ship.Data GetShipData(string type)
+    {
+        return null;
+    }
 
     public abstract Texture2D GetTexture(int tile, int x, int y);
     public abstract Texture2D GetShip(string name);

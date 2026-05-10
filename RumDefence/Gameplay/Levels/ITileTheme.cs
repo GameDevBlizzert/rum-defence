@@ -13,4 +13,5 @@ public interface ITileTheme
     List<Texture2D> GetRocks();
     List<Texture2D> GetTrees();
     List<Texture2D> GetBushes();
+    Ship.Data GetShipData(string type);
 }
