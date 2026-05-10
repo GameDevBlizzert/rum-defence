@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace RumDefence.Levels.Ghost;
+namespace RumDefence.Levels.Grass;
 
 public static class Level3Data
 {

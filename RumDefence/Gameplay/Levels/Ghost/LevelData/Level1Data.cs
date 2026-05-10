@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
-namespace RumDefence.Levels.Ghost;
+namespace RumDefence.Levels.Grass;
 
 public static class Level1Data
 {

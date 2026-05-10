@@ -232,16 +232,6 @@ public class GameScreen : Screen
         hud.Draw(spriteBatch);
     }
 
-    private void UnlockNextLevel()
-    {
-        int currentIndex = GrassLevels.All.IndexOf(currentLevel);
-
-        if (currentIndex + 1 < GrassLevels.All.Count)
-        {
-            GrassLevels.All[currentIndex + 1].IsUnlocked = true;
-        }
-    }
-
     private void UpdateBuildSystem(GameTime gameTime)
     {
         // If mode is reset to something else (e.g. wall building), clear selection
@@ -389,7 +379,6 @@ public class GameScreen : Screen
         {
             levelCompleted = true;
 
-            UnlockNextLevel();
             AudioManager.Instance.StopBackgroundMusic();
 
             manager.SetScreen(new GameOverScreen(
