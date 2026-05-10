@@ -63,7 +63,7 @@ public abstract class BaseTheme : ITileTheme
     {
         return new List<Texture2D>();
     }
-    
+
     public virtual Ship.Data GetShipData(string type)
     {
         return null;
