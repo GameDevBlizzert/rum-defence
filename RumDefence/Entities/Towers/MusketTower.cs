@@ -62,6 +62,6 @@ public class MusketTower : BaseTower
         foreach (var proj in Projectiles)
             proj.Draw(spriteBatch);
 
-        DrawLevelLabel(spriteBatch);
+        DrawLevelStripes(spriteBatch);
     }
 }
