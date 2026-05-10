@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
@@ -9,17 +9,14 @@ public class TroopSpawner
     private Grid grid;
     private Level level;
 
+    private readonly Queue<TroopData> troopQueue = new();
     private float spawnTimer = 0f;
     private float spawnInterval = 1f;
-
-    private int troopsToSpawn = 0;
-    private int troopsSpawned = 0;
-
     private Vector2 spawnPosition;
 
     public List<Troop> SpawnedTroops { get; } = new();
 
-    public bool IsSpawning => troopsSpawned < troopsToSpawn;
+    public bool IsSpawning => troopQueue.Count > 0;
 
     public TroopSpawner(Level level, Grid grid)
     {
@@ -27,13 +24,18 @@ public class TroopSpawner
         this.grid = grid;
     }
 
-    public void StartSpawning(Vector2 position, int count)
+    public void StartSpawning(Vector2 position, IReadOnlyList<TroopGroup> troops, float spawnDelay = 1f)
     {
         spawnPosition = position;
-        troopsToSpawn = count;
-        troopsSpawned = 0;
+        troopQueue.Clear();
         spawnTimer = 0f;
+        spawnInterval = spawnDelay;
+
+        foreach (var group in troops)
+            for (int i = 0; i < group.Count; i++)
+                troopQueue.Enqueue(group.Data);
     }
+
     private Vector2 troopTargetDestination => grid.GridToWorld(level.RumTile);
 
     public void Update(GameTime gameTime)
@@ -46,26 +48,22 @@ public class TroopSpawner
         if (spawnTimer >= spawnInterval)
         {
             spawnTimer = 0f;
-            troopsSpawned++;
-            var data = troopsSpawned < troopsToSpawn ? TroopFactory.Regular : TroopFactory.Boss;
+            var data = troopQueue.Dequeue();
             SpawnTroop(TroopFactory.Create(data, spawnPosition + GetSpawnOffset(), troopTargetDestination));
         }
     }
 
     private Vector2 GetSpawnOffset()
     {
-        Vector2 offset = new Vector2(
+        return new Vector2(
             Random.Shared.Next(-10, 10),
             Random.Shared.Next(-10, 10)
         );
-        return offset;
     }
 
     private void SpawnTroop(Troop troop)
     {
         SpawnedTroops.Add(troop);
-
-        // Play random footstep sound when enemy spawns
         AudioManager.Instance.PlayRandomFootstep();
     }
 }

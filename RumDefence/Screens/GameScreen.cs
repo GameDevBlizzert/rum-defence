@@ -318,6 +318,7 @@ public class GameScreen : Screen
 
             if (Ships[i].IsFinished)
             {
+                Spawner.NotifyShipDeparted(Ships[i].AssignedCoast);
                 Ships.RemoveAt(i);
             }
         }

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace RumDefence;
@@ -11,22 +12,22 @@ public class MusketTower : BaseTower
 
     public MusketTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
-        BaseRange = 500f;
+        BaseRange = data.Range;
         RangeUpgradeFlat = 50f;
         RangeUpgradePercent = 0.1f;
 
-        BaseFireRate = 3f;
+        BaseFireRate = data.FireRate;
         FireRateUpgradeFlat = 1f;
         FireRateUpgradePercent = 0.05f;
 
-        BaseDamage = 10;
+        BaseDamage = data.Damage;
         DamageUpgradeFlat = 5;
         DamageUpgradePercent = 0.1f;
 
         BaseUpgradeCost = 75;
 
-        ProjectileSpeed = 500f;
-        AttackMode = AttackMode.First;
+        ProjectileSpeed = data.ProjectileSpeed;
+        AttackMode = data.AttackMode;
 
         // Sprite sheet is 512px wide (4 cells of 128px). Scale to one cell = one grid tile.
         scale *= 8f;

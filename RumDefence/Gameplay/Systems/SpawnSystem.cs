@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace RumDefence;
 
@@ -9,6 +10,8 @@ public static class SpawnSystem
         Grid grid,
         Ship.Data data,
         CoastTile coast,
+        IReadOnlyList<TroopGroup> troops,
+        float troopSpawnDelay,
         float lateralOffset = 0f
     )
     {
@@ -18,6 +21,6 @@ public static class SpawnSystem
 
         var texture = level.Theme.Tiles.GetShip(data.Texture);
 
-        return new Ship(start, holding, target, coast, data, texture);
+        return new Ship(start, holding, target, coast, data, texture, troops, troopSpawnDelay);
     }
 }

@@ -7,8 +7,22 @@ namespace RumDefence;
 public static class Level2Data
 {
 
-    private static readonly Ship.Data BossShip = new("Ships/boss_ship", 80f, 10, true, 1f, -90f);
-    private static readonly Ship.Data NormalShip = new("Ships/ship_1", 80f, 10, false, 0.8f, -90f);
+    private static readonly Ship.Data BossShip = new()
+    {
+        Texture = "Ships/boss_ship",
+        Speed = 80f,
+        IsBoss = true,
+        SizeMultiplier = 1f,
+        RotationOffsetDegrees = -90f,
+    };
+
+    private static readonly Ship.Data NormalShip = new()
+    {
+        Texture = "Ships/ship_1",
+        Speed = 80f,
+        SizeMultiplier = 0.8f,
+        RotationOffsetDegrees = -90f,
+    };
 
     public static Level Create(Theme theme)
     {
@@ -22,9 +36,13 @@ public static class Level2Data
         );
     }
 
+    private static readonly TroopData Regular = TroopFactory.Regular;
+    private static readonly TroopData Boss = TroopFactory.Boss;
+
     private static List<Wave> Waves => new()
     {
-        CreateWave(4f, 7f, 0f, (NormalShip, 1)),
+        //                                                               ships  troops                    spawnDelay
+        CreateWave(minSpawnTime: 4f, maxSpawnTime: 7f, holdingTime: 0f, (NormalShip, 1, [(Regular, 10, 100)], 1f)),
     };
 
     private static string[] MapData => new[]
@@ -49,12 +67,17 @@ public static class Level2Data
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
     };
 
-    private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, float holdingTime, params (Ship.Data data, int count)[] groups)
+    private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, float holdingTime, params (Ship.Data data, int count, (TroopData troop, int n, int hp)[] troops, float spawnDelay)[] groups)
     {
         var list = new List<ShipGroup>();
 
-        foreach (var (data, count) in groups)
-            list.Add(new ShipGroup(data, count));
+        foreach (var (data, count, troops, spawnDelay) in groups)
+        {
+            var troopGroups = new List<TroopGroup>();
+            foreach (var (troop, n, hp) in troops)
+                troopGroups.Add(new TroopGroup(troop with { Health = hp }, n));
+            list.Add(new ShipGroup(data, count, troopGroups, spawnDelay));
+        }
 
         return new Wave(list, minSpawnTime, maxSpawnTime, holdingTime);
     }
