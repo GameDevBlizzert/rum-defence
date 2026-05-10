@@ -54,7 +54,7 @@ public static class DecorationManager
         var trees = level.Theme.Tiles.GetTrees();
         var bushes = level.Theme.Tiles.GetBushes();
 
-        if (rocks.Count == 0 || trees.Count == 0 || bushes.Count == 0)
+        if (rocks.Count == 0 && trees.Count == 0 && bushes.Count == 0)
             return result;
 
         var rng = new Random(level.Id);
@@ -63,7 +63,7 @@ public static class DecorationManager
         {
             for (int y = 0; y < h; y++)
             {
-                if (level.Map[y, x] != TileRules.Center)
+                if (!TileRules.IsLand(level.Map[y, x]) || TileRules.IsCoast(level.Map, x, y))
                     continue;
 
                 if (rng.NextDouble() > density)
@@ -74,28 +74,26 @@ public static class DecorationManager
                 double roll = rng.NextDouble();
 
                 DecorationType type;
-                Texture2D tex;
+                Texture2D tex = null;
 
-                if (roll < 0.2)
+                if (roll < 0.2 && rocks.Count > 0)
                 {
                     type = DecorationType.Rock;
-
-                    int index = Math.Abs((x * 332371 + y * 881231 + rng.Next())) % rocks.Count;
-                    tex = rocks[index];
+                    tex = rocks[SafeIndex(x * 73856093 ^ y * 19349663, rocks.Count)];
                 }
-                else if (roll < 0.5)
+                else if (roll < 0.5 && trees.Count > 0)
                 {
                     type = DecorationType.Tree;
-
-                    int index = Math.Abs((x * 712371 + y * 551231 + rng.Next())) % trees.Count;
-                    tex = trees[index];
+                    tex = trees[SafeIndex(x * 19349663 ^ y * 83492791, trees.Count)];
+                }
+                else if (bushes.Count > 0)
+                {
+                    type = DecorationType.Bush;
+                    tex = bushes[SafeIndex(x * 83492791 ^ y * 1234567, bushes.Count)];
                 }
                 else
                 {
-                    type = DecorationType.Bush;
-
-                    int index = Math.Abs((x * 928371 + y * 123123 + rng.Next())) % bushes.Count;
-                    tex = bushes[index];
+                    continue;
                 }
 
                 if (!CanPlace(result, p, type))
@@ -106,6 +104,11 @@ public static class DecorationManager
         }
 
         return result;
+    }
+
+    private static int SafeIndex(int value, int count)
+    {
+        return Math.Abs(value) % count;
     }
 
     private static bool CanPlace(List<Decoration> existing, Point p, DecorationType newType)
