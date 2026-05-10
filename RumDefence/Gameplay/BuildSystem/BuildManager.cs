@@ -91,7 +91,12 @@ public class BuildManager
 
     private bool CanPlace(Point p)
     {
-        if (grid.Tiles[p.Y, p.X] != TileRules.Center)
+        var map = grid.Tiles;
+
+        if (!TileRules.IsLand(map[p.Y, p.X]))
+            return false;
+
+        if (TileRules.IsCoast(map, p.X, p.Y))
             return false;
 
         if (p == targetTile)

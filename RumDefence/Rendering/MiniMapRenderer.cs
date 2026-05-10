@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace RumDefence;
 
@@ -37,78 +38,25 @@ public static class MiniMapRenderer
                 }
                 else
                 {
-                    int mask = GetMask(map, x, y);
-                    int mapped = MapMaskToTile(mask);
+                    int mapped = TileSystem.GetTile(map, level.RumTile, x, y);
                     texture = theme.Tiles.GetTexture(mapped, x, y);
                 }
 
                 if (texture == null) continue;
 
+                float px = area.X + x * tileWidth;
+                float py = area.Y + y * tileHeight;
+
                 var rect = new Rectangle(
-                    (int)(area.X + x * tileWidth),
-                    (int)(area.Y + y * tileHeight),
-                    (int)tileWidth + 1,
-                    (int)tileHeight + 1
+                    (int)px,
+                    (int)py,
+                    (int)Math.Ceiling(tileWidth),
+                    (int)Math.Ceiling(tileHeight)
                 );
 
                 spriteBatch.Draw(texture, rect, Color.White);
             }
         }
-    }
-
-    private static int GetMask(int[,] map, int x, int y)
-    {
-        int h = map.GetLength(0);
-        int w = map.GetLength(1);
-
-        bool IsLand(int px, int py)
-        {
-            if (px < 0 || px >= w || py < 0 || py >= h)
-                return true;
-
-            return map[py, px] == 1;
-        }
-
-        int mask = 0;
-
-        if (IsLand(x, y - 1)) mask |= 1;
-        if (IsLand(x + 1, y)) mask |= 2;
-        if (IsLand(x - 1, y)) mask |= 4;
-        if (IsLand(x, y + 1)) mask |= 8;
-
-        return mask;
-    }
-
-    private static int MapMaskToTile(int mask)
-    {
-        bool top = (mask & 1) != 0;
-        bool right = (mask & 2) != 0;
-        bool left = (mask & 4) != 0;
-        bool bottom = (mask & 8) != 0;
-
-        bool wTop = !top;
-        bool wRight = !right;
-        bool wLeft = !left;
-        bool wBottom = !bottom;
-
-        if (!wTop && !wRight && !wLeft && !wBottom) return 5;
-
-        if (wTop && !wRight && !wLeft && !wBottom) return 8;
-        if (!wTop && wRight && !wLeft && !wBottom) return 6;
-        if (!wTop && !wRight && !wLeft && wBottom) return 2;
-        if (!wTop && !wRight && wLeft && !wBottom) return 4;
-
-        if (wTop && wLeft) return 7;
-        if (wTop && wRight) return 9;
-        if (wBottom && wLeft) return 1;
-        if (wBottom && wRight) return 3;
-
-        if (wTop && wLeft && wRight) return 10;
-        if (wTop && wRight && wBottom) return 11;
-        if (wLeft && wBottom && wRight) return 12;
-        if (wTop && wLeft && wBottom) return 13;
-
-        return 5;
     }
 
     private static Texture2D GetPixel(SpriteBatch spriteBatch)

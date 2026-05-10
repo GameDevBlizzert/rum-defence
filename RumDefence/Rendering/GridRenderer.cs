@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -54,8 +53,7 @@ public class GridRenderer
                 }
                 else
                 {
-                    int mask = GetMask(grid.Tiles, x, y);
-                    int mapped = MapMaskToTile(grid.Tiles, x, y, mask);
+                    int mapped = TileSystem.GetTile(grid.Tiles, level.RumTile, x, y);
                     texture = theme.GetTexture(mapped, x, y);
                 }
 
@@ -103,88 +101,5 @@ public class GridRenderer
         );
 
         spriteBatch.Draw(pixel, rect, Color.Gray * 0.5f);
-    }
-
-    private bool IsLandSafe(int[,] map, int x, int y)
-    {
-        int h = map.GetLength(0);
-        int w = map.GetLength(1);
-
-        if (x < 0 || x >= w || y < 0 || y >= h)
-            return true;
-
-        if (RumGame.Instance.CurrentLevel?.RumTile == new Point(x, y))
-            return true;
-
-        return map[y, x] == 1;
-    }
-
-    private bool IsLandDiag(int[,] map, int x, int y)
-    {
-        int h = map.GetLength(0);
-        int w = map.GetLength(1);
-
-        if (x < 0 || x >= w || y < 0 || y >= h)
-            return false;
-
-        if (RumGame.Instance.CurrentLevel?.RumTile == new Point(x, y))
-            return true;
-
-        return map[y, x] == 1;
-    }
-
-    private int GetMask(int[,] map, int x, int y)
-    {
-        int mask = 0;
-
-        if (IsLandSafe(map, x, y - 1)) mask |= 1;
-        if (IsLandSafe(map, x + 1, y)) mask |= 2;
-        if (IsLandSafe(map, x - 1, y)) mask |= 4;
-        if (IsLandSafe(map, x, y + 1)) mask |= 8;
-
-        return mask;
-    }
-
-    private int MapMaskToTile(int[,] map, int x, int y, int mask)
-    {
-        bool top = (mask & 1) != 0;
-        bool right = (mask & 2) != 0;
-        bool left = (mask & 4) != 0;
-        bool bottom = (mask & 8) != 0;
-
-        bool diagTL = IsLandDiag(map, x - 1, y - 1);
-        bool diagTR = IsLandDiag(map, x + 1, y - 1);
-        bool diagBR = IsLandDiag(map, x + 1, y + 1);
-        bool diagBL = IsLandDiag(map, x - 1, y + 1);
-
-        // 🔥 binnenhoeken (mask = 15)
-        if (top && right && left && bottom)
-        {
-            if (!diagTL) return 10;
-            if (!diagTR) return 11;
-            if (!diagBR) return 12;
-            if (!diagBL) return 13;
-
-            return 5;
-        }
-
-        bool wTop = !top;
-        bool wRight = !right;
-        bool wLeft = !left;
-        bool wBottom = !bottom;
-
-        // rechte randen
-        if (wTop && !wRight && !wLeft && !wBottom) return 8;
-        if (!wTop && wRight && !wLeft && !wBottom) return 6;
-        if (!wTop && !wRight && !wLeft && wBottom) return 2;
-        if (!wTop && !wRight && wLeft && !wBottom) return 4;
-
-        // buitenhoeken
-        if (wTop && wLeft) return 7;
-        if (wTop && wRight) return 9;
-        if (wBottom && wLeft) return 1;
-        if (wBottom && wRight) return 3;
-
-        return 5;
     }
 }
