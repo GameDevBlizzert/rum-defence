@@ -11,6 +11,7 @@ public class AudioManager
     public static AudioManager Instance => _instance ??= new AudioManager();
 
     private readonly Dictionary<string, SoundEffect> soundEffects = new();
+    private readonly Dictionary<string, List<SoundEffectInstance>> activeSoundInstances = new();
     private readonly Dictionary<string, SoundEffect> musicTracks = new();
     private readonly List<SoundEffect> footstepSounds = new();
     private readonly List<SoundEffect> impactSounds = new();
@@ -73,12 +74,27 @@ public class AudioManager
         SoundEffect.MasterVolume = soundVolume;
     }
 
-    public void PlaySound(string soundName)
+    public void PlaySound(string soundName, int? maxConcurrentInstances = null)
     {
         try
         {
             if (soundEffects.TryGetValue(soundName, out var sound))
-                sound.Play();
+            {
+                if (maxConcurrentInstances.HasValue)
+                {
+                    CleanupStoppedSoundInstances(soundName);
+
+                    if (GetActiveSoundInstanceCount(soundName) >= maxConcurrentInstances.Value)
+                        return;
+                }
+
+                var instance = sound.CreateInstance();
+                instance.Volume = soundVolume;
+                instance.Play();
+
+                if (maxConcurrentInstances.HasValue)
+                    TrackSoundInstance(soundName, instance);
+            }
             else
                 System.Diagnostics.Debug.WriteLine($"Warning: Sound '{soundName}' not found");
         }
@@ -244,6 +260,8 @@ public class AudioManager
 
     public void Update()
     {
+        CleanupStoppedSoundInstances();
+
         if (!isMusicActive || isSuspended || currentMusicTrack == null)
             return;
 
@@ -269,6 +287,64 @@ public class AudioManager
         currentMusicInstance.IsLooped = true;
         currentMusicInstance.Volume = musicVolume;
         currentMusicInstance.Play();
+    }
+
+    private void TrackSoundInstance(string soundName, SoundEffectInstance instance)
+    {
+        if (!activeSoundInstances.TryGetValue(soundName, out var instances))
+        {
+            instances = [];
+            activeSoundInstances[soundName] = instances;
+        }
+
+        instances.Add(instance);
+    }
+
+    private int GetActiveSoundInstanceCount(string soundName)
+    {
+        if (!activeSoundInstances.TryGetValue(soundName, out var instances))
+            return 0;
+
+        int activeCount = 0;
+        for (int i = 0; i < instances.Count; i++)
+        {
+            if (instances[i].State != SoundState.Stopped)
+                activeCount++;
+        }
+
+        return activeCount;
+    }
+
+    private void CleanupStoppedSoundInstances(string soundName = null)
+    {
+        if (soundName != null)
+        {
+            if (!activeSoundInstances.TryGetValue(soundName, out var instances))
+                return;
+
+            CleanupStoppedSoundInstances(instances);
+
+            if (instances.Count == 0)
+                activeSoundInstances.Remove(soundName);
+
+            return;
+        }
+
+        var soundNames = new List<string>(activeSoundInstances.Keys);
+        foreach (var name in soundNames)
+            CleanupStoppedSoundInstances(name);
+    }
+
+    private void CleanupStoppedSoundInstances(List<SoundEffectInstance> instances)
+    {
+        for (int i = instances.Count - 1; i >= 0; i--)
+        {
+            if (instances[i].State == SoundState.Stopped)
+            {
+                instances[i].Dispose();
+                instances.RemoveAt(i);
+            }
+        }
     }
 
     private void DisposeCurrentMusicInstance()
