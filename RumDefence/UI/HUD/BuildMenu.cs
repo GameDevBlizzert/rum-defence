@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -15,9 +16,18 @@ public class BuildMenu
     private IconButton cannonButton;
     private IconButton musketButton;
     private IconButton removeButton;
-    private IconButton menuButton;
+    private IconButton speedButton;
+    private IconButton pauseMenuButton;
 
+    private readonly Texture2D playIcon;
+    private readonly Texture2D pauseIcon;
+    private readonly Texture2D fastForwardIcon;
+    private readonly Texture2D hamburgerIcon;
+
+    public System.Action OnSpeedRequested;
     public System.Action OnMenuRequested;
+
+    private GamePlaybackState playbackState = GamePlaybackState.Normal;
 
     private BuildManager buildManager;
     private LevelProgressSystem progress;
@@ -101,24 +111,104 @@ public class BuildMenu
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
 
-        int menuButtonY = panelY + panelHeight - ButtonHeight - 20;
-        var hamburgerIcon = CreateHamburgerIcon(RumGame.Instance.GraphicsDevice);
-        menuButton = new IconButton(panelTexture, hamburgerIcon, new Vector2(buttonX, menuButtonY), new Vector2(ButtonWidth, ButtonHeight));
-        menuButton.BackgroundSourceRect = panelSourceRect;
-        menuButton.OnClick = () => OnMenuRequested?.Invoke();
+        playIcon = CreatePlayIcon(RumGame.Instance.GraphicsDevice);
+        pauseIcon = CreatePauseIcon(RumGame.Instance.GraphicsDevice);
+        fastForwardIcon = CreateFastForwardIcon(RumGame.Instance.GraphicsDevice);
+        hamburgerIcon = CreateHamburgerIcon(RumGame.Instance.GraphicsDevice);
+
+        int speedButtonY = panelY + panelHeight - (ButtonHeight + spacing) * 2 - 20;
+        speedButton = new IconButton(panelTexture, fastForwardIcon, new Vector2(buttonX, speedButtonY), new Vector2(ButtonWidth, ButtonHeight));
+        speedButton.BackgroundSourceRect = panelSourceRect;
+        speedButton.OnClick = () => OnSpeedRequested?.Invoke();
+
+        int pauseMenuButtonY = panelY + panelHeight - ButtonHeight - 20;
+        pauseMenuButton = new IconButton(panelTexture, hamburgerIcon, new Vector2(buttonX, pauseMenuButtonY), new Vector2(ButtonWidth, ButtonHeight));
+        pauseMenuButton.BackgroundSourceRect = panelSourceRect;
+        pauseMenuButton.OnClick = () => OnMenuRequested?.Invoke();
+    }
+
+    public void SetPlaybackState(GamePlaybackState state)
+    {
+        playbackState = state;
+    }
+
+    private static Texture2D CreatePlayIcon(GraphicsDevice graphicsDevice)
+    {
+        const int w = 24, h = 14;
+        var data = new Color[w * h];
+
+        // Triangle: pointy right. From top to bottom, each row gets wider.
+        int midY = h / 2;
+        for (int y = 0; y < h; y++)
+        {
+            // Distance from center determines how wide this row is
+            int halfWidth = (int)Math.Round((midY - Math.Abs(y - midY)) * 0.85f);
+            int startX = 4;
+            for (int x = startX; x < startX + halfWidth * 2 && x < w - 2; x++)
+                data[y * w + x] = Color.White;
+        }
+
+        var tex = new Texture2D(graphicsDevice, w, h);
+        tex.SetData(data);
+        return tex;
+    }
+
+    private static Texture2D CreatePauseIcon(GraphicsDevice graphicsDevice)
+    {
+        const int w = 24, h = 14;
+        var data = new Color[w * h];
+
+        for (int y = 2; y < h - 2; y++)
+        {
+            for (int x = 4; x < 8; x++)
+                data[y * w + x] = Color.White;
+
+            for (int x = 16; x < 20; x++)
+                data[y * w + x] = Color.White;
+        }
+
+        var tex = new Texture2D(graphicsDevice, w, h);
+        tex.SetData(data);
+        return tex;
+    }
+
+    private static Texture2D CreateFastForwardIcon(GraphicsDevice graphicsDevice)
+    {
+        const int w = 24, h = 14;
+        var data = new Color[w * h];
+
+        int midY = h / 2;
+        for (int y = 0; y < h; y++)
+        {
+            int halfWidth = (int)Math.Round((midY - Math.Abs(y - midY)) * 0.85f);
+
+            // Left triangle
+            int leftStartX = 1;
+            for (int x = leftStartX; x < leftStartX + halfWidth * 2 && x < 11; x++)
+                data[y * w + x] = Color.White;
+
+            // Right triangle
+            int rightStartX = 12;
+            for (int x = rightStartX; x < rightStartX + halfWidth * 2 && x < w - 1; x++)
+                data[y * w + x] = Color.White;
+        }
+
+        var tex = new Texture2D(graphicsDevice, w, h);
+        tex.SetData(data);
+        return tex;
     }
 
     private static Texture2D CreateHamburgerIcon(GraphicsDevice graphicsDevice)
     {
-        const int w = 30, h = 20;
+        const int w = 24, h = 14;
         var data = new Color[w * h];
 
-        int[] barStartYs = { 2, 8, 14 };
-        const int barHeight = 4;
+        int[] barStartYs = { 2, 6, 10 };
+        const int barHeight = 2;
 
         foreach (int barY in barStartYs)
-            for (int y = barY; y < barY + barHeight; y++)
-                for (int x = 0; x < w; x++)
+            for (int y = barY; y < barY + barHeight && y < h; y++)
+                for (int x = 2; x < w - 2; x++)
                     data[y * w + x] = Color.White;
 
         var tex = new Texture2D(graphicsDevice, w, h);
@@ -143,15 +233,26 @@ public class BuildMenu
         wallButton.SetSelected(mode == BuildMode.Wall);
         removeButton.SetSelected(mode == BuildMode.Remove);
 
-        cannonButton.IsDisabled = progress.CoinsRemaining < TowerFactory.Cannon.Cost;
-        musketButton.IsDisabled = progress.CoinsRemaining < TowerFactory.Musket.Cost;
-        wallButton.IsDisabled = progress.CoinsRemaining < BuildManager.WallCost;
+        bool isPaused = playbackState == GamePlaybackState.Paused;
+
+        cannonButton.IsDisabled = isPaused || progress.CoinsRemaining < TowerFactory.Cannon.Cost;
+        musketButton.IsDisabled = isPaused || progress.CoinsRemaining < TowerFactory.Musket.Cost;
+        wallButton.IsDisabled = isPaused || progress.CoinsRemaining < BuildManager.WallCost;
+        removeButton.IsDisabled = isPaused;
+
+        speedButton.IconTexture = playbackState switch
+        {
+            GamePlaybackState.Normal => fastForwardIcon,
+            GamePlaybackState.FastForward => pauseIcon,
+            _ => playIcon
+        };
 
         cannonButton.Update(gameTime);
         musketButton.Update(gameTime);
         wallButton.Update(gameTime);
         removeButton.Update(gameTime);
-        menuButton.Update(gameTime);
+        speedButton.Update(gameTime);
+        pauseMenuButton.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -174,6 +275,7 @@ public class BuildMenu
         musketButton.Draw(spriteBatch);
         wallButton.Draw(spriteBatch);
         removeButton.Draw(spriteBatch);
-        menuButton.Draw(spriteBatch);
+        speedButton.Draw(spriteBatch);
+        pauseMenuButton.Draw(spriteBatch);
     }
 }
