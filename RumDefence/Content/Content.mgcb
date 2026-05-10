@@ -819,7 +819,7 @@
 
 #begin Audio/GentleBreeze.ogg
 /importer:OggImporter
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Audio/GentleBreeze.ogg
 
@@ -855,7 +855,7 @@
 
 #begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Audio/PineappleUnderTheSea.ogg
 
@@ -873,7 +873,7 @@
 
 #begin Audio/WhatCloudsAreMadeOf.ogg
 /importer:OggImporter
-/processor:SongProcessor
+/processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Audio/WhatCloudsAreMadeOf.ogg
 
