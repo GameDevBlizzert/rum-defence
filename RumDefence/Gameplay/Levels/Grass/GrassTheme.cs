@@ -28,7 +28,6 @@ public class GrassTheme : BaseTheme, IWallTheme
     private List<Texture2D> cornerDamagedList;
     private List<Texture2D> twallDamagedList;
     private List<Texture2D> xwallDamagedList;
-    private List<Texture2D> decorations;
     private List<Texture2D> rocks;
     private List<Texture2D> trees;
     private List<Texture2D> bushes;
@@ -151,7 +150,6 @@ public class GrassTheme : BaseTheme, IWallTheme
         return GetRandom(enemies);
     }
 
-    public override List<Texture2D> GetDecorations() => decorations;
 
     public override float GetDecorationDensity() => 0.2f;
 
