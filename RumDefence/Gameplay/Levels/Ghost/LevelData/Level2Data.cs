@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace RumDefence.Gameplay.Levels.Grass.LevelData;
+namespace RumDefence.Gameplay.Levels.Ghost.LevelData;
 
 public static class Level2Data
 {
-
     private static readonly Ship.Data BossShip = new()
     {
         Texture = "Ships/boss_ship",
@@ -29,10 +28,8 @@ public static class Level2Data
             MapData,
             theme,
             Waves,
-            //unlocked,
-            startingCoinBalance: 200,
-            unlocked: true
-
+            unlocked,
+            startingCoinBalance: 100
         );
     }
 
@@ -41,7 +38,7 @@ public static class Level2Data
 
     private static List<Wave> Waves => new()
     {
-        //                                                               ships  troops                    spawnDelay
+        //                                                          ships  troops                    spawnDelay
         CreateWave(minSpawnTime: 10f, maxSpawnTime: 20f, holdingTime: 5f, (NormalShip,  2, [(Regular,   5,  75)],         2.5f)),
         CreateWave(minSpawnTime:  3f, maxSpawnTime: 8f, holdingTime: 1f, (NormalShip,  4, [(Regular,   6,  100)],        1.0f)),
         CreateWave(minSpawnTime: 0f, maxSpawnTime: 5f, holdingTime: 6f, (NormalShip,  4, [(Regular,   7,  100)],        0.4f)),

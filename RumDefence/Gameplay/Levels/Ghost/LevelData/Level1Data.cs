@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace RumDefence.Gameplay.Levels.Grass.LevelData;
+namespace RumDefence.Gameplay.Levels.Ghost.LevelData;
 
 public static class Level1Data
 {
-
     private static readonly Ship.Data BossShip = new()
     {
         Texture = "Ships/boss_ship",
@@ -30,7 +29,7 @@ public static class Level1Data
             MapData,
             theme,
             Waves,
-            startingCoinBalance: 200,
+            startingCoinBalance: 100,
             unlocked: true
         );
     }

@@ -47,8 +47,22 @@ public class PathfindingSystem : IGameLoopSystem
             for (int j = 0; j < map.GetLength(1); j++)
                 map[i, j] = int.MaxValue;
 
-        var entityPosition = grid.WorldToGrid(currentPosition);
-        var targetPosition = grid.WorldToGrid(Destination);
+        // Clamp positions to the grid's world bounds to prevent floating-point overshoot crashes
+        float maxValidX = grid.Offset.X + (grid.Width * grid.TileSize) - 0.001f;
+        float maxValidY = grid.Offset.Y + (grid.Height * grid.TileSize) - 0.001f;
+
+        Vector2 clampedPosition = new Vector2(
+            Math.Clamp(currentPosition.X, grid.Offset.X, maxValidX),
+            Math.Clamp(currentPosition.Y, grid.Offset.Y, maxValidY)
+        );
+
+        Vector2 clampedDestination = new Vector2(
+            Math.Clamp(Destination.X, grid.Offset.X, maxValidX),
+            Math.Clamp(Destination.Y, grid.Offset.Y, maxValidY)
+        );
+
+        var entityPosition = grid.WorldToGrid(clampedPosition);
+        var targetPosition = grid.WorldToGrid(clampedDestination);
 
         if (null == entityPosition)
             throw new ArgumentException("Current position is out of grid bounds.");
