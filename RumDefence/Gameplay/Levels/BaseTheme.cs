@@ -39,6 +39,11 @@ public abstract class BaseTheme : ITileTheme
         return list[localRng.Next(list.Count)];
     }
 
+    public virtual Ship.Data GetShipData(string type)
+    {
+        return null;
+    }
+
     public abstract Texture2D GetTexture(int tile, int x, int y);
     public abstract Texture2D GetShip(string name);
     public abstract Texture2D GetRandomEnemy();

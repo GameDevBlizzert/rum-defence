@@ -57,14 +57,20 @@ public class OverlayRenderer
 
     private void DrawPlaceableOverlays(SpriteBatch spriteBatch)
     {
+        var map = grid.Tiles;
+
         for (int y = 0; y < grid.Height; y++)
         {
             for (int x = 0; x < grid.Width; x++)
             {
-                var tile = grid.Tiles[y, x];
-                if (tile == TileRules.Center && !IsOccupied(new Point(x, y)))
+                var p = new Point(x, y);
+                var tile = map[y, x];
+
+                if (TileRules.IsLand(tile) &&
+                    !TileRules.IsCoast(map, x, y) &&
+                    !IsOccupied(p))
                 {
-                    DrawOverlayAtTile(spriteBatch, new Point(x, y), placeableOverlay, Color.White * 0.5f);
+                    DrawOverlayAtTile(spriteBatch, p, placeableOverlay, Color.White * 0.5f);
                 }
             }
         }

@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
-using RumDefence.Gameplay.Levels.Grass.LevelData;
+using RumDefence.Gameplay.Levels.Ghost.LevelData;
 
-namespace RumDefence.Levels.Grass;
+namespace RumDefence.Gameplay.Levels.Ghost;
 
-public static class GrassLevels
+public static class GhostLevels
 {
-    private static GrassTheme grass = new GrassTheme();
+    private static GhostTheme ghost = new GhostTheme();
 
     private static Theme theme = new Theme
     {
-        Tiles = grass,
-        Walls = grass
+        Tiles = ghost,
     };
 
     public static List<Level> All = new()

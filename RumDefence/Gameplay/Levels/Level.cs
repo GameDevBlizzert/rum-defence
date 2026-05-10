@@ -61,7 +61,7 @@ public class Level
                 if (cell == "#")
                 {
                     RumTile = new Point(x, y);
-                    map[y, x] = TileRules.Center;
+                    map[y, x] = TileRules.Land;
                 }
                 else
                 {

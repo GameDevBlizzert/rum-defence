@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
-namespace RumDefence.Gameplay.Levels.Grass.LevelData;
+namespace RumDefence.Gameplay.Levels.Ghost.LevelData;
 
-public static class Level4Data
+public static class Level3Data
 {
-
     private static readonly Ship.Data BossShip = new()
     {
         Texture = "Ships/boss_ship",
         Speed = 80f,
         IsBoss = true,
-        SizeMultiplier = 1f,
+        SizeMultiplier = 2f,
         RotationOffsetDegrees = -90f,
     };
 
@@ -25,14 +24,12 @@ public static class Level4Data
     public static Level Create(Theme theme, bool unlocked = false)
     {
         return new Level(
-            4,
+            3,
             MapData,
             theme,
             Waves,
-            //unlocked,
-            startingCoinBalance: 200,
-            unlocked: true
-
+            unlocked,
+            startingCoinBalance: 100
         );
     }
 
@@ -46,7 +43,7 @@ public static class Level4Data
         CreateWave(minSpawnTime: 2f,   maxSpawnTime: 4f,   holdingTime: 0f, (NormalShip,  2, [(Regular,  7, 100)],              1.0f)),
         CreateWave(minSpawnTime: 1f,   maxSpawnTime: 9f,   holdingTime: 0f, (NormalShip,  3, [(Regular,  6, 100)],1.5f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
         CreateWave(minSpawnTime: 1f,   maxSpawnTime: 7f,   holdingTime: 0f, (NormalShip,  3, [(Regular, 8, 100)],0.8f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
-        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 3f,   holdingTime: 0f, (NormalShip,  20, [(Regular, 4, 100)], 0.5f), (BossShip, 2, [(Boss, 1, 600)], 0.5f)),
+        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 4f,   holdingTime: 0f, (NormalShip,  20, [(Regular, 4, 100)], 0.5f), (BossShip, 2, [(Boss, 1, 600)], 0.5f)),
         CreateWave(minSpawnTime: 0.5f, maxSpawnTime: 8f, holdingTime: 0f, (NormalShip, 10, [(Regular, 10, 100)], 0.3f), (BossShip, 3, [(Boss, 1, 600)], 0.3f)),
     };
 
@@ -54,20 +51,20 @@ public static class Level4Data
     {
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 # 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 0 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 # 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
     };

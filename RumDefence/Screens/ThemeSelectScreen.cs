@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.Gameplay.Levels.Ghost;
+using RumDefence.Levels.Grass;
 
 namespace RumDefence;
 
@@ -33,7 +35,7 @@ public class ThemeSelectScreen : Screen
 
         stoneButton.OnClick = () =>
         {
-            manager.SetScreen(new LevelSelectScreen(manager, GrassLevels.All)); // later StoneLevels
+            manager.SetScreen(new LevelSelectScreen(manager, GhostLevels.All)); 
         };
 
         // Play theme music
