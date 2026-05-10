@@ -8,12 +8,9 @@ public class LevelButton : Button
 {
     private Level level;
 
-    private SpriteFont font;
-
-    public LevelButton(Level level, SpriteFont font)
+    public LevelButton(Level level)
     {
         this.level = level;
-        this.font = font;
     }
 
     public override void Update(GameTime gameTime)
@@ -56,7 +53,7 @@ public class LevelButton : Button
         MiniMapRenderer.Draw(spriteBatch, level, mapRect, level.IsUnlocked);
 
         spriteBatch.DrawString(
-            font,
+            Primitives.Font,
             $"LEVEL {level.Id}",
             new Vector2(bounds.X + 10, bounds.Y + 5),
             Color.White

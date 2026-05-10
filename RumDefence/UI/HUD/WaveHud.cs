@@ -7,7 +7,6 @@ namespace RumDefence;
 public class WaveHud
 {
     private readonly ShipSpawner spawner;
-    private readonly SpriteFont font;
 
     private const int PanelPaddingX = 24;
     private const int PanelPaddingY = 10;
@@ -18,7 +17,6 @@ public class WaveHud
     public WaveHud(ShipSpawner spawner)
     {
         this.spawner = spawner;
-        font = RumGame.Instance.Content.Load<SpriteFont>("Fonts/KenneyFuture");
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -27,8 +25,8 @@ public class WaveHud
         float progress = spawner.IsFinished ? 1f : spawner.WaveTroopProgress;
         string pctText = spawner.IsFinished ? "All waves complete!" : $"{(int)(progress * 100)}%";
 
-        var waveSize = font.MeasureString(waveText);
-        var pctSize = font.MeasureString(pctText);
+        var waveSize = Primitives.Font.MeasureString(waveText);
+        var pctSize = Primitives.Font.MeasureString(pctText);
 
         float innerWidth = spawner.IsFinished
             ? Math.Max(waveSize.X, pctSize.X)
@@ -44,14 +42,14 @@ public class WaveHud
 
         float waveX = panelX + (panelWidth - waveSize.X) / 2f;
         float waveY = panelY + PanelPaddingY;
-        spriteBatch.DrawString(font, waveText, new Vector2(waveX, waveY), Color.White);
+        spriteBatch.DrawString(Primitives.Font, waveText, new Vector2(waveX, waveY), Color.White);
 
         float contentY = waveY + waveSize.Y + LineSpacing;
 
         if (spawner.IsFinished)
         {
             float pctX = panelX + (panelWidth - pctSize.X) / 2f;
-            spriteBatch.DrawString(font, pctText, new Vector2(pctX, contentY), Color.White);
+            spriteBatch.DrawString(Primitives.Font, pctText, new Vector2(pctX, contentY), Color.White);
         }
         else
         {
@@ -68,7 +66,7 @@ public class WaveHud
                 barX + (barWidth - pctSize.X) / 2f,
                 contentY + (BarHeight - pctSize.Y) / 2f
             );
-            spriteBatch.DrawString(font, pctText, pctPos, Color.White);
+            spriteBatch.DrawString(Primitives.Font, pctText, pctPos, Color.White);
         }
     }
 }

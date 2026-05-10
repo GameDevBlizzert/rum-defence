@@ -9,16 +9,14 @@ public class HudButton
 
     private Texture2D texture;
     private string text;
-    private SpriteFont font;
 
     private System.Action onClick;
 
-    public HudButton(Rectangle bounds, Texture2D texture, string text, SpriteFont font, System.Action onClick)
+    public HudButton(Rectangle bounds, Texture2D texture, string text, System.Action onClick)
     {
         Bounds = bounds;
         this.texture = texture;
         this.text = text;
-        this.font = font;
         this.onClick = onClick;
     }
 
@@ -34,15 +32,15 @@ public class HudButton
     {
         spriteBatch.Draw(texture, Bounds, Color.White);
 
-        if (font != null && !string.IsNullOrEmpty(text))
+        if (!string.IsNullOrEmpty(text))
         {
-            var size = font.MeasureString(text);
+            var size = Primitives.Font.MeasureString(text);
             var pos = new Vector2(
                 Bounds.Center.X - size.X / 2,
                 Bounds.Center.Y - size.Y / 2
             );
 
-            spriteBatch.DrawString(font, text, pos, Color.Black);
+            spriteBatch.DrawString(Primitives.Font, text, pos, Color.Black);
         }
     }
 }

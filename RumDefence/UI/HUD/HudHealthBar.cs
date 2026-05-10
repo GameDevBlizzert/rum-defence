@@ -7,14 +7,11 @@ public class HudHealthBar
 {
     private readonly LevelProgressSystem progress;
 
-    private readonly SpriteFont font;
-
     private readonly Rectangle barBounds;
 
     public HudHealthBar(LevelProgressSystem progress, Rectangle barBounds)
     {
         this.progress = progress;
-        font = RumGame.Instance.Content.Load<SpriteFont>("Fonts/KenneyFuture");
         this.barBounds = barBounds;
     }
 
@@ -35,11 +32,11 @@ public class HudHealthBar
 
         // Label: "X / Y"
         var label = $"{progress.LivesRemaining}";
-        var labelSize = font.MeasureString(label);
+        var labelSize = Primitives.Font.MeasureString(label);
         var labelPos = new Vector2(
             barBounds.X + (barBounds.Width - labelSize.X) / 2f,
             barBounds.Y + (barBounds.Height - labelSize.Y) / 2f
         );
-        spriteBatch.DrawString(font, label, labelPos, Color.White);
+        spriteBatch.DrawString(Primitives.Font, label, labelPos, Color.White);
     }
 }

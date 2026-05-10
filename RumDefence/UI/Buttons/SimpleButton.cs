@@ -6,17 +6,15 @@ namespace RumDefence;
 public class SimpleButton : Button
 {
     private Texture2D texture;
-    private SpriteFont font;
     private string text;
 
     public bool IsDisabled { get; set; }
 
     public Color BaseTint { get; set; } = Color.White;
 
-    public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position, Vector2 size)
+    public SimpleButton(Texture2D texture, string text, Vector2 position, Vector2 size)
     {
         this.texture = texture;
-        this.font = font;
         this.text = text;
 
         SetBounds(new Rectangle(
@@ -27,10 +25,9 @@ public class SimpleButton : Button
         ));
     }
 
-    public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position)
+    public SimpleButton(Texture2D texture, string text, Vector2 position)
     {
         this.texture = texture;
-        this.font = font;
         this.text = text;
 
         SetBounds(new Rectangle(
@@ -58,7 +55,7 @@ public class SimpleButton : Button
 
         NineSlice.Draw(spriteBatch, texture, bounds, null, 10, color);
 
-        var textSize = font.MeasureString(text);
+        var textSize = Primitives.Font.MeasureString(text);
 
         var textPos = new Vector2(
             bounds.X + (bounds.Width - textSize.X) / 2,
@@ -66,7 +63,7 @@ public class SimpleButton : Button
         );
 
         var textColor = IsDisabled ? Color.DarkGray : Color.Black;
-        spriteBatch.DrawString(font, text, textPos, textColor);
+        spriteBatch.DrawString(Primitives.Font, text, textPos, textColor);
     }
 
 }

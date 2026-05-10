@@ -8,8 +8,6 @@ public class MainMenuScreen : Screen
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
 
-    private SpriteFont font;
-
     private SimpleButton levelsButton;
     private SimpleButton settingsButton;
     private SimpleButton quitButton;
@@ -22,16 +20,14 @@ public class MainMenuScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
-
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        levelsButton = new SimpleButton(buttonTexture, font, "Levels", new Vector2(800, 300), new Vector2(300, 100));
-        settingsButton = new SimpleButton(buttonTexture, font, "Settings", new Vector2(800, 450), new Vector2(300, 100));
-        quitButton = new SimpleButton(buttonTexture, font, "Quit", new Vector2(800, 600), new Vector2(300, 100));
+        levelsButton = new SimpleButton(buttonTexture,"Levels", new Vector2(800, 300), new Vector2(300, 100));
+        settingsButton = new SimpleButton(buttonTexture,"Settings", new Vector2(800, 450), new Vector2(300, 100));
+        quitButton = new SimpleButton(buttonTexture,"Quit", new Vector2(800, 600), new Vector2(300, 100));
 
         levelsButton.OnClick = () =>
         {

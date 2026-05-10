@@ -10,7 +10,6 @@ public class SettingsScreen : Screen
 
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
-    private SpriteFont font;
 
     private SimpleButton backButton;
 
@@ -30,14 +29,13 @@ public class SettingsScreen : Screen
     public override void Load()
     {
         var content = RumGame.Instance.Content;
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
 
         int backX = PanelLeft + (PanelWidth - 200) / 2;
-        backButton = new SimpleButton(buttonTexture, font, "Back",
+        backButton = new SimpleButton(buttonTexture, "Back",
             new Vector2(backX, PanelTop + PanelHeight - 110),
             new Vector2(200, 70));
         backButton.OnClick = () => manager.SetScreen(previous);
@@ -92,8 +90,8 @@ public class SettingsScreen : Screen
         NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         var title = "Settings";
-        var titleSize = font.MeasureString(title);
-        spriteBatch.DrawString(font, title,
+        var titleSize = Primitives.Font.MeasureString(title);
+        spriteBatch.DrawString(Primitives.Font, title,
             new Vector2(PanelLeft + (PanelWidth - titleSize.X) / 2f, PanelTop + 40),
             Color.Black);
 
@@ -105,11 +103,11 @@ public class SettingsScreen : Screen
 
     private void DrawSlider(SpriteBatch spriteBatch, string label, float value, Rectangle track)
     {
-        spriteBatch.DrawString(font, label, new Vector2(track.X, track.Y - 44), Color.Black);
+        spriteBatch.DrawString(Primitives.Font, label, new Vector2(track.X, track.Y - 44), Color.Black);
 
         var pct = $"{(int)(value * 100)}%";
-        var pctSize = font.MeasureString(pct);
-        spriteBatch.DrawString(font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Color.Black);
+        var pctSize = Primitives.Font.MeasureString(pct);
+        spriteBatch.DrawString(Primitives.Font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Color.Black);
 
         spriteBatch.Draw(Primitives.Pixel, track, new Color(170, 170, 170));
 

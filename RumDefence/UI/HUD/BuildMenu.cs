@@ -6,7 +6,6 @@ namespace RumDefence;
 public class BuildMenu
 {
     private Texture2D panelTexture;
-    private SpriteFont font;
 
     private Rectangle panelRect;
 
@@ -39,7 +38,6 @@ public class BuildMenu
 
         var content = RumGame.Instance.Content;
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
         var cannonIcon = content.Load<Texture2D>("KenneyPiratePack/PNG/Default size/Ship parts/cannon");
@@ -53,7 +51,7 @@ public class BuildMenu
         coinIcon = content.Load<Texture2D>("Art/UI/Coin");
 
         const int barMargin = 8;
-        int fontHeight = (int)font.MeasureString("0").Y;
+        int fontHeight = (int)Primitives.Font.MeasureString("0").Y;
         int barHeight = fontHeight + 8;
         coinIconSize = fontHeight;
         int coinHeight = fontHeight;
@@ -75,21 +73,18 @@ public class BuildMenu
         cannonButton.BackgroundSourceRect = panelSourceRect;
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
         cannonButton.CostLabel = TowerFactory.Cannon.Cost.ToString();
-        cannonButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         musketButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         musketButton.BackgroundSourceRect = panelSourceRect;
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
         musketButton.CostLabel = TowerFactory.Musket.Cost.ToString();
-        musketButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         wallButton = new IconButton(panelTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         wallButton.BackgroundSourceRect = panelSourceRect;
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
         wallButton.CostLabel = BuildManager.WallCost.ToString();
-        wallButton.Font = font;
         currentY += ButtonHeight + spacing;
 
         removeButton = new IconButton(panelTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
@@ -124,7 +119,7 @@ public class BuildMenu
 
     public Vector2 GetCoinTargetPosition()
     {
-        var size = font.MeasureString(progress.CoinsRemaining.ToString());
+        var size = Primitives.Font.MeasureString(progress.CoinsRemaining.ToString());
         const int iconTextGap = 4;
         float totalWidth = coinIconSize + iconTextGap + size.X;
         float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
@@ -157,14 +152,14 @@ public class BuildMenu
         healthBar.Draw(spriteBatch);
 
         var coinText = progress.CoinsRemaining.ToString();
-        var coinSize = font.MeasureString(coinText);
+        var coinSize = Primitives.Font.MeasureString(coinText);
         const int iconTextGap = 4;
         float totalWidth = coinIconSize + iconTextGap + coinSize.X;
         float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
         var iconRect = new Rectangle((int)coinRowX, coinAreaY, coinIconSize, coinIconSize);
         spriteBatch.Draw(coinIcon, iconRect, Color.White);
         float textY = coinAreaY + (coinIconSize - coinSize.Y) / 2f;
-        spriteBatch.DrawString(font, coinText, new Vector2(coinRowX + coinIconSize + iconTextGap, textY), Color.Yellow);
+        spriteBatch.DrawString(Primitives.Font, coinText, new Vector2(coinRowX + coinIconSize + iconTextGap, textY), Color.Yellow);
 
         cannonButton.Draw(spriteBatch);
         musketButton.Draw(spriteBatch);

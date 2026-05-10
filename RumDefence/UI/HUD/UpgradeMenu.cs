@@ -6,7 +6,6 @@ namespace RumDefence;
 public class UpgradeMenu
 {
     private Texture2D panelTexture;
-    private SpriteFont font;
 
     private Rectangle panelRect;
     private SimpleButton upgradeButton;
@@ -27,7 +26,6 @@ public class UpgradeMenu
         var content = RumGame.Instance.Content;
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
 
         int width = 340;
         int height = 300;
@@ -35,7 +33,7 @@ public class UpgradeMenu
         int y = RumGame.VirtualHeight - height - 20; // bottom right
         panelRect = new Rectangle(x, y, width, height);
 
-        upgradeButton = new SimpleButton(buttonTexture, font, "Upgrade", new Vector2(x + 20, y + 210), new Vector2(width - 40, 70));
+        upgradeButton = new SimpleButton(buttonTexture, "Upgrade", new Vector2(x + 20, y + 210), new Vector2(width - 40, 70));
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
     }
 
@@ -72,7 +70,7 @@ public class UpgradeMenu
         title += $" LVL {SelectedTower.CurrentLevel + 1}";
 
         float titleScale = 0.8f;
-        spriteBatch.DrawString(font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Color.White, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
+        spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Color.White, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
         //Draw stats
         var startY = panelRect.Y + 70;
@@ -80,19 +78,19 @@ public class UpgradeMenu
         var color = Color.LightGray;
         float statScale = 0.65f;
 
-        spriteBatch.DrawString(font, $"DAM: {SelectedTower.CurrentDamage}", new Vector2(panelRect.X + 20, startY), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        spriteBatch.DrawString(font, $"RNG: {(int)SelectedTower.CurrentRange}", new Vector2(panelRect.X + 20, startY + spacing), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        spriteBatch.DrawString(font, $"SPD: {SelectedTower.CurrentFireRate:F1}/s", new Vector2(panelRect.X + 20, startY + spacing * 2), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+        spriteBatch.DrawString(Primitives.Font, $"DAM: {SelectedTower.CurrentDamage}", new Vector2(panelRect.X + 20, startY), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+        spriteBatch.DrawString(Primitives.Font, $"RNG: {(int)SelectedTower.CurrentRange}", new Vector2(panelRect.X + 20, startY + spacing), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+        spriteBatch.DrawString(Primitives.Font, $"SPD: {SelectedTower.CurrentFireRate:F1}/s", new Vector2(panelRect.X + 20, startY + spacing * 2), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
 
         if (SelectedTower.CanUpgrade)
         {
             var cost = SelectedTower.GetUpgradeCost();
-            spriteBatch.DrawString(font, $"Cost: {cost} coins", new Vector2(panelRect.X + 20, startY + spacing * 3), Color.Yellow, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(Primitives.Font, $"Cost: {cost} coins", new Vector2(panelRect.X + 20, startY + spacing * 3), Color.Yellow, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
             upgradeButton.Draw(spriteBatch);
         }
         else
         {
-            spriteBatch.DrawString(font, "MAX LEVEL", new Vector2(panelRect.X + 20, startY + spacing * 3), Color.White, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(Primitives.Font, "MAX LEVEL", new Vector2(panelRect.X + 20, startY + spacing * 3), Color.White, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         }
     }
 }

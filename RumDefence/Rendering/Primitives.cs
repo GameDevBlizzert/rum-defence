@@ -6,6 +6,7 @@ namespace RumDefence;
 public static class Primitives
 {
     private static Texture2D _pixel;
+    private static SpriteFont _font;
 
     public static Texture2D Pixel
     {
@@ -19,4 +20,6 @@ public static class Primitives
             return _pixel;
         }
     }
+
+    public static SpriteFont Font => _font ??= RumGame.Instance.Content.Load<SpriteFont>("Fonts/KenneyFuture");
 }

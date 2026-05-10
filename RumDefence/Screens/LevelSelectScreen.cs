@@ -13,8 +13,6 @@ public class LevelSelectScreen : Screen
     private int currentPage = 0;
     private int levelsPerPage = 4;
 
-    private SpriteFont font;
-
     public LevelSelectScreen(ScreenManager manager, List<Level> levels) : base(manager)
     {
         this.levels = levels;
@@ -24,13 +22,11 @@ public class LevelSelectScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
-
         buttons.Clear();
 
         for (int i = 0; i < levels.Count; i++)
         {
-            var btn = new LevelButton(levels[i], font);
+            var btn = new LevelButton(levels[i]);
 
             int index = i;
 
