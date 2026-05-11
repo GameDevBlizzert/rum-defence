@@ -38,12 +38,25 @@ public class Hud
     {
         buildMenu.Update(gameTime);
         coinManager.Update(gameTime);
+
+        if (upgradeMenu.SelectedTower == null)
+        {
+            upgradeMenu.PreviewData = buildManager.GetMode() switch
+            {
+                BuildMode.CannonTower => TowerFactory.Cannon,
+                BuildMode.MusketTower => TowerFactory.Musket,
+                _ => null
+            };
+        }
+
         upgradeMenu.Update(gameTime);
     }
 
     public void SetSelectedTower(BaseTower tower)
     {
         upgradeMenu.SelectedTower = tower;
+        if (tower != null)
+            upgradeMenu.PreviewData = null;
     }
 
     public bool WasUpgradeClicked()
@@ -53,7 +66,7 @@ public class Hud
 
     public bool IsMouseOverUpgradeMenu(Vector2 mousePos)
     {
-        return upgradeMenu.SelectedTower != null && upgradeMenu.IsMouseOver(mousePos);
+        return (upgradeMenu.SelectedTower != null || upgradeMenu.PreviewData != null) && upgradeMenu.IsMouseOver(mousePos);
     }
 
     public void Draw(SpriteBatch spriteBatch)
