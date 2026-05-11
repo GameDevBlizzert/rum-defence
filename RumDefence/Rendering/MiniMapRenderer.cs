@@ -6,8 +6,6 @@ namespace RumDefence;
 
 public static class MiniMapRenderer
 {
-    private static Texture2D pixel;
-
     public static void Draw(
         SpriteBatch spriteBatch,
         Level level,
@@ -21,7 +19,7 @@ public static class MiniMapRenderer
         int width = map.GetLength(1);
         int height = map.GetLength(0);
 
-        spriteBatch.Draw(GetPixel(spriteBatch), area, new Color(30, 144, 255));
+        spriteBatch.Draw(Primitives.Pixel, area, new Color(30, 144, 255));
 
         float tileWidth = (float)area.Width / width;
         float tileHeight = (float)area.Height / height;
@@ -57,15 +55,5 @@ public static class MiniMapRenderer
                 spriteBatch.Draw(texture, rect, Color.White);
             }
         }
-    }
-
-    private static Texture2D GetPixel(SpriteBatch spriteBatch)
-    {
-        if (pixel == null)
-        {
-            pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
-        }
-        return pixel;
     }
 }

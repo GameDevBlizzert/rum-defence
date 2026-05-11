@@ -1657,6 +1657,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Walls/Xwall.png;Art/Themes/Grass/Walls/Xwall
 
+#begin Art/Towers/cannon-icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Towers/cannon-icon.png
+
 #begin Art/Towers/cannon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1680,6 +1692,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Towers/cannon.png;Art/Towers/cannon
+
+#begin Art/Towers/musket-icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Towers/musket-icon.png
 
 #begin Art/Towers/musket.png
 /importer:TextureImporter
@@ -1728,6 +1752,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/UI/Buttons/button_blue.png;Art/UI/Buttons/button_blue
+
+#begin Art/UI/Buttons/button_inverted.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/UI/Buttons/button_inverted.png
 
 #begin Art/UI/Buttons/button.png
 /importer:TextureImporter

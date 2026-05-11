@@ -17,8 +17,6 @@ public abstract class EntityWithHealth : Entity
     /// </summary>
     public readonly int InitialHealth;
 
-    private readonly Texture2D whitePixelTexture2D;
-
     /// <summary>
     /// The width of the entity as it is rendered on the screen
     /// </summary>
@@ -37,8 +35,6 @@ public abstract class EntityWithHealth : Entity
         InitialHealth = initialHealth;
         Health = initialHealth;
 
-        whitePixelTexture2D = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        whitePixelTexture2D.SetData(new[] { Color.White });
     }
 
     protected EntityWithHealth(int initialHealth = 100)
@@ -103,7 +99,7 @@ public abstract class EntityWithHealth : Entity
         var backgroundPosition = new Vector2(barX, barY);
 
         spriteBatch.Draw(
-            whitePixelTexture2D,
+            Primitives.Pixel,
             backgroundPosition,
             backgroundRectangle,
             Color.Red,
@@ -115,7 +111,7 @@ public abstract class EntityWithHealth : Entity
         );
 
         spriteBatch.Draw(
-            whitePixelTexture2D,
+            Primitives.Pixel,
             healthPosition,
             healthRectangle,
             Color.YellowGreen,

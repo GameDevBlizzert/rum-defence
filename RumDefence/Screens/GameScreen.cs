@@ -54,9 +54,6 @@ public class GameScreen : Screen
 
     public override void Load()
     {
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
-
         grid = new Grid(currentLevel.Map);
 
         RumGame.Instance.CurrentGrid = grid;
@@ -138,7 +135,16 @@ public class GameScreen : Screen
                     TowerFactory.Cannon,
                     grid.GridToWorld(p),
                     Troops,
-                    (pos, explosionIndex) => explosions.Add(new Explosion(pos, explosionIndex))
+                    (pos, explosionIndex, damage, radius) =>
+                    {
+                        explosions.Add(new Explosion(pos, explosionIndex, radius));
+                        foreach (var troop in Troops)
+                        {
+                            if (troop.IsDead || troop.IsFinished) continue;
+                            if (Vector2.Distance(pos, troop.Position) <= radius)
+                                troop.TakeDamage(damage);
+                        }
+                    }
                 );
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Cannon.Cost);
@@ -475,8 +481,8 @@ public class GameScreen : Screen
             float pct = (float)wall.Health / Wall.MaxHealth;
             int healthWidth = (int)(barWidth * pct);
 
-            spriteBatch.Draw(pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
-            spriteBatch.Draw(pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
         }
     }
 
@@ -529,7 +535,7 @@ public class GameScreen : Screen
         Vector2 edge = end - start;
         float angle = (float)Math.Atan2(edge.Y, edge.X);
 
-        spriteBatch.Draw(pixel,
+        spriteBatch.Draw(Primitives.Pixel,
             new Rectangle((int)start.X, (int)start.Y, (int)edge.Length(), (int)thickness),
             null,
             color,

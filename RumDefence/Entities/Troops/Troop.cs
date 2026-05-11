@@ -24,8 +24,6 @@ public class Troop : EntityWithHealth, ICollidable
 
     private List<ITroopAbility> abilities = new();
 
-    private static Texture2D pixel;
-
     private TroopDyingAnimation _dyingAnimation = new();
 
     public bool CanBeRemoved { get; private set; }
@@ -47,12 +45,6 @@ public class Troop : EntityWithHealth, ICollidable
 
         animation = new TroopAnimation(16, 16, 0.2f, 3, true);
         _swordAttackAnimation = new TroopSwordAttackAnimation();
-
-        if (pixel == null)
-        {
-            pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
-        }
 
         // https://foozlecc.itch.io/scallywag-pirates
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
@@ -203,7 +195,7 @@ public class Troop : EntityWithHealth, ICollidable
             foreach (var point in pathfinding.Path)
             {
                 spriteBatch.Draw(
-                    pixel,
+                    Primitives.Pixel,
                     new Rectangle(
                         (int)(point.X - dotSize / 2f),
                         (int)(point.Y - dotSize / 2f),
@@ -220,7 +212,7 @@ public class Troop : EntityWithHealth, ICollidable
                 {
                     float rotation = (float)Math.Atan2(edge.Y, edge.X);
                     spriteBatch.Draw(
-                        pixel,
+                        Primitives.Pixel,
                         currentPos,
                         null,
                         Color.HotPink,
