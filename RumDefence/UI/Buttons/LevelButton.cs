@@ -29,7 +29,7 @@ public class LevelButton : Button
             ? new Color(220, 220, 220)
             : new Color(180, 180, 180);
 
-        spriteBatch.Draw(Primitives.Pixel,bounds, borderColor);
+        spriteBatch.Draw(Primitives.Pixel, bounds, borderColor);
 
         Rectangle panel = new Rectangle(
             bounds.X + 4,
@@ -38,7 +38,7 @@ public class LevelButton : Button
             bounds.Height - 8
         );
 
-        spriteBatch.Draw(Primitives.Pixel,panel, panelColor);
+        spriteBatch.Draw(Primitives.Pixel, panel, panelColor);
 
         int mapWidth = 340;
         int mapHeight = 200;
@@ -61,7 +61,7 @@ public class LevelButton : Button
 
         if (!level.IsUnlocked)
         {
-            spriteBatch.Draw(Primitives.Pixel,bounds, Color.Black * 0.5f);
+            spriteBatch.Draw(Primitives.Pixel, bounds, Color.Black * 0.5f);
         }
     }
 

@@ -25,9 +25,9 @@ public class MainMenuScreen : Screen
 
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        levelsButton = new SimpleButton(buttonTexture,"Levels", new Vector2(800, 300), new Vector2(300, 100));
-        settingsButton = new SimpleButton(buttonTexture,"Settings", new Vector2(800, 450), new Vector2(300, 100));
-        quitButton = new SimpleButton(buttonTexture,"Quit", new Vector2(800, 600), new Vector2(300, 100));
+        levelsButton = new SimpleButton(buttonTexture, "Levels", new Vector2(800, 300), new Vector2(300, 100));
+        settingsButton = new SimpleButton(buttonTexture, "Settings", new Vector2(800, 450), new Vector2(300, 100));
+        quitButton = new SimpleButton(buttonTexture, "Quit", new Vector2(800, 600), new Vector2(300, 100));
 
         levelsButton.OnClick = () =>
         {
