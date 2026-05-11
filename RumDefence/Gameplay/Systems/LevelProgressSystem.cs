@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using RumDefence.Exceptions;
+using RumDefence.Gameplay.Levels.Dev;
 using RumDefence.Gameplay.Levels.Ghost;
 using RumDefence.Levels.Grass;
 
@@ -39,6 +40,7 @@ public class LevelProgressSystem : IGameLoopSystem
     /// </summary>
     private static List<List<Level>> allLevelSets = new()
     {
+        DevLevels.All,
         GrassLevels.All,
         GhostLevels.All
     };

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using RumDefence.Gameplay.Levels.Grass.LevelData;
 
-namespace RumDefence.Levels.Grass;
+namespace RumDefence.Gameplay.Levels.Dev;
 
-public static class GrassLevels
+public static class DevLevels
 {
     private static GrassTheme grass = new GrassTheme();
 
@@ -15,10 +14,7 @@ public static class GrassLevels
 
     public static List<Level> All = new()
     {
-        //Level99Data.Create(theme),    
         Level1Data.Create(theme),
         Level2Data.Create(theme),
-        Level3Data.Create(theme),
-        Level4Data.Create(theme),
     };
 }
