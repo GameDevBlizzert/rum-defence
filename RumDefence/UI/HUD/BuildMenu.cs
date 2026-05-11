@@ -37,11 +37,11 @@ public class BuildMenu
 
         var content = RumGame.Instance.Content;
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_inverted");
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
-        var cannonIcon = content.Load<Texture2D>("Art/Towers/cannon");
-        var musketIcon = content.Load<Texture2D>("Art/Towers/musket");
+        var cannonIcon = content.Load<Texture2D>("Art/Towers/cannon-icon");
+        var musketIcon = content.Load<Texture2D>("Art/Towers/musket-icon");
         var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
 
         panelX = 20;
@@ -76,7 +76,7 @@ public class BuildMenu
         cannonButton.CostLabel = TowerFactory.Cannon.Cost.ToString();
         currentY += ButtonHeight + spacing;
 
-        musketButton = new IconButton(buttonTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        musketButton = new IconButton(buttonTexture, musketIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         musketButton.BackgroundSourceRect = buttonSourceRect;
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
         musketButton.CostLabel = TowerFactory.Musket.Cost.ToString();
