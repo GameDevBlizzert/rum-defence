@@ -11,6 +11,7 @@ public class UpgradeMenu
     private SimpleButton upgradeButton;
     private LevelProgressSystem progress;
     public bool UpgradeClicked { get; private set; }
+    public bool IsDisabled { get; set; }
 
     public BaseTower SelectedTower { get; set; }
     public TowerData PreviewData { get; set; }
@@ -47,6 +48,9 @@ public class UpgradeMenu
         // So putting it BEFORE upgradeButton.Update() is correct.
 
         UpgradeClicked = false;
+
+        if (IsDisabled)
+            return;
 
         if (SelectedTower == null)
             return;
@@ -95,6 +99,7 @@ public class UpgradeMenu
             spriteBatch.DrawString(Primitives.Font, "MAX LEVEL", new Vector2(panelRect.X + 20, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         }
     }
+<<<<<<< tower-level
 
     private void DrawPreview(SpriteBatch spriteBatch)
     {
@@ -115,3 +120,6 @@ public class UpgradeMenu
         spriteBatch.DrawString(Primitives.Font, $"Cost: {PreviewData.Cost} coins", new Vector2(panelRect.X + 20, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
     }
 }
+=======
+}
+>>>>>>> main

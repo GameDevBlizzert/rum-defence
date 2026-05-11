@@ -13,11 +13,9 @@ public static class CoastSystem
         {
             for (int x = 0; x < map.GetLength(1); x++)
             {
-                int tile = map[y, x];
-
-                if (TileRules.IsCoast(tile))
+                if (TileRules.IsCoast(map, x, y))
                 {
-                    result.Add(new CoastTile(new Point(x, y), tile));
+                    result.Add(new CoastTile(new Point(x, y), map[y, x]));
                 }
             }
         }

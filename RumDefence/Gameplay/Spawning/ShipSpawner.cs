@@ -10,14 +10,14 @@ public class ShipSpawner
     private readonly Grid grid;
     private readonly List<Wave> waves;
     private readonly List<CoastTile> coastTiles;
+    private readonly HashSet<CoastTile> occupiedCoastTiles = [];
     private readonly Random random = new Random();
 
     private int waveIndex = 0;
     private float spawnTimer = 0f;
     private float nextSpawnInterval = 0f;
-    private int spawnCount = 0;
 
-    private readonly Queue<Ship.Data> spawnQueue = new();
+    private readonly Queue<(Ship.Data data, IReadOnlyList<TroopGroup> troops, float troopSpawnDelay)> spawnQueue = new();
 
     public List<Ship> NewShips { get; } = new();
 
@@ -48,6 +48,11 @@ public class ShipSpawner
         TroopsDefeatedInWave++;
     }
 
+    public void NotifyShipDeparted(CoastTile coast)
+    {
+        occupiedCoastTiles.Remove(coast);
+    }
+
     public void Update(GameTime gameTime)
     {
         NewShips.Clear();
@@ -75,7 +80,6 @@ public class ShipSpawner
     private void StartSpawning()
     {
         spawnQueue.Clear();
-        spawnCount = 0;
         spawnTimer = 0f;
         nextSpawnInterval = 0f;
         TotalTroopsInWave = 0;
@@ -85,8 +89,8 @@ public class ShipSpawner
         foreach (var group in wave.ShipGroups)
         {
             for (int i = 0; i < group.Count; i++)
-                spawnQueue.Enqueue(group.Data);
-            TotalTroopsInWave += group.Data.EnemyCount * group.Count;
+                spawnQueue.Enqueue((group.Data, group.Troops, group.TroopSpawnDelay));
+            TotalTroopsInWave += group.TotalTroops * group.Count;
         }
     }
 
@@ -94,13 +98,20 @@ public class ShipSpawner
     {
         if (coastTiles.Count == 0) return;
 
-        var data = spawnQueue.Dequeue();
-        var coast = coastTiles[spawnCount % coastTiles.Count];
-        float lateralOffset = (spawnCount / coastTiles.Count) * 30f;
+        var (data, troops, troopSpawnDelay) = spawnQueue.Dequeue();
 
-        var ship = (Ship)SpawnSystem.CreateShip(level, grid, data, coast, lateralOffset);
+        var available = new List<CoastTile>();
+        foreach (var c in coastTiles)
+            if (!occupiedCoastTiles.Contains(c))
+                available.Add(c);
+
+        var coast = available.Count > 0
+            ? available[random.Next(available.Count)]
+            : coastTiles[random.Next(coastTiles.Count)];
+
+        var ship = (Ship)SpawnSystem.CreateShip(level, grid, data, coast, troops, troopSpawnDelay);
         ship.AdvanceToDock(waves[waveIndex].HoldingTime);
-        spawnCount++;
+        occupiedCoastTiles.Add(coast);
 
         var wave = waves[waveIndex];
         nextSpawnInterval = (float)(random.NextDouble() * (wave.MaxSpawnTime - wave.MinSpawnTime) + wave.MinSpawnTime);

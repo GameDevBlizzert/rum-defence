@@ -9,9 +9,9 @@ public class GrassTheme : BaseTheme, IWallTheme
     private string wallPrefix = "Art/Themes/Grass/Walls/";
     private string shipPrefix = "Art/Themes/Grass/Ships/";
     private string enemyPrefix = "Art/Themes/Grass/Enemies/";
+    private string decorationPrefix = "Art/Themes/Grass/Decorations/";
 
     private Dictionary<int, List<Texture2D>> tileMap;
-
     public Texture2D Single { get; private set; }
     public Texture2D Wall { get; private set; }
     public Texture2D End { get; private set; }
@@ -27,6 +27,9 @@ public class GrassTheme : BaseTheme, IWallTheme
     private List<Texture2D> cornerDamagedList;
     private List<Texture2D> twallDamagedList;
     private List<Texture2D> xwallDamagedList;
+    private List<Texture2D> rocks;
+    private List<Texture2D> trees;
+    private List<Texture2D> bushes;
 
     private Dictionary<string, Texture2D> shipMap;
 
@@ -46,7 +49,11 @@ public class GrassTheme : BaseTheme, IWallTheme
             { 6, LoadList(envPrefix, "6") },
             { 7, LoadList(envPrefix, "7") },
             { 8, LoadList(envPrefix, "8.1", "8.2") },
-            { 9, LoadList(envPrefix, "9") }
+            { 9, LoadList(envPrefix, "9") },
+            { 10, LoadList(envPrefix, "10") },
+            { 11, LoadList(envPrefix, "11") },
+            { 12, LoadList(envPrefix, "12") },
+            { 13, LoadList(envPrefix, "13") }
         };
 
         Single = Load(wallPrefix + "single");
@@ -64,6 +71,29 @@ public class GrassTheme : BaseTheme, IWallTheme
         cornerDamagedList = LoadList(wallPrefix, "corner_damaged");
         twallDamagedList = LoadList(wallPrefix, "Twall_damaged");
         xwallDamagedList = LoadList(wallPrefix, "Xwall_damaged");
+
+        rocks = new List<Texture2D>()
+        {
+            Load(decorationPrefix + "Rock_01"),
+            Load(decorationPrefix + "Rock_02"),
+            Load(decorationPrefix + "Rock_03"),
+            Load(decorationPrefix + "Rock_Moss_01"),
+            Load(decorationPrefix + "Rock_Moss_02"),
+            Load(decorationPrefix + "Rock_Moss_03"),
+        };
+
+        trees = new List<Texture2D>()
+        {
+            Load(decorationPrefix + "Tree_01"),
+            Load(decorationPrefix + "Tree_02"),
+            Load(decorationPrefix + "Tree_03"),
+        };
+
+        bushes = new List<Texture2D>()
+        {
+            Load(decorationPrefix + "Bush_Small_01"),
+            Load(decorationPrefix + "Bush_Small_02"),
+        };
 
         shipMap = new Dictionary<string, Texture2D>()
         {
@@ -122,4 +152,13 @@ public class GrassTheme : BaseTheme, IWallTheme
     {
         return GetRandom(enemies);
     }
+
+
+    public override float GetDecorationDensity() => 0.2f;
+
+    public override List<Texture2D> GetRocks() => rocks;
+
+    public override List<Texture2D> GetTrees() => trees;
+
+    public override List<Texture2D> GetBushes() => bushes;
 }

@@ -62,10 +62,53 @@ public class ConfirmScreen : Screen
 
         NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
-        spriteBatch.DrawString(Primitives.Font, message, new Vector2(650, 400), Primitives.FontColor);
+        const int messageWidth = 600;
+        var wrappedMessage = WrapText(font, message, messageWidth);
+        spriteBatch.DrawString(Primitives.Font, wrappedMessage, new Vector2(650, 380), Primitives.FontColor);
 
         yesButton.Draw(spriteBatch);
         noButton.Draw(spriteBatch);
     }
 
+    private static string WrapText(SpriteFont font, string text, float maxWidth)
+    {
+        var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        if (words.Length == 0)
+        {
+            return string.Empty;
+        }
+
+        var lines = new System.Collections.Generic.List<string>();
+        var currentLine = words[0];
+
+        for (var index = 1; index < words.Length; index++)
+        {
+            var candidateLine = currentLine + " " + words[index];
+
+            if (font.MeasureString(candidateLine).X <= maxWidth)
+            {
+                currentLine = candidateLine;
+            }
+            else
+            {
+                lines.Add(currentLine);
+                currentLine = words[index];
+            }
+        }
+
+        lines.Add(currentLine);
+        return string.Join(Environment.NewLine, lines);
+    }
+
+    private Texture2D pixel;
+    private Texture2D GetPixel(SpriteBatch spriteBatch)
+    {
+        if (pixel == null)
+        {
+            pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            pixel.SetData(new[] { Color.White });
+        }
+        return pixel;
+    }
 }

@@ -18,7 +18,12 @@ public class GridRenderer
         this.buildManager = buildManager;
         this.grid = grid;
 
+<<<<<<< tower-level
 
+=======
+        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
+        pixel.SetData(new[] { Color.White });
+>>>>>>> main
     }
 
     public void SetOccupiedTiles(Dictionary<Point, bool> occupiedTiles)
@@ -42,7 +47,18 @@ public class GridRenderer
                 var worldPos = grid.GridToWorld(new Point(x, y));
                 var drawPos = worldPos - new Vector2(grid.TileSize / 2f);
 
-                var texture = theme.GetTexture(grid.Tiles[y, x], x, y);
+                int tile = grid.Tiles[y, x];
+                Texture2D texture;
+
+                if (tile == 0)
+                {
+                    texture = theme.GetTexture(0, x, y);
+                }
+                else
+                {
+                    int mapped = TileSystem.GetTile(grid.Tiles, level.RumTile, x, y);
+                    texture = theme.GetTexture(mapped, x, y);
+                }
 
                 if (texture != null)
                 {
@@ -69,7 +85,7 @@ public class GridRenderer
         {
             var p = hovered.Value;
 
-            if (grid.Tiles[p.Y, p.X] == 5)
+            if (grid.Tiles[p.Y, p.X] == 1)
             {
                 DrawHighlight(spriteBatch, p);
             }

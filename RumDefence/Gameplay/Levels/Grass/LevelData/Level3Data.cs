@@ -1,65 +1,88 @@
-﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace RumDefence;
+namespace RumDefence.Gameplay.Levels.Grass.LevelData;
 
 public static class Level3Data
 {
 
-    private static readonly Ship.Data BossShip = new("Ships/boss_ship", 80f, 10, true, 2f, -90f);
-    private static readonly Ship.Data NormalShip = new("Ships/ship_1", 80f, 10, false, 0.8f, -90f);
+    private static readonly Ship.Data BossShip = new()
+    {
+        Texture = "Ships/boss_ship",
+        Speed = 80f,
+        IsBoss = true,
+        SizeMultiplier = 2f,
+        RotationOffsetDegrees = -90f,
+    };
 
-    public static Level Create(Theme theme)
+    private static readonly Ship.Data NormalShip = new()
+    {
+        Texture = "Ships/ship_1",
+        Speed = 80f,
+        SizeMultiplier = 0.8f,
+        RotationOffsetDegrees = -90f,
+    };
+
+    public static Level Create(Theme theme, bool unlocked = false)
     {
         return new Level(
             3,
             MapData,
             theme,
             Waves,
-            true,
-            startingCoinBalance: 250
-        );
+            //unlocked,
+            startingCoinBalance: 200,
+            unlocked: true
+
+                );
     }
+
+    private static readonly TroopData Regular = TroopFactory.Regular;
+    private static readonly TroopData Boss = TroopFactory.Boss;
 
     private static List<Wave> Waves => new()
     {
-        CreateWave(3f, 6f, 5f, (NormalShip, 1)),
-        CreateWave(2f, 4f, 0f, (NormalShip, 2)),
-        CreateWave(1f, 3f, 0f, (NormalShip, 3), (BossShip, 1)),
-        CreateWave(1f, 2f, 0f, (NormalShip, 4), (BossShip, 3)),
-        CreateWave(1f, 2f, 0f, (NormalShip, 8), (BossShip, 4)),
-        CreateWave(0.5f, 1.5f, 0f, (NormalShip, 10), (BossShip, 5)),
+        //                                                                    ships  troops                                spawnDelay
+        CreateWave(minSpawnTime: 3f,   maxSpawnTime: 6f,   holdingTime: 5f, (NormalShip,  1, [(Regular,  5, 100)],              1.0f)),
+        CreateWave(minSpawnTime: 2f,   maxSpawnTime: 4f,   holdingTime: 0f, (NormalShip,  2, [(Regular,  7, 100)],              1.0f)),
+        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 9f,   holdingTime: 0f, (NormalShip,  3, [(Regular,  6, 100)],1.5f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
+        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 7f,   holdingTime: 0f, (NormalShip,  3, [(Regular, 8, 100)],0.8f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
+        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 4f,   holdingTime: 0f, (NormalShip,  20, [(Regular, 4, 100)], 0.5f), (BossShip, 2, [(Boss, 1, 600)], 0.5f)),
+        CreateWave(minSpawnTime: 0.5f, maxSpawnTime: 8f, holdingTime: 0f, (NormalShip, 10, [(Regular, 10, 100)], 0.3f), (BossShip, 3, [(Boss, 1, 600)], 0.3f)),
     };
 
     private static string[] MapData => new[]
     {
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 #",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 5 5 5 5 5 5 5 5 5 5 5"
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 0 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 0 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 # 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 0 0 0 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 1 0 0 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
+        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
     };
 
-    private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, float holdingTime, params (Ship.Data data, int count)[] groups)
+    private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, float holdingTime, params (Ship.Data data, int count, (TroopData troop, int n, int hp)[] troops, float spawnDelay)[] groups)
     {
         var list = new List<ShipGroup>();
 
-        foreach (var (data, count) in groups)
-            list.Add(new ShipGroup(data, count));
+        foreach (var (data, count, troops, spawnDelay) in groups)
+        {
+            var troopGroups = new List<TroopGroup>();
+            foreach (var (troop, n, hp) in troops)
+                troopGroups.Add(new TroopGroup(troop with { Health = hp }, n));
+            list.Add(new ShipGroup(data, count, troopGroups, spawnDelay));
+        }
 
         return new Wave(list, minSpawnTime, maxSpawnTime, holdingTime);
     }

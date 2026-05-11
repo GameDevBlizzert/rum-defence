@@ -17,7 +17,7 @@ public class CannonTower : BaseTower
 
     public CannonTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
-        BaseRange = 400f;
+        BaseRange = data.Range;
         RangeUpgradeFlat = 25f;
         RangeUpgradePercent = 0.05f;
 
@@ -29,8 +29,8 @@ public class CannonTower : BaseTower
         DamageUpgradeFlat = 10;
         DamageUpgradePercent = 0.2f;
 
-        ProjectileSpeed = 300f;
-        AttackMode = AttackMode.Closest;
+        ProjectileSpeed = data.ProjectileSpeed;
+        AttackMode = data.AttackMode;
         BaseUpgradeCost = 100;
 
         scale *= 1.4f;
