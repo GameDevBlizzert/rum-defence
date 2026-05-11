@@ -685,6 +685,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/UI/Buttons/button_blue.png;Art/UI/Buttons/button_blue
 
+#begin Art/UI/Buttons/button_inverted.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/UI/Buttons/button_inverted.png
+
 #begin Art/UI/Buttons/button.png
 /importer:TextureImporter
 /processor:TextureProcessor

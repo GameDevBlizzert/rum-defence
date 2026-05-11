@@ -6,9 +6,8 @@ namespace RumDefence;
 public class BuildMenu
 {
     private Texture2D panelTexture;
-
+    private Texture2D buttonTexture;
     private Rectangle panelRect;
-
     private IconButton wallButton;
     private IconButton cannonButton;
     private IconButton musketButton;
@@ -38,9 +37,11 @@ public class BuildMenu
 
         var content = RumGame.Instance.Content;
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button_inverted");
 
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
-        var cannonIcon = content.Load<Texture2D>("KenneyPiratePack/PNG/Default size/Ship parts/cannon");
+        var cannonIcon = content.Load<Texture2D>("Art/Towers/cannon");
+        var musketIcon = content.Load<Texture2D>("Art/Towers/musket");
         var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
 
         panelX = 20;
@@ -67,35 +68,35 @@ public class BuildMenu
         coinAreaY = currentY;
         currentY += coinHeight + spacing;
 
-        var panelSourceRect = new Rectangle(0, 0, 128, 128);
+        var buttonSourceRect = new Rectangle(0, 0, 64, 64);
 
-        cannonButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        cannonButton.BackgroundSourceRect = panelSourceRect;
+        cannonButton = new IconButton(buttonTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        cannonButton.BackgroundSourceRect = buttonSourceRect;
         cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
         cannonButton.CostLabel = TowerFactory.Cannon.Cost.ToString();
         currentY += ButtonHeight + spacing;
 
-        musketButton = new IconButton(panelTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        musketButton.BackgroundSourceRect = panelSourceRect;
+        musketButton = new IconButton(buttonTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        musketButton.BackgroundSourceRect = buttonSourceRect;
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
         musketButton.CostLabel = TowerFactory.Musket.Cost.ToString();
         currentY += ButtonHeight + spacing;
 
-        wallButton = new IconButton(panelTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        wallButton.BackgroundSourceRect = panelSourceRect;
+        wallButton = new IconButton(buttonTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        wallButton.BackgroundSourceRect = buttonSourceRect;
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
         wallButton.CostLabel = BuildManager.WallCost.ToString();
         currentY += ButtonHeight + spacing;
 
-        removeButton = new IconButton(panelTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        removeButton.BackgroundSourceRect = panelSourceRect;
+        removeButton = new IconButton(buttonTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        removeButton.BackgroundSourceRect = buttonSourceRect;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
 
         int menuButtonY = panelY + panelHeight - ButtonHeight - 20;
         var hamburgerIcon = CreateHamburgerIcon(RumGame.Instance.GraphicsDevice);
-        menuButton = new IconButton(panelTexture, hamburgerIcon, new Vector2(buttonX, menuButtonY), new Vector2(ButtonWidth, ButtonHeight));
-        menuButton.BackgroundSourceRect = panelSourceRect;
+        menuButton = new IconButton(buttonTexture, hamburgerIcon, new Vector2(buttonX, menuButtonY), new Vector2(ButtonWidth, ButtonHeight));
+        menuButton.BackgroundSourceRect = buttonSourceRect;
         menuButton.OnClick = () => OnMenuRequested?.Invoke();
     }
 
