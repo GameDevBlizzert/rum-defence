@@ -15,6 +15,11 @@ public class IconButton : Button
     public bool IsDisabled { get; set; }
     public string CostLabel { get; set; }
     public Rectangle? BackgroundSourceRect { get; set; }
+    public Texture2D IconTexture
+    {
+        get => iconTexture;
+        set => iconTexture = value;
+    }
 
     public IconButton(Texture2D backgroundTexture, Texture2D iconTexture, Vector2 position, Vector2 size)
     {

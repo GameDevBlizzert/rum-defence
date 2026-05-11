@@ -11,6 +11,7 @@ public class Level
     public List<Wave> Waves { get; set; }
     public bool IsUnlocked { get; set; }
     public Point RumTile { get; private set; }
+    public List<DecorationManager.Decoration> Decorations { get; private set; }
 
     private RumBarrel _rumBarrel;
     public RumBarrel RumBarrel
@@ -40,6 +41,7 @@ public class Level
         Map = ParseMap(mapData);
         StartingCoinBalance = startingCoinBalance;
         StartingLives = startingLives;
+        Decorations = DecorationManager.Generate(this);
     }
 
     private int[,] ParseMap(string[] data)
@@ -61,7 +63,7 @@ public class Level
                 if (cell == "#")
                 {
                     RumTile = new Point(x, y);
-                    map[y, x] = TileRules.Center;
+                    map[y, x] = TileRules.Land;
                 }
                 else
                 {

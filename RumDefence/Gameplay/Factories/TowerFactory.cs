@@ -24,24 +24,24 @@ public static class TowerFactory
         Type: TowerType.Musket,
         TexturePath: "Art/Towers/musket",
         OverlayTexturePath: null,
-        Range: 500f,
+        Range: 250f,
         FireRate: 3f,
         Damage: 10,
         ProjectileSpeed: 500f,
         AttackMode: AttackMode.First,
-        Cost: 25
+        Cost: 75
     );
 
     public static readonly TowerData Cannon = new(
         Type: TowerType.Cannon,
         TexturePath: "Art/Towers/cannon",
         OverlayTexturePath: null,
-        Range: 700f,
-        FireRate: 0.5f,
+        Range: 225f,
+        FireRate: 0.7f,
         Damage: 50,
         ProjectileSpeed: 300f,
-        AttackMode: AttackMode.Closest,
-        Cost: 100
+        AttackMode: AttackMode.First,
+        Cost: 50
     );
 
     public static BaseTower Create(

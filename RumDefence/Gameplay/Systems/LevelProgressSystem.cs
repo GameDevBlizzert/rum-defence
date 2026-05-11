@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using RumDefence.Exceptions;
+using RumDefence.Gameplay.Levels.Ghost;
+using RumDefence.Levels.Grass;
 
 namespace RumDefence;
 
@@ -25,6 +28,20 @@ public class LevelProgressSystem : IGameLoopSystem
     /// Indicates whether the level has been won or not.
     /// </summary>
     private bool levelWon;
+
+    /// <summary>
+    /// Ensures the next level is only unlocked once per win.
+    /// </summary>
+    private bool hasUnlockedNext = false;
+
+    /// <summary>
+    /// Contains all level sets (themes) for progression handling.
+    /// </summary>
+    private static List<List<Level>> allLevelSets = new()
+    {
+        GrassLevels.All,
+        GhostLevels.All
+    };
 
     /// <param name="initialLives">The initial amount of lives at the start of the level</param>
     /// <param name="initialCoins">The initial amount of coins at the start of the level</param>
@@ -123,6 +140,7 @@ public class LevelProgressSystem : IGameLoopSystem
     /// <summary>
     /// Updates the level progress system.
     /// Checks if the win condition has been met.
+    /// Also handles unlocking the next level in the current theme.
     /// </summary>
     public void Update(GameTime gameTime, GameScreen gameScreen)
     {
@@ -133,7 +151,45 @@ public class LevelProgressSystem : IGameLoopSystem
             gameScreen.Ships.Count == 0 &&
             gameScreen.Troops.Count == 0)
         {
-            levelWon = true;
+            if (!levelWon)
+            {
+                levelWon = true;
+
+                // Ensure unlock happens only once
+                if (!hasUnlockedNext)
+                {
+                    UnlockNextLevel(RumGame.Instance.CurrentLevel);
+                    hasUnlockedNext = true;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Unlocks the next level within the same theme.
+    /// Will only unlock if this is the highest unlocked level (prevents replay abuse).
+    /// </summary>
+    private void UnlockNextLevel(Level currentLevel)
+    {
+        foreach (var set in allLevelSets)
+        {
+            int index = set.IndexOf(currentLevel);
+            if (index == -1) continue;
+
+            // Check if a higher level is already unlocked
+            for (int i = index + 1; i < set.Count; i++)
+            {
+                if (set[i].IsUnlocked)
+                    return;
+            }
+
+            // Unlock next level
+            if (index + 1 < set.Count)
+            {
+                set[index + 1].IsUnlocked = true;
+            }
+
+            return;
         }
     }
 }

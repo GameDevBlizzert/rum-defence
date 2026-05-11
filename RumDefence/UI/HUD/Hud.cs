@@ -24,9 +24,20 @@ public class Hud
         upgradeMenu = new UpgradeMenu(levelProgress);
     }
 
+    public System.Action OnSpeedRequested
+    {
+        set => buildMenu.OnSpeedRequested = value;
+    }
+
     public System.Action OnMenuRequested
     {
         set => buildMenu.OnMenuRequested = value;
+    }
+
+    public void SetPlaybackState(GamePlaybackState playbackState)
+    {
+        buildMenu.SetPlaybackState(playbackState);
+        upgradeMenu.IsDisabled = playbackState == GamePlaybackState.Paused;
     }
 
     public CoinManager GetCoinManager()

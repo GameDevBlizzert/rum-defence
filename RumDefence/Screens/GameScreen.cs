@@ -7,6 +7,13 @@ using System.Linq;
 
 namespace RumDefence;
 
+public enum GamePlaybackState
+{
+    Normal,
+    FastForward,
+    Paused
+}
+
 public class GameScreen : Screen
 {
     private Grid grid { get; set; }
@@ -36,6 +43,10 @@ public class GameScreen : Screen
 
     private Dictionary<Point, bool> occupiedTiles = new();
 
+    private Texture2D pixel;
+
+    private GamePlaybackState playbackState = GamePlaybackState.Normal;
+
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
         currentLevel = level;
@@ -61,6 +72,8 @@ public class GameScreen : Screen
         Spawner = new ShipSpawner(currentLevel, grid);
 
         hud = new Hud(buildManager, progress, Spawner);
+        hud.SetPlaybackState(playbackState);
+        hud.OnSpeedRequested = CyclePlaybackState;
         hud.OnMenuRequested = () => manager.SetScreen(new PauseScreen(manager, this));
 
         wallRenderer = new WallRenderer(
@@ -76,6 +89,7 @@ public class GameScreen : Screen
             if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) &&
                 progress.CoinsRemaining >= BuildManager.WallCost)
             {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
                 walls[p] = new Wall(p);
                 occupiedTiles[p] = true;
                 progress.SpendCoins(BuildManager.WallCost);
@@ -116,6 +130,7 @@ public class GameScreen : Screen
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
                 progress.CoinsRemaining >= TowerFactory.Cannon.Cost)
             {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
                 placedTowers[p] = TowerFactory.Create(
                     TowerFactory.Cannon,
                     grid.GridToWorld(p),
@@ -145,6 +160,7 @@ public class GameScreen : Screen
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
                 progress.CoinsRemaining >= TowerFactory.Musket.Cost)
             {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
                 placedTowers[p] = TowerFactory.Create(TowerFactory.Musket, grid.GridToWorld(p), Troops);
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Musket.Cost);
@@ -176,12 +192,18 @@ public class GameScreen : Screen
 
         input.Update();
         UpdateBuildSystem(gameTime);
-        UpdateSpawner(gameTime);
-        UpdateShips(gameTime);
-        UpdateTroops(gameTime);
+
+        if (playbackState == GamePlaybackState.Paused)
+            return;
+
+        var gameplayGameTime = GetGameplayGameTime(gameTime);
+
+        UpdateSpawner(gameplayGameTime);
+        UpdateShips(gameplayGameTime);
+        UpdateTroops(gameplayGameTime);
         UpdateWalls();
-        UpdateTowers(gameTime);
-        CheckLevelCompletion(gameTime);
+        UpdateTowers(gameplayGameTime);
+        CheckLevelCompletion(gameplayGameTime);
     }
 
     private void UpdateTowers(GameTime gameTime)
@@ -215,6 +237,9 @@ public class GameScreen : Screen
         foreach (var tower in placedTowers.Values)
             tower.Draw(spriteBatch);
 
+        foreach (var deco in currentLevel.Decorations)
+            deco.Draw(spriteBatch, grid);
+
         // Draw range of selected tower
         if (selectedTower != null)
         {
@@ -236,16 +261,6 @@ public class GameScreen : Screen
         hud.Draw(spriteBatch);
     }
 
-    private void UnlockNextLevel()
-    {
-        int currentIndex = GrassLevels.All.IndexOf(currentLevel);
-
-        if (currentIndex + 1 < GrassLevels.All.Count)
-        {
-            GrassLevels.All[currentIndex + 1].IsUnlocked = true;
-        }
-    }
-
     private void UpdateBuildSystem(GameTime gameTime)
     {
         // If mode is reset to something else (e.g. wall building), clear selection
@@ -255,8 +270,12 @@ public class GameScreen : Screen
         }
 
         hud.SetSelectedTower(selectedTower);
+        hud.SetPlaybackState(playbackState);
 
-        hud.Update(gameTime);
+        hud.Update(GetGameplayGameTime(gameTime));
+
+        if (playbackState == GamePlaybackState.Paused)
+            return;
 
         // Handle HUD Upgrade interaction
         if (selectedTower != null && hud.WasUpgradeClicked())
@@ -285,6 +304,31 @@ public class GameScreen : Screen
                 false // forcefully tell buildManager it's NOT a click because the UI consumed it
             );
         }
+    }
+
+    private GameTime GetGameplayGameTime(GameTime gameTime)
+    {
+        float scale = playbackState switch
+        {
+            GamePlaybackState.FastForward => 2f,
+            GamePlaybackState.Paused => 0f,
+            _ => 1f
+        };
+
+        long elapsedTicks = (long)(gameTime.ElapsedGameTime.Ticks * scale);
+        return new GameTime(gameTime.TotalGameTime, TimeSpan.FromTicks(elapsedTicks));
+    }
+
+    private void CyclePlaybackState()
+    {
+        playbackState = playbackState switch
+        {
+            GamePlaybackState.Normal => GamePlaybackState.FastForward,
+            GamePlaybackState.FastForward => GamePlaybackState.Paused,
+            _ => GamePlaybackState.Normal
+        };
+
+        hud.SetPlaybackState(playbackState);
     }
 
     private bool HandlePause()
@@ -322,6 +366,7 @@ public class GameScreen : Screen
 
             if (Ships[i].IsFinished)
             {
+                Spawner.NotifyShipDeparted(Ships[i].AssignedCoast);
                 Ships.RemoveAt(i);
             }
         }
@@ -393,7 +438,6 @@ public class GameScreen : Screen
         {
             levelCompleted = true;
 
-            UnlockNextLevel();
             AudioManager.Instance.StopBackgroundMusic();
 
             manager.SetScreen(new GameOverScreen(
