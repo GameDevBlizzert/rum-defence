@@ -6,11 +6,14 @@ namespace RumDefence;
 
 public class CannonProjectile : Projectile
 {
-    private Action<Vector2, int> _onHit;
+    private readonly Action<Vector2, int, int, float> _onHit;
+    private readonly float _aoeRadius;
 
-    public CannonProjectile(Vector2 start, Troop target, float speed, int damage, Action<Vector2, int> onHit = null)
+    public CannonProjectile(Vector2 start, Troop target, float speed, int damage, float aoeRadius, Action<Vector2, int, int, float> onHit = null)
         : base(start, target, speed, damage)
     {
+        ApplyDirectDamage = false;
+        _aoeRadius = aoeRadius;
         _onHit = onHit;
     }
 
@@ -18,14 +21,12 @@ public class CannonProjectile : Projectile
     {
         if (IsFinished) return;
 
-        // Call base update to handle movement and damage
         base.Update(gameTime);
 
-        // If we just finished (hit target), trigger explosion callback
         if (IsFinished && _onHit != null)
         {
             int explosionIndex = new Random().Next(0, 3);
-            _onHit(Position, explosionIndex);
+            _onHit(Position, explosionIndex, Damage, _aoeRadius);
         }
     }
 }

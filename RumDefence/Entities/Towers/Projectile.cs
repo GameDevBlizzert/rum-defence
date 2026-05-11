@@ -13,6 +13,8 @@ public class Projectile : Entity
     public int Damage { get; }
     public bool IsFinished { get; private set; }
 
+    protected bool ApplyDirectDamage = true;
+
     private static Texture2D _cannonBall;
 
     public Projectile(Vector2 start, Troop target, float speed, int damage)
@@ -46,7 +48,7 @@ public class Projectile : Entity
 
         if (dir.Length() < 6f)
         {
-            if (!Target.IsDead && !Target.IsFinished)
+            if (ApplyDirectDamage && !Target.IsDead && !Target.IsFinished)
                 Target.TakeDamage(Damage);
 
             IsFinished = true;

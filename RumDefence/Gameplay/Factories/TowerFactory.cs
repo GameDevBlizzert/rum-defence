@@ -48,7 +48,7 @@ public static class TowerFactory
         TowerData data,
         Vector2 location,
         List<Troop> troops,
-        Action<Vector2, int> onProjectileHit = null)
+        Action<Vector2, int, int, float> onProjectileHit = null)
     {
         return data.Type switch
         {
@@ -62,7 +62,7 @@ public static class TowerFactory
         TowerData data,
         Vector2 location,
         List<Troop> troops,
-        Action<Vector2, int> onProjectileHit)
+        Action<Vector2, int, int, float> onProjectileHit)
     {
         var cannon = new CannonTower(data, location, troops);
         if (onProjectileHit != null)

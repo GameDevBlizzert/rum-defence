@@ -120,7 +120,16 @@ public class GameScreen : Screen
                     TowerFactory.Cannon,
                     grid.GridToWorld(p),
                     Troops,
-                    (pos, explosionIndex) => explosions.Add(new Explosion(pos, explosionIndex))
+                    (pos, explosionIndex, damage, radius) =>
+                    {
+                        explosions.Add(new Explosion(pos, explosionIndex, radius));
+                        foreach (var troop in Troops)
+                        {
+                            if (troop.IsDead || troop.IsFinished) continue;
+                            if (Vector2.Distance(pos, troop.Position) <= radius)
+                                troop.TakeDamage(damage);
+                        }
+                    }
                 );
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Cannon.Cost);
