@@ -62,7 +62,7 @@ public class ConfirmScreen : Screen
 
         NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
-        spriteBatch.DrawString(Primitives.Font, message, new Vector2(650, 400), Color.Black);
+        spriteBatch.DrawString(Primitives.Font, message, new Vector2(650, 400), Primitives.FontColor);
 
         yesButton.Draw(spriteBatch);
         noButton.Draw(spriteBatch);

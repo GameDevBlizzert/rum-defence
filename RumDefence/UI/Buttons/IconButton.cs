@@ -65,7 +65,7 @@ public class IconButton : Button
             );
             spriteBatch.Draw(iconTexture, iconRect, iconColor);
 
-            var labelColor = IsDisabled ? new Color(120, 120, 120) : Color.Yellow;
+            var labelColor = IsDisabled ? new Color(120, 120, 120) : Primitives.FontColor;
             spriteBatch.DrawString(Primitives.Font, CostLabel,
                 new Vector2(startX + iconSize + gap, centerY - textSize.Y / 2f),
                 labelColor);

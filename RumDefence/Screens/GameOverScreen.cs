@@ -127,7 +127,7 @@ public class GameOverScreen : Screen
             Primitives.Font,
             title,
             new Vector2(panelRect.Center.X - titleSize.X / 2, panelRect.Y + 40),
-            Color.White
+            Primitives.FontColor
         );
 
         // 5. stats
@@ -147,7 +147,7 @@ public class GameOverScreen : Screen
             Primitives.Font,
             text,
             new Vector2(centerX - size.X / 2, y),
-            Color.White
+            Primitives.FontColor
         );
     }
 }

@@ -42,14 +42,14 @@ public class WaveHud
 
         float waveX = panelX + (panelWidth - waveSize.X) / 2f;
         float waveY = panelY + PanelPaddingY;
-        spriteBatch.DrawString(Primitives.Font, waveText, new Vector2(waveX, waveY), Color.White);
+        spriteBatch.DrawString(Primitives.Font, waveText, new Vector2(waveX, waveY), Primitives.FontColor);
 
         float contentY = waveY + waveSize.Y + LineSpacing;
 
         if (spawner.IsFinished)
         {
             float pctX = panelX + (panelWidth - pctSize.X) / 2f;
-            spriteBatch.DrawString(Primitives.Font, pctText, new Vector2(pctX, contentY), Color.White);
+            spriteBatch.DrawString(Primitives.Font, pctText, new Vector2(pctX, contentY), Primitives.FontColor);
         }
         else
         {
@@ -66,7 +66,7 @@ public class WaveHud
                 barX + (barWidth - pctSize.X) / 2f,
                 contentY + (BarHeight - pctSize.Y) / 2f
             );
-            spriteBatch.DrawString(Primitives.Font, pctText, pctPos, Color.White);
+            spriteBatch.DrawString(Primitives.Font, pctText, pctPos, Primitives.FontColor);
         }
     }
 }

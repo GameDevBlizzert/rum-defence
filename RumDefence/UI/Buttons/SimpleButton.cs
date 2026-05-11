@@ -62,7 +62,7 @@ public class SimpleButton : Button
             bounds.Y + (bounds.Height - textSize.Y) / 2
         );
 
-        var textColor = IsDisabled ? Color.DarkGray : Color.Black;
+        var textColor = IsDisabled ? Color.DarkGray : Primitives.FontColor;
         spriteBatch.DrawString(Primitives.Font, text, textPos, textColor);
     }
 

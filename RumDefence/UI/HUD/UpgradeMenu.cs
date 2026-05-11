@@ -73,11 +73,11 @@ public class UpgradeMenu
         title += $" LVL {SelectedTower.CurrentLevel + 1}";
 
         float titleScale = 0.8f;
-        spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Color.White, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
+        spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Primitives.FontColor, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
         var startY = panelRect.Y + 70;
         var spacing = 35;
-        var color = Color.LightGray;
+        var color = Primitives.FontColor;
         float statScale = 0.65f;
 
         spriteBatch.DrawString(Primitives.Font, $"DAM: {SelectedTower.CurrentDamage}", new Vector2(panelRect.X + 20, startY), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
@@ -87,12 +87,12 @@ public class UpgradeMenu
         if (SelectedTower.CanUpgrade)
         {
             var cost = SelectedTower.GetUpgradeCost();
-            spriteBatch.DrawString(Primitives.Font, $"Cost: {cost} coins", new Vector2(panelRect.X + 20, startY + spacing * 3), Color.Yellow, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(Primitives.Font, $"Cost: {cost} coins", new Vector2(panelRect.X + 20, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
             upgradeButton.Draw(spriteBatch);
         }
         else
         {
-            spriteBatch.DrawString(Primitives.Font, "MAX LEVEL", new Vector2(panelRect.X + 20, startY + spacing * 3), Color.White, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(Primitives.Font, "MAX LEVEL", new Vector2(panelRect.X + 20, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         }
     }
 
@@ -102,16 +102,16 @@ public class UpgradeMenu
 
         var title = (PreviewData.Type == TowerType.Cannon ? "CANNON" : "MUSKET") + " LVL 1";
         float titleScale = 0.8f;
-        spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Color.White, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
+        spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Primitives.FontColor, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
         var startY = panelRect.Y + 70;
         var spacing = 35;
-        var color = Color.LightGray;
+        var color = Primitives.FontColor;
         float statScale = 0.65f;
 
         spriteBatch.DrawString(Primitives.Font, $"DAM: {PreviewData.Damage}", new Vector2(panelRect.X + 20, startY), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         spriteBatch.DrawString(Primitives.Font, $"RNG: {(int)PreviewData.Range}", new Vector2(panelRect.X + 20, startY + spacing), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         spriteBatch.DrawString(Primitives.Font, $"SPD: {PreviewData.FireRate:F1}/s", new Vector2(panelRect.X + 20, startY + spacing * 2), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        spriteBatch.DrawString(Primitives.Font, $"Cost: {PreviewData.Cost} coins", new Vector2(panelRect.X + 20, startY + spacing * 3), Color.Yellow, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+        spriteBatch.DrawString(Primitives.Font, $"Cost: {PreviewData.Cost} coins", new Vector2(panelRect.X + 20, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
     }
 }

@@ -56,7 +56,7 @@ public class LevelButton : Button
             Primitives.Font,
             $"LEVEL {level.Id}",
             new Vector2(bounds.X + 10, bounds.Y + 5),
-            Color.White
+            Primitives.FontColor
         );
 
         if (!level.IsUnlocked)

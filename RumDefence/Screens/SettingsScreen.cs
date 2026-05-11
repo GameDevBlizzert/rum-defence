@@ -93,7 +93,7 @@ public class SettingsScreen : Screen
         var titleSize = Primitives.Font.MeasureString(title);
         spriteBatch.DrawString(Primitives.Font, title,
             new Vector2(PanelLeft + (PanelWidth - titleSize.X) / 2f, PanelTop + 40),
-            Color.Black);
+            Primitives.FontColor);
 
         DrawSlider(spriteBatch, "Music Volume", AudioManager.Instance.MusicVolume, GetMusicTrack());
         DrawSlider(spriteBatch, "Sound Volume", AudioManager.Instance.SoundVolume, GetSoundTrack());
@@ -103,11 +103,11 @@ public class SettingsScreen : Screen
 
     private void DrawSlider(SpriteBatch spriteBatch, string label, float value, Rectangle track)
     {
-        spriteBatch.DrawString(Primitives.Font, label, new Vector2(track.X, track.Y - 44), Color.Black);
+        spriteBatch.DrawString(Primitives.Font, label, new Vector2(track.X, track.Y - 44), Primitives.FontColor);
 
         var pct = $"{(int)(value * 100)}%";
         var pctSize = Primitives.Font.MeasureString(pct);
-        spriteBatch.DrawString(Primitives.Font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Color.Black);
+        spriteBatch.DrawString(Primitives.Font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Primitives.FontColor);
 
         spriteBatch.Draw(Primitives.Pixel, track, new Color(170, 170, 170));
 

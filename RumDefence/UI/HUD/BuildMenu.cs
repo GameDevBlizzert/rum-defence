@@ -160,7 +160,7 @@ public class BuildMenu
         var iconRect = new Rectangle((int)coinRowX, coinAreaY, coinIconSize, coinIconSize);
         spriteBatch.Draw(coinIcon, iconRect, Color.White);
         float textY = coinAreaY + (coinIconSize - coinSize.Y) / 2f;
-        spriteBatch.DrawString(Primitives.Font, coinText, new Vector2(coinRowX + coinIconSize + iconTextGap, textY), Color.Yellow);
+        spriteBatch.DrawString(Primitives.Font, coinText, new Vector2(coinRowX + coinIconSize + iconTextGap, textY), Primitives.FontColor);
 
         cannonButton.Draw(spriteBatch);
         musketButton.Draw(spriteBatch);

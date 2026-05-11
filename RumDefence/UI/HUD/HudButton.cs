@@ -40,7 +40,7 @@ public class HudButton
                 Bounds.Center.Y - size.Y / 2
             );
 
-            spriteBatch.DrawString(Primitives.Font, text, pos, Color.Black);
+            spriteBatch.DrawString(Primitives.Font, text, pos, Primitives.FontColor);
         }
     }
 }

@@ -37,6 +37,6 @@ public class HudHealthBar
             barBounds.X + (barBounds.Width - labelSize.X) / 2f,
             barBounds.Y + (barBounds.Height - labelSize.Y) / 2f
         );
-        spriteBatch.DrawString(Primitives.Font, label, labelPos, Color.White);
+        spriteBatch.DrawString(Primitives.Font, label, labelPos, Primitives.FontColor);
     }
 }
