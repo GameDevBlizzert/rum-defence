@@ -40,9 +40,9 @@ public class PauseScreen : Screen
 
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        resumeButton = new SimpleButton(buttonTexture,"Resume", new Vector2(800, 300), new Vector2(300, 100));
-        settingsButton = new SimpleButton(buttonTexture,"Settings", new Vector2(800, 450), new Vector2(300, 100));
-        menuButton = new SimpleButton(buttonTexture,"Main Menu", new Vector2(800, 600), new Vector2(300, 100));
+        resumeButton = new SimpleButton(buttonTexture, "Resume", new Vector2(800, 300), new Vector2(300, 100));
+        settingsButton = new SimpleButton(buttonTexture, "Settings", new Vector2(800, 450), new Vector2(300, 100));
+        menuButton = new SimpleButton(buttonTexture, "Main Menu", new Vector2(800, 600), new Vector2(300, 100));
 
         resumeButton.OnClick = () =>
         {

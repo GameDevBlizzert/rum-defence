@@ -20,10 +20,10 @@ public class ThemeSelectScreen : Screen
 
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
-        grassButton = new SimpleButton(buttonTexture,"Grass",
+        grassButton = new SimpleButton(buttonTexture, "Grass",
             new Vector2(800, 400), new Vector2(300, 100));
 
-        stoneButton = new SimpleButton(buttonTexture,"Stone",
+        stoneButton = new SimpleButton(buttonTexture, "Stone",
             new Vector2(800, 550), new Vector2(300, 100));
 
         grassButton.OnClick = () =>

@@ -34,8 +34,8 @@ public class ConfirmScreen : Screen
 
         panelRect = new Rectangle(600, 300, 700, 400);
 
-        yesButton = new SimpleButton(buttonTexture,"Yes", new Vector2(700, 550), new Vector2(200, 100));
-        noButton = new SimpleButton(buttonTexture,"No", new Vector2(1000, 550), new Vector2(200, 100));
+        yesButton = new SimpleButton(buttonTexture, "Yes", new Vector2(700, 550), new Vector2(200, 100));
+        noButton = new SimpleButton(buttonTexture, "No", new Vector2(1000, 550), new Vector2(200, 100));
 
         yesButton.OnClick = () =>
         {

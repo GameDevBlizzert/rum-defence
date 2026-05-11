@@ -47,8 +47,8 @@ public class GameOverScreen : Screen
 
         Vector2 buttonSize = new Vector2(300, 100);
 
-        retryButton = new SimpleButton(buttonTexture,"Retry", Vector2.Zero, buttonSize);
-        menuButton = new SimpleButton(buttonTexture,"Menu", Vector2.Zero, buttonSize);
+        retryButton = new SimpleButton(buttonTexture, "Retry", Vector2.Zero, buttonSize);
+        menuButton = new SimpleButton(buttonTexture, "Menu", Vector2.Zero, buttonSize);
 
         retryButton.OnClick = () =>
         {
