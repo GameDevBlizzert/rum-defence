@@ -13,11 +13,23 @@ public static class GrassLevels
         Walls = grass
     };
 
-    public static List<Level> All = new()
+    private static List<Level> _all;
+
+    public static List<Level> All
     {
-        Level1Data.Create(theme),
-        Level2Data.Create(theme),
-        Level3Data.Create(theme),
-        Level4Data.Create(theme)
-    };
+        get
+        {
+            if (_all == null)
+            {
+                _all = new List<Level>()
+                {
+                    Level1Data.Create(theme, true),
+                    Level2Data.Create(theme),
+                    Level3Data.Create(theme),
+                    Level4Data.Create(theme)
+                };
+            }
+            return _all;
+        }
+    }
 }

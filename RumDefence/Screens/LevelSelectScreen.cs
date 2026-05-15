@@ -42,7 +42,7 @@ public class LevelSelectScreen : Screen
             {
                 if (levels[index].IsUnlocked)
                 {
-                    manager.SetScreen(new GameScreen(manager, levels[index]));
+                    manager.SetScreen(new GameScreen(manager, levels[index], levels));
                 }
             };
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -9,6 +10,7 @@ public class GhostTheme : BaseTheme, IWallTheme
     private string wallPrefix = "Art/Themes/Grass/Walls/";
     private string shipPrefix = "Art/Themes/Ghost/Ships/";//ghost ship
     private string enemyPrefix = "Art/Themes/Grass/Enemies/";
+    private string decorationPrefix = "Art/Themes/Grass/Decorations/";
 
     private Dictionary<int, List<Texture2D>> tileMap;
     private Dictionary<string, Texture2D> shipMap;
@@ -77,6 +79,23 @@ public class GhostTheme : BaseTheme, IWallTheme
         {
             Load(enemyPrefix + "enemy_1")
         };
+
+        Console.WriteLine("Single: " + (Single != null));
+        Console.WriteLine("Wall: " + (Wall != null));
+        Console.WriteLine("End: " + (End != null));
+        Console.WriteLine("Corner: " + (Corner != null));
+        Console.WriteLine("Twall: " + (Twall != null));
+        Console.WriteLine("Xwall: " + (Xwall != null));
+        Console.WriteLine("Diagonal: " + (Diagonal != null));
+        Console.WriteLine("DiagonalEnd: " + (DiagonalEnd != null));
+        Console.WriteLine("DiagonalFill: " + (DiagonalFill != null));
+
+        Console.WriteLine("xwallDamagedList count: " + xwallDamagedList.Count);
+
+        var tex = Load(wallPrefix + "Xwall_damaged");
+
+        if (tex == null)
+            throw new Exception("Xwall_damaged FAILED TO LOAD");
     }
 
     public override Texture2D GetTexture(int tile, int x, int y)
