@@ -29,9 +29,10 @@ public class GameScreen : Screen
     public ShipSpawner Spawner { get; private set; }
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
+    public static GameScreen Instance { get; private set; }
+    public List<Explosion> Explosions = new();
 
     private Dictionary<Point, BaseTower> placedTowers = new();
-    private List<Explosion> explosions = new();
 
     private BaseTower selectedTower = null;
 
@@ -48,6 +49,7 @@ public class GameScreen : Screen
     public GameScreen(ScreenManager manager, Level level) : base(manager)
     {
         currentLevel = level;
+        Instance = this;
     }
 
     public override void Load()
@@ -132,17 +134,7 @@ public class GameScreen : Screen
                 placedTowers[p] = TowerFactory.Create(
                     TowerFactory.Cannon,
                     grid.GridToWorld(p),
-                    Troops,
-                    (pos, explosionIndex, damage, radius) =>
-                    {
-                        explosions.Add(new Explosion(pos, explosionIndex, radius));
-                        foreach (var troop in Troops)
-                        {
-                            if (troop.IsDead || troop.IsFinished) continue;
-                            if (Vector2.Distance(pos, troop.Position) <= radius)
-                                troop.TakeDamage(damage);
-                        }
-                    }
+                    Troops
                 );
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Cannon.Cost);
@@ -211,11 +203,11 @@ public class GameScreen : Screen
             tower.Update(gameTime);
 
         // Update and remove finished explosions
-        for (int i = explosions.Count - 1; i >= 0; i--)
+        for (int i = Explosions.Count - 1; i >= 0; i--)
         {
-            explosions[i].Update(gameTime);
-            if (explosions[i].IsFinished)
-                explosions.RemoveAt(i);
+            Explosions[i].Update(gameTime);
+            if (Explosions[i].IsFinished)
+                Explosions.RemoveAt(i);
         }
     }
 
@@ -245,7 +237,7 @@ public class GameScreen : Screen
         }
 
         // Draw explosions
-        foreach (var explosion in explosions)
+        foreach (var explosion in Explosions)
             explosion.Draw(spriteBatch);
 
         DrawWallHealthBars(spriteBatch);

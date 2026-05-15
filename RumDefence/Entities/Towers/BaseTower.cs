@@ -114,9 +114,9 @@ public class BaseTower : Entity
         Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, CurrentDamage));
     }
 
-    private int GetPendingDamage(Troop troop)
+    private float GetPendingDamage(Troop troop)
     {
-        int pending = 0;
+        float pending = 0;
         foreach (var proj in Projectiles)
             if (proj.Target == troop)
                 pending += proj.Damage;
