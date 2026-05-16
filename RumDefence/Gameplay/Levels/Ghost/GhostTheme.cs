@@ -31,6 +31,7 @@ public class GhostTheme : BaseTheme, IWallTheme
     private List<Texture2D> cornerDamagedList;
     private List<Texture2D> twallDamagedList;
     private List<Texture2D> xwallDamagedList;
+    private List<Texture2D> rocks;
 
     public GhostTheme()
     {
@@ -78,6 +79,16 @@ public class GhostTheme : BaseTheme, IWallTheme
         enemies = new List<Texture2D>()
         {
             Load(enemyPrefix + "enemy_1")
+        };
+
+        rocks = new List<Texture2D>()
+        {
+            Load(decorationPrefix + "Rock_01"),
+            Load(decorationPrefix + "Rock_02"),
+            Load(decorationPrefix + "Rock_03"),
+            Load(decorationPrefix + "Rock_Moss_01"),
+            Load(decorationPrefix + "Rock_Moss_02"),
+            Load(decorationPrefix + "Rock_Moss_03"),
         };
 
     }
