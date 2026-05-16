@@ -164,6 +164,22 @@ public class GameScreen : Screen
             }
         });
 
+        buildManager.SetFisherTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
+                progress.CoinsRemaining >= TowerFactory.Fisher.Cost)
+            {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
+                placedTowers[p] = TowerFactory.Create(TowerFactory.Fisher, grid.GridToWorld(p), Troops);
+                occupiedTiles[p] = true;
+                progress.SpendCoins(TowerFactory.Fisher.Cost);
+                AudioManager.Instance.PlayRandomImpact();
+                // Select newly placed tower
+                selectedTower = placedTowers[p];
+                buildManager.SetMode(BuildMode.None); // Auto select without button
+            }
+        });
+
         buildManager.SetSelectCallback(p =>
         {
             if (placedTowers.TryGetValue(p, out BaseTower tower))

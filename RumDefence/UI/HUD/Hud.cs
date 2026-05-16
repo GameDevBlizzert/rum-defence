@@ -56,6 +56,7 @@ public class Hud
             {
                 BuildMode.CannonTower => TowerFactory.Cannon,
                 BuildMode.MusketTower => TowerFactory.Musket,
+                BuildMode.FisherTower => TowerFactory.Fisher,
                 _ => null
             };
         }

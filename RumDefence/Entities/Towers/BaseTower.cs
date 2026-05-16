@@ -14,6 +14,7 @@ public class BaseTower : Entity
     public int CurrentLevel { get; protected set; } = 0;
     public int MaxLevel { get; protected set; } = 3;
 
+    public string Label = "";
     protected float BaseRange = 700f;
     protected float RangeUpgradeFlat = 50f;
     protected float RangeUpgradePercent = 0.1f;
@@ -64,6 +65,7 @@ public class BaseTower : Entity
         BaseDamage = data.Damage;
         ProjectileSpeed = data.ProjectileSpeed;
         AttackMode = data.AttackMode;
+        Label = data.Label;
 
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.TexturePath);
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);

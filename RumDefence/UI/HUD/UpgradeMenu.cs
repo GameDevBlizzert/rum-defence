@@ -73,7 +73,7 @@ public class UpgradeMenu
     {
         NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
-        var title = SelectedTower is CannonTower ? "CANNON" : SelectedTower is MusketTower ? "MUSKET" : "TOWER";
+        var title = SelectedTower.Label;
         title += $" LVL {SelectedTower.CurrentLevel + 1}";
 
         float titleScale = 0.8f;
@@ -104,7 +104,7 @@ public class UpgradeMenu
     {
         NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
-        var title = (PreviewData.Type == TowerType.Cannon ? "CANNON" : "MUSKET") + " LVL 1";
+        var title = PreviewData.Label + " LVL 1";
         float titleScale = 0.8f;
         spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Primitives.FontColor, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
