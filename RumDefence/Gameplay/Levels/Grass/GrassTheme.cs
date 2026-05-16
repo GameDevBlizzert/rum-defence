@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -34,6 +35,8 @@ public class GrassTheme : BaseTheme, IWallTheme
     private Dictionary<string, Texture2D> shipMap;
 
     private List<Texture2D> enemies;
+
+    public override float GetDecorationDensity() => 0.2f;
 
     public GrassTheme()
     {
@@ -153,12 +156,16 @@ public class GrassTheme : BaseTheme, IWallTheme
         return GetRandom(enemies);
     }
 
+    public override (Texture2D, string) GetRandomDecoration(Random rng, int x, int y)
+    {
+        double roll = rng.NextDouble();
 
-    public override float GetDecorationDensity() => 0.2f;
+        if (roll < 0.3)
+            return (GetSeeded(rocks, x, y), "rock");
 
-    public override List<Texture2D> GetRocks() => rocks;
+        if (roll < 0.6)
+            return (GetSeeded(trees, x, y), "tree");
 
-    public override List<Texture2D> GetTrees() => trees;
-
-    public override List<Texture2D> GetBushes() => bushes;
+        return (GetSeeded(bushes, x, y), "bush");
+    }
 }

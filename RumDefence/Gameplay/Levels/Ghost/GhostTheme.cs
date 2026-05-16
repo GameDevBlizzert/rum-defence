@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using Moq;
 using System;
 using System.Collections.Generic;
 
@@ -138,4 +139,15 @@ public class GhostTheme : BaseTheme, IWallTheme
     {
         return GetSeeded(xwallDamagedList, x, y);
     }
+
+    public override (Texture2D, string) GetRandomDecoration(Random rng, int x, int y)
+    {
+        if (rng.NextDouble() < 0.3)
+            return (GetSeeded(rocks, x, y), "rock");
+
+        return (null, null);
+    }
+
+    public override float GetDecorationDensity() => 0.35f;
+
 }

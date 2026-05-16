@@ -7,20 +7,15 @@ namespace RumDefence;
 
 public static class DecorationManager
 {
-    public enum DecorationType
-    {
-        Rock,
-        Tree,
-        Bush
-    }
+
 
     public class Decoration
     {
         public Point GridPos;
-        public DecorationType Type;
         private Texture2D texture;
+        public string Type;
 
-        public Decoration(Point pos, Texture2D tex, DecorationType type)
+        public Decoration(Point pos, Texture2D tex, string type)
         {
             GridPos = pos;
             texture = tex;
@@ -50,13 +45,6 @@ public static class DecorationManager
         int w = level.Map.GetLength(1);
         int h = level.Map.GetLength(0);
 
-        var rocks = level.Theme.Tiles.GetRocks();
-        var trees = level.Theme.Tiles.GetTrees();
-        var bushes = level.Theme.Tiles.GetBushes();
-
-        if (rocks.Count == 0 && trees.Count == 0 && bushes.Count == 0)
-            return result;
-
         var rng = new Random(level.Id);
 
         for (int x = 0; x < w; x++)
@@ -69,32 +57,12 @@ public static class DecorationManager
                 if (rng.NextDouble() > density)
                     continue;
 
-                var p = new Point(x, y);
+                var (tex, type) = level.Theme.Tiles.GetRandomDecoration(rng, x, y);
 
-                double roll = rng.NextDouble();
-
-                DecorationType type;
-                Texture2D tex = null;
-
-                if (roll < 0.2 && rocks.Count > 0)
-                {
-                    type = DecorationType.Rock;
-                    tex = rocks[SafeIndex(x * 73856093 ^ y * 19349663, rocks.Count)];
-                }
-                else if (roll < 0.5 && trees.Count > 0)
-                {
-                    type = DecorationType.Tree;
-                    tex = trees[SafeIndex(x * 19349663 ^ y * 83492791, trees.Count)];
-                }
-                else if (bushes.Count > 0)
-                {
-                    type = DecorationType.Bush;
-                    tex = bushes[SafeIndex(x * 83492791 ^ y * 1234567, bushes.Count)];
-                }
-                else
-                {
+                if (tex == null || type == null)
                     continue;
-                }
+
+                var p = new Point(x, y);
 
                 if (!CanPlace(result, p, type))
                     continue;
@@ -111,10 +79,8 @@ public static class DecorationManager
         return Math.Abs(value) % count;
     }
 
-    private static bool CanPlace(List<Decoration> existing, Point p, DecorationType newType)
+    private static bool CanPlace(List<Decoration> existing, Point p, string newType)
     {
-        bool hasBushNeighbor = false;
-
         foreach (var d in existing)
         {
             int dx = Math.Abs(d.GridPos.X - p.X);
@@ -123,15 +89,14 @@ public static class DecorationManager
             if (dx > 1 || dy > 1)
                 continue;
 
-            if (newType == DecorationType.Rock || d.Type == DecorationType.Rock)
+            // rocks mogen niet naast elkaar
+            if (newType == "rock" && d.Type == "rock")
                 return false;
 
-            if (d.Type == DecorationType.Bush)
-                hasBushNeighbor = true;
+            // trees alleen bij bushes
+            if (newType == "tree" && d.Type != "bush")
+                return false;
         }
-
-        if (newType == DecorationType.Tree && !hasBushNeighbor)
-            return false;
 
         return true;
     }
