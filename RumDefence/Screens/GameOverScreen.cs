@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace RumDefence;
 
@@ -12,6 +13,7 @@ public class GameOverScreen : Screen
     private SimpleButton menuButton;
 
     private Level level;
+    private List<Level> levelSet;
     private bool isWin;
 
     private int wavesSurvived;
@@ -26,6 +28,7 @@ public class GameOverScreen : Screen
         ScreenManager manager,
         GameScreen previousScreen,
         Level level,
+        List<Level> levelSet,
         bool isWin,
         int wavesSurvived,
         int coins
@@ -36,6 +39,7 @@ public class GameOverScreen : Screen
         this.isWin = isWin;
         this.wavesSurvived = wavesSurvived;
         this.coins = coins;
+        this.levelSet = levelSet;
     }
 
     public override void Load()
@@ -52,7 +56,7 @@ public class GameOverScreen : Screen
 
         retryButton.OnClick = () =>
         {
-            manager.SetScreen(new GameScreen(manager, level));
+            manager.SetScreen(new GameScreen(manager, level, levelSet));
         };
 
         menuButton.OnClick = () =>

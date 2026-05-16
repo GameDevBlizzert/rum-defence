@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RumDefence.Gameplay.Levels.Ghost;
+using RumDefence.Levels.Ghost;
 using RumDefence.Levels.Grass;
 
 namespace RumDefence;

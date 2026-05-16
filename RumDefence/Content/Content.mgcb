@@ -601,6 +601,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Decorations/Bush_Small_01.png;Art/Themes/Grass/Decorations/Bush_Small_01
 
+#begin Art/Themes/Grass/Decorations/Bush_Small_01.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Bush_Small_01.png;Art/Themes/Grass/Decorations/Bush_Small_01
+
 #begin Art/Themes/Grass/Decorations/Bush_Small_02.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -612,6 +624,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Decorations/Bush_Small_02.png;Art/Themes/Grass/Decorations/Bush_Small_02
+
+#begin Art/Themes/Grass/Decorations/Bush_Small_02.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Bush_Small_02.png;Art/Themes/Grass/Decorations/Bush_Small_02
+
+#begin Art/Themes/Grass/Decorations/Rock_01.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Rock_01.png;Art/Themes/Grass/Decorations/Rock_01
 
 #begin Art/Themes/Grass/Decorations/Rock_01.png
 /importer:TextureImporter
@@ -637,6 +673,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Decorations/Rock_02.png;Art/Themes/Grass/Decorations/Rock_02
 
+#begin Art/Themes/Grass/Decorations/Rock_02.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Rock_02.png;Art/Themes/Grass/Decorations/Rock_02
+
 #begin Art/Themes/Grass/Decorations/Rock_03.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -648,6 +696,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Decorations/Rock_03.png;Art/Themes/Grass/Decorations/Rock_03
+
+#begin Art/Themes/Grass/Decorations/Rock_03.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Rock_03.png;Art/Themes/Grass/Decorations/Rock_03
+
+#begin Art/Themes/Grass/Decorations/Rock_Moss_01.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Rock_Moss_01.png;Art/Themes/Grass/Decorations/Rock_Moss_01
 
 #begin Art/Themes/Grass/Decorations/Rock_Moss_01.png
 /importer:TextureImporter
@@ -673,6 +745,30 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Decorations/Rock_Moss_02.png;Art/Themes/Grass/Decorations/Rock_Moss_02
 
+#begin Art/Themes/Grass/Decorations/Rock_Moss_02.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Rock_Moss_02.png;Art/Themes/Grass/Decorations/Rock_Moss_02
+
+#begin Art/Themes/Grass/Decorations/Rock_Moss_03.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Rock_Moss_03.png;Art/Themes/Grass/Decorations/Rock_Moss_03
+
 #begin Art/Themes/Grass/Decorations/Rock_Moss_03.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -697,6 +793,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Decorations/Tree_01.png;Art/Themes/Grass/Decorations/Tree_01
 
+#begin Art/Themes/Grass/Decorations/Tree_01.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Tree_01.png;Art/Themes/Grass/Decorations/Tree_01
+
 #begin Art/Themes/Grass/Decorations/Tree_02.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -708,6 +816,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Decorations/Tree_02.png;Art/Themes/Grass/Decorations/Tree_02
+
+#begin Art/Themes/Grass/Decorations/Tree_02.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Tree_02.png;Art/Themes/Grass/Decorations/Tree_02
+
+#begin Art/Themes/Grass/Decorations/Tree_03.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Themes/Grass/Decorations/Tree_03.png;Art/Themes/Grass/Decorations/Tree_03
 
 #begin Art/Themes/Grass/Decorations/Tree_03.png
 /importer:TextureImporter
