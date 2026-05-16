@@ -168,12 +168,11 @@ public class BaseTower : Entity
     public virtual void DrawLevelStripes(SpriteBatch spriteBatch)
     {
         var gapBetweenStripes = new Vector2(6, 0);
-        var rect = new Rectangle(0, 0, 8, 20);
+        var rect = new Rectangle(0, 0, 6, 6);
         var levelStripeOrigin = rect.Center.ToVector2();
         Color color;
-        Vector2 towerOrigin = new(Size.X / 2, Size.Y / 2);
-        Vector2 levelStripeLength = (gapBetweenStripes * MaxLevel) + rect.Size.ToVector2() * (MaxLevel + 1) * new Vector2(1, 0);
-        var levelStripePos = Position + towerOrigin - levelStripeLength;
+        Vector2 levelStripeSize = (gapBetweenStripes * MaxLevel) + rect.Size.ToVector2() * (MaxLevel + 1) * new Vector2(1, 0);
+        var levelStripePos = Position - levelStripeSize / 2 - new Vector2(0, Size.Y / 2);
         for (int i = 0; i <= MaxLevel; i++)
         {
             if (i <= CurrentLevel)
