@@ -29,10 +29,8 @@ public static class Level2Data
             MapData,
             theme,
             Waves,
-            //unlocked,
-            startingCoinBalance: 200,
-            unlocked: true
-
+            unlocked,
+            startingCoinBalance: 200
         );
     }
 

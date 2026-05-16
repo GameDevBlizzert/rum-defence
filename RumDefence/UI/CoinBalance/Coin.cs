@@ -16,7 +16,7 @@ public class Coin
     private float progress = 0f;
     private float duration = 2f;
 
-    private float scale = 0.01f;
+    private float scale = 0.1f;
 
     public bool IsFinished { get; private set; }
 

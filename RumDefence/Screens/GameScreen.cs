@@ -46,10 +46,13 @@ public class GameScreen : Screen
     private Texture2D pixel;
 
     private GamePlaybackState playbackState = GamePlaybackState.Normal;
+    public List<Level> ActiveLevelSet { get; private set; }
+    public Level CurrentLevel => currentLevel;
 
-    public GameScreen(ScreenManager manager, Level level) : base(manager)
+    public GameScreen(ScreenManager manager, Level level, List<Level> levelSet) : base(manager)
     {
         currentLevel = level;
+        ActiveLevelSet = levelSet;
     }
 
     public override void Load()
@@ -69,7 +72,7 @@ public class GameScreen : Screen
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
 
-        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance, ActiveLevelSet, currentLevel);
         currentLevel.RumBarrel.OnDamageTaken = amount => progress.TakeHits(amount);
 
         Spawner = new ShipSpawner(currentLevel, grid);
@@ -407,6 +410,7 @@ public class GameScreen : Screen
 
     private void CheckLevelCompletion(GameTime gameTime)
     {
+        progress.Update(gameTime, this);
         // Lose condition
         if (progress.IsLost())
         {
@@ -415,6 +419,7 @@ public class GameScreen : Screen
                 manager,
                 this,
                 currentLevel,
+                ActiveLevelSet,
                 false,
                 Spawner.CurrentWave,
                 progress.CoinsRemaining
@@ -422,7 +427,6 @@ public class GameScreen : Screen
             return;
         }
 
-        progress.Update(gameTime, this);
 
         // Win condition
         if (!levelCompleted && Spawner.IsAllWavesComplete && Ships.Count == 0 && Troops.Count == 0)
@@ -438,6 +442,7 @@ public class GameScreen : Screen
                 manager,
                 this,
                 currentLevel,
+                ActiveLevelSet,
                 true,
                 Spawner.CurrentWave,
                 progress.CoinsRemaining
