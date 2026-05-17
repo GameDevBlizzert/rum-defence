@@ -6,6 +6,7 @@ namespace RumDefence;
 public class Level
 {
     public int Id { get; set; }
+    public string SaveKey { get; set; }
     public int[,] Map { get; set; }
     public Theme Theme;
     public List<Wave> Waves { get; set; }

@@ -180,7 +180,14 @@ public class LevelProgressSystem : IGameLoopSystem
 
         if (index + 1 < activeLevelSet.Count)
         {
-            activeLevelSet[index + 1].IsUnlocked = true;
+            var next = activeLevelSet[index + 1];
+            next.IsUnlocked = true;
+
+            if (next.SaveKey != null)
+            {
+                SaveManager.CurrentSave.UnlockedLevelKeys.Add(next.SaveKey);
+                SaveManager.Save();
+            }
         }
     }
 }

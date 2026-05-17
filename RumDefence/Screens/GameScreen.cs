@@ -49,6 +49,9 @@ public class GameScreen : Screen
     public List<Level> ActiveLevelSet { get; private set; }
     public Level CurrentLevel => currentLevel;
 
+    private TutorialOverlay tutorialOverlay;
+    private bool tutorialWaveNotified = false;
+
     public GameScreen(ScreenManager manager, Level level, List<Level> levelSet) : base(manager)
     {
         currentLevel = level;
@@ -143,9 +146,11 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Cannon.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None);
+                }
             }
         });
 
@@ -159,9 +164,11 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Musket.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None);
+                }
             }
         });
 
@@ -192,6 +199,9 @@ public class GameScreen : Screen
                 selectedTower = null;
             }
         });
+
+        if (currentLevel.Id == 1)
+            tutorialOverlay = new TutorialOverlay();
 
         AudioManager.Instance.PlayBackgroundMusic();
     }
@@ -279,6 +289,7 @@ public class GameScreen : Screen
         }
 
         hud.Draw(spriteBatch);
+        tutorialOverlay?.Draw(spriteBatch);
     }
 
     private void UpdateBuildSystem(GameTime gameTime)
@@ -308,12 +319,23 @@ public class GameScreen : Screen
             }
         }
 
+        if (tutorialOverlay != null)
+        {
+            if (!tutorialWaveNotified && Ships.Count > 0)
+            {
+                tutorialOverlay.NotifyWaveStarted();
+                tutorialWaveNotified = true;
+            }
+            tutorialOverlay.Update(gameTime);
+        }
+
         // Only process tile clicks if the mouse is NOT over the upgrade menu
         if (!hud.IsMouseOverUpgradeMenu(input.MousePositionScaled))
         {
             buildManager.Update(
                 input.MousePositionScaled,
-                input.IsLeftClick()
+                input.IsLeftClick(),
+                input.IsCtrlHeld()
             );
         }
         else
@@ -321,7 +343,8 @@ public class GameScreen : Screen
             // Still update the hovering logic so visuals don't freeze, but consume the click
             buildManager.Update(
                 input.MousePositionScaled,
-                false // forcefully tell buildManager it's NOT a click because the UI consumed it
+                false, // forcefully tell buildManager it's NOT a click because the UI consumed it
+                input.IsCtrlHeld()
             );
         }
     }
