@@ -142,9 +142,11 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Cannon.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None);
+                }
             }
         });
 
@@ -158,9 +160,11 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Musket.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None);
+                }
             }
         });
 
@@ -174,9 +178,11 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Fisher.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None);
+                }
             }
         });
 
@@ -302,7 +308,8 @@ public class GameScreen : Screen
         {
             buildManager.Update(
                 input.MousePositionScaled,
-                input.IsLeftClick()
+                input.IsLeftClick(),
+                input.IsCtrlHeld()
             );
         }
         else
@@ -310,7 +317,8 @@ public class GameScreen : Screen
             // Still update the hovering logic so visuals don't freeze, but consume the click
             buildManager.Update(
                 input.MousePositionScaled,
-                false // forcefully tell buildManager it's NOT a click because the UI consumed it
+                false, // forcefully tell buildManager it's NOT a click because the UI consumed it
+                input.IsCtrlHeld()
             );
         }
     }
