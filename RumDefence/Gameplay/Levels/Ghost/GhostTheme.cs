@@ -11,7 +11,7 @@ public class GhostTheme : BaseTheme, IWallTheme
     private string wallPrefix = "Art/Themes/Grass/Walls/";
     private string shipPrefix = "Art/Themes/Ghost/Ships/";//ghost ship
     private string enemyPrefix = "Art/Themes/Grass/Enemies/";
-    private string decorationPrefix = "Art/Themes/Grass/Decorations/"; 
+    private string decorationPrefix = "Art/Themes/Grass/Decorations/";
 
     private Dictionary<int, List<Texture2D>> tileMap;
     private Dictionary<string, Texture2D> shipMap;
