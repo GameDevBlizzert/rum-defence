@@ -28,7 +28,7 @@ public class ThemeSelectScreen : Screen
         stoneButton = new SimpleButton(buttonTexture, "Stone",
             new Vector2(800, 550), new Vector2(300, 100));
 
-        backButton = new SimpleButton(buttonTexture, font, "Back",
+        backButton = new SimpleButton(buttonTexture,  "Back",
             new Vector2(20, 20), new Vector2(200, 80));
 
 

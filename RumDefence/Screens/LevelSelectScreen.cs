@@ -36,7 +36,7 @@ public class LevelSelectScreen : Screen
 
         buttons.Clear();
 
-        backButton = new SimpleButton(buttonTexture, font, "Back",
+        backButton = new SimpleButton(buttonTexture, "Back",
             new Vector2(20, 20), new Vector2(200, 80));
 
         backButton.OnClick = () =>
