@@ -10,8 +10,6 @@ public class SettingsScreen : Screen
 
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
-    private Texture2D pixel;
-    private SpriteFont font;
 
     private SimpleButton backButton;
 
@@ -31,20 +29,22 @@ public class SettingsScreen : Screen
     public override void Load()
     {
         var content = RumGame.Instance.Content;
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
 
         panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
 
         int backX = PanelLeft + (PanelWidth - 200) / 2;
-        backButton = new SimpleButton(buttonTexture, font, "Back",
+        backButton = new SimpleButton(buttonTexture, "Back",
             new Vector2(backX, PanelTop + PanelHeight - 110),
             new Vector2(200, 70));
-        backButton.OnClick = () => manager.SetScreen(previous);
+        backButton.OnClick = () =>
+        {
+            SaveManager.CurrentSave.MusicVolume = AudioManager.Instance.MusicVolume;
+            SaveManager.CurrentSave.SfxVolume = AudioManager.Instance.SoundVolume;
+            SaveManager.Save();
+            manager.SetScreen(previous);
+        };
     }
 
     public override void Update(GameTime gameTime)
@@ -89,17 +89,17 @@ public class SettingsScreen : Screen
         else
             RumGame.Instance.GraphicsDevice.Clear(Color.DarkSlateGray);
 
-        spriteBatch.Draw(pixel,
+        spriteBatch.Draw(Primitives.Pixel,
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
         NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         var title = "Settings";
-        var titleSize = font.MeasureString(title);
-        spriteBatch.DrawString(font, title,
+        var titleSize = Primitives.Font.MeasureString(title);
+        spriteBatch.DrawString(Primitives.Font, title,
             new Vector2(PanelLeft + (PanelWidth - titleSize.X) / 2f, PanelTop + 40),
-            Color.Black);
+            Primitives.FontColor);
 
         DrawSlider(spriteBatch, "Music Volume", AudioManager.Instance.MusicVolume, GetMusicTrack());
         DrawSlider(spriteBatch, "Sound Volume", AudioManager.Instance.SoundVolume, GetSoundTrack());
@@ -109,22 +109,22 @@ public class SettingsScreen : Screen
 
     private void DrawSlider(SpriteBatch spriteBatch, string label, float value, Rectangle track)
     {
-        spriteBatch.DrawString(font, label, new Vector2(track.X, track.Y - 44), Color.Black);
+        spriteBatch.DrawString(Primitives.Font, label, new Vector2(track.X, track.Y - 44), Primitives.FontColor);
 
         var pct = $"{(int)(value * 100)}%";
-        var pctSize = font.MeasureString(pct);
-        spriteBatch.DrawString(font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Color.Black);
+        var pctSize = Primitives.Font.MeasureString(pct);
+        spriteBatch.DrawString(Primitives.Font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Primitives.FontColor);
 
-        spriteBatch.Draw(pixel, track, new Color(170, 170, 170));
+        spriteBatch.Draw(Primitives.Pixel, track, new Color(170, 170, 170));
 
         int filledWidth = (int)(track.Width * value);
         if (filledWidth > 0)
-            spriteBatch.Draw(pixel, new Rectangle(track.X, track.Y, filledWidth, track.Height), new Color(70, 130, 200));
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y, filledWidth, track.Height), new Color(70, 130, 200));
 
         int thumbSize = 28;
         int thumbX = track.X + filledWidth - thumbSize / 2;
         int thumbY = track.Y + track.Height / 2 - thumbSize / 2;
-        spriteBatch.Draw(pixel, new Rectangle(thumbX, thumbY, thumbSize, thumbSize), Color.White);
-        spriteBatch.Draw(pixel, new Rectangle(thumbX + 3, thumbY + 3, thumbSize - 6, thumbSize - 6), new Color(40, 100, 180));
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX, thumbY, thumbSize, thumbSize), Color.White);
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX + 3, thumbY + 3, thumbSize - 6, thumbSize - 6), new Color(40, 100, 180));
     }
 }

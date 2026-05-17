@@ -13,7 +13,6 @@ public class ThemeSelectScreen : Screen
     private SimpleButton backButton;
 
     private Texture2D buttonTexture;
-    private SpriteFont font;
 
     public ThemeSelectScreen(ScreenManager manager) : base(manager) { }
 
@@ -21,13 +20,12 @@ public class ThemeSelectScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
-        grassButton = new SimpleButton(buttonTexture, font, "Grass",
+        grassButton = new SimpleButton(buttonTexture, "Grass",
             new Vector2(800, 400), new Vector2(300, 100));
 
-        stoneButton = new SimpleButton(buttonTexture, font, "Stone",
+        stoneButton = new SimpleButton(buttonTexture, "Stone",
             new Vector2(800, 550), new Vector2(300, 100));
 
         backButton = new SimpleButton(buttonTexture, font, "Back",

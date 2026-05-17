@@ -7,7 +7,9 @@ namespace RumDefence;
 
 public class CannonTower : BaseTower
 {
-    private Action<Vector2, int> _onProjectileHit;
+    private const float AoeRadius = 80f;
+
+    private Action<Vector2, int, int, float> _onProjectileHit;
 
     private float _recoilTimer = float.MaxValue;
     private const float RecoilDuration = 0.35f;
@@ -34,14 +36,14 @@ public class CannonTower : BaseTower
         scale *= 1.4f;
     }
 
-    public void SetProjectileHitCallback(Action<Vector2, int> callback)
+    public void SetProjectileHitCallback(Action<Vector2, int, int, float> callback)
     {
         _onProjectileHit = callback;
     }
 
     protected override void FireProjectile(Troop target)
     {
-        Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, CurrentDamage, _onProjectileHit));
+        Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, CurrentDamage, AoeRadius));
         _recoilTimer = 0f;
     }
 
@@ -77,5 +79,7 @@ public class CannonTower : BaseTower
 
         foreach (var proj in Projectiles)
             proj.Draw(spriteBatch);
+
+        DrawLevelStripes(spriteBatch);
     }
 }

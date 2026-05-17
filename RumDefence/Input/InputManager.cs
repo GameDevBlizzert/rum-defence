@@ -26,4 +26,10 @@ public class InputManager
         return currentMouse.LeftButton == ButtonState.Pressed &&
                previousMouse.LeftButton == ButtonState.Released;
     }
+
+    public bool IsCtrlHeld()
+    {
+        var kb = Keyboard.GetState();
+        return kb.IsKeyDown(Keys.LeftControl) || kb.IsKeyDown(Keys.RightControl);
+    }
 }

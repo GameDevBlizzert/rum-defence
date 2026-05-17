@@ -6,26 +6,39 @@ namespace RumDefence;
 
 public class CannonProjectile : Projectile
 {
-    private Action<Vector2, int> _onHit;
+    private readonly float _aoeRadius;
+    private readonly Tuple<float, float> _aoeDamageRange = new(0.2f, 0.8f);
 
-    public CannonProjectile(Vector2 start, Troop target, float speed, int damage, Action<Vector2, int> onHit = null)
+    public CannonProjectile(Vector2 start, Troop target, float speed, int damage, float aoeRadius)
         : base(start, target, speed, damage)
     {
-        _onHit = onHit;
+        ApplyDirectDamage = false;
+        _aoeRadius = aoeRadius;
     }
 
     public override void Update(GameTime gameTime)
     {
         if (IsFinished) return;
 
-        // Call base update to handle movement and damage
         base.Update(gameTime);
 
-        // If we just finished (hit target), trigger explosion callback
-        if (IsFinished && _onHit != null)
+        if (IsFinished)
         {
-            int explosionIndex = new Random().Next(0, 3);
-            _onHit(Position, explosionIndex);
+            float distanceToCenter;
+            float fractionDamage;
+            float distanceFraction;
+            GameScreen.Instance.Explosions.Add(new Explosion(Position, _aoeRadius));
+            foreach (var troop in GameScreen.Instance.Troops)
+            {
+                if (troop.IsDead || troop.IsFinished) continue;
+                distanceToCenter = Vector2.Distance(Position, troop.Position);
+                if (distanceToCenter <= _aoeRadius)
+                {
+                    distanceFraction = distanceToCenter / _aoeRadius;
+                    fractionDamage = _aoeDamageRange.Item2 - (distanceFraction * (_aoeDamageRange.Item2 - _aoeDamageRange.Item1));
+                    troop.TakeDamage(Damage * fractionDamage);
+                }
+            }
         }
     }
 }

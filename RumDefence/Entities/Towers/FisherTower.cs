@@ -6,11 +6,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace RumDefence;
 
-public class MusketTower : BaseTower
+public class FisherTower : BaseTower
 {
     private readonly MusketAnimation _animation = new MusketAnimation();
 
-    public MusketTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
+    public FisherTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
         BaseRange = data.Range;
         RangeUpgradeFlat = 50f;
