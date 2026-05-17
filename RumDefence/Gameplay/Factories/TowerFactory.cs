@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
-public enum TowerType { Musket, Cannon }
+public enum TowerType { Musket, Cannon, Fisher }
 
 public record TowerData(
     TowerType Type,
     string TexturePath,
+    string Label,
     string OverlayTexturePath,
     float Range,
     float FireRate,
@@ -23,6 +24,7 @@ public static class TowerFactory
     public static readonly TowerData Musket = new(
         Type: TowerType.Musket,
         TexturePath: "Art/Towers/musket",
+        Label: "musket",
         OverlayTexturePath: null,
         Range: 250f,
         FireRate: 3f,
@@ -32,9 +34,23 @@ public static class TowerFactory
         Cost: 75
     );
 
+    public static readonly TowerData Fisher = new(
+        Type: TowerType.Musket,
+        TexturePath: "Art/Towers/fisher",
+        Label: "fisher",
+        OverlayTexturePath: null,
+        Range: 150f,
+        FireRate: 0.5f,
+        Damage: 0,
+        ProjectileSpeed: 200f,
+        AttackMode: AttackMode.First,
+        Cost: 35
+    );
+
     public static readonly TowerData Cannon = new(
         Type: TowerType.Cannon,
         TexturePath: "Art/Towers/cannon",
+        Label: "cannon",
         OverlayTexturePath: null,
         Range: 225f,
         FireRate: 0.7f,
@@ -47,26 +63,14 @@ public static class TowerFactory
     public static BaseTower Create(
         TowerData data,
         Vector2 location,
-        List<Troop> troops,
-        Action<Vector2, int> onProjectileHit = null)
+        List<Troop> troops)
     {
         return data.Type switch
         {
             TowerType.Musket => new MusketTower(data, location, troops),
-            TowerType.Cannon => CreateCannon(data, location, troops, onProjectileHit),
+            TowerType.Cannon => new CannonTower(data, location, troops),
+            TowerType.Fisher => new FisherTower(data, location, troops),
             _ => throw new ArgumentException($"Unknown tower type: {data.Type}")
         };
-    }
-
-    private static CannonTower CreateCannon(
-        TowerData data,
-        Vector2 location,
-        List<Troop> troops,
-        Action<Vector2, int> onProjectileHit)
-    {
-        var cannon = new CannonTower(data, location, troops);
-        if (onProjectileHit != null)
-            cannon.SetProjectileHitCallback(onProjectileHit);
-        return cannon;
     }
 }

@@ -29,9 +29,10 @@ public class GameScreen : Screen
     public ShipSpawner Spawner { get; private set; }
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
+    public static GameScreen Instance { get; private set; }
+    public List<Explosion> Explosions = new();
 
     private Dictionary<Point, BaseTower> placedTowers = new();
-    private List<Explosion> explosions = new();
 
     private BaseTower selectedTower = null;
 
@@ -43,8 +44,6 @@ public class GameScreen : Screen
 
     private Dictionary<Point, bool> occupiedTiles = new();
 
-    private Texture2D pixel;
-
     private GamePlaybackState playbackState = GamePlaybackState.Normal;
     public List<Level> ActiveLevelSet { get; private set; }
     public Level CurrentLevel => currentLevel;
@@ -53,13 +52,11 @@ public class GameScreen : Screen
     {
         currentLevel = level;
         ActiveLevelSet = levelSet;
+        Instance = this;
     }
 
     public override void Load()
     {
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
-
         grid = new Grid(currentLevel.Map);
 
         RumGame.Instance.CurrentGrid = grid;
@@ -140,8 +137,7 @@ public class GameScreen : Screen
                 placedTowers[p] = TowerFactory.Create(
                     TowerFactory.Cannon,
                     grid.GridToWorld(p),
-                    Troops,
-                    (pos, explosionIndex) => explosions.Add(new Explosion(pos, explosionIndex))
+                    Troops
                 );
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Cannon.Cost);
@@ -161,6 +157,22 @@ public class GameScreen : Screen
                 placedTowers[p] = TowerFactory.Create(TowerFactory.Musket, grid.GridToWorld(p), Troops);
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Musket.Cost);
+                AudioManager.Instance.PlayRandomImpact();
+                // Select newly placed tower
+                selectedTower = placedTowers[p];
+                buildManager.SetMode(BuildMode.None); // Auto select without button
+            }
+        });
+
+        buildManager.SetFisherTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
+                progress.CoinsRemaining >= TowerFactory.Fisher.Cost)
+            {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
+                placedTowers[p] = TowerFactory.Create(TowerFactory.Fisher, grid.GridToWorld(p), Troops);
+                occupiedTiles[p] = true;
+                progress.SpendCoins(TowerFactory.Fisher.Cost);
                 AudioManager.Instance.PlayRandomImpact();
                 // Select newly placed tower
                 selectedTower = placedTowers[p];
@@ -210,11 +222,11 @@ public class GameScreen : Screen
             tower.Update(gameTime);
 
         // Update and remove finished explosions
-        for (int i = explosions.Count - 1; i >= 0; i--)
+        for (int i = Explosions.Count - 1; i >= 0; i--)
         {
-            explosions[i].Update(gameTime);
-            if (explosions[i].IsFinished)
-                explosions.RemoveAt(i);
+            Explosions[i].Update(gameTime);
+            if (Explosions[i].IsFinished)
+                Explosions.RemoveAt(i);
         }
     }
 
@@ -244,7 +256,7 @@ public class GameScreen : Screen
         }
 
         // Draw explosions
-        foreach (var explosion in explosions)
+        foreach (var explosion in Explosions)
             explosion.Draw(spriteBatch);
 
         DrawWallHealthBars(spriteBatch);
@@ -480,8 +492,8 @@ public class GameScreen : Screen
             float pct = (float)wall.Health / Wall.MaxHealth;
             int healthWidth = (int)(barWidth * pct);
 
-            spriteBatch.Draw(pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
-            spriteBatch.Draw(pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
         }
     }
 
@@ -534,7 +546,7 @@ public class GameScreen : Screen
         Vector2 edge = end - start;
         float angle = (float)Math.Atan2(edge.Y, edge.X);
 
-        spriteBatch.Draw(pixel,
+        spriteBatch.Draw(Primitives.Pixel,
             new Rectangle((int)start.X, (int)start.Y, (int)edge.Length(), (int)thickness),
             null,
             color,

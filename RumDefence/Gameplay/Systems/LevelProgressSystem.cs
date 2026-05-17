@@ -13,7 +13,7 @@ public class LevelProgressSystem : IGameLoopSystem
     /// <summary>
     /// Indicates the number of lives the player has remaining.
     /// </summary>
-    public int LivesRemaining { get; private set; }
+    public float LivesRemaining { get; private set; }
 
     /// <summary>
     /// Indicates the total number of lives the player had at the start of the level.
@@ -56,7 +56,7 @@ public class LevelProgressSystem : IGameLoopSystem
     /// </summary>
     /// <param name="hits">Amount of hits to take, hits must be a positive integer</param>
     /// <exception cref="ArgumentException">Thrown when the amount of hits is negative</exception>
-    public void TakeHits(int hits)
+    public void TakeHits(float hits)
     {
         if (hits < 0)
         {

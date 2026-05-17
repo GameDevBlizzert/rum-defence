@@ -14,9 +14,11 @@ public class Explosion : Entity
 
     private static Texture2D[] _explosionTextures;
 
-    public Explosion(Vector2 position, int explosionIndex)
+    public Explosion(Vector2 position, float radius)
     {
-        _explosionIndex = Math.Clamp(explosionIndex, 0, 2); // 0, 1, or 2
+        _explosionIndex = new Random().Next(0, 3);
+
+        // _explosionIndex = Math.Clamp(explosionIndex, 0, 2); // 0, 1, or 2
         _lifeTime = _maxLifeTime;
         Position = position;
 
@@ -30,7 +32,8 @@ public class Explosion : Entity
 
         Texture = _explosionTextures[_explosionIndex];
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
-        Size = SizeSystem.Square(0.6f);
+        float diameter = radius * 2f;
+        Size = new Vector2(diameter, diameter);
         ApplySize();
 
         AudioManager.Instance.PlayRandomExplosion();

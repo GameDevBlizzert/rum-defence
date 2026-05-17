@@ -8,14 +8,9 @@ public class LevelButton : Button
 {
     private Level level;
 
-    private Texture2D pixel;
-    private SpriteFont font;
-
-    public LevelButton(Level level, Texture2D pixel, SpriteFont font)
+    public LevelButton(Level level)
     {
         this.level = level;
-        this.pixel = pixel;
-        this.font = font;
     }
 
     public override void Update(GameTime gameTime)
@@ -34,7 +29,7 @@ public class LevelButton : Button
             ? new Color(220, 220, 220)
             : new Color(180, 180, 180);
 
-        spriteBatch.Draw(pixel, bounds, borderColor);
+        spriteBatch.Draw(Primitives.Pixel, bounds, borderColor);
 
         Rectangle panel = new Rectangle(
             bounds.X + 4,
@@ -43,7 +38,7 @@ public class LevelButton : Button
             bounds.Height - 8
         );
 
-        spriteBatch.Draw(pixel, panel, panelColor);
+        spriteBatch.Draw(Primitives.Pixel, panel, panelColor);
 
         int mapWidth = 340;
         int mapHeight = 200;
@@ -58,15 +53,15 @@ public class LevelButton : Button
         MiniMapRenderer.Draw(spriteBatch, level, mapRect, level.IsUnlocked);
 
         spriteBatch.DrawString(
-            font,
+            Primitives.Font,
             $"LEVEL {level.Id}",
             new Vector2(bounds.X + 10, bounds.Y + 5),
-            Color.White
+            Primitives.FontColor
         );
 
         if (!level.IsUnlocked)
         {
-            spriteBatch.Draw(pixel, bounds, Color.Black * 0.5f);
+            spriteBatch.Draw(Primitives.Pixel, bounds, Color.Black * 0.5f);
         }
     }
 
