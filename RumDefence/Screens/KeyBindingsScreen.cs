@@ -15,14 +15,14 @@ public class KeyBindingsScreen : Screen
     private Rectangle panelRect;
     private MouseState prevMouse;
 
-    private const int PanelLeft   = 560;
-    private const int PanelTop    = 190;
-    private const int PanelWidth  = 800;
+    private const int PanelLeft = 560;
+    private const int PanelTop = 190;
+    private const int PanelWidth = 800;
     private const int PanelHeight = 620;
 
-    private const int RowHeight   = 78;
-    private const int RowsStartY  = PanelTop + 110;
-    private const int RowMargin   = 30;
+    private const int RowHeight = 78;
+    private const int RowsStartY = PanelTop + 110;
+    private const int RowMargin = 30;
 
     private static readonly (string Id, string Name)[] Actions =
     {

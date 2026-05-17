@@ -17,9 +17,9 @@ public class SettingsScreen : Screen
     private Rectangle panelRect;
     private MouseState prevMouse;
 
-    private const int PanelLeft   = 560;
-    private const int PanelTop    = 190;
-    private const int PanelWidth  = 800;
+    private const int PanelLeft = 560;
+    private const int PanelTop = 190;
+    private const int PanelWidth = 800;
     private const int PanelHeight = 620;
 
     public SettingsScreen(ScreenManager manager, Screen previous) : base(manager)

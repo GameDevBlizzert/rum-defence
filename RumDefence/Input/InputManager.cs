@@ -10,10 +10,10 @@ public class InputManager
 {
     private static readonly Dictionary<string, Keys> Defaults = new()
     {
-        ["Pause"]      = Keys.Escape,
+        ["Pause"] = Keys.Escape,
         ["MultiPlace"] = Keys.LeftControl,
-        ["LevelNext"]  = Keys.D,
-        ["LevelPrev"]  = Keys.A,
+        ["LevelNext"] = Keys.D,
+        ["LevelPrev"] = Keys.A,
     };
 
     public static IReadOnlyDictionary<string, Keys> DefaultBindings => Defaults;
@@ -94,25 +94,25 @@ public class InputManager
 
     public static string GetKeyDisplayName(Keys key) => key switch
     {
-        Keys.LeftControl  => "L.Ctrl",
+        Keys.LeftControl => "L.Ctrl",
         Keys.RightControl => "R.Ctrl",
-        Keys.LeftShift    => "L.Shift",
-        Keys.RightShift   => "R.Shift",
-        Keys.LeftAlt      => "L.Alt",
-        Keys.RightAlt     => "R.Alt",
-        Keys.Escape       => "Escape",
-        Keys.Space        => "Space",
-        Keys.Enter        => "Enter",
-        Keys.Back         => "Backspace",
-        Keys.Delete       => "Delete",
-        Keys.Up           => "Up",
-        Keys.Down         => "Down",
-        Keys.Left         => "Left",
-        Keys.Right        => "Right",
-        Keys.Tab          => "Tab",
-        Keys.OemComma     => ",",
-        Keys.OemPeriod    => ".",
+        Keys.LeftShift => "L.Shift",
+        Keys.RightShift => "R.Shift",
+        Keys.LeftAlt => "L.Alt",
+        Keys.RightAlt => "R.Alt",
+        Keys.Escape => "Escape",
+        Keys.Space => "Space",
+        Keys.Enter => "Enter",
+        Keys.Back => "Backspace",
+        Keys.Delete => "Delete",
+        Keys.Up => "Up",
+        Keys.Down => "Down",
+        Keys.Left => "Left",
+        Keys.Right => "Right",
+        Keys.Tab => "Tab",
+        Keys.OemComma => ",",
+        Keys.OemPeriod => ".",
         Keys.OemSemicolon => ";",
-        _                 => key.ToString()
+        _ => key.ToString()
     };
 }
