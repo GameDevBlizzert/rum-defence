@@ -47,12 +47,10 @@ public class LevelSelectScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
-        var keyboard = Keyboard.GetState();
-
-        if (keyboard.IsKeyDown(Keys.D))
+        if (InputManager.Instance.IsActionJustPressed("LevelNext"))
             currentPage = MathHelper.Clamp(currentPage + 1, 0, (levels.Count - 1) / levelsPerPage);
 
-        if (keyboard.IsKeyDown(Keys.A))
+        if (InputManager.Instance.IsActionJustPressed("LevelPrev"))
             currentPage = MathHelper.Clamp(currentPage - 1, 0, (levels.Count - 1) / levelsPerPage);
 
         int startIndex = currentPage * levelsPerPage;
