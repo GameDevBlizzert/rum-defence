@@ -43,8 +43,6 @@ public class GameScreen : Screen
 
     private Dictionary<Point, bool> occupiedTiles = new();
 
-    private Texture2D pixel;
-
     private GamePlaybackState playbackState = GamePlaybackState.Normal;
 
     public GameScreen(ScreenManager manager, Level level) : base(manager)

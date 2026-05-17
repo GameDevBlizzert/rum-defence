@@ -28,7 +28,7 @@ public class ThemeSelectScreen : Screen
         stoneButton = new SimpleButton(buttonTexture, "Stone",
             new Vector2(800, 550), new Vector2(300, 100));
 
-        devButton = new SimpleButton(buttonTexture, font, "Dev",
+        devButton = new SimpleButton(buttonTexture, "Dev",
             new Vector2(800, 700), new Vector2(300, 100));
 
         grassButton.OnClick = () =>
