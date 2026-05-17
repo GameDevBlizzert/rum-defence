@@ -24,8 +24,11 @@ public class BuildManager
         this.targetTile = targetTile;
     }
 
-    public void Update(Vector2 mousePosition, bool isClick)
+    public bool CtrlHeld { get; private set; }
+
+    public void Update(Vector2 mousePosition, bool isClick, bool ctrlHeld = false)
     {
+        CtrlHeld = ctrlHeld;
         hoveredTile = grid.WorldToGrid(mousePosition);
 
         if (hoveredTile == null) return;
