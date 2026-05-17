@@ -48,6 +48,9 @@ public class GameScreen : Screen
     public List<Level> ActiveLevelSet { get; private set; }
     public Level CurrentLevel => currentLevel;
 
+    private TutorialOverlay tutorialOverlay;
+    private bool tutorialWaveNotified = false;
+
     public GameScreen(ScreenManager manager, Level level, List<Level> levelSet) : base(manager)
     {
         currentLevel = level;
@@ -192,6 +195,9 @@ public class GameScreen : Screen
             }
         });
 
+        if (currentLevel.Id == 1)
+            tutorialOverlay = new TutorialOverlay();
+
         AudioManager.Instance.PlayBackgroundMusic();
     }
 
@@ -268,6 +274,7 @@ public class GameScreen : Screen
         }
 
         hud.Draw(spriteBatch);
+        tutorialOverlay?.Draw(spriteBatch);
     }
 
     private void UpdateBuildSystem(GameTime gameTime)
@@ -295,6 +302,16 @@ public class GameScreen : Screen
                 selectedTower.ApplyUpgrade();
                 AudioManager.Instance.PlayRandomImpact();
             }
+        }
+
+        if (tutorialOverlay != null)
+        {
+            if (!tutorialWaveNotified && Ships.Count > 0)
+            {
+                tutorialOverlay.NotifyWaveStarted();
+                tutorialWaveNotified = true;
+            }
+            tutorialOverlay.Update(gameTime);
         }
 
         // Only process tile clicks if the mouse is NOT over the upgrade menu
