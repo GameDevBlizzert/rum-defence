@@ -43,7 +43,7 @@ public class CannonTower : BaseTower
 
     protected override void FireProjectile(Troop target)
     {
-        Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, CurrentDamage, AoeRadius, _onProjectileHit));
+        Projectiles.Add(new CannonProjectile(Position, target, ProjectileSpeed, CurrentDamage, AoeRadius));
         _recoilTimer = 0f;
     }
 

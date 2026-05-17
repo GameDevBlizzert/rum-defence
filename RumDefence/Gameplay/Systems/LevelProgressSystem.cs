@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using RumDefence.Exceptions;
 using RumDefence.Gameplay.Levels.Dev;
 using RumDefence.Gameplay.Levels.Ghost;
+using RumDefence.Levels.Ghost;
 using RumDefence.Levels.Grass;
+using System;
+using System.Collections.Generic;
 
 namespace RumDefence;
 
@@ -13,7 +14,7 @@ public class LevelProgressSystem : IGameLoopSystem
     /// <summary>
     /// Indicates the number of lives the player has remaining.
     /// </summary>
-    public int LivesRemaining { get; private set; }
+    public float LivesRemaining { get; private set; }
 
     /// <summary>
     /// Indicates the total number of lives the player had at the start of the level.
@@ -35,6 +36,8 @@ public class LevelProgressSystem : IGameLoopSystem
     /// </summary>
     private bool hasUnlockedNext = false;
 
+    private List<Level> activeLevelSet;
+    private Level currentLevel;
     /// <summary>
     /// Contains all level sets (themes) for progression handling.
     /// </summary>
@@ -47,11 +50,14 @@ public class LevelProgressSystem : IGameLoopSystem
 
     /// <param name="initialLives">The initial amount of lives at the start of the level</param>
     /// <param name="initialCoins">The initial amount of coins at the start of the level</param>
-    public LevelProgressSystem(int initialLives, int initialCoins)
+    public LevelProgressSystem(int initialLives, int initialCoins, List<Level> levelSet, Level level)
     {
         LivesRemaining = initialLives;
         LivesTotal = initialLives;
         CoinsRemaining = initialCoins;
+
+        activeLevelSet = levelSet;
+        currentLevel = level;
     }
 
     /// <summary>
@@ -60,7 +66,7 @@ public class LevelProgressSystem : IGameLoopSystem
     /// </summary>
     /// <param name="hits">Amount of hits to take, hits must be a positive integer</param>
     /// <exception cref="ArgumentException">Thrown when the amount of hits is negative</exception>
-    public void TakeHits(int hits)
+    public void TakeHits(float hits)
     {
         if (hits < 0)
         {
@@ -149,7 +155,7 @@ public class LevelProgressSystem : IGameLoopSystem
         // - Spawner finished (no more enemies spawning)
         // - No ships left in the game
         // - No troops left in the game
-        if (gameScreen.Spawner.IsFinished &&
+        if (gameScreen.Spawner.IsAllWavesComplete &&
             gameScreen.Ships.Count == 0 &&
             gameScreen.Troops.Count == 0)
         {
@@ -160,7 +166,7 @@ public class LevelProgressSystem : IGameLoopSystem
                 // Ensure unlock happens only once
                 if (!hasUnlockedNext)
                 {
-                    UnlockNextLevel(RumGame.Instance.CurrentLevel);
+                    UnlockNextLevel();
                     hasUnlockedNext = true;
                 }
             }
@@ -171,27 +177,27 @@ public class LevelProgressSystem : IGameLoopSystem
     /// Unlocks the next level within the same theme.
     /// Will only unlock if this is the highest unlocked level (prevents replay abuse).
     /// </summary>
-    private void UnlockNextLevel(Level currentLevel)
+    private void UnlockNextLevel()
     {
-        foreach (var set in allLevelSets)
+        int index = activeLevelSet.FindIndex(l => l.Id == currentLevel.Id);
+        if (index == -1) return;
+
+        for (int i = index + 1; i < activeLevelSet.Count; i++)
         {
-            int index = set.IndexOf(currentLevel);
-            if (index == -1) continue;
+            if (activeLevelSet[i].IsUnlocked)
+                return;
+        }
 
-            // Check if a higher level is already unlocked
-            for (int i = index + 1; i < set.Count; i++)
+        if (index + 1 < activeLevelSet.Count)
+        {
+            var next = activeLevelSet[index + 1];
+            next.IsUnlocked = true;
+
+            if (next.SaveKey != null)
             {
-                if (set[i].IsUnlocked)
-                    return;
+                SaveManager.CurrentSave.UnlockedLevelKeys.Add(next.SaveKey);
+                SaveManager.Save();
             }
-
-            // Unlock next level
-            if (index + 1 < set.Count)
-            {
-                set[index + 1].IsUnlocked = true;
-            }
-
-            return;
         }
     }
 }

@@ -12,6 +12,7 @@ public class BuildMenu
     private IconButton wallButton;
     private IconButton cannonButton;
     private IconButton musketButton;
+    private IconButton fisherButton;
     private IconButton removeButton;
     private IconButton speedButton;
     private IconButton pauseMenuButton;
@@ -52,6 +53,7 @@ public class BuildMenu
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
         var cannonIcon = content.Load<Texture2D>("Art/Towers/cannon-icon");
         var musketIcon = content.Load<Texture2D>("Art/Towers/musket-icon");
+        var FisherIcon = content.Load<Texture2D>("Art/Towers/fisher-icon");
         var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
 
         panelX = 20;
@@ -90,6 +92,12 @@ public class BuildMenu
         musketButton.BackgroundSourceRect = buttonSourceRect;
         musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
         musketButton.CostLabel = TowerFactory.Musket.Cost.ToString();
+        currentY += ButtonHeight + spacing;
+
+        fisherButton = new IconButton(buttonTexture, FisherIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        fisherButton.BackgroundSourceRect = buttonSourceRect;
+        fisherButton.OnClick = () => buildManager.SetMode(BuildMode.FisherTower);
+        fisherButton.CostLabel = TowerFactory.Fisher.Cost.ToString();
         currentY += ButtonHeight + spacing;
 
         wallButton = new IconButton(buttonTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
@@ -222,6 +230,7 @@ public class BuildMenu
         var mode = buildManager.GetMode();
         cannonButton.SetSelected(mode == BuildMode.CannonTower);
         musketButton.SetSelected(mode == BuildMode.MusketTower);
+        fisherButton.SetSelected(mode == BuildMode.FisherTower);
         wallButton.SetSelected(mode == BuildMode.Wall);
         removeButton.SetSelected(mode == BuildMode.Remove);
 
@@ -229,6 +238,7 @@ public class BuildMenu
 
         cannonButton.IsDisabled = isPaused || progress.CoinsRemaining < TowerFactory.Cannon.Cost;
         musketButton.IsDisabled = isPaused || progress.CoinsRemaining < TowerFactory.Musket.Cost;
+        fisherButton.IsDisabled = isPaused || progress.CoinsRemaining < TowerFactory.Fisher.Cost;
         wallButton.IsDisabled = isPaused || progress.CoinsRemaining < BuildManager.WallCost;
         removeButton.IsDisabled = isPaused;
 
@@ -241,6 +251,7 @@ public class BuildMenu
 
         cannonButton.Update(gameTime);
         musketButton.Update(gameTime);
+        fisherButton.Update(gameTime);
         wallButton.Update(gameTime);
         removeButton.Update(gameTime);
         speedButton.Update(gameTime);
@@ -265,6 +276,7 @@ public class BuildMenu
 
         cannonButton.Draw(spriteBatch);
         musketButton.Draw(spriteBatch);
+        fisherButton.Draw(spriteBatch);
         wallButton.Draw(spriteBatch);
         removeButton.Draw(spriteBatch);
         speedButton.Draw(spriteBatch);

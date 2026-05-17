@@ -29,9 +29,10 @@ public class GameScreen : Screen
     public ShipSpawner Spawner { get; private set; }
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
+    public static GameScreen Instance { get; private set; }
+    public List<Explosion> Explosions = new();
 
     private Dictionary<Point, BaseTower> placedTowers = new();
-    private List<Explosion> explosions = new();
 
     private BaseTower selectedTower = null;
 
@@ -44,10 +45,17 @@ public class GameScreen : Screen
     private Dictionary<Point, bool> occupiedTiles = new();
 
     private GamePlaybackState playbackState = GamePlaybackState.Normal;
+    public List<Level> ActiveLevelSet { get; private set; }
+    public Level CurrentLevel => currentLevel;
 
-    public GameScreen(ScreenManager manager, Level level) : base(manager)
+    private TutorialOverlay tutorialOverlay;
+    private bool tutorialWaveNotified = false;
+
+    public GameScreen(ScreenManager manager, Level level, List<Level> levelSet) : base(manager)
     {
         currentLevel = level;
+        ActiveLevelSet = levelSet;
+        Instance = this;
     }
 
     public override void Load()
@@ -64,7 +72,7 @@ public class GameScreen : Screen
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
 
-        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance);
+        progress = new(currentLevel.StartingLives, currentLevel.StartingCoinBalance, ActiveLevelSet, currentLevel);
         currentLevel.RumBarrel.OnDamageTaken = amount => progress.TakeHits(amount);
 
         Spawner = new ShipSpawner(currentLevel, grid);
@@ -132,24 +140,16 @@ public class GameScreen : Screen
                 placedTowers[p] = TowerFactory.Create(
                     TowerFactory.Cannon,
                     grid.GridToWorld(p),
-                    Troops,
-                    (pos, explosionIndex, damage, radius) =>
-                    {
-                        explosions.Add(new Explosion(pos, explosionIndex, radius));
-                        foreach (var troop in Troops)
-                        {
-                            if (troop.IsDead || troop.IsFinished) continue;
-                            if (Vector2.Distance(pos, troop.Position) <= radius)
-                                troop.TakeDamage(damage);
-                        }
-                    }
+                    Troops
                 );
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Cannon.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None);
+                }
             }
         });
 
@@ -163,9 +163,29 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Musket.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None);
+                }
+            }
+        });
+
+        buildManager.SetFisherTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
+                progress.CoinsRemaining >= TowerFactory.Fisher.Cost)
+            {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
+                placedTowers[p] = TowerFactory.Create(TowerFactory.Fisher, grid.GridToWorld(p), Troops);
+                occupiedTiles[p] = true;
+                progress.SpendCoins(TowerFactory.Fisher.Cost);
+                AudioManager.Instance.PlayRandomImpact();
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None);
+                }
             }
         });
 
@@ -180,6 +200,9 @@ public class GameScreen : Screen
                 selectedTower = null;
             }
         });
+
+        if (currentLevel.Id == 1)
+            tutorialOverlay = new TutorialOverlay();
 
         AudioManager.Instance.PlayBackgroundMusic();
     }
@@ -211,11 +234,11 @@ public class GameScreen : Screen
             tower.Update(gameTime);
 
         // Update and remove finished explosions
-        for (int i = explosions.Count - 1; i >= 0; i--)
+        for (int i = Explosions.Count - 1; i >= 0; i--)
         {
-            explosions[i].Update(gameTime);
-            if (explosions[i].IsFinished)
-                explosions.RemoveAt(i);
+            Explosions[i].Update(gameTime);
+            if (Explosions[i].IsFinished)
+                Explosions.RemoveAt(i);
         }
     }
 
@@ -245,7 +268,7 @@ public class GameScreen : Screen
         }
 
         // Draw explosions
-        foreach (var explosion in explosions)
+        foreach (var explosion in Explosions)
             explosion.Draw(spriteBatch);
 
         DrawWallHealthBars(spriteBatch);
@@ -257,6 +280,7 @@ public class GameScreen : Screen
         }
 
         hud.Draw(spriteBatch);
+        tutorialOverlay?.Draw(spriteBatch);
     }
 
     private void UpdateBuildSystem(GameTime gameTime)
@@ -286,12 +310,23 @@ public class GameScreen : Screen
             }
         }
 
+        if (tutorialOverlay != null)
+        {
+            if (!tutorialWaveNotified && Ships.Count > 0)
+            {
+                tutorialOverlay.NotifyWaveStarted();
+                tutorialWaveNotified = true;
+            }
+            tutorialOverlay.Update(gameTime);
+        }
+
         // Only process tile clicks if the mouse is NOT over the upgrade menu
         if (!hud.IsMouseOverUpgradeMenu(input.MousePositionScaled))
         {
             buildManager.Update(
                 input.MousePositionScaled,
-                input.IsLeftClick()
+                input.IsLeftClick(),
+                input.IsCtrlHeld()
             );
         }
         else
@@ -299,7 +334,8 @@ public class GameScreen : Screen
             // Still update the hovering logic so visuals don't freeze, but consume the click
             buildManager.Update(
                 input.MousePositionScaled,
-                false // forcefully tell buildManager it's NOT a click because the UI consumed it
+                false, // forcefully tell buildManager it's NOT a click because the UI consumed it
+                input.IsCtrlHeld()
             );
         }
     }
@@ -411,6 +447,7 @@ public class GameScreen : Screen
 
     private void CheckLevelCompletion(GameTime gameTime)
     {
+        progress.Update(gameTime, this);
         // Lose condition
         if (progress.IsLost())
         {
@@ -419,6 +456,7 @@ public class GameScreen : Screen
                 manager,
                 this,
                 currentLevel,
+                ActiveLevelSet,
                 false,
                 Spawner.CurrentWave,
                 progress.CoinsRemaining
@@ -426,7 +464,6 @@ public class GameScreen : Screen
             return;
         }
 
-        progress.Update(gameTime, this);
 
         // Win condition
         if (!levelCompleted && Spawner.IsAllWavesComplete && Ships.Count == 0 && Troops.Count == 0)
@@ -442,6 +479,7 @@ public class GameScreen : Screen
                 manager,
                 this,
                 currentLevel,
+                ActiveLevelSet,
                 true,
                 Spawner.CurrentWave,
                 progress.CoinsRemaining

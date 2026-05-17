@@ -31,7 +31,7 @@ public static class Level3Data
             Waves,
             //unlocked,
             startingCoinBalance: 200,
-            unlocked: true
+            unlocked: false
 
                 );
     }

@@ -8,7 +8,7 @@ public class RumBarrel : EntityWithHealth, ICollidable
 {
     private readonly int _size;
 
-    public Action<int> OnDamageTaken { get; set; }
+    public Action<float> OnDamageTaken { get; set; }
 
     public RumBarrel(Vector2 position, int size, int initialHealth = 100) : base(size, size, initialHealth)
     {
@@ -19,7 +19,7 @@ public class RumBarrel : EntityWithHealth, ICollidable
         ApplySize();
     }
 
-    public override void TakeDamage(int amount)
+    public override void TakeDamage(float amount)
     {
         base.TakeDamage(amount);
         OnDamageTaken?.Invoke(amount);

@@ -10,7 +10,7 @@ public class Projectile : Entity
     private Vector2 _lastKnownPosition;
 
     public Troop Target { get; }
-    public int Damage { get; }
+    public float Damage { get; }
     public bool IsFinished { get; private set; }
 
     protected bool ApplyDirectDamage = true;

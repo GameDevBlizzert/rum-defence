@@ -10,7 +10,7 @@ public abstract class EntityWithHealth : Entity
     /// <summary>
     /// The health of the entity. When it reaches 0 or below, the entity is considered dead.
     /// </summary>
-    public int Health { get; protected set; }
+    public float Health { get; protected set; }
 
     /// <summary>
     /// The initial health of the entity when it is created.
@@ -52,7 +52,7 @@ public abstract class EntityWithHealth : Entity
     /// </summary>
     /// <param name="amount">The amount of damage the entity is taking, must be a positive integer</param>
     /// <exception cref="ArgumentException">Thrown if the damage amount is negative</exception>
-    public virtual void TakeDamage(int amount)
+    public virtual void TakeDamage(float amount)
     {
         if (amount < 0)
         {

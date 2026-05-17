@@ -14,9 +14,11 @@ public class Explosion : Entity
 
     private static Texture2D[] _explosionTextures;
 
-    public Explosion(Vector2 position, int explosionIndex, float radius)
+    public Explosion(Vector2 position, float radius)
     {
-        _explosionIndex = Math.Clamp(explosionIndex, 0, 2); // 0, 1, or 2
+        _explosionIndex = new Random().Next(0, 3);
+
+        // _explosionIndex = Math.Clamp(explosionIndex, 0, 2); // 0, 1, or 2
         _lifeTime = _maxLifeTime;
         Position = position;
 

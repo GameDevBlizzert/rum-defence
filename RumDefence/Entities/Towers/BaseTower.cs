@@ -14,6 +14,7 @@ public class BaseTower : Entity
     public int CurrentLevel { get; protected set; } = 0;
     public int MaxLevel { get; protected set; } = 3;
 
+    public string Label = "";
     protected float BaseRange = 700f;
     protected float RangeUpgradeFlat = 50f;
     protected float RangeUpgradePercent = 0.1f;
@@ -64,6 +65,7 @@ public class BaseTower : Entity
         BaseDamage = data.Damage;
         ProjectileSpeed = data.ProjectileSpeed;
         AttackMode = data.AttackMode;
+        Label = data.Label;
 
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.TexturePath);
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
@@ -114,9 +116,9 @@ public class BaseTower : Entity
         Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, CurrentDamage));
     }
 
-    private int GetPendingDamage(Troop troop)
+    private float GetPendingDamage(Troop troop)
     {
-        int pending = 0;
+        float pending = 0;
         foreach (var proj in Projectiles)
             if (proj.Target == troop)
                 pending += proj.Damage;
@@ -168,12 +170,11 @@ public class BaseTower : Entity
     public virtual void DrawLevelStripes(SpriteBatch spriteBatch)
     {
         var gapBetweenStripes = new Vector2(6, 0);
-        var rect = new Rectangle(0, 0, 8, 20);
+        var rect = new Rectangle(0, 0, 6, 6);
         var levelStripeOrigin = rect.Center.ToVector2();
         Color color;
-        Vector2 towerOrigin = new(Size.X / 2, Size.Y / 2);
-        Vector2 levelStripeLength = (gapBetweenStripes * MaxLevel) + rect.Size.ToVector2() * (MaxLevel + 1) * new Vector2(1, 0);
-        var levelStripePos = Position + towerOrigin - levelStripeLength;
+        Vector2 levelStripeSize = (gapBetweenStripes * MaxLevel) + rect.Size.ToVector2() * (MaxLevel + 1) * new Vector2(1, 0);
+        var levelStripePos = Position - levelStripeSize / 2 - new Vector2(0, Size.Y / 2);
         for (int i = 0; i <= MaxLevel; i++)
         {
             if (i <= CurrentLevel)

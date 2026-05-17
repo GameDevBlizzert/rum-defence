@@ -23,15 +23,15 @@ public static class Level1Data
         RotationOffsetDegrees = -90f,
     };
 
-    public static Level Create(Theme theme)
+    public static Level Create(Theme theme, bool unlocked = false)
     {
         return new Level(
             1,
             MapData,
             theme,
             Waves,
-            startingCoinBalance: 200,
-            unlocked: true
+            unlocked,
+            startingCoinBalance: 200
         );
     }
 

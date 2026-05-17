@@ -38,7 +38,13 @@ public class SettingsScreen : Screen
         backButton = new SimpleButton(buttonTexture, "Back",
             new Vector2(backX, PanelTop + PanelHeight - 110),
             new Vector2(200, 70));
-        backButton.OnClick = () => manager.SetScreen(previous);
+        backButton.OnClick = () =>
+        {
+            SaveManager.CurrentSave.MusicVolume = AudioManager.Instance.MusicVolume;
+            SaveManager.CurrentSave.SfxVolume = AudioManager.Instance.SoundVolume;
+            SaveManager.Save();
+            manager.SetScreen(previous);
+        };
     }
 
     public override void Update(GameTime gameTime)

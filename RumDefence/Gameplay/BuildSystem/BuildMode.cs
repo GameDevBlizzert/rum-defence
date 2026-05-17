@@ -4,5 +4,6 @@
     Wall,
     MusketTower,
     CannonTower,
+    FisherTower,
     Remove,
 }
