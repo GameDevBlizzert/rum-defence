@@ -28,6 +28,14 @@ public static class GrassLevels
                     Level3Data.Create(theme),
                     Level4Data.Create(theme)
                 };
+
+                string[] keys = { "grass_1", "grass_2", "grass_3", "grass_4" };
+                for (int i = 0; i < _all.Count; i++)
+                {
+                    _all[i].SaveKey = keys[i];
+                    if (SaveManager.CurrentSave.UnlockedLevelKeys.Contains(keys[i]))
+                        _all[i].IsUnlocked = true;
+                }
             }
             return _all;
         }

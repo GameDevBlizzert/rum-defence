@@ -22,12 +22,20 @@ public static class GhostLevels
             if (_all == null)
             {
                 _all = new List<Level>()
-            {
-                Level1Data.Create(theme, true),
-                Level2Data.Create(theme),
-                Level3Data.Create(theme),
-                Level4Data.Create(theme)
-            };
+                {
+                    Level1Data.Create(theme, true),
+                    Level2Data.Create(theme),
+                    Level3Data.Create(theme),
+                    Level4Data.Create(theme)
+                };
+
+                string[] keys = { "ghost_1", "ghost_2", "ghost_3", "ghost_4" };
+                for (int i = 0; i < _all.Count; i++)
+                {
+                    _all[i].SaveKey = keys[i];
+                    if (SaveManager.CurrentSave.UnlockedLevelKeys.Contains(keys[i]))
+                        _all[i].IsUnlocked = true;
+                }
             }
             return _all;
         }
