@@ -184,7 +184,7 @@ public class Troop : EntityWithHealth, ICollidable
         base.Draw(spriteBatch);
 
         bool showPathfindingDebug = bool.Parse(
-            Environment.GetEnvironmentVariable("SHOW_PATHFINDING") ?? "true"
+            Environment.GetEnvironmentVariable("SHOW_PATHFINDING") ?? "false"
         );
 
         if (showPathfindingDebug)
