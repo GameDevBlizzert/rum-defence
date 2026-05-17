@@ -36,6 +36,11 @@ public class FisherTower : BaseTower
         origin = new Vector2(64f, 64f);
     }
 
+    protected override void FireProjectile(Troop target)
+    {
+        Projectiles.Add(new NetProjectile(Position, target, ProjectileSpeed, aoeRadius: 80f));
+    }
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         Vector2 dir = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation));

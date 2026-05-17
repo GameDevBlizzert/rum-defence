@@ -23,6 +23,7 @@ public class Troop : EntityWithHealth, ICollidable
     private float _attackTimer = 0f;
 
     private List<ITroopAbility> abilities = new();
+    private readonly List<IModifier> _modifiers = new();
 
     private TroopDyingAnimation _dyingAnimation = new();
 
@@ -71,6 +72,19 @@ public class Troop : EntityWithHealth, ICollidable
         abilities.Add(ability);
     }
 
+    public void ApplyModifier(IModifier buff)
+    {
+        for (int i = 0; i < _modifiers.Count; i++)
+        {
+            if (_modifiers[i].GetType() == buff.GetType())
+            {
+                _modifiers[i] = buff;
+                return;
+            }
+        }
+        _modifiers.Add(buff);
+    }
+
     public override void Update(GameTime gameTime)
     {
         if (IsDead)
@@ -88,6 +102,13 @@ public class Troop : EntityWithHealth, ICollidable
         foreach (var ability in abilities)
         {
             ability.Update(this, gameTime);
+        }
+
+        for (int i = _modifiers.Count - 1; i >= 0; i--)
+        {
+            _modifiers[i].Update(this, gameTime);
+            if (_modifiers[i].IsExpired)
+                _modifiers.RemoveAt(i);
         }
 
         if (IsNearBarrel())
