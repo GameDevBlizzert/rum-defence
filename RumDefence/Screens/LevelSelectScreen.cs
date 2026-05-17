@@ -46,7 +46,7 @@ public class LevelSelectScreen : Screen
 
         for (int i = 0; i < levels.Count; i++)
         {
-            var btn = new LevelButton(levels[i], pixel, font);
+            var btn = new LevelButton(levels[i]);
 
             int index = i;
 

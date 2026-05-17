@@ -6,17 +6,17 @@ namespace RumDefence;
 public class SimpleButton : Button
 {
     private Texture2D texture;
-    private SpriteFont font;
     private string text;
+    public string Text { get => text; set => text = value; }
 
     public bool IsDisabled { get; set; }
 
     public Color BaseTint { get; set; } = Color.White;
+    public float TextScale { get; set; } = 1f;
 
-    public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position, Vector2 size)
+    public SimpleButton(Texture2D texture, string text, Vector2 position, Vector2 size)
     {
         this.texture = texture;
-        this.font = font;
         this.text = text;
 
         SetBounds(new Rectangle(
@@ -27,10 +27,9 @@ public class SimpleButton : Button
         ));
     }
 
-    public SimpleButton(Texture2D texture, SpriteFont font, string text, Vector2 position)
+    public SimpleButton(Texture2D texture, string text, Vector2 position)
     {
         this.texture = texture;
-        this.font = font;
         this.text = text;
 
         SetBounds(new Rectangle(
@@ -58,15 +57,15 @@ public class SimpleButton : Button
 
         NineSlice.Draw(spriteBatch, texture, bounds, null, 10, color);
 
-        var textSize = font.MeasureString(text);
+        var textSize = Primitives.Font.MeasureString(text) * TextScale;
 
         var textPos = new Vector2(
             bounds.X + (bounds.Width - textSize.X) / 2,
             bounds.Y + (bounds.Height - textSize.Y) / 2
         );
 
-        var textColor = IsDisabled ? Color.DarkGray : Color.Black;
-        spriteBatch.DrawString(font, text, textPos, textColor);
+        var textColor = IsDisabled ? Color.DarkGray : Primitives.FontColor;
+        spriteBatch.DrawString(Primitives.Font, text, textPos, textColor, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
     }
 
 }

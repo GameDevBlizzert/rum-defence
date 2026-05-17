@@ -10,14 +10,12 @@ public abstract class EntityWithHealth : Entity
     /// <summary>
     /// The health of the entity. When it reaches 0 or below, the entity is considered dead.
     /// </summary>
-    public int Health { get; protected set; }
+    public float Health { get; protected set; }
 
     /// <summary>
     /// The initial health of the entity when it is created.
     /// </summary>
     public readonly int InitialHealth;
-
-    private readonly Texture2D whitePixelTexture2D;
 
     /// <summary>
     /// The width of the entity as it is rendered on the screen
@@ -37,8 +35,6 @@ public abstract class EntityWithHealth : Entity
         InitialHealth = initialHealth;
         Health = initialHealth;
 
-        whitePixelTexture2D = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        whitePixelTexture2D.SetData(new[] { Color.White });
     }
 
     protected EntityWithHealth(int initialHealth = 100)
@@ -56,7 +52,7 @@ public abstract class EntityWithHealth : Entity
     /// </summary>
     /// <param name="amount">The amount of damage the entity is taking, must be a positive integer</param>
     /// <exception cref="ArgumentException">Thrown if the damage amount is negative</exception>
-    public virtual void TakeDamage(int amount)
+    public virtual void TakeDamage(float amount)
     {
         if (amount < 0)
         {
@@ -103,7 +99,7 @@ public abstract class EntityWithHealth : Entity
         var backgroundPosition = new Vector2(barX, barY);
 
         spriteBatch.Draw(
-            whitePixelTexture2D,
+            Primitives.Pixel,
             backgroundPosition,
             backgroundRectangle,
             Color.Red,
@@ -115,7 +111,7 @@ public abstract class EntityWithHealth : Entity
         );
 
         spriteBatch.Draw(
-            whitePixelTexture2D,
+            Primitives.Pixel,
             healthPosition,
             healthRectangle,
             Color.YellowGreen,

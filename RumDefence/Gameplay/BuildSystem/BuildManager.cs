@@ -14,6 +14,7 @@ public class BuildManager
     private Action<Point> onWallPlaced;
     private Action<Point> onMusketTowerPlaced;
     private Action<Point> onCannonTowerPlaced;
+    private Action<Point> onFisherTowerPlaced;
     private Action<Point> onRemove;
     private Action<Point> onSelect;
 
@@ -23,8 +24,11 @@ public class BuildManager
         this.targetTile = targetTile;
     }
 
-    public void Update(Vector2 mousePosition, bool isClick)
+    public bool CtrlHeld { get; private set; }
+
+    public void Update(Vector2 mousePosition, bool isClick, bool ctrlHeld = false)
     {
+        CtrlHeld = ctrlHeld;
         hoveredTile = grid.WorldToGrid(mousePosition);
 
         if (hoveredTile == null) return;
@@ -54,6 +58,10 @@ public class BuildManager
             case BuildMode.CannonTower:
                 if (CanPlace(p))
                     onCannonTowerPlaced?.Invoke(p);
+                break;
+            case BuildMode.FisherTower:
+                if (CanPlace(p))
+                    onFisherTowerPlaced?.Invoke(p);
                 break;
             case BuildMode.Remove:
                 onRemove?.Invoke(p);
@@ -123,6 +131,11 @@ public class BuildManager
     public void SetCannonTowerPlacementCallback(Action<Point> callback)
     {
         onCannonTowerPlaced = callback;
+    }
+
+    public void SetFisherTowerPlacementCallback(Action<Point> callback)
+    {
+        onFisherTowerPlaced = callback;
     }
 
     public void SetSelectCallback(Action<Point> callback)

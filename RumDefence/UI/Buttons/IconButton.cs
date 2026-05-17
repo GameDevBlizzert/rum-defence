@@ -14,7 +14,6 @@ public class IconButton : Button
     public Color BaseTint { get; set; } = Color.White;
     public bool IsDisabled { get; set; }
     public string CostLabel { get; set; }
-    public SpriteFont Font { get; set; }
     public Rectangle? BackgroundSourceRect { get; set; }
     public Texture2D IconTexture
     {
@@ -54,9 +53,9 @@ public class IconButton : Button
 
         var iconColor = IsDisabled ? new Color(80, 80, 80) : Color.White;
 
-        if (CostLabel != null && Font != null)
+        if (CostLabel != null)
         {
-            var textSize = Font.MeasureString(CostLabel);
+            var textSize = Primitives.Font.MeasureString(CostLabel);
             const int gap = 4;
             int iconSize = (int)(Math.Min(bounds.Width, bounds.Height) * IconScale);
             float totalWidth = iconSize + gap + textSize.X;
@@ -71,8 +70,8 @@ public class IconButton : Button
             );
             spriteBatch.Draw(iconTexture, iconRect, iconColor);
 
-            var labelColor = IsDisabled ? new Color(120, 120, 120) : Color.Yellow;
-            spriteBatch.DrawString(Font, CostLabel,
+            var labelColor = IsDisabled ? new Color(120, 120, 120) : Primitives.FontColor;
+            spriteBatch.DrawString(Primitives.Font, CostLabel,
                 new Vector2(startX + iconSize + gap, centerY - textSize.Y / 2f),
                 labelColor);
         }

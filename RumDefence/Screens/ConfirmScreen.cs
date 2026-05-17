@@ -12,7 +12,6 @@ public class ConfirmScreen : Screen
 
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
-    private SpriteFont font;
 
     private SimpleButton yesButton;
     private SimpleButton noButton;
@@ -30,14 +29,13 @@ public class ConfirmScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         panelRect = new Rectangle(600, 300, 700, 400);
 
-        yesButton = new SimpleButton(buttonTexture, font, "Yes", new Vector2(700, 550), new Vector2(200, 100));
-        noButton = new SimpleButton(buttonTexture, font, "No", new Vector2(1000, 550), new Vector2(200, 100));
+        yesButton = new SimpleButton(buttonTexture, "Yes", new Vector2(700, 550), new Vector2(200, 100));
+        noButton = new SimpleButton(buttonTexture, "No", new Vector2(1000, 550), new Vector2(200, 100));
 
         yesButton.OnClick = () =>
         {
@@ -58,15 +56,15 @@ public class ConfirmScreen : Screen
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(GetPixel(spriteBatch),
+        spriteBatch.Draw(Primitives.Pixel,
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
         NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         const int messageWidth = 600;
-        var wrappedMessage = WrapText(font, message, messageWidth);
-        spriteBatch.DrawString(font, wrappedMessage, new Vector2(650, 380), Color.Black);
+        var wrappedMessage = WrapText(Primitives.Font, message, messageWidth);
+        spriteBatch.DrawString(Primitives.Font, wrappedMessage, new Vector2(650, 380), Primitives.FontColor);
 
         yesButton.Draw(spriteBatch);
         noButton.Draw(spriteBatch);
@@ -101,16 +99,5 @@ public class ConfirmScreen : Screen
 
         lines.Add(currentLine);
         return string.Join(Environment.NewLine, lines);
-    }
-
-    private Texture2D pixel;
-    private Texture2D GetPixel(SpriteBatch spriteBatch)
-    {
-        if (pixel == null)
-        {
-            pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
-            pixel.SetData(new[] { Color.White });
-        }
-        return pixel;
     }
 }

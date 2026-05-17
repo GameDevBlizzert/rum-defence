@@ -8,8 +8,6 @@ public class GameOverScreen : Screen
 {
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
-    private Texture2D pixel;
-    private SpriteFont font;
 
     private SimpleButton retryButton;
     private SimpleButton menuButton;
@@ -48,18 +46,13 @@ public class GameOverScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
-        // pixel voor overlay
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
-
         Vector2 buttonSize = new Vector2(300, 100);
 
-        retryButton = new SimpleButton(buttonTexture, font, "Retry", Vector2.Zero, buttonSize);
-        menuButton = new SimpleButton(buttonTexture, font, "Menu", Vector2.Zero, buttonSize);
+        retryButton = new SimpleButton(buttonTexture, "Retry", Vector2.Zero, buttonSize);
+        menuButton = new SimpleButton(buttonTexture, "Menu", Vector2.Zero, buttonSize);
 
         retryButton.OnClick = () =>
         {
@@ -112,7 +105,7 @@ public class GameOverScreen : Screen
 
         // 2. overlay
         spriteBatch.Draw(
-            pixel,
+            Primitives.Pixel,
             new Rectangle(0, 0, screenWidth, screenHeight),
             Color.Black * 0.6f
         );
@@ -132,13 +125,13 @@ public class GameOverScreen : Screen
 
         // 4. titel
         var title = isWin ? "YOU WIN!" : "GAME OVER";
-        var titleSize = font.MeasureString(title);
+        var titleSize = Primitives.Font.MeasureString(title);
 
         spriteBatch.DrawString(
-            font,
+            Primitives.Font,
             title,
             new Vector2(panelRect.Center.X - titleSize.X / 2, panelRect.Y + 40),
-            Color.White
+            Primitives.FontColor
         );
 
         // 5. stats
@@ -152,13 +145,13 @@ public class GameOverScreen : Screen
 
     private void DrawCenteredText(SpriteBatch spriteBatch, string text, float centerX, float y)
     {
-        var size = font.MeasureString(text);
+        var size = Primitives.Font.MeasureString(text);
 
         spriteBatch.DrawString(
-            font,
+            Primitives.Font,
             text,
             new Vector2(centerX - size.X / 2, y),
-            Color.White
+            Primitives.FontColor
         );
     }
 }

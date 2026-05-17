@@ -7,8 +7,6 @@ namespace RumDefence;
 public class WaveHud
 {
     private readonly ShipSpawner spawner;
-    private readonly SpriteFont font;
-    private readonly Texture2D pixel;
 
     private const int PanelPaddingX = 24;
     private const int PanelPaddingY = 10;
@@ -19,10 +17,6 @@ public class WaveHud
     public WaveHud(ShipSpawner spawner)
     {
         this.spawner = spawner;
-        font = RumGame.Instance.Content.Load<SpriteFont>("Fonts/KenneyFuture");
-
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -31,8 +25,8 @@ public class WaveHud
         float progress = spawner.IsFinished ? 1f : spawner.WaveTroopProgress;
         string pctText = spawner.IsFinished ? "All waves complete!" : $"{(int)(progress * 100)}%";
 
-        var waveSize = font.MeasureString(waveText);
-        var pctSize = font.MeasureString(pctText);
+        var waveSize = Primitives.Font.MeasureString(waveText);
+        var pctSize = Primitives.Font.MeasureString(pctText);
 
         float innerWidth = spawner.IsFinished
             ? Math.Max(waveSize.X, pctSize.X)
@@ -44,18 +38,18 @@ public class WaveHud
         float panelY = 20f;
 
         var panelRect = new Rectangle((int)panelX, (int)panelY, (int)panelWidth, (int)panelHeight);
-        spriteBatch.Draw(pixel, panelRect, Color.Black * 0.55f);
+        spriteBatch.Draw(Primitives.Pixel, panelRect, Color.Black * 0.55f);
 
         float waveX = panelX + (panelWidth - waveSize.X) / 2f;
         float waveY = panelY + PanelPaddingY;
-        spriteBatch.DrawString(font, waveText, new Vector2(waveX, waveY), Color.White);
+        spriteBatch.DrawString(Primitives.Font, waveText, new Vector2(waveX, waveY), Primitives.FontColor);
 
         float contentY = waveY + waveSize.Y + LineSpacing;
 
         if (spawner.IsFinished)
         {
             float pctX = panelX + (panelWidth - pctSize.X) / 2f;
-            spriteBatch.DrawString(font, pctText, new Vector2(pctX, contentY), Color.White);
+            spriteBatch.DrawString(Primitives.Font, pctText, new Vector2(pctX, contentY), Primitives.FontColor);
         }
         else
         {
@@ -65,14 +59,14 @@ public class WaveHud
             var barBgRect = new Rectangle((int)barX, (int)contentY, (int)barWidth, BarHeight);
             var barFillRect = new Rectangle((int)barX, (int)contentY, (int)(barWidth * progress), BarHeight);
 
-            spriteBatch.Draw(pixel, barBgRect, new Color(60, 60, 0));
-            spriteBatch.Draw(pixel, barFillRect, Color.Yellow);
+            spriteBatch.Draw(Primitives.Pixel, barBgRect, new Color(60, 60, 0));
+            spriteBatch.Draw(Primitives.Pixel, barFillRect, Color.Yellow);
 
             var pctPos = new Vector2(
                 barX + (barWidth - pctSize.X) / 2f,
                 contentY + (BarHeight - pctSize.Y) / 2f
             );
-            spriteBatch.DrawString(font, pctText, pctPos, Color.White);
+            spriteBatch.DrawString(Primitives.Font, pctText, pctPos, Primitives.FontColor);
         }
     }
 }
