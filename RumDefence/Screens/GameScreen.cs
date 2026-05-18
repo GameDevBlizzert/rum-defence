@@ -181,9 +181,11 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Fisher.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None); // Auto select without button
+                }
             }
         });
 
