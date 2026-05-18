@@ -5,14 +5,17 @@ namespace RumDefence;
 
 public class FireProjectile : BaseProjectile
 {
+    private readonly float _aoeRadius;
     private readonly float _burnDuration;
     private readonly float _burnDamagePerTick;
     private readonly float _burnTickInterval;
 
-    public FireProjectile(Vector2 start, Troop target, float speed, int damage,
+    public FireProjectile(Vector2 start, Troop target, float speed, int damage, float aoeRadius,
         float burnDuration = 3f, float burnDamagePerTick = 4f, float burnTickInterval = 0.5f)
         : base(start, target, speed, damage)
     {
+        ApplyDirectDamage = false;
+        _aoeRadius = aoeRadius;
         _burnDuration = burnDuration;
         _burnDamagePerTick = burnDamagePerTick;
         _burnTickInterval = burnTickInterval;
@@ -35,10 +38,28 @@ public class FireProjectile : BaseProjectile
 
         if (IsFinished)
         {
-            if (!Target.IsDead && !Target.IsFinished)
-                Target.ApplyModifier(new BurnModifier(_burnDuration, _burnDamagePerTick, _burnTickInterval));
+            GameScreen.Instance.FireEffects.Add(new FireEffect(Position, _aoeRadius));
 
-            GameScreen.Instance.FireEffects.Add(new FireEffect(Position, 30f));
+            foreach (var troop in GameScreen.Instance.Troops)
+            {
+                if (troop.IsDead || troop.IsFinished) continue;
+
+                float dist = Vector2.Distance(Position, troop.Position);
+                if (dist > _aoeRadius) continue;
+
+                float distFraction = dist / _aoeRadius;
+
+                // Splash damage: 80% at center, 20% at edge
+                float dmgFraction = 0.8f - (distFraction * 0.6f);
+                troop.TakeDamage(Damage * dmgFraction);
+
+                // Burn duration: full at center, 30% at edge
+                float durationFraction = 1f - (distFraction * 0.7f);
+                troop.ApplyModifier(new BurnModifier(
+                    _burnDuration * durationFraction,
+                    _burnDamagePerTick,
+                    _burnTickInterval));
+            }
         }
     }
 }
