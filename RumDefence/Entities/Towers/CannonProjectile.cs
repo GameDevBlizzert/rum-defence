@@ -4,7 +4,7 @@ using System;
 
 namespace RumDefence;
 
-public class CannonProjectile : Projectile
+public class CannonProjectile : BaseProjectile
 {
     private readonly float _aoeRadius;
     private readonly Tuple<float, float> _aoeDamageRange = new(0.2f, 0.8f);

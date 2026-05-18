@@ -38,7 +38,7 @@ public class FisherTower : BaseTower
 
     protected override void FireProjectile(Troop target)
     {
-        Projectiles.Add(new NetProjectile(Position, target, ProjectileSpeed, aoeRadius: 80f));
+        Projectiles.Add(new NetProjectile(Position, target, ProjectileSpeed, aoeRadius: 30f));
     }
 
     public override void Draw(SpriteBatch spriteBatch)

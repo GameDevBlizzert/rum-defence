@@ -15,6 +15,7 @@ public class Troop : EntityWithHealth, ICollidable
 
     private float baseSpeed;
     public float SpeedMultiplier { get; set; } = 1f;
+    public float AttackSpeedMultiplier { get; set; } = 1f;
     public int CoinValue { get; set; } = 1;
     public bool HasDroppedReward { get; private set; }
     public bool IsFinished { get; private set; }
@@ -78,7 +79,7 @@ public class Troop : EntityWithHealth, ICollidable
         {
             if (_modifiers[i].GetType() == buff.GetType())
             {
-                _modifiers[i] = buff;
+                _modifiers[i].Refresh(buff);
                 return;
             }
         }
@@ -98,6 +99,7 @@ public class Troop : EntityWithHealth, ICollidable
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
         SpeedMultiplier = 1f;
+        AttackSpeedMultiplier = 1f;
 
         foreach (var ability in abilities)
         {
@@ -114,7 +116,7 @@ public class Troop : EntityWithHealth, ICollidable
         if (IsNearBarrel())
         {
             sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
-            _attackTimer += dt;
+            _attackTimer += dt * AttackSpeedMultiplier;
             if (_attackTimer >= 1f)
             {
                 RumGame.Instance.CurrentLevel?.RumBarrel?.TakeDamage(Damage);
@@ -149,7 +151,7 @@ public class Troop : EntityWithHealth, ICollidable
                     if (wallDir != Vector2.Zero) wallDir.Normalize();
                     _lastDir = wallDir;
                     sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
-                    _attackTimer += dt;
+                    _attackTimer += dt * AttackSpeedMultiplier;
                     if (_attackTimer >= 1f)
                     {
                         wall.TakeDamage(Damage);

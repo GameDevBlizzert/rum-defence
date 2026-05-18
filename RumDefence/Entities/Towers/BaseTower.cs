@@ -9,7 +9,7 @@ namespace RumDefence;
 public class BaseTower : Entity
 {
     protected readonly List<Troop> Troops;
-    protected readonly List<Projectile> Projectiles = [];
+    protected readonly List<BaseProjectile> Projectiles = [];
 
     public int CurrentLevel { get; protected set; } = 0;
     public int MaxLevel { get; protected set; } = 3;
@@ -113,7 +113,7 @@ public class BaseTower : Entity
     protected virtual void FireProjectile(Troop target)
     {
         AudioManager.Instance.PlaySound("shoot", maxConcurrentInstances: 4);
-        Projectiles.Add(new Projectile(Position, target, ProjectileSpeed, CurrentDamage));
+        Projectiles.Add(new BulletProjectile(Position, target, ProjectileSpeed, CurrentDamage));
     }
 
     private float GetPendingDamage(Troop troop)
