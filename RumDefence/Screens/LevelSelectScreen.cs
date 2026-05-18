@@ -13,7 +13,6 @@ public class LevelSelectScreen : Screen
     private int currentPage = 0;
     private int levelsPerPage = 4;
 
-    private Texture2D pixel;
     private SpriteFont font;
 
     private SimpleButton backButton;
@@ -30,9 +29,6 @@ public class LevelSelectScreen : Screen
 
         font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
 
         buttons.Clear();
 
