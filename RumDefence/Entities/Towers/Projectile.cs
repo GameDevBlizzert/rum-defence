@@ -45,8 +45,10 @@ public class Projectile : Entity
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         Vector2 dir = _lastKnownPosition - Position;
+        float dist = dir.Length();
+        float moveDistance = _speed * dt;
 
-        if (dir.Length() < 6f)
+        if (dist < 6f || moveDistance >= dist)
         {
             if (ApplyDirectDamage && !Target.IsDead && !Target.IsFinished)
                 Target.TakeDamage(Damage);
@@ -55,7 +57,6 @@ public class Projectile : Entity
             return;
         }
 
-        dir.Normalize();
-        Position += dir * _speed * dt;
+        Position += dir / dist * moveDistance;
     }
 }
