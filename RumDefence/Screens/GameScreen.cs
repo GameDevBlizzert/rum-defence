@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -67,7 +66,7 @@ public class GameScreen : Screen
 
         GridSystem.CalculateLayout(grid);
 
-        input = new InputManager();
+        input = InputManager.Instance;
         buildManager = new BuildManager(grid, currentLevel.RumTile);
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
@@ -211,7 +210,6 @@ public class GameScreen : Screen
     {
         if (HandlePause()) return;
 
-        input.Update();
         UpdateBuildSystem(gameTime);
 
         if (playbackState == GamePlaybackState.Paused)
@@ -367,9 +365,7 @@ public class GameScreen : Screen
 
     private bool HandlePause()
     {
-        var keyboard = Keyboard.GetState();
-
-        if (keyboard.IsKeyDown(Keys.Escape))
+        if (InputManager.Instance.IsActionJustPressed("Pause"))
         {
             manager.SetScreen(new PauseScreen(manager, this));
             return true;
