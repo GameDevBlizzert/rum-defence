@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using RumDefence;
 using System;
 
@@ -12,12 +12,11 @@ public class BuildManager
     private Point? hoveredTile;
 
     private Action<Point> onWallPlaced;
-    private Action<Point> onMusketTowerPlaced;
-    private Action<Point> onCannonTowerPlaced;
-    private Action<Point> onFisherTowerPlaced;
-    private Action<Point> onFireTowerPlaced;
+    private Action<Point, TowerData> onTowerPlaced;
     private Action<Point> onRemove;
     private Action<Point> onSelect;
+
+    public TowerData SelectedTowerData { get; private set; }
 
     public BuildManager(Grid grid, Point targetTile)
     {
@@ -48,25 +47,11 @@ public class BuildManager
         {
             case BuildMode.Wall:
                 if (CanPlace(p))
-                {
                     onWallPlaced?.Invoke(p);
-                }
                 break;
-            case BuildMode.MusketTower:
-                if (CanPlace(p))
-                    onMusketTowerPlaced?.Invoke(p);
-                break;
-            case BuildMode.CannonTower:
-                if (CanPlace(p))
-                    onCannonTowerPlaced?.Invoke(p);
-                break;
-            case BuildMode.FisherTower:
-                if (CanPlace(p))
-                    onFisherTowerPlaced?.Invoke(p);
-                break;
-            case BuildMode.FireTower:
-                if (CanPlace(p))
-                    onFireTowerPlaced?.Invoke(p);
+            case BuildMode.Tower:
+                if (CanPlace(p) && SelectedTowerData != null)
+                    onTowerPlaced?.Invoke(p, SelectedTowerData);
                 break;
             case BuildMode.Remove:
                 onRemove?.Invoke(p);
@@ -95,6 +80,21 @@ public class BuildManager
             currentMode = BuildMode.None;
         else
             currentMode = mode;
+        SelectedTowerData = null;
+    }
+
+    public void SetTowerMode(TowerData data)
+    {
+        if (currentMode == BuildMode.Tower && SelectedTowerData == data)
+        {
+            currentMode = BuildMode.None;
+            SelectedTowerData = null;
+        }
+        else
+        {
+            currentMode = BuildMode.Tower;
+            SelectedTowerData = data;
+        }
     }
 
     public BuildMode GetMode()
@@ -128,24 +128,9 @@ public class BuildManager
         onRemove = callback;
     }
 
-    public void SetMusketTowerPlacementCallback(Action<Point> callback)
+    public void SetTowerPlacementCallback(Action<Point, TowerData> callback)
     {
-        onMusketTowerPlaced = callback;
-    }
-
-    public void SetCannonTowerPlacementCallback(Action<Point> callback)
-    {
-        onCannonTowerPlaced = callback;
-    }
-
-    public void SetFisherTowerPlacementCallback(Action<Point> callback)
-    {
-        onFisherTowerPlaced = callback;
-    }
-
-    public void SetFireTowerPlacementCallback(Action<Point> callback)
-    {
-        onFireTowerPlaced = callback;
+        onTowerPlaced = callback;
     }
 
     public void SetSelectCallback(Action<Point> callback)

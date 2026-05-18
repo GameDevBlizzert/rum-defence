@@ -116,13 +116,7 @@ public class GameScreen : Screen
             }
             else if (placedTowers.TryGetValue(p, out BaseTower tower))
             {
-                if (tower is CannonTower)
-                    refundAmount = (int)Math.Ceiling(TowerFactory.Cannon.Cost * 0.8f);
-                else if (tower is MusketTower)
-                    refundAmount = (int)Math.Ceiling(TowerFactory.Musket.Cost * 0.8f);
-                else if (tower is FireTower)
-                    refundAmount = (int)Math.Ceiling(TowerFactory.Fire.Cost * 0.8f);
-
+                refundAmount = (int)Math.Ceiling(tower.Data.Cost * 0.8f);
                 placedTowers.Remove(p);
             }
 
@@ -134,71 +128,15 @@ public class GameScreen : Screen
             }
         });
 
-        buildManager.SetCannonTowerPlacementCallback(p =>
+        buildManager.SetTowerPlacementCallback((p, data) =>
         {
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
-                progress.CoinsRemaining >= TowerFactory.Cannon.Cost)
+                progress.CoinsRemaining >= data.Cost)
             {
                 currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
-                placedTowers[p] = TowerFactory.Create(
-                    TowerFactory.Cannon,
-                    grid.GridToWorld(p),
-                    Troops
-                );
+                placedTowers[p] = TowerFactory.Create(data, grid.GridToWorld(p), Troops);
                 occupiedTiles[p] = true;
-                progress.SpendCoins(TowerFactory.Cannon.Cost);
-                AudioManager.Instance.PlayRandomImpact();
-                if (!buildManager.CtrlHeld)
-                {
-                    selectedTower = placedTowers[p];
-                    buildManager.SetMode(BuildMode.None);
-                }
-            }
-        });
-
-        buildManager.SetMusketTowerPlacementCallback(p =>
-        {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
-                progress.CoinsRemaining >= TowerFactory.Musket.Cost)
-            {
-                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
-                placedTowers[p] = TowerFactory.Create(TowerFactory.Musket, grid.GridToWorld(p), Troops);
-                occupiedTiles[p] = true;
-                progress.SpendCoins(TowerFactory.Musket.Cost);
-                AudioManager.Instance.PlayRandomImpact();
-                if (!buildManager.CtrlHeld)
-                {
-                    selectedTower = placedTowers[p];
-                    buildManager.SetMode(BuildMode.None);
-                }
-            }
-        });
-
-        buildManager.SetFisherTowerPlacementCallback(p =>
-        {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
-                progress.CoinsRemaining >= TowerFactory.Fisher.Cost)
-            {
-                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
-                placedTowers[p] = TowerFactory.Create(TowerFactory.Fisher, grid.GridToWorld(p), Troops);
-                occupiedTiles[p] = true;
-                progress.SpendCoins(TowerFactory.Fisher.Cost);
-                AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
-            }
-        });
-
-        buildManager.SetFireTowerPlacementCallback(p =>
-        {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
-                progress.CoinsRemaining >= TowerFactory.Fire.Cost)
-            {
-                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
-                placedTowers[p] = TowerFactory.Create(TowerFactory.Fire, grid.GridToWorld(p), Troops);
-                occupiedTiles[p] = true;
-                progress.SpendCoins(TowerFactory.Fire.Cost);
+                progress.SpendCoins(data.Cost);
                 AudioManager.Instance.PlayRandomImpact();
                 if (!buildManager.CtrlHeld)
                 {
