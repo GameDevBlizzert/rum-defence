@@ -30,6 +30,7 @@ public class GameScreen : Screen
     public List<Troop> Troops { get; private set; } = new();
     public static GameScreen Instance { get; private set; }
     public List<Explosion> Explosions = new();
+    public List<NetEffect> NetEffects = new();
 
     private Dictionary<Point, BaseTower> placedTowers = new();
 
@@ -180,11 +181,9 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Fisher.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                if (!buildManager.CtrlHeld)
-                {
-                    selectedTower = placedTowers[p];
-                    buildManager.SetMode(BuildMode.None);
-                }
+                // Select newly placed tower
+                selectedTower = placedTowers[p];
+                buildManager.SetMode(BuildMode.None); // Auto select without button
             }
         });
 
@@ -238,6 +237,13 @@ public class GameScreen : Screen
             if (Explosions[i].IsFinished)
                 Explosions.RemoveAt(i);
         }
+
+        for (int i = NetEffects.Count - 1; i >= 0; i--)
+        {
+            NetEffects[i].Update(gameTime);
+            if (NetEffects[i].IsFinished)
+                NetEffects.RemoveAt(i);
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -268,6 +274,9 @@ public class GameScreen : Screen
         // Draw explosions
         foreach (var explosion in Explosions)
             explosion.Draw(spriteBatch);
+
+        foreach (var net in NetEffects)
+            net.Draw(spriteBatch);
 
         DrawWallHealthBars(spriteBatch);
 

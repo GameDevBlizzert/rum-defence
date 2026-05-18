@@ -1,23 +1,23 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 namespace RumDefence;
 
-public class SpeedModifier : IModifier
+public class AttackSpeedModifier : IModifier
 {
     private float multiplier;
     private float _duration;
     public bool IsExpired => _duration <= 0f;
-    public SpeedModifier(float duration, float multiplier = 0.3f)
+    public AttackSpeedModifier(float duration, float multiplier = 0.3f)
     {
         this.multiplier = multiplier;
         _duration = duration;
     }
     public void Apply(Troop troop)
     {
-        troop.SpeedMultiplier *= multiplier;
+        troop.AttackSpeedMultiplier *= multiplier;
     }
     public void Refresh(IModifier source)
     {
-        if (source is SpeedModifier s)
+        if (source is AttackSpeedModifier s)
         {
             _duration = s._duration;
             multiplier = s.multiplier;
