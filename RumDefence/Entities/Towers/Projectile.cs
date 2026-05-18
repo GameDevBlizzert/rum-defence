@@ -4,36 +4,26 @@ using RumDefence;
 
 namespace RumDefence;
 
-public class Projectile : Entity
+public abstract class BaseProjectile : Entity
 {
     private readonly float _speed;
     private Vector2 _lastKnownPosition;
 
     public Troop Target { get; }
     public float Damage { get; }
-    public bool IsFinished { get; private set; }
+    public bool IsFinished { get; set; }
 
     protected bool ApplyDirectDamage = true;
 
-    private static Texture2D _cannonBall;
+    protected static Texture2D _texture;
 
-    public Projectile(Vector2 start, Troop target, float speed, int damage)
+    public BaseProjectile(Vector2 start, Troop target, float speed, int damage)
     {
         Target = target;
         _speed = speed;
         Damage = damage;
         Position = start;
         _lastKnownPosition = target.Position;
-
-        if (_cannonBall == null)
-        {
-            _cannonBall = RumGame.Instance.Content.Load<Texture2D>("KenneyPiratePack/PNG/Retina/Ship parts/cannonBall");
-        }
-
-        Texture = _cannonBall;
-        origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
-        Size = SizeSystem.Square(0.25f);
-        ApplySize();
     }
 
     public override void Update(GameTime gameTime)
@@ -45,8 +35,10 @@ public class Projectile : Entity
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
         Vector2 dir = _lastKnownPosition - Position;
+        float dist = dir.Length();
+        float moveDistance = _speed * dt;
 
-        if (dir.Length() < 6f)
+        if (dist < 6f || moveDistance >= dist)
         {
             if (ApplyDirectDamage && !Target.IsDead && !Target.IsFinished)
                 Target.TakeDamage(Damage);
@@ -55,7 +47,6 @@ public class Projectile : Entity
             return;
         }
 
-        dir.Normalize();
-        Position += dir * _speed * dt;
+        Position += dir / dist * moveDistance;
     }
 }

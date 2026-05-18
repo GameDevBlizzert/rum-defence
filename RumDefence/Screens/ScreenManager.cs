@@ -47,6 +47,7 @@ public class ScreenManager
 
         previousMouse = currentMouse;
 
+        InputManager.Instance.Update();
         currentScreen?.Update(gameTime);
     }
 

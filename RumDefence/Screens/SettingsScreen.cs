@@ -11,6 +11,7 @@ public class SettingsScreen : Screen
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
 
+    private SimpleButton keyBindingsButton;
     private SimpleButton backButton;
 
     private Rectangle panelRect;
@@ -34,10 +35,24 @@ public class SettingsScreen : Screen
 
         panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
 
-        int backX = PanelLeft + (PanelWidth - 200) / 2;
+        int centerX = PanelLeft + PanelWidth / 2;
+
+        keyBindingsButton = new SimpleButton(buttonTexture, "Key Bindings",
+            new Vector2(centerX - 200, PanelTop + 430),
+            new Vector2(400, 70));
+
         backButton = new SimpleButton(buttonTexture, "Back",
-            new Vector2(backX, PanelTop + PanelHeight - 110),
+            new Vector2(centerX - 100, PanelTop + 520),
             new Vector2(200, 70));
+
+        keyBindingsButton.OnClick = () =>
+        {
+            SaveManager.CurrentSave.MusicVolume = AudioManager.Instance.MusicVolume;
+            SaveManager.CurrentSave.SfxVolume = AudioManager.Instance.SoundVolume;
+            SaveManager.Save();
+            manager.SetScreen(new KeyBindingsScreen(manager, this));
+        };
+
         backButton.OnClick = () =>
         {
             SaveManager.CurrentSave.MusicVolume = AudioManager.Instance.MusicVolume;
@@ -49,8 +64,11 @@ public class SettingsScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
-        if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+        if (InputManager.Instance.IsActionJustPressed("Pause"))
         {
+            SaveManager.CurrentSave.MusicVolume = AudioManager.Instance.MusicVolume;
+            SaveManager.CurrentSave.SfxVolume = AudioManager.Instance.SoundVolume;
+            SaveManager.Save();
             manager.SetScreen(previous);
             return;
         }
@@ -61,6 +79,7 @@ public class SettingsScreen : Screen
         UpdateSlider(GetMusicTrack(), mouse, mousePos, v => AudioManager.Instance.MusicVolume = v);
         UpdateSlider(GetSoundTrack(), mouse, mousePos, v => AudioManager.Instance.SoundVolume = v);
 
+        keyBindingsButton.Update(gameTime);
         backButton.Update(gameTime);
         prevMouse = mouse;
     }
@@ -77,10 +96,10 @@ public class SettingsScreen : Screen
     }
 
     private Rectangle GetMusicTrack() =>
-        new Rectangle(PanelLeft + 100, PanelTop + 260, PanelWidth - 200, 12);
+        new Rectangle(PanelLeft + 100, PanelTop + 200, PanelWidth - 200, 12);
 
     private Rectangle GetSoundTrack() =>
-        new Rectangle(PanelLeft + 100, PanelTop + 420, PanelWidth - 200, 12);
+        new Rectangle(PanelLeft + 100, PanelTop + 360, PanelWidth - 200, 12);
 
     public override void Draw(SpriteBatch spriteBatch)
     {
@@ -104,6 +123,7 @@ public class SettingsScreen : Screen
         DrawSlider(spriteBatch, "Music Volume", AudioManager.Instance.MusicVolume, GetMusicTrack());
         DrawSlider(spriteBatch, "Sound Volume", AudioManager.Instance.SoundVolume, GetSoundTrack());
 
+        keyBindingsButton.Draw(spriteBatch);
         backButton.Draw(spriteBatch);
     }
 

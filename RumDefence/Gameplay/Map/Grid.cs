@@ -44,7 +44,7 @@ public class Grid
     public int GetTileCost(Point tile, HashSet<Point> untraversableTiles)
     {
         if (untraversableTiles.Contains(tile))
-            return 100_000;
+            return 10;
         return 1;
     }
 

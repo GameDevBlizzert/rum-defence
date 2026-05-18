@@ -35,7 +35,7 @@ public static class TowerFactory
     );
 
     public static readonly TowerData Fisher = new(
-        Type: TowerType.Musket,
+        Type: TowerType.Fisher,
         TexturePath: "Art/Towers/fisher",
         Label: "fisher",
         OverlayTexturePath: null,

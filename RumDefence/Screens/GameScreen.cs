@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,6 +30,7 @@ public class GameScreen : Screen
     public List<Troop> Troops { get; private set; } = new();
     public static GameScreen Instance { get; private set; }
     public List<Explosion> Explosions = new();
+    public List<NetEffect> NetEffects = new();
 
     private Dictionary<Point, BaseTower> placedTowers = new();
 
@@ -67,7 +67,7 @@ public class GameScreen : Screen
 
         GridSystem.CalculateLayout(grid);
 
-        input = new InputManager();
+        input = InputManager.Instance;
         buildManager = new BuildManager(grid, currentLevel.RumTile);
 
         renderer = new GridRenderer(currentLevel.Theme.Tiles, buildManager, grid);
@@ -181,11 +181,9 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(TowerFactory.Fisher.Cost);
                 AudioManager.Instance.PlayRandomImpact();
-                if (!buildManager.CtrlHeld)
-                {
-                    selectedTower = placedTowers[p];
-                    buildManager.SetMode(BuildMode.None);
-                }
+                // Select newly placed tower
+                selectedTower = placedTowers[p];
+                buildManager.SetMode(BuildMode.None); // Auto select without button
             }
         });
 
@@ -211,7 +209,6 @@ public class GameScreen : Screen
     {
         if (HandlePause()) return;
 
-        input.Update();
         UpdateBuildSystem(gameTime);
 
         if (playbackState == GamePlaybackState.Paused)
@@ -239,6 +236,13 @@ public class GameScreen : Screen
             Explosions[i].Update(gameTime);
             if (Explosions[i].IsFinished)
                 Explosions.RemoveAt(i);
+        }
+
+        for (int i = NetEffects.Count - 1; i >= 0; i--)
+        {
+            NetEffects[i].Update(gameTime);
+            if (NetEffects[i].IsFinished)
+                NetEffects.RemoveAt(i);
         }
     }
 
@@ -270,6 +274,9 @@ public class GameScreen : Screen
         // Draw explosions
         foreach (var explosion in Explosions)
             explosion.Draw(spriteBatch);
+
+        foreach (var net in NetEffects)
+            net.Draw(spriteBatch);
 
         DrawWallHealthBars(spriteBatch);
 
@@ -367,9 +374,7 @@ public class GameScreen : Screen
 
     private bool HandlePause()
     {
-        var keyboard = Keyboard.GetState();
-
-        if (keyboard.IsKeyDown(Keys.Escape))
+        if (InputManager.Instance.IsActionJustPressed("Pause"))
         {
             manager.SetScreen(new PauseScreen(manager, this));
             return true;

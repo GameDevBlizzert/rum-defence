@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace RumDefence;
 
@@ -10,6 +11,7 @@ public class UpgradeMenu
     private Rectangle panelRect;
     private SimpleButton upgradeButton;
     private LevelProgressSystem progress;
+    private KeyboardState previousKeyboardState;
     public bool UpgradeClicked { get; private set; }
     public bool IsDisabled { get; set; }
 
@@ -35,17 +37,20 @@ public class UpgradeMenu
         int y = RumGame.VirtualHeight - height - 20; // bottom right
         panelRect = new Rectangle(x, y, width, height);
 
-        upgradeButton = new SimpleButton(buttonTexture, "Upgrade", new Vector2(x + 20, y + 210), new Vector2(width - 40, 70));
+        upgradeButton = new SimpleButton(buttonTexture, "Upgrade (U)", new Vector2(x + 20, y + 210), new Vector2(width - 40, 70));
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
     }
 
     public void Update(GameTime gameTime)
     {
-        // Don't reset UpgradeClicked immediately here, or GameScreen won't see it if polled after.
-        // It's safer to provide a Consume method or let the click handler set it to true and the consumer reset it.
-        // But since we are setting it here and GameScreen checks it in the same frame, we must ensure ordering.
-        // Wait, if we set UpgradeClicked = false here... the OnClick delegates fire DURING upgradeButton.Update!
-        // So putting it BEFORE upgradeButton.Update() is correct.
+        var keyboard = Keyboard.GetState();
+        var upgradeShortcutPressed =
+            SelectedTower != null &&
+            !IsDisabled &&
+            keyboard.IsKeyDown(Keys.U) &&
+            previousKeyboardState.IsKeyUp(Keys.U);
+
+        previousKeyboardState = keyboard;
 
         UpgradeClicked = false;
 
@@ -54,6 +59,9 @@ public class UpgradeMenu
 
         if (SelectedTower == null)
             return;
+
+        if (upgradeShortcutPressed)
+            UpgradeClicked = true;
 
         upgradeButton.IsDisabled = !SelectedTower.CanUpgrade || progress.CoinsRemaining < SelectedTower.GetUpgradeCost();
 
