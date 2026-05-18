@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RumDefence.Gameplay.Levels.Dev;
 using RumDefence.Gameplay.Levels.Ghost;
@@ -34,8 +35,17 @@ public class ThemeSelectScreen : Screen
             new Vector2(20, 20), new Vector2(200, 80));
 
 
-        devButton = new SimpleButton(buttonTexture, "Dev",
-            new Vector2(800, 700), new Vector2(300, 100));
+        bool devMode = Environment.GetEnvironmentVariable("RUM_DEV") == "true";
+
+        if (devMode)
+        {
+            devButton = new SimpleButton(buttonTexture, "Dev",
+                new Vector2(800, 700), new Vector2(300, 100));
+            devButton.OnClick = () =>
+            {
+                manager.SetScreen(new LevelSelectScreen(manager, DevLevels.All));
+            };
+        }
 
         grassButton.OnClick = () =>
         {
@@ -45,11 +55,6 @@ public class ThemeSelectScreen : Screen
         stoneButton.OnClick = () =>
         {
             manager.SetScreen(new LevelSelectScreen(manager, GhostLevels.All));
-        };
-
-        devButton.OnClick = () =>
-        {
-            manager.SetScreen(new LevelSelectScreen(manager, DevLevels.All));
         };
 
         backButton.OnClick = () =>
@@ -65,7 +70,7 @@ public class ThemeSelectScreen : Screen
     {
         grassButton.Update(gameTime);
         stoneButton.Update(gameTime);
-        devButton.Update(gameTime);
+        devButton?.Update(gameTime);
         backButton.Update(gameTime);
     }
 
@@ -75,7 +80,7 @@ public class ThemeSelectScreen : Screen
 
         grassButton.Draw(spriteBatch);
         stoneButton.Draw(spriteBatch);
-        devButton.Draw(spriteBatch);
+        devButton?.Draw(spriteBatch);
         backButton.Draw(spriteBatch);
     }
 }
