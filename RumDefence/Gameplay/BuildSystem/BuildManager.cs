@@ -15,6 +15,7 @@ public class BuildManager
     private Action<Point> onMusketTowerPlaced;
     private Action<Point> onCannonTowerPlaced;
     private Action<Point> onFisherTowerPlaced;
+    private Action<Point> onFireTowerPlaced;
     private Action<Point> onRemove;
     private Action<Point> onSelect;
 
@@ -62,6 +63,10 @@ public class BuildManager
             case BuildMode.FisherTower:
                 if (CanPlace(p))
                     onFisherTowerPlaced?.Invoke(p);
+                break;
+            case BuildMode.FireTower:
+                if (CanPlace(p))
+                    onFireTowerPlaced?.Invoke(p);
                 break;
             case BuildMode.Remove:
                 onRemove?.Invoke(p);
@@ -136,6 +141,11 @@ public class BuildManager
     public void SetFisherTowerPlacementCallback(Action<Point> callback)
     {
         onFisherTowerPlaced = callback;
+    }
+
+    public void SetFireTowerPlacementCallback(Action<Point> callback)
+    {
+        onFireTowerPlaced = callback;
     }
 
     public void SetSelectCallback(Action<Point> callback)

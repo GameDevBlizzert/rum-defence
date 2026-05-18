@@ -5,5 +5,6 @@
     MusketTower,
     CannonTower,
     FisherTower,
+    FireTower,
     Remove,
 }

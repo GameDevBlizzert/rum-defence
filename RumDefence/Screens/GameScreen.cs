@@ -31,6 +31,7 @@ public class GameScreen : Screen
     public static GameScreen Instance { get; private set; }
     public List<Explosion> Explosions = new();
     public List<NetEffect> NetEffects = new();
+    public List<FireEffect> FireEffects = new();
 
     private Dictionary<Point, BaseTower> placedTowers = new();
 
@@ -119,6 +120,8 @@ public class GameScreen : Screen
                     refundAmount = (int)Math.Ceiling(TowerFactory.Cannon.Cost * 0.8f);
                 else if (tower is MusketTower)
                     refundAmount = (int)Math.Ceiling(TowerFactory.Musket.Cost * 0.8f);
+                else if (tower is FireTower)
+                    refundAmount = (int)Math.Ceiling(TowerFactory.Fire.Cost * 0.8f);
 
                 placedTowers.Remove(p);
             }
@@ -187,6 +190,24 @@ public class GameScreen : Screen
             }
         });
 
+        buildManager.SetFireTowerPlacementCallback(p =>
+        {
+            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
+                progress.CoinsRemaining >= TowerFactory.Fire.Cost)
+            {
+                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
+                placedTowers[p] = TowerFactory.Create(TowerFactory.Fire, grid.GridToWorld(p), Troops);
+                occupiedTiles[p] = true;
+                progress.SpendCoins(TowerFactory.Fire.Cost);
+                AudioManager.Instance.PlayRandomImpact();
+                if (!buildManager.CtrlHeld)
+                {
+                    selectedTower = placedTowers[p];
+                    buildManager.SetMode(BuildMode.None);
+                }
+            }
+        });
+
         buildManager.SetSelectCallback(p =>
         {
             if (placedTowers.TryGetValue(p, out BaseTower tower))
@@ -244,6 +265,13 @@ public class GameScreen : Screen
             if (NetEffects[i].IsFinished)
                 NetEffects.RemoveAt(i);
         }
+
+        for (int i = FireEffects.Count - 1; i >= 0; i--)
+        {
+            FireEffects[i].Update(gameTime);
+            if (FireEffects[i].IsFinished)
+                FireEffects.RemoveAt(i);
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -277,6 +305,9 @@ public class GameScreen : Screen
 
         foreach (var net in NetEffects)
             net.Draw(spriteBatch);
+
+        foreach (var fire in FireEffects)
+            fire.Draw(spriteBatch);
 
         DrawWallHealthBars(spriteBatch);
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
-public enum TowerType { Musket, Cannon, Fisher }
+public enum TowerType { Musket, Cannon, Fisher, Fire }
 
 public record TowerData(
     TowerType Type,
@@ -60,6 +60,19 @@ public static class TowerFactory
         Cost: 50
     );
 
+    public static readonly TowerData Fire = new(
+        Type: TowerType.Fire,
+        TexturePath: "Art/Towers/fire",
+        Label: "fire",
+        OverlayTexturePath: null,
+        Range: 200f,
+        FireRate: 1f,
+        Damage: 5,
+        ProjectileSpeed: 350f,
+        AttackMode: AttackMode.Closest,
+        Cost: 65
+    );
+
     public static BaseTower Create(
         TowerData data,
         Vector2 location,
@@ -70,6 +83,7 @@ public static class TowerFactory
             TowerType.Musket => new MusketTower(data, location, troops),
             TowerType.Cannon => new CannonTower(data, location, troops),
             TowerType.Fisher => new FisherTower(data, location, troops),
+            TowerType.Fire => new FireTower(data, location, troops),
             _ => throw new ArgumentException($"Unknown tower type: {data.Type}")
         };
     }
