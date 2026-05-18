@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.Gameplay.Levels.Dev;
 using RumDefence.Gameplay.Levels.Ghost;
 using RumDefence.Levels.Ghost;
 using RumDefence.Levels.Grass;
@@ -10,6 +11,7 @@ public class ThemeSelectScreen : Screen
 {
     private SimpleButton grassButton;
     private SimpleButton stoneButton;
+    private SimpleButton devButton;
 
     private Texture2D buttonTexture;
 
@@ -27,6 +29,9 @@ public class ThemeSelectScreen : Screen
         stoneButton = new SimpleButton(buttonTexture, "Stone",
             new Vector2(800, 550), new Vector2(300, 100));
 
+        devButton = new SimpleButton(buttonTexture, "Dev",
+            new Vector2(800, 700), new Vector2(300, 100));
+
         grassButton.OnClick = () =>
         {
             manager.SetScreen(new LevelSelectScreen(manager, GrassLevels.All));
@@ -37,6 +42,11 @@ public class ThemeSelectScreen : Screen
             manager.SetScreen(new LevelSelectScreen(manager, GhostLevels.All));
         };
 
+        devButton.OnClick = () =>
+        {
+            manager.SetScreen(new LevelSelectScreen(manager, DevLevels.All));
+        };
+
         // Play theme music
         AudioManager.Instance.PlayBackgroundMusic("WhatCloudsAreMadeOf");
     }
@@ -45,6 +55,7 @@ public class ThemeSelectScreen : Screen
     {
         grassButton.Update(gameTime);
         stoneButton.Update(gameTime);
+        devButton.Update(gameTime);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -53,5 +64,6 @@ public class ThemeSelectScreen : Screen
 
         grassButton.Draw(spriteBatch);
         stoneButton.Draw(spriteBatch);
+        devButton.Draw(spriteBatch);
     }
 }
