@@ -10,7 +10,8 @@ public record TroopData(
     int CoinValue,
     float Size,
     float InitialSpeedMultiplier,
-    bool IsBoss = false
+    bool IsBoss = false,
+    bool IsGhost = false
 );
 
 public static class TroopFactory
@@ -36,8 +37,21 @@ public static class TroopFactory
         IsBoss: true
     );
 
+    public static readonly TroopData Ghost = new(
+        SpritePath: "Art/Pirates/pirates-white-sprite-sheet",
+        Health: 50,
+        BaseSpeed: 45f,
+        Damage: 1,
+        CoinValue: 15,
+        Size: 10f,
+        InitialSpeedMultiplier: 1f,
+        IsGhost: true
+    );
+
     public static Troop Create(TroopData data, Vector2 start, Vector2 target)
-        => data.IsBoss
-            ? new BossTroop(data, start, target)
-            : new Troop(data, start, target);
+        => data.IsGhost
+            ? new GhostTroop(data, start, target)
+            : data.IsBoss
+                ? new BossTroop(data, start, target)
+                : new Troop(data, start, target);
 }

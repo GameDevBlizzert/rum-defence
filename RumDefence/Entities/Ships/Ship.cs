@@ -72,6 +72,7 @@ public class Ship : Entity
 
     public Ship(Vector2 start, Vector2 holding, Vector2 target, CoastTile coast, Data data, Texture2D texture, IReadOnlyList<TroopGroup> troops, float troopSpawnDelay)
     {
+        start = new Vector2(-100, 500);
         Position = start;
         spawnPosition = start;
 

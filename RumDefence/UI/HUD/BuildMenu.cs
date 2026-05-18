@@ -9,10 +9,9 @@ public class BuildMenu
     private Texture2D panelTexture;
     private Texture2D buttonTexture;
     private Rectangle panelRect;
+
+    private readonly (IconButton button, TowerData data)[] towerButtons;
     private IconButton wallButton;
-    private IconButton cannonButton;
-    private IconButton musketButton;
-    private IconButton fisherButton;
     private IconButton removeButton;
     private IconButton speedButton;
     private IconButton pauseMenuButton;
@@ -51,9 +50,6 @@ public class BuildMenu
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
-        var cannonIcon = content.Load<Texture2D>("Art/Towers/cannon-icon");
-        var musketIcon = content.Load<Texture2D>("Art/Towers/musket-icon");
-        var FisherIcon = content.Load<Texture2D>("Art/Towers/fisher-icon");
         var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
 
         panelX = 20;
@@ -82,23 +78,19 @@ public class BuildMenu
 
         var buttonSourceRect = new Rectangle(0, 0, 64, 64);
 
-        cannonButton = new IconButton(buttonTexture, cannonIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        cannonButton.BackgroundSourceRect = buttonSourceRect;
-        cannonButton.OnClick = () => buildManager.SetMode(BuildMode.CannonTower);
-        cannonButton.CostLabel = TowerFactory.Cannon.Cost.ToString();
-        currentY += ButtonHeight + spacing;
-
-        musketButton = new IconButton(buttonTexture, musketIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        musketButton.BackgroundSourceRect = buttonSourceRect;
-        musketButton.OnClick = () => buildManager.SetMode(BuildMode.MusketTower);
-        musketButton.CostLabel = TowerFactory.Musket.Cost.ToString();
-        currentY += ButtonHeight + spacing;
-
-        fisherButton = new IconButton(buttonTexture, FisherIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        fisherButton.BackgroundSourceRect = buttonSourceRect;
-        fisherButton.OnClick = () => buildManager.SetMode(BuildMode.FisherTower);
-        fisherButton.CostLabel = TowerFactory.Fisher.Cost.ToString();
-        currentY += ButtonHeight + spacing;
+        var allTowers = TowerFactory.All;
+        towerButtons = new (IconButton, TowerData)[allTowers.Length];
+        for (int i = 0; i < allTowers.Length; i++)
+        {
+            var data = allTowers[i];
+            var icon = content.Load<Texture2D>(data.IconTexturePath);
+            var btn = new IconButton(buttonTexture, icon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+            btn.BackgroundSourceRect = buttonSourceRect;
+            btn.OnClick = () => buildManager.SetTowerMode(data);
+            btn.CostLabel = data.Cost.ToString();
+            towerButtons[i] = (btn, data);
+            currentY += ButtonHeight + spacing;
+        }
 
         wallButton = new IconButton(buttonTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         wallButton.BackgroundSourceRect = buttonSourceRect;
@@ -137,11 +129,9 @@ public class BuildMenu
         const int w = 24, h = 14;
         var data = new Color[w * h];
 
-        // Triangle: pointy right. From top to bottom, each row gets wider.
         int midY = h / 2;
         for (int y = 0; y < h; y++)
         {
-            // Distance from center determines how wide this row is
             int halfWidth = (int)Math.Round((midY - Math.Abs(y - midY)) * 0.85f);
             int startX = 4;
             for (int x = startX; x < startX + halfWidth * 2 && x < w - 2; x++)
@@ -182,12 +172,10 @@ public class BuildMenu
         {
             int halfWidth = (int)Math.Round((midY - Math.Abs(y - midY)) * 0.85f);
 
-            // Left triangle
             int leftStartX = 1;
             for (int x = leftStartX; x < leftStartX + halfWidth * 2 && x < 11; x++)
                 data[y * w + x] = Color.White;
 
-            // Right triangle
             int rightStartX = 12;
             for (int x = rightStartX; x < rightStartX + halfWidth * 2 && x < w - 1; x++)
                 data[y * w + x] = Color.White;
@@ -228,17 +216,19 @@ public class BuildMenu
     public void Update(GameTime gameTime)
     {
         var mode = buildManager.GetMode();
-        cannonButton.SetSelected(mode == BuildMode.CannonTower);
-        musketButton.SetSelected(mode == BuildMode.MusketTower);
-        fisherButton.SetSelected(mode == BuildMode.FisherTower);
+        var selectedData = buildManager.SelectedTowerData;
+
+        foreach (var (button, data) in towerButtons)
+            button.SetSelected(mode == BuildMode.Tower && selectedData == data);
+
         wallButton.SetSelected(mode == BuildMode.Wall);
         removeButton.SetSelected(mode == BuildMode.Remove);
 
         bool isPaused = playbackState == GamePlaybackState.Paused;
 
-        cannonButton.IsDisabled = isPaused || progress.CoinsRemaining < TowerFactory.Cannon.Cost;
-        musketButton.IsDisabled = isPaused || progress.CoinsRemaining < TowerFactory.Musket.Cost;
-        fisherButton.IsDisabled = isPaused || progress.CoinsRemaining < TowerFactory.Fisher.Cost;
+        foreach (var (button, data) in towerButtons)
+            button.IsDisabled = isPaused || progress.CoinsRemaining < data.Cost;
+
         wallButton.IsDisabled = isPaused || progress.CoinsRemaining < BuildManager.WallCost;
         removeButton.IsDisabled = isPaused;
 
@@ -249,9 +239,9 @@ public class BuildMenu
             _ => playIcon
         };
 
-        cannonButton.Update(gameTime);
-        musketButton.Update(gameTime);
-        fisherButton.Update(gameTime);
+        foreach (var (button, _) in towerButtons)
+            button.Update(gameTime);
+
         wallButton.Update(gameTime);
         removeButton.Update(gameTime);
         speedButton.Update(gameTime);
@@ -274,9 +264,9 @@ public class BuildMenu
         float textY = coinAreaY + (coinIconSize - coinSize.Y) / 2f;
         spriteBatch.DrawString(Primitives.Font, coinText, new Vector2(coinRowX + coinIconSize + iconTextGap, textY), Primitives.FontColor);
 
-        cannonButton.Draw(spriteBatch);
-        musketButton.Draw(spriteBatch);
-        fisherButton.Draw(spriteBatch);
+        foreach (var (button, _) in towerButtons)
+            button.Draw(spriteBatch);
+
         wallButton.Draw(spriteBatch);
         removeButton.Draw(spriteBatch);
         speedButton.Draw(spriteBatch);

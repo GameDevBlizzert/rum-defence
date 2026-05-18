@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace RumDefence;
 
@@ -37,6 +38,28 @@ public class MusketAnimation : Animation
             ? _musketLeftRightLayer
             : _musketUpDownLayer;
         return layer.GetSourceRectangle(0, FrameWidth, FrameHeight);
+    }
+
+    public void DrawLayers(SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Vector2 origin,
+        float scale, Color color, float rotation, float rotationOffset, float layerDepth)
+    {
+        Vector2 dir = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation));
+        bool facingHorizontal = Math.Abs(dir.X) >= Math.Abs(dir.Y);
+        SpriteEffects musketEffect = facingHorizontal && dir.X > 0
+            ? SpriteEffects.FlipVertically
+            : SpriteEffects.None;
+
+        spriteBatch.Draw(texture, position, GetBarrelInnerRectangle(),
+            color, 0f, origin, scale, SpriteEffects.None, layerDepth);
+
+        spriteBatch.Draw(texture, position, GetPirateRectangle(dir),
+            color, 0f, origin, scale, SpriteEffects.None, layerDepth + 0.02f);
+
+        spriteBatch.Draw(texture, position, GetBarrelOuterRectangle(),
+            color, 0f, origin, scale, SpriteEffects.None, layerDepth + 0.03f);
+
+        spriteBatch.Draw(texture, position, GetMusketRectangle(dir),
+            color, rotation + rotationOffset, origin, scale, musketEffect, layerDepth + 0.04f);
     }
 
     public override Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction) =>

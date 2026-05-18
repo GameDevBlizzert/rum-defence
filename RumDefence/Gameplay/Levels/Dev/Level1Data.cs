@@ -37,13 +37,13 @@ public static class Level1Data
         );
     }
 
-    private static readonly TroopData Regular = TroopFactory.Regular;
+    private static readonly TroopData Regular = TroopFactory.Ghost;
     private static readonly TroopData Boss = TroopFactory.Boss;
 
     private static List<Wave> Waves => new()
     {
         //                                                               ships  troops                    spawnDelay
-        CreateWave(minSpawnTime:  0f, maxSpawnTime:1f, holdingTime: 1f, (NormalShip,  100, [(Regular,   1,  100)],        1.0f)),
+        CreateWave(minSpawnTime:  0f, maxSpawnTime:1f, holdingTime: 0f, (NormalShip,  100, [(Regular,   1,  100)],        1.0f)),
         CreateWave(minSpawnTime: 0, maxSpawnTime: 1, holdingTime: 0f, (NormalShip,  50, [(Regular,   10,  75)],         0.1f)),
         CreateWave(minSpawnTime: 0f, maxSpawnTime: 5f, holdingTime: 6f, (NormalShip,  4, [(Regular,   7,  100)],        0.4f)),
         CreateWave(minSpawnTime:  6f, maxSpawnTime: 11f, holdingTime: 0f, (NormalShip,  6, [(Regular, 4,  100)],        1f), (BossShip, 1, [(Boss, 2, 500)], 0.1f)),

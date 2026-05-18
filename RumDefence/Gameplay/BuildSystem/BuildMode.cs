@@ -1,9 +1,7 @@
-﻿public enum BuildMode
+public enum BuildMode
 {
     None,
     Wall,
-    MusketTower,
-    CannonTower,
-    FisherTower,
+    Tower,
     Remove,
 }
