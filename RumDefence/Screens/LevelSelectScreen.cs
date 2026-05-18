@@ -13,6 +13,12 @@ public class LevelSelectScreen : Screen
     private int currentPage = 0;
     private int levelsPerPage = 4;
 
+    private Texture2D pixel;
+    private SpriteFont font;
+
+    private SimpleButton backButton;
+    private Texture2D buttonTexture;
+
     public LevelSelectScreen(ScreenManager manager, List<Level> levels) : base(manager)
     {
         this.levels = levels;
@@ -22,7 +28,21 @@ public class LevelSelectScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
+        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
+
+        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
+        pixel.SetData(new[] { Color.White });
+
         buttons.Clear();
+
+        backButton = new SimpleButton(buttonTexture, "Back",
+            new Vector2(20, 20), new Vector2(200, 80));
+
+        backButton.OnClick = () =>
+        {
+            manager.SetScreen(new ThemeSelectScreen(manager));
+        };
 
         for (int i = 0; i < levels.Count; i++)
         {
@@ -68,6 +88,8 @@ public class LevelSelectScreen : Screen
             buttons[levelIndex].SetBounds(rect);
             buttons[levelIndex].Update(gameTime);
         }
+
+        backButton.Update(gameTime);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -83,6 +105,8 @@ public class LevelSelectScreen : Screen
 
             buttons[levelIndex].Draw(spriteBatch);
         }
+
+        backButton.Draw(spriteBatch);
     }
 
     private Rectangle GetLevelRect(int row, int col)

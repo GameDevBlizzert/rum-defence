@@ -12,6 +12,7 @@ public class ThemeSelectScreen : Screen
     private SimpleButton grassButton;
     private SimpleButton stoneButton;
     private SimpleButton devButton;
+    private SimpleButton backButton;
 
     private Texture2D buttonTexture;
 
@@ -28,6 +29,10 @@ public class ThemeSelectScreen : Screen
 
         stoneButton = new SimpleButton(buttonTexture, "Stone",
             new Vector2(800, 550), new Vector2(300, 100));
+
+        backButton = new SimpleButton(buttonTexture, "Back",
+            new Vector2(20, 20), new Vector2(200, 80));
+
 
         devButton = new SimpleButton(buttonTexture, "Dev",
             new Vector2(800, 700), new Vector2(300, 100));
@@ -47,6 +52,11 @@ public class ThemeSelectScreen : Screen
             manager.SetScreen(new LevelSelectScreen(manager, DevLevels.All));
         };
 
+        backButton.OnClick = () =>
+        {
+            manager.SetScreen(new MainMenuScreen(manager));
+        };
+
         // Play theme music
         AudioManager.Instance.PlayBackgroundMusic("WhatCloudsAreMadeOf");
     }
@@ -56,6 +66,7 @@ public class ThemeSelectScreen : Screen
         grassButton.Update(gameTime);
         stoneButton.Update(gameTime);
         devButton.Update(gameTime);
+        backButton.Update(gameTime);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -65,5 +76,6 @@ public class ThemeSelectScreen : Screen
         grassButton.Draw(spriteBatch);
         stoneButton.Draw(spriteBatch);
         devButton.Draw(spriteBatch);
+        backButton.Draw(spriteBatch);
     }
 }
