@@ -29,7 +29,8 @@ public class Troop : EntityWithHealth, ICollidable
     private TroopDyingAnimation _dyingAnimation = new();
 
     public bool CanBeRemoved { get; private set; }
-    public bool NeedsPathInit { get; private set; } = true;
+    public bool NeedsPathInit { get; protected set; } = true;
+    protected virtual bool CanAttackWalls => true;
     protected PathfindingSystem pathfinding;
     public Queue<Vector2> Path => pathfinding?.Path;
 
@@ -138,7 +139,7 @@ public class Troop : EntityWithHealth, ICollidable
         }
 
         // If the next waypoint in the path is a wall, stop and attack it
-        if (GetWallAt != null && pathfinding.Path.Count > 0)
+        if (CanAttackWalls && GetWallAt != null && pathfinding.Path.Count > 0)
         {
             var grid = RumGame.Instance.CurrentGrid;
             var nextGrid = grid.WorldToGrid(pathfinding.Path.Peek());
@@ -189,7 +190,7 @@ public class Troop : EntityWithHealth, ICollidable
         return Collider.CheckIntersection(barrel.Collider);
     }
 
-    public void UpdatePathfinding()
+    public virtual void UpdatePathfinding()
     {
         NeedsPathInit = false;
         var grid = RumGame.Instance.CurrentGrid;

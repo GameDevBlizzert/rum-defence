@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using RumDefence;
 using System;
 
@@ -14,6 +15,8 @@ public class CannonProjectile : BaseProjectile
     {
         ApplyDirectDamage = false;
         _aoeRadius = aoeRadius;
+        Texture = RumGame.Instance.Content.Load<Texture2D>("KenneyPiratePack/PNG/Retina/Ship parts/cannonBall");
+        Size = SizeSystem.Square(0.25f);
     }
 
     public override void Update(GameTime gameTime)
