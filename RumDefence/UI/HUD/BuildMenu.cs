@@ -20,8 +20,6 @@ public class BuildMenu
     private readonly Texture2D playIcon;
     private readonly Texture2D pauseIcon;
     private readonly Texture2D fastForwardIcon;
-    private readonly Texture2D hamburgerIcon;
-
     public System.Action OnSpeedRequested;
     public System.Action OnMenuRequested;
 
@@ -114,7 +112,6 @@ public class BuildMenu
         playIcon = CreatePlayIcon(RumGame.Instance.GraphicsDevice);
         pauseIcon = CreatePauseIcon(RumGame.Instance.GraphicsDevice);
         fastForwardIcon = CreateFastForwardIcon(RumGame.Instance.GraphicsDevice);
-        hamburgerIcon = CreateHamburgerIcon(RumGame.Instance.GraphicsDevice);
 
         int speedButtonY = panelY + panelHeight - (ButtonHeight + spacing) * 2 - 20;
         speedButton = new IconButton(buttonTexture, fastForwardIcon, new Vector2(buttonX, speedButtonY), new Vector2(ButtonWidth, ButtonHeight));
@@ -122,7 +119,7 @@ public class BuildMenu
         speedButton.OnClick = () => OnSpeedRequested?.Invoke();
 
         int pauseMenuButtonY = panelY + panelHeight - ButtonHeight - 20;
-        pauseMenuButton = new IconButton(buttonTexture, hamburgerIcon, new Vector2(buttonX, pauseMenuButtonY), new Vector2(ButtonWidth, ButtonHeight));
+        pauseMenuButton = new IconButton(buttonTexture, pauseIcon, new Vector2(buttonX, pauseMenuButtonY), new Vector2(ButtonWidth, ButtonHeight));
         pauseMenuButton.BackgroundSourceRect = buttonSourceRect;
         pauseMenuButton.OnClick = () => OnMenuRequested?.Invoke();
     }
@@ -198,24 +195,6 @@ public class BuildMenu
         return tex;
     }
 
-    private static Texture2D CreateHamburgerIcon(GraphicsDevice graphicsDevice)
-    {
-        const int w = 24, h = 14;
-        var data = new Color[w * h];
-
-        int[] barStartYs = { 2, 6, 10 };
-        const int barHeight = 2;
-
-        foreach (int barY in barStartYs)
-            for (int y = barY; y < barY + barHeight && y < h; y++)
-                for (int x = 2; x < w - 2; x++)
-                    data[y * w + x] = Color.White;
-
-        var tex = new Texture2D(graphicsDevice, w, h);
-        tex.SetData(data);
-        return tex;
-    }
-
     public Vector2 GetCoinTargetPosition()
     {
         var size = Primitives.Font.MeasureString(progress.CoinsRemaining.ToString());
@@ -245,7 +224,7 @@ public class BuildMenu
         speedButton.IconTexture = playbackState switch
         {
             GamePlaybackState.Normal => fastForwardIcon,
-            GamePlaybackState.FastForward => pauseIcon,
+            GamePlaybackState.FastForward => playIcon,
             _ => playIcon
         };
 
