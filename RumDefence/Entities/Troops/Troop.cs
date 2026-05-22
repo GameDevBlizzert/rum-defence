@@ -26,7 +26,7 @@ public class Troop : EntityWithHealth, ICollidable
     private List<ITroopAbility> abilities = new();
     private readonly List<IModifier> _modifiers = new();
 
-    private TroopDyingAnimation _dyingAnimation = new();
+    protected virtual TroopDyingAnimation _dyingAnimation { get; set; } = new();
 
     public bool CanBeRemoved { get; private set; }
     public bool NeedsPathInit { get; private set; } = true;
