@@ -11,35 +11,24 @@ public class BaseTower : Entity
     protected readonly List<Troop> Troops;
     protected readonly List<BaseProjectile> Projectiles = [];
 
+    public TowerData Data { get; }
+
     public int CurrentLevel { get; protected set; } = 0;
     public int MaxLevel { get; protected set; } = 3;
 
     public string Label = "";
-    protected float BaseRange = 700f;
-    protected float RangeUpgradeFlat = 50f;
-    protected float RangeUpgradePercent = 0.1f;
 
-    protected float BaseFireRate = 1f; // shots per second
-    protected float FireRateUpgradeFlat = 0f;
-    protected float FireRateUpgradePercent = 0.2f;
-
-    protected int BaseDamage = 25;
-    protected int DamageUpgradeFlat = 5;
-    protected float DamageUpgradePercent = 0.1f;
-
-    public float CurrentRange => (BaseRange + (CurrentLevel * RangeUpgradeFlat)) * (1f + (CurrentLevel * RangeUpgradePercent));
-    public float CurrentFireRate => (BaseFireRate + (CurrentLevel * FireRateUpgradeFlat)) * (1f + (CurrentLevel * FireRateUpgradePercent));
-    public int CurrentDamage => (int)((BaseDamage + (CurrentLevel * DamageUpgradeFlat)) * (1f + (CurrentLevel * DamageUpgradePercent)));
+    public float CurrentRange => (Data.Range + (CurrentLevel * Data.RangeUpgradeFlat)) * (1f + (CurrentLevel * Data.RangeUpgradePercent));
+    public float CurrentFireRate => (Data.FireRate + (CurrentLevel * Data.FireRateUpgradeFlat)) * (1f + (CurrentLevel * Data.FireRateUpgradePercent));
+    public int CurrentDamage => (int)((Data.Damage + (CurrentLevel * Data.DamageUpgradeFlat)) * (1f + (CurrentLevel * Data.DamageUpgradePercent)));
 
     public float ProjectileSpeed { get; set; } = 200f;
     public AttackMode AttackMode { get; set; } = AttackMode.Closest;
-    public float RotationSpeed { get; set; } = 5f; // radians per second
-
-    public int BaseUpgradeCost { get; set; } = 50;
+    public float RotationSpeed { get; set; } = 5f;
 
     public int GetUpgradeCost()
     {
-        return (int)(BaseUpgradeCost * Math.Pow(1.5, CurrentLevel));
+        return (int)(Data.UpgradeCost * Math.Pow(1.5, CurrentLevel));
     }
 
     public bool CanUpgrade => CurrentLevel < MaxLevel;
@@ -57,12 +46,10 @@ public class BaseTower : Entity
 
     public BaseTower(TowerData data, Vector2 location, List<Troop> troops)
     {
+        Data = data;
         Position = location;
         Troops = troops;
 
-        BaseRange = data.Range;
-        BaseFireRate = data.FireRate;
-        BaseDamage = data.Damage;
         ProjectileSpeed = data.ProjectileSpeed;
         AttackMode = data.AttackMode;
         Label = data.Label;
@@ -73,6 +60,8 @@ public class BaseTower : Entity
 
         Size = SizeSystem.Square(1f);
         ApplySize();
+
+        scale *= data.ScaleMultiplier;
     }
 
     public override void Update(GameTime gameTime)
@@ -81,7 +70,6 @@ public class BaseTower : Entity
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        // update projectiles
         for (int i = Projectiles.Count - 1; i >= 0; i--)
         {
             Projectiles[i].Update(gameTime);
@@ -89,10 +77,8 @@ public class BaseTower : Entity
                 Projectiles.RemoveAt(i);
         }
 
-        // find target every frame so rotation stays smooth
         Troop target = FindTarget();
 
-        // rotate toward target
         if (target != null)
         {
             Vector2 dir = target.Position - Position;
@@ -101,7 +87,6 @@ public class BaseTower : Entity
         float diff = MathHelper.WrapAngle(_targetRotation - rotation);
         rotation += diff * Math.Min(1f, RotationSpeed * dt);
 
-        // handle firing
         _fireCooldown -= dt;
         if (_fireCooldown > 0f) return;
         if (target == null) return;

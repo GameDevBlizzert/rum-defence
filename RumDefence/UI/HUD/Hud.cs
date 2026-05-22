@@ -52,13 +52,9 @@ public class Hud
 
         if (upgradeMenu.SelectedTower == null)
         {
-            upgradeMenu.PreviewData = buildManager.GetMode() switch
-            {
-                BuildMode.CannonTower => TowerFactory.Cannon,
-                BuildMode.MusketTower => TowerFactory.Musket,
-                BuildMode.FisherTower => TowerFactory.Fisher,
-                _ => null
-            };
+            upgradeMenu.PreviewData = buildManager.GetMode() == BuildMode.Tower
+                ? buildManager.SelectedTowerData
+                : null;
         }
 
         upgradeMenu.Update(gameTime);

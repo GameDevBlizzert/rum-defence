@@ -13,6 +13,11 @@ public class LevelSelectScreen : Screen
     private int currentPage = 0;
     private int levelsPerPage = 4;
 
+    private SpriteFont font;
+
+    private SimpleButton backButton;
+    private Texture2D buttonTexture;
+
     public LevelSelectScreen(ScreenManager manager, List<Level> levels) : base(manager)
     {
         this.levels = levels;
@@ -22,7 +27,18 @@ public class LevelSelectScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
+        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
+
         buttons.Clear();
+
+        backButton = new SimpleButton(buttonTexture, "Back",
+            new Vector2(20, 20), new Vector2(200, 80));
+
+        backButton.OnClick = () =>
+        {
+            manager.SetScreen(new ThemeSelectScreen(manager));
+        };
 
         for (int i = 0; i < levels.Count; i++)
         {
@@ -47,12 +63,10 @@ public class LevelSelectScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
-        var keyboard = Keyboard.GetState();
-
-        if (keyboard.IsKeyDown(Keys.D))
+        if (InputManager.Instance.IsActionJustPressed("LevelNext"))
             currentPage = MathHelper.Clamp(currentPage + 1, 0, (levels.Count - 1) / levelsPerPage);
 
-        if (keyboard.IsKeyDown(Keys.A))
+        if (InputManager.Instance.IsActionJustPressed("LevelPrev"))
             currentPage = MathHelper.Clamp(currentPage - 1, 0, (levels.Count - 1) / levelsPerPage);
 
         int startIndex = currentPage * levelsPerPage;
@@ -70,6 +84,8 @@ public class LevelSelectScreen : Screen
             buttons[levelIndex].SetBounds(rect);
             buttons[levelIndex].Update(gameTime);
         }
+
+        backButton.Update(gameTime);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -85,6 +101,8 @@ public class LevelSelectScreen : Screen
 
             buttons[levelIndex].Draw(spriteBatch);
         }
+
+        backButton.Draw(spriteBatch);
     }
 
     private Rectangle GetLevelRect(int row, int col)

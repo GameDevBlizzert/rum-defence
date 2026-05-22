@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using RumDefence.Exceptions;
+using RumDefence.Gameplay.Levels.Dev;
 using RumDefence.Gameplay.Levels.Ghost;
 using RumDefence.Levels.Ghost;
 using RumDefence.Levels.Grass;
@@ -37,6 +38,15 @@ public class LevelProgressSystem : IGameLoopSystem
 
     private List<Level> activeLevelSet;
     private Level currentLevel;
+    /// <summary>
+    /// Contains all level sets (themes) for progression handling.
+    /// </summary>
+    private static List<List<Level>> allLevelSets = new()
+    {
+        DevLevels.All,
+        GrassLevels.All,
+        GhostLevels.All
+    };
 
     /// <param name="initialLives">The initial amount of lives at the start of the level</param>
     /// <param name="initialCoins">The initial amount of coins at the start of the level</param>

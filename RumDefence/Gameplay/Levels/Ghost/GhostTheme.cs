@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
+using Moq;
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +11,7 @@ public class GhostTheme : BaseTheme, IWallTheme
     private string wallPrefix = "Art/Themes/Grass/Walls/";
     private string shipPrefix = "Art/Themes/Ghost/Ships/";//ghost ship
     private string enemyPrefix = "Art/Themes/Grass/Enemies/";
-    //private string decorationPrefix = "Art/Themes/Grass/Decorations/"; //Dit is voor decorations toe te voegen voor volgende PR
+    private string decorationPrefix = "Art/Themes/Grass/Decorations/";
 
     private Dictionary<int, List<Texture2D>> tileMap;
     private Dictionary<string, Texture2D> shipMap;
@@ -31,6 +32,7 @@ public class GhostTheme : BaseTheme, IWallTheme
     private List<Texture2D> cornerDamagedList;
     private List<Texture2D> twallDamagedList;
     private List<Texture2D> xwallDamagedList;
+    private List<Texture2D> rocks;
 
     public GhostTheme()
     {
@@ -80,22 +82,16 @@ public class GhostTheme : BaseTheme, IWallTheme
             Load(enemyPrefix + "enemy_1")
         };
 
-        Console.WriteLine("Single: " + (Single != null));
-        Console.WriteLine("Wall: " + (Wall != null));
-        Console.WriteLine("End: " + (End != null));
-        Console.WriteLine("Corner: " + (Corner != null));
-        Console.WriteLine("Twall: " + (Twall != null));
-        Console.WriteLine("Xwall: " + (Xwall != null));
-        Console.WriteLine("Diagonal: " + (Diagonal != null));
-        Console.WriteLine("DiagonalEnd: " + (DiagonalEnd != null));
-        Console.WriteLine("DiagonalFill: " + (DiagonalFill != null));
+        rocks = new List<Texture2D>()
+        {
+            Load(decorationPrefix + "Rock_01"),
+            Load(decorationPrefix + "Rock_02"),
+            Load(decorationPrefix + "Rock_03"),
+            Load(decorationPrefix + "Rock_Moss_01"),
+            Load(decorationPrefix + "Rock_Moss_02"),
+            Load(decorationPrefix + "Rock_Moss_03"),
+        };
 
-        Console.WriteLine("xwallDamagedList count: " + xwallDamagedList.Count);
-
-        var tex = Load(wallPrefix + "Xwall_damaged");
-
-        if (tex == null)
-            throw new Exception("Xwall_damaged FAILED TO LOAD");
     }
 
     public override Texture2D GetTexture(int tile, int x, int y)
@@ -143,4 +139,15 @@ public class GhostTheme : BaseTheme, IWallTheme
     {
         return GetSeeded(xwallDamagedList, x, y);
     }
+
+    public override (Texture2D, string) GetRandomDecoration(Random rng, int x, int y)
+    {
+        if (rng.NextDouble() < 0.3)
+            return (GetSeeded(rocks, x, y), "rock");
+
+        return (null, null);
+    }
+
+    public override float GetDecorationDensity() => 0.35f;
+
 }
