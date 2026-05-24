@@ -23,7 +23,7 @@ public static class TroopFactory
         BaseSpeed: 60f,
         Damage: 1,
         CoinValue: 10,
-        Size: 10f,
+        Size: 20f,
         InitialSpeedMultiplier: 1f
     );
 
@@ -33,7 +33,7 @@ public static class TroopFactory
         BaseSpeed: 60f,
         Damage: 10,
         CoinValue: 100,
-        Size: 12f,
+        Size: 22f,
         InitialSpeedMultiplier: 0.5f,
         IsBoss: true
     );
@@ -44,7 +44,7 @@ public static class TroopFactory
         BaseSpeed: 45f,
         Damage: 1,
         CoinValue: 15,
-        Size: 10f,
+        Size: 20f,
         InitialSpeedMultiplier: 1f,
         IsGhost: true
     );
