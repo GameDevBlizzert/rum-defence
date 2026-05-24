@@ -8,54 +8,33 @@ public class BomberTroopAnimation : TroopAnimation
     public BomberTroopAnimation(int frameWidth, int frameHeight, float frameDuration, int totalFrames, bool isLoop) : base(frameWidth, frameHeight, frameDuration, totalFrames, isLoop)
     {
         _walkDownLayers = [
-            new SpriteLayer(12, 14, 8), // Body Down
-            new SpriteLayer(12, 14, 10), // Clothes Down
-            new SpriteLayer(12, 14, 7) // Bomb Down
+            new SpriteLayer(12, 14, 9), // Body Down
+            new SpriteLayer(12, 14, 7), // Clothes Down
+            new SpriteLayer(12, 14, 6) // Bomb Down
         ];
         _walkUpLayers = [
-            new SpriteLayer(15, 17, 8), // Body Up
-            new SpriteLayer(15, 17, 10), // Clothes Up
-            new SpriteLayer(15, 17, 7) // Bomb Up
+            new SpriteLayer(15, 17, 9), // Body Up
+            new SpriteLayer(15, 17, 7), // Clothes Up
+            new SpriteLayer(15, 17, 6) // Bomb Up
         ];
         _walkRightLayers = [
-            new SpriteLayer(18, 20, 8), // Body Right
-            new SpriteLayer(18, 20, 10), // Clothes Right
-            new SpriteLayer(18, 20, 7) // Bomb Right
+            new SpriteLayer(18, 20, 9), // Body Right
+            new SpriteLayer(18, 20, 7), // Clothes Right
+            new SpriteLayer(18, 20, 6) // Bomb Right
         ];
         _walkLeftLayers = [
-            new SpriteLayer(21, 23, 8), // Body Left
-            new SpriteLayer(21, 23, 10), // Clothes Left
-            new SpriteLayer(21, 23, 7) // Bomb Left
-        ];
-    }
-}
-public class BomberTroopExplodeAnimation : TroopAnimation
-{
-    public BomberTroopExplodeAnimation() : base(16, 16, 0.15f, 3, true)
-    {
-        _walkDownLayers = [
-            new SpriteLayer(0, 2, 12),
-            new SpriteLayer(8, 10, 12),
-        ];
-        _walkUpLayers = [
-            new SpriteLayer(0, 2, 13),
-            new SpriteLayer(8, 10, 13),
-        ];
-        _walkRightLayers = [
-            new SpriteLayer(0, 2, 14),
-            new SpriteLayer(8, 10, 14),
-        ];
-        _walkLeftLayers = [
-            new SpriteLayer(0, 2, 15),
-            new SpriteLayer(8, 10, 15),
+            new SpriteLayer(21, 23, 9), // Body Left
+            new SpriteLayer(21, 23, 7), // Clothes Left
+            new SpriteLayer(21, 23, 6) // Bomb Left
         ];
     }
 }
 
 public class BomberTroopDyingAnimation : TroopDyingAnimation
 {
-    private SpriteLayer[] _layers = [
-        new (24, 26, 8),
-        new (24, 26, 18),
+    protected new readonly SpriteLayer[] _layers = [
+        new (24, 26, 9),
+        new (24, 26, 7),
+        new (24, 26, 6),
     ];
 }

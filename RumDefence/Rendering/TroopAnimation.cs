@@ -89,7 +89,7 @@ public class TroopAnimation : Animation
 }
 public class TroopDyingAnimation : Animation
 {
-    private SpriteLayer[] _layers = [
+    protected readonly SpriteLayer[] _layers = [
         new (0, 3, 18),
         new (4, 7, 18),
     ];

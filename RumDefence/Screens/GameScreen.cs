@@ -32,6 +32,7 @@ public class GameScreen : Screen
     public List<Explosion> Explosions = new();
     public List<NetEffect> NetEffects = new();
     public List<FireEffect> FireEffects = new();
+    public IEnumerable<Wall> Walls => walls.Values;
 
     private Dictionary<Point, BaseTower> placedTowers = new();
 
