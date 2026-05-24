@@ -9,8 +9,8 @@ namespace RumDefence;
 public class Troop : EntityWithHealth, ICollidable
 {
     private Vector2 target;
-    protected virtual Animation animation { get; set; }
-    protected virtual Animation _swordAttackAnimation { get; set; }
+    protected virtual TroopAnimation _walkanimation { get; set; }
+    protected virtual TroopSwordAttackAnimation _swordAttackAnimation { get; set; }
     private Vector2 _lastDir = Vector2.UnitY;
 
     private float baseSpeed;
@@ -26,7 +26,7 @@ public class Troop : EntityWithHealth, ICollidable
     private List<ITroopAbility> abilities = new();
     private readonly List<IModifier> _modifiers = new();
 
-    protected virtual TroopDyingAnimation _dyingAnimation { get; set; } = new();
+    protected virtual Animation _dyingAnimation { get; set; }
 
     public bool CanBeRemoved { get; private set; }
     public bool NeedsPathInit { get; protected set; } = true;
@@ -46,12 +46,13 @@ public class Troop : EntityWithHealth, ICollidable
         CoinValue = data.CoinValue;
         SpeedMultiplier = data.InitialSpeedMultiplier;
 
-        animation = new TroopAnimation(16, 16, 0.2f, 3, true);
+        _walkanimation = new TroopAnimation(16, 16, 0.2f, true);
         _swordAttackAnimation = new TroopSwordAttackAnimation();
+        _dyingAnimation = new TroopDyingAnimation();
 
         // https://foozlecc.itch.io/scallywag-pirates
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
-        origin = new Vector2(animation.FrameHeight / 2, animation.FrameWidth / 2);
+        origin = new Vector2(_walkanimation.FrameHeight / 2, _walkanimation.FrameWidth / 2);
 
         Size = SizeSystem.Square(data.Size);
 
@@ -91,7 +92,7 @@ public class Troop : EntityWithHealth, ICollidable
     {
         if (IsDead)
         {
-            sourceRectangles = _dyingAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
+            sourceRectangles = _dyingAnimation.GetCurrentLayerRectangles(gameTime);
             if (_dyingAnimation.IsFinished)
                 CanBeRemoved = true;
             return;
@@ -116,6 +117,7 @@ public class Troop : EntityWithHealth, ICollidable
 
         if (IsNearBarrel())
         {
+            _swordAttackAnimation.SetWalkDirection(_lastDir);
             sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
             _attackTimer += dt * AttackSpeedMultiplier;
             if (_attackTimer >= 1f)
@@ -178,7 +180,7 @@ public class Troop : EntityWithHealth, ICollidable
 
         dir.Normalize();
         _lastDir = dir;
-        sourceRectangles = animation.GetCurrentLayerRectangles(gameTime, dir);
+        sourceRectangles = _walkanimation.GetCurrentLayerRectangles(gameTime, dir);
 
         Position += dir * speed * dt;
     }

@@ -7,15 +7,43 @@ public class BomberTroop : Troop
     private bool _hasExploded;
     private const float ExplosionRadius = 96f;
     private const float WallDamageModifier = 4f;
-
     public BomberTroop(TroopData data, Vector2 start, Vector2 target)
         : base(data, start, target)
     {
-        animation = new BomberTroopAnimation(16, 16, 0.2f, 3, true);
-        _dyingAnimation = new BomberTroopDyingAnimation();
+        // _walkanimation = new BomberTroopAnimation(16, 16, 0.2f, true);
+        // _dyingAnimation = new BomberTroopDyingAnimation();
     }
 
     protected override bool CanAttackWalls => false;
+
+    // public override void UpdatePathfinding()
+    // {
+    //     NeedsPathInit = false;
+    //     var grid = RumGame.Instance.CurrentGrid;
+    //     var walls = GameScreen.Instance.Walls;
+
+    //     Wall nearest = null;
+    //     float nearestDist = float.MaxValue;
+    //     foreach (var wall in walls)
+    //     {
+    //         float dist = Vector2.Distance(Position, grid.GridToWorld(wall.GridPos));
+    //         if (dist < nearestDist)
+    //         {
+    //             nearestDist = dist;
+    //             nearest = wall;
+    //         }
+    //     }
+
+    //     if (nearest != null)
+    //     {
+    //         pathfinding = new PathfindingSystem(grid.GridToWorld(nearest.GridPos));
+    //         pathfinding.UpdatePath(Position, grid, null);
+    //     }
+    //     else
+    //     {
+    //         pathfinding.UpdatePath(Position, grid, grid.UntraversableTiles);
+    //     }
+    // }
 
     public override void Update(GameTime gameTime)
     {

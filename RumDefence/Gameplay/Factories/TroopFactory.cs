@@ -18,7 +18,7 @@ public record TroopData(
 public static class TroopFactory
 {
     public static readonly TroopData Regular = new(
-        SpritePath: "Art/Pirates/pirates-green-sprite-sheet",
+        SpritePath: "Art/Pirates/pirate.grunt",
         Health: 100,
         BaseSpeed: 60f,
         Damage: 1,
@@ -28,7 +28,7 @@ public static class TroopFactory
     );
 
     public static readonly TroopData Boss = new(
-        SpritePath: "Art/Pirates/pirates-red-sprite-sheet",
+        SpritePath: "Art/Pirates/pirate.captain",
         Health: 500,
         BaseSpeed: 60f,
         Damage: 10,
@@ -39,7 +39,7 @@ public static class TroopFactory
     );
 
     public static readonly TroopData Ghost = new(
-        SpritePath: "Art/Pirates/pirates-white-sprite-sheet",
+        SpritePath: "Art/Pirates/pirate.grunt",
         Health: 50,
         BaseSpeed: 45f,
         Damage: 1,

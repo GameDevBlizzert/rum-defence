@@ -6,17 +6,17 @@ namespace RumDefence;
 
 public class MusketAnimation : Animation
 {
-    private readonly SpriteLayer _barrelOuterLayer = new SpriteLayer(0, 0, 0);
-    private readonly SpriteLayer _barrelInnerLayer = new SpriteLayer(0, 0, 4);
-    private readonly SpriteLayer _musketLeftRightLayer = new SpriteLayer(0, 0, 2);
-    private readonly SpriteLayer _musketUpDownLayer = new SpriteLayer(1, 1, 2);
+    private readonly SpriteLayer _barrelOuterLayer = new SpriteLayer(SpriteType.Idle, 0, 0, 0);
+    private readonly SpriteLayer _barrelInnerLayer = new SpriteLayer(SpriteType.Idle, 0, 0, 4);
+    private readonly SpriteLayer _musketLeftRightLayer = new SpriteLayer(SpriteType.Idle, 0, 0, 2);
+    private readonly SpriteLayer _musketUpDownLayer = new SpriteLayer(SpriteType.Idle, 1, 1, 2);
 
-    private readonly SpriteLayer _pirateRightLayer = new SpriteLayer(0, 0, 3);
-    private readonly SpriteLayer _pirateDownLayer = new SpriteLayer(1, 1, 3);
-    private readonly SpriteLayer _pirateLeftLayer = new SpriteLayer(2, 2, 3);
-    private readonly SpriteLayer _pirateUpLayer = new SpriteLayer(3, 3, 3);
+    private readonly SpriteLayer _pirateRightLayer = new SpriteLayer(SpriteType.Right, 0, 0, 3);
+    private readonly SpriteLayer _pirateDownLayer = new SpriteLayer(SpriteType.Down, 1, 1, 3);
+    private readonly SpriteLayer _pirateLeftLayer = new SpriteLayer(SpriteType.Left, 2, 2, 3);
+    private readonly SpriteLayer _pirateUpLayer = new SpriteLayer(SpriteType.Up, 3, 3, 3);
 
-    public MusketAnimation() : base(128, 128, 0f, 1, false) { }
+    public MusketAnimation() : base(128, 128, 0f, false) { }
 
     public Rectangle GetBarrelOuterRectangle() =>
         _barrelOuterLayer.GetSourceRectangle(0, FrameWidth, FrameHeight);
@@ -62,6 +62,6 @@ public class MusketAnimation : Animation
             color, rotation + rotationOffset, origin, scale, musketEffect, layerDepth + 0.04f);
     }
 
-    public override Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction) =>
+    public Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction) =>
         new[] { GetMusketRectangle(direction) };
 }

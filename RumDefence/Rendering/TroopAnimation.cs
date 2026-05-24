@@ -3,140 +3,96 @@ using Microsoft.Xna.Framework;
 
 namespace RumDefence;
 
+/*
+Troop Sprite row description:
+row_index   layer
+0           effect
+1           tool
+2           clothes
+3           body
+*/
+
 public class TroopAnimation : Animation
 {
-    private SpriteLayer[] _currentActiveLayers;
-
-    protected virtual SpriteLayer[] _walkDownLayers { get; set; }
-    protected virtual SpriteLayer[] _walkUpLayers { get; set; }
-    protected virtual SpriteLayer[] _walkRightLayers { get; set; }
-    protected virtual SpriteLayer[] _walkLeftLayers { get; set; }
-    public TroopAnimation(int frameWidth, int frameHeight, float frameDuration, int totalFrames, bool isLoop) : base(frameWidth, frameHeight, frameDuration, totalFrames, isLoop)
+    public TroopAnimation(int frameWidth, int frameHeight, float frameDuration, bool isLoop)
+        : base(frameWidth, frameHeight, frameDuration, isLoop)
     {
-        _currentActiveLayers = _walkDownLayers;
-        _walkDownLayers = [
-            new SpriteLayer(0, 2, 0), // Body Down
-            new SpriteLayer(4, 6, 0), // Hat Down
-        ];
-        _walkUpLayers = [
-            new SpriteLayer(0, 2, 1), // Body Up
-            new SpriteLayer(4, 6, 1), // Hat Up
-        ];
-        _walkRightLayers = [
-            new SpriteLayer(0, 2, 2), // Body Right
-            new SpriteLayer(4, 6, 2), // Hat Right
-        ];
-        _walkLeftLayers = [
-            new SpriteLayer(0, 2, 3), // Body Left
-            new SpriteLayer(4, 6, 3), // Hat Left
-        ];
-    }
-    public void Update(GameTime gameTime, Vector2 direction)
-    {
-        SetWalkDirection(direction);
-        if (direction != Vector2.Zero)
-        {
-            ElapseTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            CurrentFrame = (int)(ElapseTime / FrameDuration) % FrameTotal;
-        }
-        else
-        {
-            ElapseTime = 0;
-            CurrentFrame = 0;
-        }
+        AddSpriteLayer(new SpriteLayer(SpriteType.Down, 12, 14, 3));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Down, 12, 14, 2));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Down, 12, 14, 1));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Down, 12, 14, 0));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Up, 15, 17, 3));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Up, 15, 17, 2));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Up, 15, 17, 1));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Up, 15, 17, 0));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Right, 18, 20, 3));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Right, 18, 20, 2));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Right, 18, 20, 1));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Right, 18, 20, 0));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Left, 21, 23, 3));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Left, 21, 23, 2));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Left, 21, 23, 1));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Left, 21, 23, 0));
+        UpdateActiveLayers(SpriteType.Down);
     }
 
-    public override Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction)
+    public Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction)
     {
-        Update(gameTime, direction);
-        if (_currentActiveLayers == null)
-            return Array.Empty<Rectangle>();
-
-        Rectangle[] rects = new Rectangle[_currentActiveLayers.Length];
-
-        for (int i = 0; i < _currentActiveLayers.Length; i++)
-        {
-            rects[i] = _currentActiveLayers[i].GetSourceRectangle(CurrentFrame, FrameWidth, FrameHeight);
-        }
-
-        return rects;
+        ActivateLayerType(direction);
+        return base.GetCurrentLayerRectangles(gameTime);
     }
+
     public void SetWalkDirection(Vector2 direction)
+    {
+        ActivateLayerType(direction);
+    }
+
+    public void ActivateLayerType(Vector2 direction)
     {
         if (Math.Abs(direction.X) > Math.Abs(direction.Y))
         {
-            if (direction.X > 0)
-            {
-                _currentActiveLayers = _walkRightLayers;
-            }
-            else
-            {
-                _currentActiveLayers = _walkLeftLayers;
-            }
+            UpdateActiveLayers(direction.X > 0 ? SpriteType.Right : SpriteType.Left);
         }
         else
         {
-            if (direction.Y > 0)
-            {
-                _currentActiveLayers = _walkDownLayers;
-            }
-            else
-            {
-                _currentActiveLayers = _walkUpLayers;
-            }
+            UpdateActiveLayers(direction.Y > 0 ? SpriteType.Down : SpriteType.Up);
         }
     }
 }
+
 public class TroopDyingAnimation : Animation
 {
-    protected readonly SpriteLayer[] _layers = [
-        new (0, 3, 18),
-        new (4, 7, 18),
-    ];
-
-    public bool IsFinished { get; private set; }
-
-    public TroopDyingAnimation() : base(16, 16, 0.15f, 4, false) { }
-
-    public override Rectangle[] GetCurrentLayerRectangles(GameTime gameTime, Vector2 direction)
+    public TroopDyingAnimation() : base(16, 16, 0.15f, false)
     {
-        if (!IsFinished)
-        {
-            ElapseTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            CurrentFrame = (int)(ElapseTime / FrameDuration);
-            if (CurrentFrame >= FrameTotal)
-            {
-                CurrentFrame = FrameTotal - 1;
-                IsFinished = true;
-            }
-        }
-
-        Rectangle[] rects = new Rectangle[_layers.Length];
-        for (int i = 0; i < _layers.Length; i++)
-            rects[i] = _layers[i].GetSourceRectangle(CurrentFrame, FrameWidth, FrameHeight);
-        return rects;
+        AddSpriteLayer(new SpriteLayer(SpriteType.Dying, 24, 27, 3));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Dying, 24, 27, 2));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Dying, 24, 27, 1));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Dying, 24, 27, 0));
+        UpdateActiveLayers(SpriteType.Dying);
     }
 }
 
 public class TroopSwordAttackAnimation : TroopAnimation
 {
-    public TroopSwordAttackAnimation() : base(16, 16, 0.15f, 3, true)
+    public TroopSwordAttackAnimation() : base(16, 16, 0.15f, true)
     {
-        _walkDownLayers = [
-            new SpriteLayer(0, 2, 12),
-            new SpriteLayer(4, 6, 12),
-        ];
-        _walkUpLayers = [
-            new SpriteLayer(0, 2, 13),
-            new SpriteLayer(4, 6, 13),
-        ];
-        _walkRightLayers = [
-            new SpriteLayer(0, 2, 14),
-            new SpriteLayer(4, 6, 14),
-        ];
-        _walkLeftLayers = [
-            new SpriteLayer(0, 2, 15),
-            new SpriteLayer(4, 6, 15),
-        ];
+        ClearLayers();
+        AddSpriteLayer(new SpriteLayer(SpriteType.Down, 28, 30, 3));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Down, 28, 30, 2));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Down, 28, 30, 1));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Down, 28, 30, 0));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Up, 31, 33, 3));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Up, 31, 33, 2));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Up, 31, 33, 1));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Up, 31, 33, 0));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Right, 34, 36, 3));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Right, 34, 36, 2));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Right, 34, 36, 1));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Right, 34, 36, 0));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Left, 37, 39, 3));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Left, 37, 39, 2));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Left, 37, 39, 1));
+        AddSpriteLayer(new SpriteLayer(SpriteType.Left, 37, 39, 0));
+        UpdateActiveLayers(SpriteType.Down);
     }
 }
