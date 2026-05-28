@@ -24,7 +24,8 @@ public record TowerData(
     float FireRateUpgradePercent,
     int DamageUpgradeFlat,
     float DamageUpgradePercent,
-    int UpgradeCost
+    int UpgradeCost,
+    float ScaleMultiplier
 );
 
 public static class TowerFactory
@@ -47,7 +48,8 @@ public static class TowerFactory
         FireRateUpgradePercent: 0.05f,
         DamageUpgradeFlat: 5,
         DamageUpgradePercent: 0.1f,
-        UpgradeCost: 75
+        UpgradeCost: 75,
+        ScaleMultiplier: 1f
     );
 
     public static readonly TowerData Fisher = new(
@@ -68,7 +70,8 @@ public static class TowerFactory
         FireRateUpgradePercent: 0.05f,
         DamageUpgradeFlat: 5,
         DamageUpgradePercent: 0.1f,
-        UpgradeCost: 75
+        UpgradeCost: 75,
+        ScaleMultiplier: 1f
     );
 
     public static readonly TowerData Cannon = new(
@@ -89,7 +92,8 @@ public static class TowerFactory
         FireRateUpgradePercent: 0.15f,
         DamageUpgradeFlat: 10,
         DamageUpgradePercent: 0.2f,
-        UpgradeCost: 100
+        UpgradeCost: 100,
+        ScaleMultiplier: 1.4f
     );
 
     public static readonly TowerData Fire = new(
@@ -110,7 +114,8 @@ public static class TowerFactory
         FireRateUpgradePercent: 0.15f,
         DamageUpgradeFlat: 2,
         DamageUpgradePercent: 0.15f,
-        UpgradeCost: 85
+        UpgradeCost: 85,
+        ScaleMultiplier: 1.4f
     );
 
     public static readonly TowerData Bandit = new(
@@ -131,7 +136,8 @@ public static class TowerFactory
         FireRateUpgradePercent: 0.15f,
         DamageUpgradeFlat: 2,
         DamageUpgradePercent: 0.15f,
-        UpgradeCost: 35
+        UpgradeCost: 35,
+        ScaleMultiplier: 1f
     );
 
     public static readonly TowerData[] All = [Cannon, Musket, Fisher, Fire, Bandit];
