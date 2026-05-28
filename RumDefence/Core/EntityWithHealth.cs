@@ -76,10 +76,8 @@ public abstract class EntityWithHealth : Entity
         Health += amount;
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public void DrawHealth(SpriteBatch spriteBatch)
     {
-        base.Draw(spriteBatch);
-
         if (IsDead || InitialHealth <= 0) return;
 
         var healthPercentage = MathHelper.Clamp((float)Health / InitialHealth, 0f, 1f);
@@ -121,6 +119,11 @@ public abstract class EntityWithHealth : Entity
             spriteEffect,
             layerDepth
         );
+    }
 
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        base.Draw(spriteBatch);
+        DrawHealth(spriteBatch);
     }
 }

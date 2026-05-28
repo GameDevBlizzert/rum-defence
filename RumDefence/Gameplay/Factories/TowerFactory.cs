@@ -93,7 +93,7 @@ public static class TowerFactory
         DamageUpgradeFlat: 10,
         DamageUpgradePercent: 0.2f,
         UpgradeCost: 100,
-        ScaleMultiplier: 1.4f
+        ScaleMultiplier: 3f
     );
 
     public static readonly TowerData Fire = new(
@@ -115,7 +115,7 @@ public static class TowerFactory
         DamageUpgradeFlat: 2,
         DamageUpgradePercent: 0.15f,
         UpgradeCost: 85,
-        ScaleMultiplier: 1.3f
+        ScaleMultiplier: 3f
     );
 
     public static readonly TowerData[] All = [Cannon, Musket, Fisher, Fire];

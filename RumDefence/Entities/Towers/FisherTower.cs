@@ -6,25 +6,22 @@ namespace RumDefence;
 
 public class FisherTower : BaseTower
 {
-    private readonly MusketAnimation _animation = new MusketAnimation();
 
     public FisherTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
-        origin = new Vector2(64f, 64f);
+        // Sprite sheet columns: 0=Right, 1=Down, 2=Left, 3=Up  (4 rows)
+        animation.AddLayerMatrix(
+            [
+                new(1, SpriteAction.Static, SpriteDirection.Right),
+                new(1, SpriteAction.Static, SpriteDirection.Down),
+                new(1, SpriteAction.Static, SpriteDirection.Left),
+                new(1, SpriteAction.Static, SpriteDirection.Up),
+            ]
+        , 5);
     }
 
     protected override void FireProjectile(Troop target)
     {
         Projectiles.Add(new NetProjectile(Position, target, ProjectileSpeed, aoeRadius: 30f));
-    }
-
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        _animation.DrawLayers(spriteBatch, Texture, Position, origin, scale, color, rotation, rotationOffset, layerDepth);
-
-        foreach (var proj in Projectiles)
-            proj.Draw(spriteBatch);
-
-        DrawLevelStripes(spriteBatch);
     }
 }

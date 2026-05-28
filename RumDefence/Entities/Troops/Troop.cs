@@ -9,8 +9,7 @@ namespace RumDefence;
 public class Troop : EntityWithHealth, ICollidable
 {
     private Vector2 target;
-    protected virtual TroopAnimation _walkanimation { get; set; }
-    protected virtual TroopSwordAttackAnimation _swordAttackAnimation { get; set; }
+    protected readonly Animation animation;
     private Vector2 _lastDir = Vector2.UnitY;
 
     private float baseSpeed;
@@ -26,7 +25,6 @@ public class Troop : EntityWithHealth, ICollidable
     private List<ITroopAbility> abilities = new();
     private readonly List<IModifier> _modifiers = new();
 
-    protected virtual Animation _dyingAnimation { get; set; }
 
     public bool CanBeRemoved { get; private set; }
     public bool NeedsPathInit { get; protected set; } = true;
@@ -46,13 +44,28 @@ public class Troop : EntityWithHealth, ICollidable
         CoinValue = data.CoinValue;
         SpeedMultiplier = data.InitialSpeedMultiplier;
 
-        _walkanimation = new TroopAnimation(16, 16, 0.2f, true);
-        _swordAttackAnimation = new TroopSwordAttackAnimation();
-        _dyingAnimation = new TroopDyingAnimation();
-
         // https://foozlecc.itch.io/scallywag-pirates
+        animation = new Animation(16, 16, 0.2f);
+        animation.AddLayerMatrix(
+        [
+            new(3, SpriteAction.Idle, SpriteDirection.Down),
+            new(3, SpriteAction.Idle, SpriteDirection.Up),
+            new(3, SpriteAction.Idle, SpriteDirection.Right),
+            new(3, SpriteAction.Idle, SpriteDirection.Left),
+            new(3, SpriteAction.Walking, SpriteDirection.Down),
+            new(3, SpriteAction.Walking, SpriteDirection.Up),
+            new(3, SpriteAction.Walking, SpriteDirection.Right),
+            new(3, SpriteAction.Walking, SpriteDirection.Left),
+            new(4, SpriteAction.Dying, SpriteDirection.Right, isLoop: false),
+            new(3, SpriteAction.Attack, SpriteDirection.Down),
+            new(3, SpriteAction.Attack, SpriteDirection.Up),
+            new(3, SpriteAction.Attack, SpriteDirection.Right),
+            new(3, SpriteAction.Attack, SpriteDirection.Left),
+        ], 4);
+        animation.ActivateLayers([new(SpriteAction.Idle, SpriteDirection.Down)]);
+
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
-        origin = new Vector2(_walkanimation.FrameHeight / 2, _walkanimation.FrameWidth / 2);
+        origin = new Vector2(animation.FrameHeight / 2, animation.FrameWidth / 2);
 
         Size = SizeSystem.Square(data.Size);
 
@@ -90,10 +103,12 @@ public class Troop : EntityWithHealth, ICollidable
 
     public override void Update(GameTime gameTime)
     {
+        animation.Update(gameTime);
+
         if (IsDead)
         {
-            sourceRectangles = _dyingAnimation.GetCurrentLayerRectangles(gameTime);
-            if (_dyingAnimation.IsFinished)
+            animation.ActivateLayers([new(SpriteAction.Dying, SpriteDirection.Right)]);
+            if (animation.IsFinished)
                 CanBeRemoved = true;
             return;
         }
@@ -117,8 +132,7 @@ public class Troop : EntityWithHealth, ICollidable
 
         if (IsNearBarrel())
         {
-            _swordAttackAnimation.SetWalkDirection(_lastDir);
-            sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
+            animation.ActivateLayers([new(SpriteAction.Attack, VectorToSpriteDirection(_lastDir))]);
             _attackTimer += dt * AttackSpeedMultiplier;
             if (_attackTimer >= 1f)
             {
@@ -153,7 +167,7 @@ public class Troop : EntityWithHealth, ICollidable
                     var wallDir = pathfinding.Path.Peek() - Position;
                     if (wallDir != Vector2.Zero) wallDir.Normalize();
                     _lastDir = wallDir;
-                    sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
+                    animation.ActivateLayers([new(SpriteAction.Attack, VectorToSpriteDirection(wallDir))]);
                     _attackTimer += dt * AttackSpeedMultiplier;
                     if (_attackTimer >= 1f)
                     {
@@ -180,9 +194,16 @@ public class Troop : EntityWithHealth, ICollidable
 
         dir.Normalize();
         _lastDir = dir;
-        sourceRectangles = _walkanimation.GetCurrentLayerRectangles(gameTime, dir);
+        animation.ActivateLayers([new(SpriteAction.Walking, VectorToSpriteDirection(dir))]);
 
         Position += dir * speed * dt;
+    }
+
+    private static SpriteDirection VectorToSpriteDirection(Vector2 dir)
+    {
+        if (Math.Abs(dir.X) > Math.Abs(dir.Y))
+            return dir.X > 0 ? SpriteDirection.Right : SpriteDirection.Left;
+        return dir.Y > 0 ? SpriteDirection.Down : SpriteDirection.Up;
     }
 
     private bool IsNearBarrel()
@@ -207,7 +228,8 @@ public class Troop : EntityWithHealth, ICollidable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        base.Draw(spriteBatch);
+        DrawSpriteLayers(spriteBatch);
+        DrawHealth(spriteBatch);
 
         bool showPathfindingDebug = bool.Parse(
             Environment.GetEnvironmentVariable("SHOW_PATHFINDING") ?? "false"
@@ -252,6 +274,26 @@ public class Troop : EntityWithHealth, ICollidable
 
                 currentPos = point;
             }
+        }
+    }
+    public void DrawSpriteLayers(SpriteBatch spriteBatch)
+    {
+        // if (IsFinished) return;
+        var items = animation.GetCurrentLayers();
+        foreach (var item in items)
+        {
+            float itemRotation = item.Item1.Type == SpriteAction.Rotation ? rotation : 0f;
+            spriteBatch.Draw(
+                Texture,
+                Position,
+                item.Item2,
+                color,
+                itemRotation,
+                origin,
+                scale,
+                item.Item1.Effect,
+                item.Item1.Depth
+            );
         }
     }
 }
