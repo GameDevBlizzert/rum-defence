@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -15,5 +17,22 @@ public class FireTower : BaseTower
     {
         AudioManager.Instance.PlaySound("shoot", maxConcurrentInstances: 4);
         Projectiles.Add(new FireProjectile(Position, target, ProjectileSpeed, CurrentDamage, AoeRadius));
+    }
+
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        spriteBatch.Draw(
+            Texture,
+            Position,
+            null,
+            color,
+            rotation + rotationOffset,
+            origin,
+            scale,
+            spriteEffect,
+            layerDepth
+        );
+        DrawProjectiles(spriteBatch);
+        DrawLevelStripes(spriteBatch);
     }
 }
