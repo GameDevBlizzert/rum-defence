@@ -6,6 +6,7 @@ namespace RumDefence;
 
 public abstract class EntityWithHealth : Entity
 {
+    public event Action<EntityWithHealth> Died;
 
     /// <summary>
     /// The health of the entity. When it reaches 0 or below, the entity is considered dead.
@@ -54,12 +55,19 @@ public abstract class EntityWithHealth : Entity
     /// <exception cref="ArgumentException">Thrown if the damage amount is negative</exception>
     public virtual void TakeDamage(float amount)
     {
+        bool wasDead = IsDead;
+
         if (amount < 0)
         {
             throw new ArgumentException("Damage amount must be a positive integer.");
         }
 
         Health -= amount;
+
+        if (!wasDead && IsDead)
+        {
+            Died?.Invoke(this);
+        }
     }
 
     /// <summary>
