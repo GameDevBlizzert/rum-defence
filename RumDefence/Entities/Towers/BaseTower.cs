@@ -60,7 +60,7 @@ public class BaseTower : Entity
         rotationOffset = MathHelper.Pi;
 
         Size = SizeSystem.Square(Primitives.TowerSize) * data.ScaleMultiplier;
-        animation = new(Texture, 64, 64, 0f);
+        animation = new(Texture, 64, 64, 1f);
         origin = new Vector2(animation.FrameWidth / 2f, animation.FrameHeight / 2f);
         scale = Size.X / animation.FrameWidth;
     }

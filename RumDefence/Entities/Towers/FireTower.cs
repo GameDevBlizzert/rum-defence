@@ -11,6 +11,22 @@ public class FireTower : BaseTower
 
     public FireTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
+        animation.AddLayerMatrix(
+            [
+                new(1, SpriteAction.Rotation, SpriteDirection.Left),
+                new(1, SpriteAction.Rotation, SpriteDirection.Down),
+                new(1, SpriteAction.Rotation, SpriteDirection.Right),
+                new(1, SpriteAction.Rotation, SpriteDirection.Up),
+            ]
+        );
+        animation.AddLayerMatrix(
+            [
+                new(1, SpriteAction.Static, SpriteDirection.Left),
+                new(1, SpriteAction.Static, SpriteDirection.Down),
+                new(1, SpriteAction.Static, SpriteDirection.Right),
+                new(1, SpriteAction.Static, SpriteDirection.Up),
+            ]
+        , 3);
     }
 
     protected override void FireProjectile(Troop target)
@@ -19,20 +35,20 @@ public class FireTower : BaseTower
         Projectiles.Add(new FireProjectile(Position, target, ProjectileSpeed, CurrentDamage, AoeRadius));
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        spriteBatch.Draw(
-            Texture,
-            Position,
-            null,
-            color,
-            rotation + rotationOffset,
-            origin,
-            scale,
-            spriteEffect,
-            layerDepth
-        );
-        DrawProjectiles(spriteBatch);
-        DrawLevelStripes(spriteBatch);
-    }
+    // public override void Draw(SpriteBatch spriteBatch)
+    // {
+    //     spriteBatch.Draw(
+    //         Texture,
+    //         Position,
+    //         null,
+    //         color,
+    //         rotation + rotationOffset,
+    //         origin,
+    //         scale,
+    //         spriteEffect,
+    //         layerDepth
+    //     );
+    //     DrawProjectiles(spriteBatch);
+    //     DrawLevelStripes(spriteBatch);
+    // }
 }
