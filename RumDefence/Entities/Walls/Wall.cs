@@ -23,4 +23,35 @@ public class Wall
     {
         Health = Math.Max(0, Health - amount);
     }
+
+    /// <summary>
+    /// Repair the wall by a fixed amount of health.
+    /// </summary>
+    public void Repair(int amount)
+    {
+        if (amount <= 0) return;
+        Health = Math.Min(MaxHealth, Health + amount);
+    }
+
+    /// <summary>
+    /// Repair the wall back to full health.
+    /// </summary>
+    public void RepairToFull()
+    {
+        Health = MaxHealth;
+    }
+
+    /// <summary>
+    /// Get the coin cost to repair this wall back to full health.
+    /// Cost scales linearly with missing health relative to `BuildManager.WallCost`.
+    /// </summary>
+    public int GetRepairCostToFull()
+    {
+        int missing = MaxHealth - Health;
+        if (missing <= 0) return 0;
+
+        // Linearly scale: fully destroyed costs the same as building a new wall.
+        float costPerHp = BuildManager.WallCost / (float)MaxHealth;
+        return (int)Math.Ceiling(missing * costPerHp);
+    }
 }

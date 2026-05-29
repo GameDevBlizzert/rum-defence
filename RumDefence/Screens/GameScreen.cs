@@ -36,6 +36,7 @@ public class GameScreen : Screen
     private Dictionary<Point, BaseTower> placedTowers = new();
 
     private BaseTower selectedTower = null;
+    private Wall selectedWall = null;
 
     private bool levelCompleted;
 
@@ -141,6 +142,7 @@ public class GameScreen : Screen
                 if (!buildManager.CtrlHeld)
                 {
                     selectedTower = placedTowers[p];
+                    selectedWall = null;
                     buildManager.SetMode(BuildMode.None);
                 }
             }
@@ -151,11 +153,20 @@ public class GameScreen : Screen
             if (placedTowers.TryGetValue(p, out BaseTower tower))
             {
                 selectedTower = tower;
+                selectedWall = null;
+            }
+            else if (walls.TryGetValue(p, out Wall wall))
+            {
+                selectedWall = wall;
+                selectedTower = null;
             }
             else
             {
                 selectedTower = null;
+                selectedWall = null;
             }
+            hud.SetSelectedWall(selectedWall);
+            hud.SetSelectedTower(selectedTower);
         });
 
         if (currentLevel.Id == 1)
@@ -265,6 +276,8 @@ public class GameScreen : Screen
         if (buildManager.GetMode() != BuildMode.None)
         {
             selectedTower = null;
+            selectedWall = null;
+            hud.SetSelectedWall(null);
         }
 
         hud.SetSelectedTower(selectedTower);
@@ -282,6 +295,18 @@ public class GameScreen : Screen
             {
                 progress.SpendCoins(selectedTower.GetUpgradeCost());
                 selectedTower.ApplyUpgrade();
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        }
+
+        // Handle wall repair interaction
+        if (selectedWall != null && hud.WasRepairClicked())
+        {
+            int cost = selectedWall.GetRepairCostToFull();
+            if (cost > 0 && progress.CoinsRemaining >= cost && !selectedWall.IsDestroyed)
+            {
+                progress.SpendCoins(cost);
+                selectedWall.RepairToFull();
                 AudioManager.Instance.PlayRandomImpact();
             }
         }
