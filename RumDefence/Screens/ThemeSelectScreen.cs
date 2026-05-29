@@ -16,6 +16,7 @@ public class ThemeSelectScreen : Screen
     private SimpleButton backButton;
 
     private Texture2D buttonTexture;
+    private float elapsedSeconds;
 
     public ThemeSelectScreen(ScreenManager manager) : base(manager) { }
 
@@ -68,6 +69,7 @@ public class ThemeSelectScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
+        elapsedSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
         grassButton.Update(gameTime);
         stoneButton.Update(gameTime);
         devButton?.Update(gameTime);
@@ -77,6 +79,10 @@ public class ThemeSelectScreen : Screen
     public override void Draw(SpriteBatch spriteBatch)
     {
         RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
+
+
+        LoadingSplashScreen.DrawBackground(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
+        LoadingSplashScreen.DrawWater(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
 
         grassButton.Draw(spriteBatch);
         stoneButton.Draw(spriteBatch);
