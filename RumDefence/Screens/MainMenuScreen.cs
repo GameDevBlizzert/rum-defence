@@ -13,9 +13,14 @@ public class MainMenuScreen : Screen
     private SimpleButton quitButton;
 
     private Rectangle panelRect;
+    private float elapsedSeconds;
 
-    public MainMenuScreen(ScreenManager manager) : base(manager) { }
+    public MainMenuScreen(ScreenManager manager) : base(manager)
+    {
+        // BackgroundScreen = new LoadingSplashScreen(manager);
+    }
 
+    public LoadingSplashScreen BackgroundScreen;
     public override void Load()
     {
         var content = RumGame.Instance.Content;
@@ -55,6 +60,7 @@ public class MainMenuScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
+        elapsedSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
         levelsButton.Update(gameTime);
         settingsButton.Update(gameTime);
         quitButton.Update(gameTime);
@@ -63,6 +69,9 @@ public class MainMenuScreen : Screen
     public override void Draw(SpriteBatch spriteBatch)
     {
         RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
+
+        LoadingSplashScreen.DrawBackground(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
+        LoadingSplashScreen.DrawWater(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
 
         NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 

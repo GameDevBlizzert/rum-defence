@@ -53,7 +53,7 @@ namespace RumDefence
             _screenManager = new ScreenManager();
             base.Initialize();
             UpdateScaleMatrix();
-            _screenManager.SetScreen(new LoadingSplashScreen(_screenManager, new MainMenuScreen(_screenManager)));
+            _screenManager.SetScreen(new LoadingSplashScreen(_screenManager));
         }
 
         protected override void LoadContent()
