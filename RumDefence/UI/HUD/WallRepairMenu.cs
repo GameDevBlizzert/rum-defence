@@ -30,12 +30,13 @@ public class WallRepairMenu
         var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         int width = 340;
-        int height = 180;
-        int x = RumGame.VirtualWidth - width - 20; // right side
-        int y = RumGame.VirtualHeight - height - 340; // above other panels
+        int height = 240;
+        int x = RumGame.VirtualWidth - width - 20;
+        int y = RumGame.VirtualHeight - height - 320;
         panelRect = new Rectangle(x, y, width, height);
 
-        repairButton = new SimpleButton(buttonTexture, "Repair (R)", new Vector2(x + 20, y + 100), new Vector2(width - 40, 60));
+        repairButton = new SimpleButton(buttonTexture, "Repair (R)", new Vector2(0, 0), new Vector2(width - 40, 60));
+        repairButton.SetBounds(new Rectangle(panelRect.X + 20, panelRect.Bottom - 80, width - 40, 60));
         repairButton.OnClick = () => { RepairClicked = true; };
     }
 
@@ -77,8 +78,8 @@ public class WallRepairMenu
         float titleScale = 0.8f;
         spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Primitives.FontColor, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
 
-        var startY = panelRect.Y + 60;
-        var spacing = 30;
+        var startY = panelRect.Y + 50;
+        var spacing = 28;
         float statScale = 0.65f;
 
         spriteBatch.DrawString(Primitives.Font, $"HP: {SelectedWall.Health}/{Wall.MaxHealth}", new Vector2(panelRect.X + 20, startY), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
