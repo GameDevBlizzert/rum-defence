@@ -14,13 +14,7 @@ public class MainMenuScreen : Screen
 
     private Rectangle panelRect;
     private float elapsedSeconds;
-
-    public MainMenuScreen(ScreenManager manager) : base(manager)
-    {
-        // BackgroundScreen = new LoadingSplashScreen(manager);
-    }
-
-    public LoadingSplashScreen BackgroundScreen;
+    public MainMenuScreen(ScreenManager manager) : base(manager) { }
     public override void Load()
     {
         var content = RumGame.Instance.Content;
