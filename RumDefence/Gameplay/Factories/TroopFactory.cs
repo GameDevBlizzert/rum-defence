@@ -39,7 +39,7 @@ public static class TroopFactory
     );
 
     public static readonly TroopData Ghost = new(
-        SpritePath: "Art/Pirates/pirate.grunt",
+        SpritePath: "Art/Pirates/pirate.ghost",
         Health: 50,
         BaseSpeed: 45f,
         Damage: 1,
@@ -50,7 +50,7 @@ public static class TroopFactory
     );
 
     public static readonly TroopData Bomber = new(
-        SpritePath: "Art/Pirates/bomber",
+        SpritePath: "Art/Pirates/pirate.bomber",
         Health: 80,
         BaseSpeed: 70f,
         Damage: 25,
