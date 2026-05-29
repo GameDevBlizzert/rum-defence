@@ -10,9 +10,11 @@ public class UpgradeMenu
 
     private Rectangle panelRect;
     private SimpleButton upgradeButton;
+    private SimpleButton targetModeButton;
     private LevelProgressSystem progress;
     private KeyboardState previousKeyboardState;
     public bool UpgradeClicked { get; private set; }
+    public bool TargetModeClicked { get; private set; }
     public bool IsDisabled { get; set; }
 
     public BaseTower SelectedTower { get; set; }
@@ -32,13 +34,16 @@ public class UpgradeMenu
         var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         int width = 340;
-        int height = 300;
+        int height = 330;
         int x = RumGame.VirtualWidth - width - 20; // right side
         int y = RumGame.VirtualHeight - height - 20; // bottom right
         panelRect = new Rectangle(x, y, width, height);
 
-        upgradeButton = new SimpleButton(buttonTexture, "Upgrade (U)", new Vector2(x + 20, y + 210), new Vector2(width - 40, 70));
+        upgradeButton = new SimpleButton(buttonTexture, "Upgrade (U)", new Vector2(x + 20, y + 250), new Vector2(width - 40, 52));
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
+
+        targetModeButton = new SimpleButton(buttonTexture, "Target: Nearest", new Vector2(x + 20, y + 150), new Vector2(width - 40, 52));
+        targetModeButton.OnClick = () => { TargetModeClicked = true; };
     }
 
     public void Update(GameTime gameTime)
@@ -53,6 +58,7 @@ public class UpgradeMenu
         previousKeyboardState = keyboard;
 
         UpgradeClicked = false;
+        TargetModeClicked = false;
 
         if (IsDisabled)
             return;
@@ -63,9 +69,12 @@ public class UpgradeMenu
         if (upgradeShortcutPressed)
             UpgradeClicked = true;
 
+        targetModeButton.Text = $"Target: {SelectedTower.CurrentAttackModeLabel}";
+        targetModeButton.IsDisabled = false;
         upgradeButton.IsDisabled = !SelectedTower.CanUpgrade || progress.CoinsRemaining < SelectedTower.GetUpgradeCost();
 
         // This will potentially fire OnClick and set UpgradeClicked = true.
+        targetModeButton.Update(gameTime);
         upgradeButton.Update(gameTime);
     }
 
@@ -96,15 +105,17 @@ public class UpgradeMenu
         spriteBatch.DrawString(Primitives.Font, $"RNG: {(int)SelectedTower.CurrentRange}", new Vector2(panelRect.X + 20, startY + spacing), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         spriteBatch.DrawString(Primitives.Font, $"SPD: {SelectedTower.CurrentFireRate:F1}/s", new Vector2(panelRect.X + 20, startY + spacing * 2), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
 
+        targetModeButton.Draw(spriteBatch);
+
         if (SelectedTower.CanUpgrade)
         {
             var cost = SelectedTower.GetUpgradeCost();
-            spriteBatch.DrawString(Primitives.Font, $"Cost: {cost} coins", new Vector2(panelRect.X + 20, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(Primitives.Font, $"Cost: {cost} coins", new Vector2(panelRect.X + 20, panelRect.Y + 215), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
             upgradeButton.Draw(spriteBatch);
         }
         else
         {
-            spriteBatch.DrawString(Primitives.Font, "MAX LEVEL", new Vector2(panelRect.X + 20, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(Primitives.Font, "MAX LEVEL", new Vector2(panelRect.X + 20, panelRect.Y + 215), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         }
     }
 

@@ -286,6 +286,12 @@ public class GameScreen : Screen
             }
         }
 
+        if (selectedTower != null && hud.WasTargetModeClicked())
+        {
+            selectedTower.CycleAttackMode();
+            AudioManager.Instance.PlayRandomImpact();
+        }
+
         if (tutorialOverlay != null)
         {
             if (!tutorialWaveNotified && Ships.Count > 0)
@@ -403,6 +409,9 @@ public class GameScreen : Screen
                 hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
                 troop.MarkRewardGiven();
                 Spawner.NotifyTroopDefeated();
+
+                foreach (var tower in placedTowers.Values)
+                    tower.NotifyTroopDied(troop);
             }
 
             if (troop.IsFinished && !troop.IsDead)

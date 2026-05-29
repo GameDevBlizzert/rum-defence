@@ -72,6 +72,11 @@ public class Hud
         return upgradeMenu.UpgradeClicked;
     }
 
+    public bool WasTargetModeClicked()
+    {
+        return upgradeMenu.TargetModeClicked;
+    }
+
     public bool IsMouseOverUpgradeMenu(Vector2 mousePos)
     {
         return (upgradeMenu.SelectedTower != null || upgradeMenu.PreviewData != null) && upgradeMenu.IsMouseOver(mousePos);
