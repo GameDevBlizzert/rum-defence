@@ -39,15 +39,21 @@ public class IconButton : Button
     public override void Draw(SpriteBatch spriteBatch)
     {
         Color bgColor;
+        bool useDarkLabel = false;
 
         if (IsDisabled)
             bgColor = new Color(60, 60, 60);
+        else if (isPressed)
+            bgColor = Color.Lerp(BaseTint, Color.Black, 0.8f);
         else if (isSelected)
-            bgColor = Color.Multiply(BaseTint, 0.55f);
+            bgColor = Color.Lerp(BaseTint, new Color(40, 40, 40), 0.45f);
         else if (isHovering)
-            bgColor = Color.Multiply(BaseTint, 0.8f);
+            bgColor = Color.Lerp(BaseTint, Color.White, 0.8f);
         else
             bgColor = BaseTint;
+
+        if (!IsDisabled && isHovering && !isPressed)
+            useDarkLabel = true;
 
         NineSlice.Draw(spriteBatch, backgroundTexture, bounds, BackgroundSourceRect, 20, bgColor);
 
@@ -70,7 +76,11 @@ public class IconButton : Button
             );
             spriteBatch.Draw(iconTexture, iconRect, iconColor);
 
-            var labelColor = IsDisabled ? new Color(120, 120, 120) : Primitives.FontColor;
+            var labelColor = IsDisabled
+                ? new Color(120, 120, 120)
+                : useDarkLabel
+                    ? Color.Black
+                    : Primitives.FontColor;
             spriteBatch.DrawString(Primitives.Font, CostLabel,
                 new Vector2(startX + iconSize + gap, centerY - textSize.Y / 2f),
                 labelColor);
