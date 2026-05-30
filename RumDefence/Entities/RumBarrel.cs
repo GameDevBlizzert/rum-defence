@@ -38,10 +38,5 @@ public class RumBarrel : Entity, ICollidable
         Health.DrawHealth(spriteBatch, Position, _size, _size);
     }
 
-    public Collider Collider => new RectangleCollider(new Rectangle(
-        (int)Position.X,
-        (int)Position.Y,
-        _size,
-        _size
-    ));
+    public Collider Collider => new CircleCollider(Position, Size.X / 2f);
 }
