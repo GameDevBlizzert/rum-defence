@@ -61,7 +61,7 @@ public class BaseTower : Entity
 
         animation = new(data.SpriteFrameSize, 1f);
         origin = new Vector2(data.SpriteFrameSize / 2f, data.SpriteFrameSize / 2f);
-        Size = SizeSystem.Square(data.SizeScale);
+        Size = SizeSystem.Square(data.SizeInTiles);
         scale = Size.X / data.SpriteFrameSize;
     }
 

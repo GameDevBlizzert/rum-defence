@@ -72,20 +72,13 @@ public class Troop : Entity, ICollidable
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
         origin = new Vector2(data.SpriteFrameSize / 2, data.SpriteFrameSize / 2);
 
-        Size = SizeSystem.Square(data.SizeScale);
+        Size = SizeSystem.Square(data.SizeInTiles);
         scale = Size.X / data.SpriteFrameSize;
 
         pathfinding = new(target);
     }
 
-    public Collider Collider
-    {
-        get
-        {
-            var tileSize = RumGame.Instance.CurrentGrid?.TileSize ?? 32;
-            return new CircleCollider(Position, tileSize * 0.75f);
-        }
-    }
+    public Collider Collider => new CircleCollider(Position, Size.X / 2f);
 
     public void AddAbility(ITroopAbility ability)
     {
