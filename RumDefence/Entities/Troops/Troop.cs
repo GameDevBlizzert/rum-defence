@@ -45,7 +45,7 @@ public class Troop : EntityWithHealth, ICollidable
         SpeedMultiplier = data.InitialSpeedMultiplier;
 
         // https://foozlecc.itch.io/scallywag-pirates
-        animation = new Animation(16, 16, 0.2f);
+        animation = new Animation(data.SpriteFrameSize, 0.2f);
         animation.AddLayerMatrix(
         [
             new(3, SpriteAction.Idle, SpriteDirection.Down),
@@ -65,13 +65,12 @@ public class Troop : EntityWithHealth, ICollidable
         animation.ActivateLayers([new(SpriteAction.Idle, SpriteDirection.Down)]);
 
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
-        origin = new Vector2(animation.FrameHeight / 2, animation.FrameWidth / 2);
+        origin = new Vector2(data.SpriteFrameSize / 2, data.SpriteFrameSize / 2);
 
-        Size = SizeSystem.Square(data.Size);
+        Size = SizeSystem.Square(data.SizeScale);
+        scale = Size.X / data.SpriteFrameSize;
 
         pathfinding = new(target);
-
-        ApplySize();
     }
 
     public Collider Collider

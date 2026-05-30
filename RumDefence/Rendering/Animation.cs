@@ -87,7 +87,6 @@ public interface IAnimation
 
 public class Animation : IAnimation
 {
-    public Texture2D Texture { get; set; }
     public int FrameWidth { get; set; }
     public int FrameHeight { get; set; }
     public float FrameDuration { get; set; }
@@ -111,11 +110,10 @@ public class Animation : IAnimation
         FrameDuration = frameDuration;
         HasAnimation = true;
     }
-    public Animation(Texture2D texture, int frameWidth, int frameHeight, float frameDuration)
+    public Animation(int size, float frameDuration)
     {
-        Texture = texture;
-        FrameWidth = frameWidth;
-        FrameHeight = frameHeight;
+        FrameWidth = size;
+        FrameHeight = size;
         FrameDuration = frameDuration;
         HasAnimation = true;
     }

@@ -8,7 +8,8 @@ public record TroopData(
     float BaseSpeed,
     int Damage,
     int CoinValue,
-    float Size,
+    float SizeScale,
+    int SpriteFrameSize,
     float InitialSpeedMultiplier,
     bool IsBoss = false,
     bool IsGhost = false,
@@ -23,7 +24,8 @@ public static class TroopFactory
         BaseSpeed: 60f,
         Damage: 1,
         CoinValue: 10,
-        Size: 20f,
+        SizeScale: 20f,
+        SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f
     );
 
@@ -33,7 +35,8 @@ public static class TroopFactory
         BaseSpeed: 60f,
         Damage: 10,
         CoinValue: 100,
-        Size: 22f,
+        SizeScale: 22f,
+        SpriteFrameSize: 16,
         InitialSpeedMultiplier: 0.5f,
         IsBoss: true
     );
@@ -44,7 +47,8 @@ public static class TroopFactory
         BaseSpeed: 45f,
         Damage: 1,
         CoinValue: 15,
-        Size: 20f,
+        SizeScale: 20f,
+        SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f,
         IsGhost: true
     );
@@ -55,7 +59,8 @@ public static class TroopFactory
         BaseSpeed: 70f,
         Damage: 25,
         CoinValue: 20,
-        Size: 20f,
+        SizeScale: 20f,
+        SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f,
         IsBomber: true
     );

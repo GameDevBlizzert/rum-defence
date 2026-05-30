@@ -59,10 +59,10 @@ public class BaseTower : Entity
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.TexturePath);
         rotationOffset = MathHelper.Pi;
 
-        Size = SizeSystem.Square(Primitives.TowerSize) * data.ScaleMultiplier;
-        animation = new(Texture, 64, 64, 1f);
-        origin = new Vector2(animation.FrameWidth / 2f, animation.FrameHeight / 2f);
-        scale = Size.X / animation.FrameWidth;
+        animation = new(data.SpriteFrameSize, 1f);
+        origin = new Vector2(data.SpriteFrameSize / 2f, data.SpriteFrameSize / 2f);
+        Size = SizeSystem.Square(data.SizeScale);
+        scale = Size.X / data.SpriteFrameSize;
     }
 
     public override void Update(GameTime gameTime)
