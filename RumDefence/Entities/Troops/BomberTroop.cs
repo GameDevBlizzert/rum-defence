@@ -10,7 +10,20 @@ public class BomberTroop : Troop
     public BomberTroop(TroopData data, Vector2 start, Vector2 target)
         : base(data, start, target)
     {
-
+        animation.ResetLayerMatrix();
+        animation.AddLayerMatrix(
+        [
+            new(3, SpriteAction.Idle, SpriteDirection.Down),
+            new(3, SpriteAction.Idle, SpriteDirection.Up),
+            new(3, SpriteAction.Idle, SpriteDirection.Right),
+            new(3, SpriteAction.Idle, SpriteDirection.Left),
+            new(3, SpriteAction.Walking, SpriteDirection.Down),
+            new(3, SpriteAction.Walking, SpriteDirection.Up),
+            new(3, SpriteAction.Walking, SpriteDirection.Right),
+            new(3, SpriteAction.Walking, SpriteDirection.Left),
+            new(4, SpriteAction.Dying, SpriteDirection.Right, isLoop: false),
+        ], 4);
+        animation.ActivateLayers([new(SpriteAction.Idle, SpriteDirection.Down)]);
     }
 
     protected override bool CanAttackWalls => false;
@@ -29,6 +42,10 @@ public class BomberTroop : Troop
                     TakeDamage(Health.Current + 1);
                     break;
                 }
+            }
+            if (IsNearBarrel())
+            {
+                Health.TakeDamage(Health.Current);
             }
         }
 

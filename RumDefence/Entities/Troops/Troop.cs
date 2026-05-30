@@ -203,7 +203,7 @@ public class Troop : Entity, ICollidable
         return dir.Y > 0 ? SpriteDirection.Down : SpriteDirection.Up;
     }
 
-    private bool IsNearBarrel()
+    public bool IsNearBarrel()
     {
         var barrel = RumGame.Instance.CurrentLevel?.RumBarrel;
         if (barrel == null) return false;

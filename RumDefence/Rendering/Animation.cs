@@ -118,9 +118,14 @@ public class Animation : IAnimation
         HasAnimation = true;
     }
 
+    public void ResetLayerMatrix()
+    {
+        SpriteMatrices = null;
+    }
+
     public void AddLayerMatrix(SpriteMatrixCell[,] matrixCells)
     {
-        if (SpriteMatrices == null) { SpriteMatrices = matrixCells; return; }
+        if (SpriteMatrices == null || SpriteMatrices.Length < 1) { SpriteMatrices = matrixCells; return; }
         int existingRows = SpriteMatrices.GetLength(0);
         int addedRows = matrixCells.GetLength(0);
         int cols = matrixCells.GetLength(1);
