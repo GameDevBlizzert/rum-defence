@@ -26,7 +26,7 @@ public class BomberTroop : Troop
                 if (Vector2.Distance(Position, grid.GridToWorld(wall.GridPos)) <= triggerDist)
                 {
                     Explode();
-                    TakeDamage(Health + 1);
+                    TakeDamage(Health.Current + 1);
                     break;
                 }
             }

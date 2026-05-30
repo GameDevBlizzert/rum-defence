@@ -135,12 +135,12 @@ public class BaseTower : Entity
             float dist = Vector2.Distance(Position, troop.Position);
             if (dist > CurrentRange) continue;
 
-            if (troop.Health - GetPendingDamage(troop) <= 0) continue;
+            if (troop.Health.Current - GetPendingDamage(troop) <= 0) continue;
 
             float value = AttackMode switch
             {
                 AttackMode.Closest => dist,
-                AttackMode.Strongest => -troop.Health,
+                AttackMode.Strongest => -troop.Health.Current,
                 AttackMode.First => (troop.Path != null && troop.Path.Count > 0 ? (troop.Path.Count * 1000f) + Vector2.Distance(troop.Position, troop.Path.Peek()) : dist),
                 _ => dist
             };

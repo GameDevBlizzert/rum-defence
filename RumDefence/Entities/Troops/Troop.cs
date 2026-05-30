@@ -6,11 +6,15 @@ using RumDefence.Exceptions;
 
 namespace RumDefence;
 
-public class Troop : EntityWithHealth, ICollidable
+public class Troop : Entity, ICollidable
 {
     private Vector2 target;
     protected readonly Animation animation;
     private Vector2 _lastDir = Vector2.UnitY;
+
+    public HealthComponent Health { get; private set; }
+    public bool IsDead => Health.IsDead;
+    public void TakeDamage(float amount) => Health.TakeDamage(amount);
 
     private float baseSpeed;
     public float SpeedMultiplier { get; set; } = 1f;
@@ -34,8 +38,9 @@ public class Troop : EntityWithHealth, ICollidable
 
     public Func<Point, Wall> GetWallAt { get; set; }
 
-    public Troop(TroopData data, Vector2 start, Vector2 targetPos) : base(16, 32, data.Health)
+    public Troop(TroopData data, Vector2 start, Vector2 targetPos)
     {
+        Health = new HealthComponent(data.Health);
         Position = start;
         target = targetPos;
 
@@ -228,7 +233,7 @@ public class Troop : EntityWithHealth, ICollidable
     public override void Draw(SpriteBatch spriteBatch)
     {
         DrawSpriteLayers(spriteBatch);
-        DrawHealth(spriteBatch);
+        Health.DrawHealth(spriteBatch, Position, 16, 32);
 
         bool showPathfindingDebug = bool.Parse(
             Environment.GetEnvironmentVariable("SHOW_PATHFINDING") ?? "false"
