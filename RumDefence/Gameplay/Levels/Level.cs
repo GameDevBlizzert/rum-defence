@@ -22,7 +22,7 @@ public class Level
             if (_rumBarrel != null) return _rumBarrel;
             var grid = RumGame.Instance.CurrentGrid;
             var worldPos = grid.GridToWorld(RumTile);
-            var drawPos = worldPos - new Vector2(grid.TileSize / 2f);
+            var drawPos = worldPos;
             _rumBarrel = new RumBarrel(drawPos, StartingLives);
             return _rumBarrel;
         }

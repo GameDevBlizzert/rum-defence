@@ -22,6 +22,7 @@ public class RumBarrel : Entity, ICollidable
         _size = (int)Size.X;
         _SpriteFrameSize = 128;
         scale = Size.X / _SpriteFrameSize;
+        origin = new Vector2(_SpriteFrameSize) / 2;
         Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Objects/RumBarrel");
     }
 
