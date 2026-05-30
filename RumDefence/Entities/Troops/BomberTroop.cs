@@ -46,6 +46,7 @@ public class BomberTroop : Troop
             if (IsNearBarrel())
             {
                 Health.TakeDamage(Health.Current);
+                RumGame.Instance.CurrentLevel?.RumBarrel?.TakeDamage(Damage);
             }
         }
 
