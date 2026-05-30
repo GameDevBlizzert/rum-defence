@@ -24,7 +24,7 @@ public static class TroopFactory
         BaseSpeed: 60f,
         Damage: 1,
         CoinValue: 10,
-        SizeScale: 20f,
+        SizeScale: 0.5f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f
     );
@@ -35,7 +35,7 @@ public static class TroopFactory
         BaseSpeed: 60f,
         Damage: 10,
         CoinValue: 100,
-        SizeScale: 22f,
+        SizeScale: 0.6f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 0.5f,
         IsBoss: true
@@ -47,7 +47,7 @@ public static class TroopFactory
         BaseSpeed: 45f,
         Damage: 1,
         CoinValue: 15,
-        SizeScale: 20f,
+        SizeScale: 0.55f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f,
         IsGhost: true
@@ -59,7 +59,7 @@ public static class TroopFactory
         BaseSpeed: 70f,
         Damage: 25,
         CoinValue: 20,
-        SizeScale: 20f,
+        SizeScale: 0.5f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f,
         IsBomber: true
