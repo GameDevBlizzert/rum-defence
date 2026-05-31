@@ -11,6 +11,7 @@ public class GameOverScreen : Screen
 
     private SimpleButton retryButton;
     private SimpleButton menuButton;
+    private SimpleButton nextLevelButton;
 
     private Level level;
     private List<Level> levelSet;
@@ -49,10 +50,26 @@ public class GameOverScreen : Screen
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
-        Vector2 buttonSize = new Vector2(300, 100);
+        Vector2 buttonSize = new Vector2(360, 100);
 
         retryButton = new SimpleButton(buttonTexture, "Retry", Vector2.Zero, buttonSize);
         menuButton = new SimpleButton(buttonTexture, "Menu", Vector2.Zero, buttonSize);
+        nextLevelButton = new SimpleButton(buttonTexture, "Next Level", Vector2.Zero, buttonSize);
+
+        if (isWin)
+        {
+            SaveManager.UnlockLevel(level);
+            SaveManager.UnlockNextLevel(levelSet, level);
+            SaveManager.SaveWinScore(level, coins, wavesSurvived);
+
+            int currentIndex = levelSet.FindIndex(l => l.Id == level.Id);
+
+            if (currentIndex >= 0 && currentIndex < levelSet.Count - 1)
+            {
+                Level nextLevel = levelSet[currentIndex + 1];
+                SaveManager.UnlockLevel(nextLevel);
+            }
+        }
 
         retryButton.OnClick = () =>
         {
@@ -62,6 +79,25 @@ public class GameOverScreen : Screen
         menuButton.OnClick = () =>
         {
             manager.SetScreen(new MainMenuScreen(manager));
+        };
+
+        nextLevelButton.OnClick = () =>
+        {
+            if (!isWin)
+                return;
+
+            int currentIndex = levelSet.FindIndex(l => l.Id == level.Id);
+
+            if (currentIndex >= 0 && currentIndex < levelSet.Count - 1)
+            {
+                Level nextLevel = levelSet[currentIndex + 1];
+                SaveManager.UnlockLevel(nextLevel);
+                manager.SetScreen(new GameScreen(manager, nextLevel, levelSet));
+            }
+            else
+            {
+                manager.SetScreen(new MainMenuScreen(manager));
+            }
         };
     }
 
@@ -77,22 +113,50 @@ public class GameOverScreen : Screen
             panelHeight
         );
 
-        Vector2 buttonSize = new Vector2(300, 100);
+        Vector2 buttonSize = new Vector2(360, 100);
         float centerX = panelRect.Center.X;
 
-        retryButton.SetBounds(new Rectangle(
-            (int)(centerX - buttonSize.X / 2),
-            panelRect.Y + 320,
-            (int)buttonSize.X,
-            (int)buttonSize.Y
-        ));
+        if (isWin)
+        {
+            nextLevelButton.SetBounds(new Rectangle(
+                (int)(centerX - buttonSize.X / 2),
+                panelRect.Y + 300,
+                (int)buttonSize.X,
+                (int)buttonSize.Y
+            ));
 
-        menuButton.SetBounds(new Rectangle(
-            (int)(centerX - buttonSize.X / 2),
-            panelRect.Y + 440,
-            (int)buttonSize.X,
-            (int)buttonSize.Y
-        ));
+            retryButton.SetBounds(new Rectangle(
+                (int)(centerX - buttonSize.X / 2),
+                panelRect.Y + 420,
+                (int)buttonSize.X,
+                (int)buttonSize.Y
+            ));
+
+            menuButton.SetBounds(new Rectangle(
+                (int)(centerX - buttonSize.X / 2),
+                panelRect.Y + 540,
+                (int)buttonSize.X,
+                (int)buttonSize.Y
+            ));
+
+            nextLevelButton.Update(gameTime);
+        }
+        else
+        {
+            retryButton.SetBounds(new Rectangle(
+                (int)(centerX - buttonSize.X / 2),
+                panelRect.Y + 320,
+                (int)buttonSize.X,
+                (int)buttonSize.Y
+            ));
+
+            menuButton.SetBounds(new Rectangle(
+                (int)(centerX - buttonSize.X / 2),
+                panelRect.Y + 440,
+                (int)buttonSize.X,
+                (int)buttonSize.Y
+            ));
+        }
 
         retryButton.Update(gameTime);
         menuButton.Update(gameTime);
@@ -100,17 +164,14 @@ public class GameOverScreen : Screen
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        // 1. game erachter
         previousScreen.Draw(spriteBatch);
 
-        // 2. overlay
         spriteBatch.Draw(
             Primitives.Pixel,
             new Rectangle(0, 0, screenWidth, screenHeight),
             Color.Black * 0.6f
         );
 
-        // 3. panel
         int panelWidth = 700;
         int panelHeight = 700;
 
@@ -123,7 +184,6 @@ public class GameOverScreen : Screen
 
         NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
-        // 4. titel
         var title = isWin ? "YOU WIN!" : "GAME OVER";
         var titleSize = Primitives.Font.MeasureString(title);
 
@@ -134,11 +194,12 @@ public class GameOverScreen : Screen
             Primitives.FontColor
         );
 
-        // 5. stats
         DrawCenteredText(spriteBatch, $"Waves: {wavesSurvived}", panelRect.Center.X, panelRect.Y + 140);
         DrawCenteredText(spriteBatch, $"Coins: {coins}", panelRect.Center.X, panelRect.Y + 190);
 
-        // 6. buttons
+        if (isWin)
+            nextLevelButton.Draw(spriteBatch);
+
         retryButton.Draw(spriteBatch);
         menuButton.Draw(spriteBatch);
     }

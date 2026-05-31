@@ -32,10 +32,12 @@ public class GameScreen : Screen
     public List<Explosion> Explosions = new();
     public List<NetEffect> NetEffects = new();
     public List<FireEffect> FireEffects = new();
+    public IEnumerable<Wall> Walls => walls.Values;
 
     private Dictionary<Point, BaseTower> placedTowers = new();
 
     private BaseTower selectedTower = null;
+    private Wall selectedWall = null;
 
     private bool levelCompleted;
 
@@ -138,9 +140,13 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(data.Cost);
                 AudioManager.Instance.PlayRandomImpact();
+
+                selectedTower = null;
+
                 if (!buildManager.CtrlHeld)
                 {
                     selectedTower = placedTowers[p];
+                    selectedWall = null;
                     buildManager.SetMode(BuildMode.None);
                 }
             }
@@ -151,11 +157,20 @@ public class GameScreen : Screen
             if (placedTowers.TryGetValue(p, out BaseTower tower))
             {
                 selectedTower = tower;
+                selectedWall = null;
+            }
+            else if (walls.TryGetValue(p, out Wall wall))
+            {
+                selectedWall = wall;
+                selectedTower = null;
             }
             else
             {
                 selectedTower = null;
+                selectedWall = null;
             }
+            hud.SetSelectedWall(selectedWall);
+            hud.SetSelectedTower(selectedTower);
         });
 
         if (currentLevel.Id == 1)
@@ -265,6 +280,8 @@ public class GameScreen : Screen
         if (buildManager.GetMode() != BuildMode.None)
         {
             selectedTower = null;
+            selectedWall = null;
+            hud.SetSelectedWall(null);
         }
 
         hud.SetSelectedTower(selectedTower);
@@ -284,6 +301,24 @@ public class GameScreen : Screen
                 selectedTower.ApplyUpgrade();
                 AudioManager.Instance.PlayRandomImpact();
             }
+        }
+
+        // Handle wall repair interaction
+        if (selectedWall != null && hud.WasRepairClicked())
+        {
+            int cost = selectedWall.GetRepairCostToFull();
+            if (cost > 0 && progress.CoinsRemaining >= cost && !selectedWall.IsDestroyed)
+            {
+                progress.SpendCoins(cost);
+                selectedWall.RepairToFull();
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        }
+
+        if (selectedTower != null && hud.WasTargetModeClicked())
+        {
+            selectedTower.CycleAttackMode();
+            AudioManager.Instance.PlayRandomImpact();
         }
 
         if (tutorialOverlay != null)
@@ -334,7 +369,7 @@ public class GameScreen : Screen
         playbackState = playbackState switch
         {
             GamePlaybackState.Normal => GamePlaybackState.FastForward,
-            GamePlaybackState.FastForward => GamePlaybackState.Paused,
+            GamePlaybackState.FastForward => GamePlaybackState.Normal,
             _ => GamePlaybackState.Normal
         };
 
@@ -367,7 +402,10 @@ public class GameScreen : Screen
             if (Ships[i].SpawnedTroops.Count > 0)
             {
                 foreach (var troop in Ships[i].SpawnedTroops)
+                {
                     troop.GetWallAt = p => walls.TryGetValue(p, out var w) ? w : null;
+                    troop.Died += OnTroopDied;
+                }
                 Troops.AddRange(Ships[i].SpawnedTroops);
                 Ships[i].SpawnedTroops.Clear();
             }
@@ -494,6 +532,12 @@ public class GameScreen : Screen
             spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
             spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
         }
+    }
+
+    private void OnTroopDied(Troop troop)
+    {
+        foreach (var tower in placedTowers.Values)
+            tower.NotifyTroopDied(troop);
     }
 
     /// <summary>

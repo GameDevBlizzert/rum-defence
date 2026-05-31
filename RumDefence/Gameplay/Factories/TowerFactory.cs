@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
-public enum TowerType { Musket, Cannon, Fisher, Fire }
+public enum TowerType { Musket, Cannon, Fisher, Fire, Bandit }
 
 public record TowerData(
     TowerType Type,
@@ -25,7 +25,8 @@ public record TowerData(
     int DamageUpgradeFlat,
     float DamageUpgradePercent,
     int UpgradeCost,
-    float ScaleMultiplier
+    int SpriteFrameSize,
+    float SizeInTiles
 );
 
 public static class TowerFactory
@@ -40,7 +41,7 @@ public static class TowerFactory
         FireRate: 3f,
         Damage: 10,
         ProjectileSpeed: 500f,
-        AttackMode: AttackMode.First,
+        AttackMode: AttackMode.Nearest,
         Cost: 75,
         RangeUpgradeFlat: 50f,
         RangeUpgradePercent: 0.1f,
@@ -49,7 +50,8 @@ public static class TowerFactory
         DamageUpgradeFlat: 5,
         DamageUpgradePercent: 0.1f,
         UpgradeCost: 75,
-        ScaleMultiplier: 8f
+        SpriteFrameSize: 64,
+        SizeInTiles: 1f
     );
 
     public static readonly TowerData Fisher = new(
@@ -62,7 +64,7 @@ public static class TowerFactory
         FireRate: 0.5f,
         Damage: 0,
         ProjectileSpeed: 200f,
-        AttackMode: AttackMode.First,
+        AttackMode: AttackMode.Nearest,
         Cost: 35,
         RangeUpgradeFlat: 50f,
         RangeUpgradePercent: 0.1f,
@@ -71,7 +73,8 @@ public static class TowerFactory
         DamageUpgradeFlat: 5,
         DamageUpgradePercent: 0.1f,
         UpgradeCost: 75,
-        ScaleMultiplier: 8f
+        SpriteFrameSize: 64,
+        SizeInTiles: 1f
     );
 
     public static readonly TowerData Cannon = new(
@@ -84,7 +87,7 @@ public static class TowerFactory
         FireRate: 0.5f,
         Damage: 40,
         ProjectileSpeed: 300f,
-        AttackMode: AttackMode.First,
+        AttackMode: AttackMode.Nearest,
         Cost: 50,
         RangeUpgradeFlat: 25f,
         RangeUpgradePercent: 0.05f,
@@ -93,7 +96,8 @@ public static class TowerFactory
         DamageUpgradeFlat: 10,
         DamageUpgradePercent: 0.2f,
         UpgradeCost: 100,
-        ScaleMultiplier: 1.4f
+        SpriteFrameSize: 64,
+        SizeInTiles: 1.4f
     );
 
     public static readonly TowerData Fire = new(
@@ -106,7 +110,7 @@ public static class TowerFactory
         FireRate: 1f,
         Damage: 5,
         ProjectileSpeed: 350f,
-        AttackMode: AttackMode.Closest,
+        AttackMode: AttackMode.Nearest,
         Cost: 65,
         RangeUpgradeFlat: 25f,
         RangeUpgradePercent: 0.05f,
@@ -115,10 +119,34 @@ public static class TowerFactory
         DamageUpgradeFlat: 2,
         DamageUpgradePercent: 0.15f,
         UpgradeCost: 85,
-        ScaleMultiplier: 1.3f
+        SpriteFrameSize: 64,
+        SizeInTiles: 1.4f
     );
 
-    public static readonly TowerData[] All = [Cannon, Musket, Fisher, Fire];
+    public static readonly TowerData Bandit = new(
+        Type: TowerType.Bandit,
+        TexturePath: "Art/Towers/bandit",
+        Label: "bandit",
+        OverlayTexturePath: null,
+        IconTexturePath: "Art/Towers/bandit-icon",
+        Range: 100f,
+        FireRate: 0.25f,
+        Damage: 5,
+        ProjectileSpeed: 150f,
+        AttackMode: AttackMode.Nearest,
+        Cost: 10,
+        RangeUpgradeFlat: 25f,
+        RangeUpgradePercent: 0.05f,
+        FireRateUpgradeFlat: 0.1f,
+        FireRateUpgradePercent: 0.15f,
+        DamageUpgradeFlat: 2,
+        DamageUpgradePercent: 0.15f,
+        UpgradeCost: 35,
+        SpriteFrameSize: 64,
+        SizeInTiles: 1f
+    );
+
+    public static readonly TowerData[] All = [Cannon, Musket, Fisher, Fire, Bandit];
 
     public static BaseTower Create(
         TowerData data,
@@ -131,6 +159,7 @@ public static class TowerFactory
             TowerType.Cannon => new CannonTower(data, location, troops),
             TowerType.Fisher => new FisherTower(data, location, troops),
             TowerType.Fire => new FireTower(data, location, troops),
+            TowerType.Bandit => new BanditTower(data, location, troops),
             _ => throw new ArgumentException($"Unknown tower type: {data.Type}")
         };
     }
