@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using RumDefence.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RumDefence;
 
@@ -28,7 +28,6 @@ public class Ship : Entity
     private const float LeaveSpeed = 80f;
 
     private const float BackOffDistance = 1f;
-    private const float ExitDistance = 400f;
 
     public enum ShipState
     {
@@ -43,19 +42,21 @@ public class Ship : Entity
 
     private Vector2 dockTarget;
     private Vector2 leaveTarget;
+    private Vector2 spawnPosition;
 
     private float baseSpeed;
     private float troopSpawnDelay;
 
     private Grid grid;
     private PathfindingSystem pathfinding;
-    private PathfindingSystem leavingPathfinding;
+    private List<Vector2> inboundPath = new List<Vector2>();
+    private Queue<Vector2> leavingPath = new Queue<Vector2>();
 
     public IReadOnlyList<TroopGroup> Troops { get; private set; }
     public CoastTile AssignedCoast { get; private set; }
 
     public bool IsFinished => State == ShipState.Leaving_ToSea &&
-                              Vector2.Distance(Position, leaveTarget) < 10f;
+                              Vector2.Distance(Position, spawnPosition) < 10f;
 
     private TroopSpawner troopSpawner;
 
@@ -68,6 +69,7 @@ public class Ship : Entity
     public Ship(Vector2 start, Vector2 target, CoastTile coast, Data data, Texture2D texture, IReadOnlyList<TroopGroup> troops, float troopSpawnDelay)
     {
         Position = start;
+        spawnPosition = start;
 
         Texture = texture;
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
@@ -129,8 +131,6 @@ public class Ship : Entity
 
     private void UpdateSailing(GameTime gameTime)
     {
-        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
         // Initialize pathfinding once the ship has entered the grid
         if (pathfinding == null && grid.WorldToGrid(Position) != null)
             InitShipPathfinding();
@@ -139,17 +139,11 @@ public class Ship : Entity
 
         if (pathfinding != null)
         {
-            try
-            {
-                dir = pathfinding.GetNextDirection(Position);
-            }
-            catch (NoPathPossibleException)
-            {
-                State = ShipState.Docked;
-                return;
-            }
+            float distance = Vector2.Distance(Position, dockTarget);
+            float speedFactor = MathHelper.Clamp(distance / DockSlowdownDistance, MinSpeedFactor, 1f);
+            float currentSpeed = baseSpeed * speedFactor;
 
-            if (dir == Vector2.Zero)
+            if (MoveAlongPath(pathfinding.Path, currentSpeed, gameTime, out dir))
             {
                 State = ShipState.Docked;
                 return;
@@ -168,13 +162,17 @@ public class Ship : Entity
         }
 
         float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
-        rotation += MathHelper.WrapAngle(targetRotation - rotation) * RotationSpeed * dt;
+        if (pathfinding == null)
+        {
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            rotation += MathHelper.WrapAngle(targetRotation - rotation) * RotationSpeed * dt;
 
-        float distance = Vector2.Distance(Position, dockTarget);
-        float speedFactor = MathHelper.Clamp(distance / DockSlowdownDistance, MinSpeedFactor, 1f);
-        float currentSpeed = baseSpeed * speedFactor;
+            float distance = Vector2.Distance(Position, dockTarget);
+            float speedFactor = MathHelper.Clamp(distance / DockSlowdownDistance, MinSpeedFactor, 1f);
+            float currentSpeed = baseSpeed * speedFactor;
 
-        Position += dir * currentSpeed * dt;
+            Position += dir * currentSpeed * dt;
+        }
     }
 
     private const float PathNoiseDensity = 0.20f;
@@ -193,12 +191,14 @@ public class Ship : Entity
 
         pathfinding = new PathfindingSystem(dockTarget);
         pathfinding.UpdatePath(Position, grid, untraversable);
+        inboundPath = pathfinding.Path.ToList();
 
         // Fall back without noise if noise accidentally blocked all routes
         if (pathfinding.Path.Count == 0)
         {
             untraversable.RemoveWhere(p => TileRules.IsWater(grid.Tiles[p.Y, p.X]));
             pathfinding.UpdatePath(Position, grid, untraversable);
+            inboundPath = pathfinding.Path.ToList();
         }
     }
 
@@ -216,22 +216,31 @@ public class Ship : Entity
         return untraversable;
     }
 
-    private Vector2 FindGridEdgeExitTile(Vector2 exitDir)
+    private bool MoveAlongPath(Queue<Vector2> path, float speed, GameTime gameTime, out Vector2 direction)
     {
-        Point? lastWater = null;
-        float step = grid.TileSize * 0.5f;
-        Vector2 pos = Position;
+        direction = Vector2.Zero;
 
-        for (int i = 0; i < 1000; i++)
-        {
-            pos += exitDir * step;
-            var gp = grid.WorldToGrid(pos);
-            if (gp == null) break;
-            if (TileRules.IsWater(grid.Tiles[gp.Value.Y, gp.Value.X]))
-                lastWater = gp;
-        }
+        if (path == null || path.Count == 0)
+            return true;
 
-        return lastWater.HasValue ? grid.GridToWorld(lastWater.Value) : Position;
+        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+        while (path.Count > 0 && Vector2.Distance(Position, path.Peek()) < 5f)
+            path.Dequeue();
+
+        if (path.Count == 0)
+            return true;
+
+        direction = path.Peek() - Position;
+
+        if (direction != Vector2.Zero)
+            direction.Normalize();
+
+        float targetRotation = (float)Math.Atan2(direction.Y, direction.X);
+        rotation += MathHelper.WrapAngle(targetRotation - rotation) * RotationSpeed * dt;
+
+        Position += direction * speed * dt;
+        return false;
     }
 
     // =====================
@@ -269,6 +278,9 @@ public class Ship : Entity
         Vector2 backward = GetForwardVector() * -1f;
         leaveTarget = Position + backward * BackOffDistance;
 
+        leavingPath = new Queue<Vector2>(inboundPath.AsEnumerable().Reverse());
+        leavingPath.Enqueue(spawnPosition);
+
         State = ShipState.Leaving_BackOff;
     }
 
@@ -278,107 +290,13 @@ public class Ship : Entity
 
         if (Vector2.Distance(Position, leaveTarget) < 10f)
         {
-            Vector2 exitDir = GetNearestScreenExitDirection(Position);
-
-            leaveTarget = GetScreenExitPoint(Position, exitDir);
-
-            // Build pathfinding through water to the grid edge
-            if (grid.WorldToGrid(Position) != null)
-            {
-                var exitTileWorld = FindGridEdgeExitTile(exitDir);
-                var untraversable = BuildShipUntraversable();
-                var exitGP = grid.WorldToGrid(exitTileWorld);
-                var currentGP = grid.WorldToGrid(Position);
-                if (exitGP.HasValue) untraversable.Remove(exitGP.Value);
-                if (currentGP.HasValue) untraversable.Remove(currentGP.Value);
-
-                leavingPathfinding = new PathfindingSystem(exitTileWorld);
-                leavingPathfinding.UpdatePath(Position, grid, untraversable);
-
-                if (leavingPathfinding.Path.Count == 0)
-                    leavingPathfinding = null;
-            }
-
             State = ShipState.Leaving_ToSea;
         }
     }
 
-    private Vector2 GetScreenExitPoint(Vector2 from, Vector2 dir)
-    {
-        float tMin = float.MaxValue;
-
-        if (dir.X != 0)
-        {
-            float t = dir.X < 0
-                ? -from.X / dir.X
-                : (RumGame.VirtualWidth - from.X) / dir.X;
-            if (t > 0) tMin = Math.Min(tMin, t);
-        }
-
-        if (dir.Y != 0)
-        {
-            float t = dir.Y < 0
-                ? -from.Y / dir.Y
-                : (RumGame.VirtualHeight - from.Y) / dir.Y;
-            if (t > 0) tMin = Math.Min(tMin, t);
-        }
-
-        return from + dir * (tMin + ExitDistance);
-    }
-
-    private Vector2 GetNearestScreenExitDirection(Vector2 from)
-    {
-        float leftDistance = from.X;
-        float rightDistance = RumGame.VirtualWidth - from.X;
-        float topDistance = from.Y;
-        float bottomDistance = RumGame.VirtualHeight - from.Y;
-
-        float minDistance = leftDistance;
-        Vector2 direction = new Vector2(-1f, 0f);
-
-        if (rightDistance < minDistance)
-        {
-            minDistance = rightDistance;
-            direction = new Vector2(1f, 0f);
-        }
-
-        if (topDistance < minDistance)
-        {
-            minDistance = topDistance;
-            direction = new Vector2(0f, -1f);
-        }
-
-        if (bottomDistance < minDistance)
-        {
-            direction = new Vector2(0f, 1f);
-        }
-
-        return direction;
-    }
-
     private void UpdateLeavingToSea(GameTime gameTime)
     {
-        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-        if (leavingPathfinding != null && grid.WorldToGrid(Position) != null)
-        {
-            try
-            {
-                var dir = leavingPathfinding.GetNextDirection(Position);
-                if (dir != Vector2.Zero)
-                {
-                    float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
-                    rotation += MathHelper.WrapAngle(targetRotation - rotation) * RotationSpeed * dt;
-                    Position += dir * LeaveSpeed * dt;
-                    return;
-                }
-            }
-            catch (NoPathPossibleException) { }
-
-            leavingPathfinding = null;
-        }
-
-        MoveTowards(leaveTarget, LeaveSpeed, gameTime);
+        MoveAlongPath(leavingPath, LeaveSpeed, gameTime, out _);
     }
 
     // =====================
@@ -420,7 +338,7 @@ public class Ship : Entity
         if (showPathfindingDebug)
         {
             DrawPathDebug(spriteBatch, pathfinding?.Path, Color.Cyan);
-            DrawPathDebug(spriteBatch, leavingPathfinding?.Path, Color.Yellow);
+            DrawPathDebug(spriteBatch, leavingPath, Color.Yellow);
         }
     }
 

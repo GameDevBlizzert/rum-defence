@@ -99,17 +99,28 @@ public class ShipSpawner
         if (coastTiles.Count == 0) return;
 
         var (data, troops, troopSpawnDelay) = spawnQueue.Dequeue();
+        var start = DockSystem.GetSpawnPosition(grid);
 
         var available = new List<CoastTile>();
         foreach (var c in coastTiles)
             if (!occupiedCoastTiles.Contains(c))
                 available.Add(c);
 
-        var coast = available.Count > 0
-            ? available[random.Next(available.Count)]
-            : coastTiles[random.Next(coastTiles.Count)];
+        var coastPool = available.Count > 0 ? available : coastTiles;
+        var coast = coastPool[0];
 
-        var ship = (Ship)SpawnSystem.CreateShip(level, grid, data, coast, troops, troopSpawnDelay);
+        float bestDistance = float.MaxValue;
+        foreach (var candidate in coastPool)
+        {
+            float distance = Vector2.DistanceSquared(start, DockSystem.GetDockPosition(grid, candidate));
+            if (distance < bestDistance)
+            {
+                bestDistance = distance;
+                coast = candidate;
+            }
+        }
+
+        var ship = (Ship)SpawnSystem.CreateShip(level, grid, start, data, coast, troops, troopSpawnDelay);
         occupiedCoastTiles.Add(coast);
 
         var wave = waves[waveIndex];
