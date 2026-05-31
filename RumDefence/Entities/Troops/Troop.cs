@@ -6,7 +6,7 @@ using RumDefence.Exceptions;
 
 namespace RumDefence;
 
-public class Troop : Entity, ICollidable
+public abstract class Troop : Entity, ICollidable
 {
     private Vector2 target;
     protected readonly Animation animation;
@@ -31,7 +31,7 @@ public class Troop : Entity, ICollidable
     private readonly List<IModifier> _modifiers = new();
 
 
-    public bool CanBeRemoved { get; private set; }
+    public bool CanBeRemoved => IsDead && animation.IsFinished;
     public bool NeedsPathInit { get; protected set; } = true;
     private bool _wasDead;
     protected virtual bool CanAttackWalls => true;
@@ -112,9 +112,6 @@ public class Troop : Entity, ICollidable
                 Died?.Invoke(this);
             }
             animation.ActivateLayers([new(SpriteAction.Dying, SpriteDirection.Right)]);
-            if (animation.IsFinished)
-                CanBeRemoved = true;
-
             return;
         }
 

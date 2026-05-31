@@ -2,6 +2,8 @@ using Microsoft.Xna.Framework;
 
 namespace RumDefence;
 
+public enum TroopType { Grunt, Boss, Ghost, Bomber }
+
 public record TroopData(
     string SpritePath,
     int Health,
@@ -11,9 +13,7 @@ public record TroopData(
     float SizeInTiles,
     int SpriteFrameSize,
     float InitialSpeedMultiplier,
-    bool IsBoss = false,
-    bool IsGhost = false,
-    bool IsBomber = false
+    TroopType Type = TroopType.Grunt
 );
 
 public static class TroopFactory
@@ -38,7 +38,7 @@ public static class TroopFactory
         SizeInTiles: 0.5f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 0.5f,
-        IsBoss: true
+        Type: TroopType.Boss
     );
 
     public static readonly TroopData Ghost = new(
@@ -50,7 +50,7 @@ public static class TroopFactory
         SizeInTiles: 0.5f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f,
-        IsGhost: true
+        Type: TroopType.Ghost
     );
 
     public static readonly TroopData Bomber = new(
@@ -62,15 +62,16 @@ public static class TroopFactory
         SizeInTiles: 0.5f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f,
-        IsBomber: true
+        Type: TroopType.Bomber
     );
 
     public static Troop Create(TroopData data, Vector2 start, Vector2 target)
-        => data.IsGhost
-            ? new GhostTroop(data, start, target)
-            : data.IsBoss
-                ? new BossTroop(data, start, target)
-                : data.IsBomber
-                    ? new BomberTroop(data, start, target)
-                    : new Troop(data, start, target);
+        => data.Type switch
+        {
+            TroopType.Ghost => new GhostTroop(data, start, target),
+            TroopType.Boss => new BossTroop(data, start, target),
+            TroopType.Bomber => new BomberTroop(data, start, target),
+            TroopType.Grunt => new GruntTroop(data, start, target),
+            _ => new GruntTroop(data, start, target),
+        };
 }

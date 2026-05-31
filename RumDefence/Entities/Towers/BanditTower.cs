@@ -18,4 +18,9 @@ public class BanditTower : BaseTower
             ]
         , 5);
     }
+
+    protected override void FireProjectile(Troop target)
+    {
+        Projectiles.Add(new KnifeProjectile(Position, target, ProjectileSpeed, CurrentDamage));
+    }
 }

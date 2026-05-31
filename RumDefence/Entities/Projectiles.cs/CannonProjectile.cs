@@ -15,7 +15,7 @@ public class CannonProjectile : BaseProjectile
     {
         ApplyDirectDamage = false;
         _aoeRadius = aoeRadius;
-        Texture = RumGame.Instance.Content.Load<Texture2D>("KenneyPiratePack/PNG/Retina/Ship parts/cannonBall");
+        Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Projectiles/cannonball");
         Size = SizeSystem.Square(0.25f);
     }
 
@@ -30,14 +30,15 @@ public class CannonProjectile : BaseProjectile
             float distanceToCenter;
             float fractionDamage;
             float distanceFraction;
-            GameScreen.Instance.Explosions.Add(new Explosion(Position, _aoeRadius));
+            var explosion = new Explosion(Position, _aoeRadius);
+            GameScreen.Instance.Explosions.Add(explosion);
             foreach (var troop in GameScreen.Instance.Troops)
             {
                 if (troop.IsDead || troop.IsFinished) continue;
                 distanceToCenter = Vector2.Distance(Position, troop.Position);
-                if (distanceToCenter <= _aoeRadius)
+                if (distanceToCenter <= explosion.Size.X / 2)
                 {
-                    distanceFraction = distanceToCenter / _aoeRadius;
+                    distanceFraction = distanceToCenter / explosion.Size.X / 2;
                     fractionDamage = _aoeDamageRange.Item2 - (distanceFraction * (_aoeDamageRange.Item2 - _aoeDamageRange.Item1));
                     troop.TakeDamage(Damage * fractionDamage);
                 }
