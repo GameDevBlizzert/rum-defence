@@ -10,6 +10,7 @@ public class BaseTower : Entity
 {
     protected readonly List<Troop> Troops;
     protected readonly List<BaseProjectile> Projectiles = [];
+    private Troop _currentTarget;
 
     public TowerData Data { get; }
 
@@ -17,14 +18,17 @@ public class BaseTower : Entity
     public int MaxLevel { get; protected set; } = 3;
 
     public string Label = "";
+    public Troop CurrentTarget => _currentTarget;
 
     public float CurrentRange => (Data.Range + (CurrentLevel * Data.RangeUpgradeFlat)) * (1f + (CurrentLevel * Data.RangeUpgradePercent));
     public float CurrentFireRate => (Data.FireRate + (CurrentLevel * Data.FireRateUpgradeFlat)) * (1f + (CurrentLevel * Data.FireRateUpgradePercent));
     public int CurrentDamage => (int)((Data.Damage + (CurrentLevel * Data.DamageUpgradeFlat)) * (1f + (CurrentLevel * Data.DamageUpgradePercent)));
 
     public float ProjectileSpeed { get; set; } = 200f;
-    public AttackMode AttackMode { get; set; } = AttackMode.Closest;
+    public AttackMode AttackMode { get; set; } = AttackMode.Nearest;
     public float RotationSpeed { get; set; } = 5f;
+
+    public string CurrentAttackModeLabel => AttackMode.ToDisplayName();
 
     public int GetUpgradeCost()
     {
@@ -39,6 +43,24 @@ public class BaseTower : Entity
         {
             CurrentLevel++;
         }
+    }
+
+    public void CycleAttackMode()
+    {
+        AttackMode = AttackMode switch
+        {
+            AttackMode.Nearest => AttackMode.Strongest,
+            AttackMode.Strongest => AttackMode.Farthest,
+            _ => AttackMode.Nearest
+        };
+
+        _currentTarget = null;
+    }
+
+    public void NotifyTroopDied(Troop troop)
+    {
+        if (_currentTarget == troop)
+            _currentTarget = null;
     }
 
     private float _fireCooldown = 0f;
@@ -77,7 +99,8 @@ public class BaseTower : Entity
                 Projectiles.RemoveAt(i);
         }
 
-        Troop target = FindTarget();
+        _currentTarget = FindTarget();
+        Troop target = _currentTarget;
 
         if (target != null)
         {
@@ -126,9 +149,9 @@ public class BaseTower : Entity
 
             float value = AttackMode switch
             {
-                AttackMode.Closest => dist,
+                AttackMode.Nearest => dist,
                 AttackMode.Strongest => -troop.Health,
-                AttackMode.First => (troop.Path != null && troop.Path.Count > 0 ? (troop.Path.Count * 1000f) + Vector2.Distance(troop.Position, troop.Path.Peek()) : dist),
+                AttackMode.Farthest => -dist,
                 _ => dist
             };
 

@@ -2,7 +2,21 @@ namespace RumDefence;
 
 public enum AttackMode
 {
-    Closest,   // Nearest troop to the tower
-    Strongest, // Troop with the highest current health
-    First      // Troop furthest along the path (closest to the goal)
+    Nearest,
+    Strongest,
+    Farthest
+}
+
+public static class AttackModeExtensions
+{
+    public static string ToDisplayName(this AttackMode mode)
+    {
+        return mode switch
+        {
+            AttackMode.Nearest => "Nearest",
+            AttackMode.Strongest => "Strongest",
+            AttackMode.Farthest => "Farthest",
+            _ => mode.ToString()
+        };
+    }
 }
