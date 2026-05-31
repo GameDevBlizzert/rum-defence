@@ -110,7 +110,7 @@ public class ShipSpawner
             : coastTiles[random.Next(coastTiles.Count)];
 
         var ship = (Ship)SpawnSystem.CreateShip(level, grid, data, coast, troops, troopSpawnDelay);
-        ship.AdvanceToDock(waves[waveIndex].HoldingTime);
+        ship.AdvanceToDock();
         occupiedCoastTiles.Add(coast);
 
         var wave = waves[waveIndex];

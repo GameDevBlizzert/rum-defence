@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -10,11 +11,18 @@ public class WallRenderer
     private readonly IWallTheme theme;
     private readonly Dictionary<Point, Wall> walls;
 
+    private double totalTime;
+
     public WallRenderer(Grid grid, IWallTheme theme, Dictionary<Point, Wall> walls)
     {
         this.grid = grid;
         this.theme = theme;
         this.walls = walls;
+    }
+
+    public void Update(GameTime gameTime)
+    {
+        totalTime = gameTime.TotalGameTime.TotalSeconds;
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -67,10 +75,8 @@ public class WallRenderer
                 rotation = isEnd && se ? 0f : MathHelper.Pi;
                 if (!isEnd) rotation = 0f;
 
-                // The diagonal's SE corner is shared with the right cell's SW corner
-                // and the bottom cell's NE corner — fill both.
-                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X + 1, p.Y), MathHelper.PiOver2);   // SW corner
-                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X, p.Y + 1), -MathHelper.PiOver2);  // NE corner
+                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X + 1, p.Y), MathHelper.PiOver2, Color.White);
+                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X, p.Y + 1), -MathHelper.PiOver2, Color.White);
             }
             else // slash (/ direction)
             {
@@ -80,10 +86,8 @@ public class WallRenderer
                 if (isEnd && ne) rotation = MathHelper.PiOver2;
                 if (isEnd && sw) rotation = -MathHelper.PiOver2;
 
-                // The diagonal's SW corner is shared with the left cell's SE corner
-                // and the bottom cell's NW corner — fill both.
-                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X - 1, p.Y), 0f);           // SE corner
-                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X, p.Y + 1), MathHelper.Pi); // NW corner
+                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X - 1, p.Y), 0f, Color.White);
+                DrawTexture(spriteBatch, theme.DiagonalFill, new Point(p.X, p.Y + 1), MathHelper.Pi, Color.White);
             }
         }
         // SINGLE (cardinal neighbours exist but this is a lone end-cap)
@@ -139,7 +143,34 @@ public class WallRenderer
                 : theme.Xwall;
         }
 
-        DrawTexture(spriteBatch, texture, p, rotation);
+        // Draw the base wall texture normally
+        DrawTexture(spriteBatch, texture, p, rotation, Color.White);
+
+        // Overlay the upgrade effect — same texture, same size, stays inside the wall
+        if (wall.UpgradeLevel >= 1)
+            DrawTexture(spriteBatch, texture, p, rotation, GetUpgradeOverlay(wall));
+    }
+
+    // Semi-transparent colour layer drawn over the same texture — stays 100% inside the wall shape.
+    private Color GetUpgradeOverlay(Wall wall)
+    {
+        return wall.UpgradeLevel switch
+        {
+            1 => new Color(170, 95, 25, 80),  // bronze: warm copper at ~31% opacity
+            2 => new Color(50, 85, 140, 75),  // steel: cold blue-grey at ~29% opacity
+            3 => GetGoldOverlay(),
+            _ => Color.Transparent
+        };
+    }
+
+    private Color GetGoldOverlay()
+    {
+        float t = (float)(Math.Sin(totalTime * 2.5) * 0.5 + 0.5); // 0..1
+        int r = 210;
+        int g = (int)(145 + 40 * t);  // 145–185
+        int b = 0;
+        int a = (int)(80 + 35 * t);   // 80–115, pulses in intensity
+        return new Color(r, g, b, a);
     }
 
     private bool HasWall(Point p)
@@ -147,17 +178,17 @@ public class WallRenderer
         return walls.ContainsKey(p);
     }
 
-    private void DrawTexture(SpriteBatch spriteBatch, Texture2D texture, Point gridPos, float rotation)
+    private void DrawTexture(SpriteBatch spriteBatch, Texture2D texture, Point gridPos, float rotation, Color color, float scaleMultiplier = 1f)
     {
         Vector2 world = grid.GridToWorld(gridPos);
 
-        float scale = (float)grid.TileSize / texture.Width;
+        float scale = (float)grid.TileSize / texture.Width * scaleMultiplier;
 
         spriteBatch.Draw(
             texture,
             world,
             null,
-            Color.White,
+            color,
             rotation,
             new Vector2(texture.Width / 2f, texture.Height / 2f),
             scale,

@@ -83,6 +83,6 @@ public static class Level1Data
             list.Add(new ShipGroup(data, count, troopGroups, spawnDelay));
         }
 
-        return new Wave(list, minSpawnTime, maxSpawnTime, holdingTime);
+        return new Wave(list, minSpawnTime, maxSpawnTime);
     }
 }
