@@ -287,6 +287,12 @@ public class GameScreen : Screen
             }
         }
 
+        if (selectedTower != null && hud.WasTargetModeClicked())
+        {
+            selectedTower.CycleAttackMode();
+            AudioManager.Instance.PlayRandomImpact();
+        }
+
         if (tutorialOverlay != null)
         {
             if (!tutorialWaveNotified && Ships.Count > 0)
@@ -335,7 +341,7 @@ public class GameScreen : Screen
         playbackState = playbackState switch
         {
             GamePlaybackState.Normal => GamePlaybackState.FastForward,
-            GamePlaybackState.FastForward => GamePlaybackState.Paused,
+            GamePlaybackState.FastForward => GamePlaybackState.Normal,
             _ => GamePlaybackState.Normal
         };
 
@@ -368,7 +374,10 @@ public class GameScreen : Screen
             if (Ships[i].SpawnedTroops.Count > 0)
             {
                 foreach (var troop in Ships[i].SpawnedTroops)
+                {
                     troop.GetWallAt = p => walls.TryGetValue(p, out var w) ? w : null;
+                    troop.Died += OnTroopDied;
+                }
                 Troops.AddRange(Ships[i].SpawnedTroops);
                 Ships[i].SpawnedTroops.Clear();
             }
@@ -495,6 +504,12 @@ public class GameScreen : Screen
             spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
             spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
         }
+    }
+
+    private void OnTroopDied(Troop troop)
+    {
+        foreach (var tower in placedTowers.Values)
+            tower.NotifyTroopDied(troop);
     }
 
     /// <summary>

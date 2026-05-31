@@ -11,6 +11,7 @@ public class Troop : Entity, ICollidable
     private Vector2 target;
     protected readonly Animation animation;
     private Vector2 _lastDir = Vector2.UnitY;
+    public event Action<Troop> Died;
 
     public HealthComponent Health { get; private set; }
     public bool IsDead => Health.IsDead;
@@ -101,12 +102,18 @@ public class Troop : Entity, ICollidable
     public override void Update(GameTime gameTime)
     {
         animation.Update(gameTime);
+        bool wasDead = IsDead;
 
         if (IsDead)
         {
+            if (!wasDead && IsDead)
+            {
+                Died?.Invoke(this);
+            }
             animation.ActivateLayers([new(SpriteAction.Dying, SpriteDirection.Right)]);
             if (animation.IsFinished)
                 CanBeRemoved = true;
+
             return;
         }
 
