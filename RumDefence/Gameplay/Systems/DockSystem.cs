@@ -29,36 +29,32 @@ public static class DockSystem
         return basePos + GetDirection(coast.TileType) * offset;
     }
 
-    public static Vector2 GetSpawnPosition(Grid grid, CoastTile coast)
+    public static Vector2 GetSpawnPosition(Grid grid)
     {
-        Vector2 basePos = grid.GridToWorld(coast.GridPos);
-        Vector2 dir = GetDirection(coast.TileType);
-
         float margin = grid.TileSize * 2f;
+        float x;
+        float y;
 
-        float x = basePos.X;
-        float y = basePos.Y;
-
-        if (dir.X < 0) x = -margin;
-        if (dir.X > 0) x = RumGame.VirtualWidth + margin;
-
-        if (dir.Y < 0) y = -margin;
-        if (dir.Y > 0) y = RumGame.VirtualHeight + margin;
+        switch (Random.Shared.Next(4))
+        {
+            case 0:
+                x = -margin;
+                y = (float)(Random.Shared.NextDouble() * RumGame.VirtualHeight);
+                break;
+            case 1:
+                x = RumGame.VirtualWidth + margin;
+                y = (float)(Random.Shared.NextDouble() * RumGame.VirtualHeight);
+                break;
+            case 2:
+                x = (float)(Random.Shared.NextDouble() * RumGame.VirtualWidth);
+                y = -margin;
+                break;
+            default:
+                x = (float)(Random.Shared.NextDouble() * RumGame.VirtualWidth);
+                y = RumGame.VirtualHeight + margin;
+                break;
+        }
 
         return new Vector2(x, y);
-    }
-
-    public static Vector2 GetHoldingPosition(Grid grid, CoastTile coast, float lateralOffset = 0f)
-    {
-        Vector2 basePos = grid.GridToWorld(coast.GridPos);
-        Vector2 dir = GetDirection(coast.TileType);
-
-        Vector2 holdPos = basePos + dir * (grid.TileSize * 4f);
-
-        // Offset along the approach axis so ships stagger at different depths from shore
-        float angle = MathF.Atan2(dir.Y, dir.X);
-        Vector2 approachAxis = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-
-        return holdPos + approachAxis * lateralOffset;
     }
 }

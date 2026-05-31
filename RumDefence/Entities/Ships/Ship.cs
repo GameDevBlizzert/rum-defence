@@ -32,8 +32,6 @@ public class Ship : Entity
 
     public enum ShipState
     {
-        SailingToHoldingPosition,
-        HoldingAtSea,
         SailingToDock,
         Docked,
         Unloading,
@@ -41,15 +39,12 @@ public class Ship : Entity
         Leaving_ToSea
     }
 
-    public ShipState State { get; private set; } = ShipState.SailingToHoldingPosition;
+    public ShipState State { get; private set; } = ShipState.SailingToDock;
 
-    private Vector2 holdingPosition;
     private Vector2 dockTarget;
     private Vector2 leaveTarget;
-    private Vector2 spawnPosition;
 
     private float baseSpeed;
-    private float advanceDelay;
     private float troopSpawnDelay;
 
     private Grid grid;
@@ -70,10 +65,9 @@ public class Ship : Entity
     // CONSTRUCTOR
     // =====================
 
-    public Ship(Vector2 start, Vector2 holding, Vector2 target, CoastTile coast, Data data, Texture2D texture, IReadOnlyList<TroopGroup> troops, float troopSpawnDelay)
+    public Ship(Vector2 start, Vector2 target, CoastTile coast, Data data, Texture2D texture, IReadOnlyList<TroopGroup> troops, float troopSpawnDelay)
     {
         Position = start;
-        spawnPosition = start;
 
         Texture = texture;
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
@@ -81,7 +75,6 @@ public class Ship : Entity
         rotationOffset = MathHelper.ToRadians(data.RotationOffsetDegrees);
 
         AssignedCoast = coast;
-        holdingPosition = holding;
         dockTarget = target;
         baseSpeed = data.Speed;
 
@@ -108,14 +101,6 @@ public class Ship : Entity
     {
         switch (State)
         {
-            case ShipState.SailingToHoldingPosition:
-                UpdateSailingToHolding(gameTime);
-                break;
-
-            case ShipState.HoldingAtSea:
-                UpdateHoldingAtSea(gameTime);
-                break;
-
             case ShipState.SailingToDock:
                 UpdateSailing(gameTime);
                 break;
@@ -136,54 +121,6 @@ public class Ship : Entity
                 UpdateLeavingToSea(gameTime);
                 break;
         }
-    }
-
-    // =====================
-    // HOLDING
-    // =====================
-
-    private void UpdateSailingToHolding(GameTime gameTime)
-    {
-        float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-        Vector2 dir = holdingPosition - Position;
-        float distance = dir.Length();
-
-        if (dir != Vector2.Zero)
-            dir.Normalize();
-
-        float targetRotation = (float)Math.Atan2(dir.Y, dir.X);
-        rotation += MathHelper.WrapAngle(targetRotation - rotation) * RotationSpeed * dt;
-
-        Position += dir * baseSpeed * dt;
-
-        if (distance < 5f)
-            State = ShipState.HoldingAtSea;
-    }
-
-    public void AdvanceToDock(float delay = 0f)
-    {
-        if (State != ShipState.HoldingAtSea && State != ShipState.SailingToHoldingPosition)
-            return;
-
-        if (delay <= 0f)
-        {
-            State = ShipState.SailingToDock;
-        }
-        else
-        {
-            advanceDelay = delay;
-            // ship stays in HoldingAtSea (or finishes sailing there) and ticks down
-        }
-    }
-
-    private void UpdateHoldingAtSea(GameTime gameTime)
-    {
-        if (advanceDelay <= 0f) return;
-
-        advanceDelay -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-        if (advanceDelay <= 0f)
-            State = ShipState.SailingToDock;
     }
 
     // =====================

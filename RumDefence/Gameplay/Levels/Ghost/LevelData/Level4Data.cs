@@ -40,12 +40,12 @@ public static class Level4Data
     private static List<Wave> Waves => new()
     {
         //                                                                    ships  troops                                spawnDelay
-        CreateWave(minSpawnTime: 3f,   maxSpawnTime: 6f,   holdingTime: 5f, (NormalShip,  1, [(Regular,  5, 100)],              1.0f)),
-        CreateWave(minSpawnTime: 2f,   maxSpawnTime: 4f,   holdingTime: 0f, (NormalShip,  2, [(Regular,  7, 100)],              1.0f)),
-        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 9f,   holdingTime: 0f, (NormalShip,  3, [(Regular,  6, 100), (Ghost, 2, 50)],1.5f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
-        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 7f,   holdingTime: 0f, (NormalShip,  3, [(Regular, 8, 100), (Ghost, 3, 50)],0.8f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
-        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 3f,   holdingTime: 0f, (NormalShip,  20, [(Regular, 4, 100), (Ghost, 2, 50)], 0.5f), (BossShip, 2, [(Boss, 1, 600)], 0.5f)),
-        CreateWave(minSpawnTime: 0.5f, maxSpawnTime: 8f, holdingTime: 0f, (NormalShip, 10, [(Regular, 10, 100), (Ghost, 4, 50)], 0.3f), (BossShip, 3, [(Boss, 1, 600)], 0.3f)),
+        CreateWave(minSpawnTime: 3f,   maxSpawnTime: 6f,   (NormalShip,  1, [(Regular,  5, 100)],              1.0f)),
+        CreateWave(minSpawnTime: 2f,   maxSpawnTime: 4f,   (NormalShip,  2, [(Regular,  7, 100)],              1.0f)),
+        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 9f,   (NormalShip,  3, [(Regular,  6, 100), (Ghost, 2, 50)],1.5f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
+        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 7f,   (NormalShip,  3, [(Regular, 8, 100), (Ghost, 3, 50)],0.8f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
+        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 3f,   (NormalShip,  20, [(Regular, 4, 100), (Ghost, 2, 50)], 0.5f), (BossShip, 2, [(Boss, 1, 600)], 0.5f)),
+        CreateWave(minSpawnTime: 0.5f, maxSpawnTime: 8f, (NormalShip, 10, [(Regular, 10, 100), (Ghost, 4, 50)], 0.3f), (BossShip, 3, [(Boss, 1, 600)], 0.3f)),
     };
 
     private static string[] MapData => new[]
@@ -70,7 +70,7 @@ public static class Level4Data
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
     };
 
-    private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, float holdingTime, params (Ship.Data data, int count, (TroopData troop, int n, int hp)[] troops, float spawnDelay)[] groups)
+    private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, params (Ship.Data data, int count, (TroopData troop, int n, int hp)[] troops, float spawnDelay)[] groups)
     {
         var list = new List<ShipGroup>();
 
@@ -82,6 +82,6 @@ public static class Level4Data
             list.Add(new ShipGroup(data, count, troopGroups, spawnDelay));
         }
 
-        return new Wave(list, minSpawnTime, maxSpawnTime, holdingTime);
+        return new Wave(list, minSpawnTime, maxSpawnTime);
     }
 }

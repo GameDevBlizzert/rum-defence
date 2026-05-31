@@ -39,10 +39,10 @@ public static class Level2Data
     private static List<Wave> Waves => new()
     {
         //                                                          ships  troops                    spawnDelay
-        CreateWave(minSpawnTime: 10f, maxSpawnTime: 20f, holdingTime: 5f, (NormalShip,  2, [(Regular,   5,  75)],         2.5f)),
-        CreateWave(minSpawnTime:  3f, maxSpawnTime: 8f, holdingTime: 1f, (NormalShip,  4, [(Regular,   6,  100)],        1.0f)),
-        CreateWave(minSpawnTime: 0f, maxSpawnTime: 5f, holdingTime: 6f, (NormalShip,  4, [(Regular,   7,  100)],        0.4f)),
-        CreateWave(minSpawnTime:  6f, maxSpawnTime: 11f, holdingTime: 0f, (NormalShip,  6, [(Regular, 4,  100)],        1f), (BossShip, 1, [(Boss, 2, 500)], 0.1f)),
+        CreateWave(minSpawnTime: 10f, maxSpawnTime: 20f, (NormalShip,  2, [(Regular,   5,  75)],         2.5f)),
+        CreateWave(minSpawnTime:  3f, maxSpawnTime: 8f, (NormalShip,  4, [(Regular,   6,  100)],        1.0f)),
+        CreateWave(minSpawnTime: 0f, maxSpawnTime: 5f, (NormalShip,  4, [(Regular,   7,  100)],        0.4f)),
+        CreateWave(minSpawnTime:  6f, maxSpawnTime: 11f, (NormalShip,  6, [(Regular, 4,  100)],        1f), (BossShip, 1, [(Boss, 2, 500)], 0.1f)),
     };
 
     private static string[] MapData => new[]
@@ -67,7 +67,7 @@ public static class Level2Data
         "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1"
     };
 
-    private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, float holdingTime, params (Ship.Data data, int count, (TroopData troop, int n, int hp)[] troops, float spawnDelay)[] groups)
+    private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, params (Ship.Data data, int count, (TroopData troop, int n, int hp)[] troops, float spawnDelay)[] groups)
     {
         var list = new List<ShipGroup>();
 
@@ -79,6 +79,6 @@ public static class Level2Data
             list.Add(new ShipGroup(data, count, troopGroups, spawnDelay));
         }
 
-        return new Wave(list, minSpawnTime, maxSpawnTime, holdingTime);
+        return new Wave(list, minSpawnTime, maxSpawnTime);
     }
 }
