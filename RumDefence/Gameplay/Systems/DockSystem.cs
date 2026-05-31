@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace RumDefence;
@@ -31,30 +32,30 @@ public static class DockSystem
 
     public static Vector2 GetSpawnPosition(Grid grid)
     {
-        float margin = grid.TileSize * 2f;
-        float x;
-        float y;
+        var outerWaterTiles = new List<Point>();
 
-        switch (Random.Shared.Next(4))
+        for (int x = 0; x < grid.Width; x++)
         {
-            case 0:
-                x = -margin;
-                y = (float)(Random.Shared.NextDouble() * RumGame.VirtualHeight);
-                break;
-            case 1:
-                x = RumGame.VirtualWidth + margin;
-                y = (float)(Random.Shared.NextDouble() * RumGame.VirtualHeight);
-                break;
-            case 2:
-                x = (float)(Random.Shared.NextDouble() * RumGame.VirtualWidth);
-                y = -margin;
-                break;
-            default:
-                x = (float)(Random.Shared.NextDouble() * RumGame.VirtualWidth);
-                y = RumGame.VirtualHeight + margin;
-                break;
+            for (int y = 0; y < grid.Height; y++)
+            {
+                bool isOuterTile = x == 0 || y == 0 || x == grid.Width - 1 || y == grid.Height - 1;
+                if (isOuterTile && TileRules.IsWater(grid.Tiles[y, x]))
+                    outerWaterTiles.Add(new Point(x, y));
+            }
         }
 
-        return new Vector2(x, y);
+        if (outerWaterTiles.Count == 0)
+        {
+            for (int x = 0; x < grid.Width; x++)
+                for (int y = 0; y < grid.Height; y++)
+                    if (TileRules.IsWater(grid.Tiles[y, x]))
+                        outerWaterTiles.Add(new Point(x, y));
+        }
+
+        if (outerWaterTiles.Count == 0)
+            return Vector2.Zero;
+
+        var tile = outerWaterTiles[Random.Shared.Next(outerWaterTiles.Count)];
+        return grid.GridToWorld(tile);
     }
 }
