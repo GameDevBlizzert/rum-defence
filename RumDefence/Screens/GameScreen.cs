@@ -340,7 +340,7 @@ public class GameScreen : Screen
         playbackState = playbackState switch
         {
             GamePlaybackState.Normal => GamePlaybackState.FastForward,
-            GamePlaybackState.FastForward => GamePlaybackState.Paused,
+            GamePlaybackState.FastForward => GamePlaybackState.Normal,
             _ => GamePlaybackState.Normal
         };
 
