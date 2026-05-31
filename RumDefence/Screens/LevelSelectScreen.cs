@@ -139,29 +139,34 @@ public class LevelSelectScreen : Screen
     {
         var score = SaveManager.GetLevelScore(level);
 
-        string text;
+        string coinsText;
+        string wavesText;
 
         if (score == null)
         {
-            text = "High Score: -";
+            coinsText = "Best Coins: -";
+            wavesText = "Best Waves: -";
         }
         else
         {
-            text = $"Best Coins: {score.BestCoins}   Best Waves: {score.BestWaves}";
+            coinsText = $"Best Coins: {score.BestCoins}";
+            wavesText = $"Best Waves: {score.BestWaves}";
         }
 
-        var size = font.MeasureString(text);
+        var coinsSize = font.MeasureString(coinsText);
+        var wavesSize = font.MeasureString(wavesText);
 
-        Vector2 position = new Vector2(
-            rect.Center.X - size.X / 2,
-            rect.Bottom + 12
+        Vector2 coinsPosition = new Vector2(
+            rect.Center.X - coinsSize.X / 2,
+            rect.Bottom + 10
         );
 
-        spriteBatch.DrawString(
-            font,
-            text,
-            position,
-            Primitives.FontColor
+        Vector2 wavesPosition = new Vector2(
+            rect.Center.X - wavesSize.X / 2,
+            rect.Bottom + 45
         );
+
+        spriteBatch.DrawString(font, coinsText, coinsPosition, Primitives.FontColor);
+        spriteBatch.DrawString(font, wavesText, wavesPosition, Primitives.FontColor);
     }
 }

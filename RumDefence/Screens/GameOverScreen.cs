@@ -59,7 +59,8 @@ public class GameOverScreen : Screen
         if (isWin)
         {
             SaveManager.UnlockLevel(level);
-            SaveManager.SaveLevelScore(level, coins, wavesSurvived);
+            SaveManager.UnlockNextLevel(levelSet, level);
+            SaveManager.SaveWinScore(level, coins, wavesSurvived);
 
             int currentIndex = levelSet.FindIndex(l => l.Id == level.Id);
 

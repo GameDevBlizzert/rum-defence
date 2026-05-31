@@ -33,9 +33,9 @@ public static class GhostLevels
                 for (int i = 0; i < _all.Count; i++)
                 {
                     _all[i].SaveKey = keys[i];
-                    if (SaveManager.CurrentSave.UnlockedLevelKeys.Contains(keys[i]))
-                        _all[i].IsUnlocked = true;
                 }
+
+                SaveManager.ApplySaveDataToLevels(_all);
             }
             return _all;
         }
