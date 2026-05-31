@@ -28,6 +28,7 @@ public class GameScreen : Screen
     public ShipSpawner Spawner { get; private set; }
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
+    private HashSet<Point> latestUntraverableHashSet = new();
     public static GameScreen Instance { get; private set; }
     public List<Explosion> Explosions = new();
     public List<NetEffect> NetEffects = new();
@@ -42,8 +43,6 @@ public class GameScreen : Screen
     private bool levelCompleted;
 
     private LevelProgressSystem progress;
-
-    private HashSet<Point> latestUntraverableHashSet = new();
 
     private Dictionary<Point, bool> occupiedTiles = new();
 
@@ -436,24 +435,25 @@ public class GameScreen : Screen
             if (updatePaths || troop.NeedsPathInit)
                 troop.UpdatePathfinding();
 
-            if (troop.IsDead && !troop.HasDroppedReward)
+            if (troop.IsDead)
             {
-                hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
-                troop.MarkRewardGiven();
-                Spawner.NotifyTroopDefeated();
-            }
-
-            if (troop.IsFinished && !troop.IsDead)
-            {
-                progress.TakeHits(1);
-                Spawner.NotifyTroopDefeated();
-
+                if (!troop.HasDroppedReward)
+                {
+                    hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
+                    troop.MarkRewardGiven();
+                    Spawner.NotifyTroopDefeated();
+                }
                 if (troop.CanBeRemoved)
                     Troops.RemoveAt(i);
+                continue;
             }
 
-            if (troop.IsDead && troop.CanBeRemoved)
+            if (troop.IsFinished)
+            {
+                // progress.TakeHits(1);
+                // Spawner.NotifyTroopDefeated();
                 Troops.RemoveAt(i);
+            }
         }
     }
 
