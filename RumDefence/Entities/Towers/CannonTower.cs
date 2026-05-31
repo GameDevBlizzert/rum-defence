@@ -15,6 +15,12 @@ public class CannonTower : BaseTower
 
     public CannonTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
+        animation.AddLayerMatrix(new SpriteMatrixCell[,]
+        {
+            {
+                new(1, SpriteAction.Rotation, SpriteDirection.Left),
+            },
+        });
     }
 
     protected override void FireProjectile(Troop target)
@@ -52,9 +58,7 @@ public class CannonTower : BaseTower
             layerDepth
         );
 
-        foreach (var proj in Projectiles)
-            proj.Draw(spriteBatch);
-
+        DrawProjectiles(spriteBatch);
         DrawLevelStripes(spriteBatch);
     }
 }

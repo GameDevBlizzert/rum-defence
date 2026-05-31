@@ -16,6 +16,8 @@ public class BuildManager
     private Action<Point> onRemove;
     private Action<Point> onSelect;
 
+    private bool wasClickDown;
+
     public TowerData SelectedTowerData { get; private set; }
 
     public BuildManager(Grid grid, Point targetTile)
@@ -31,9 +33,12 @@ public class BuildManager
         CtrlHeld = ctrlHeld;
         hoveredTile = grid.WorldToGrid(mousePosition);
 
+        bool isNewClick = isClick && !wasClickDown;
+        wasClickDown = isClick;
+
         if (hoveredTile == null) return;
 
-        HandleClick(isClick);
+        HandleClick(isNewClick);
     }
 
     private void HandleClick(bool isClick)
@@ -49,13 +54,16 @@ public class BuildManager
                 if (CanPlace(p))
                     onWallPlaced?.Invoke(p);
                 break;
+
             case BuildMode.Tower:
                 if (CanPlace(p) && SelectedTowerData != null)
                     onTowerPlaced?.Invoke(p, SelectedTowerData);
                 break;
+
             case BuildMode.Remove:
                 onRemove?.Invoke(p);
                 break;
+
             case BuildMode.None:
                 onSelect?.Invoke(p);
                 break;
@@ -80,6 +88,7 @@ public class BuildManager
             currentMode = BuildMode.None;
         else
             currentMode = mode;
+
         SelectedTowerData = null;
     }
 
@@ -138,3 +147,4 @@ public class BuildManager
         onSelect = callback;
     }
 }
+

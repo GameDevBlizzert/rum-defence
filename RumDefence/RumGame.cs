@@ -50,12 +50,17 @@ namespace RumDefence
 
         protected override void Initialize()
         {
+            SaveManager.Load();
+
             _screenManager = new ScreenManager();
+
             base.Initialize();
+
             UpdateScaleMatrix();
             SaveManager.Load();
             AudioManager.Instance.MusicVolume = SaveManager.CurrentSave.MusicVolume;
             AudioManager.Instance.SoundVolume = SaveManager.CurrentSave.SfxVolume;
+
             _screenManager.SetScreen(new LoadingSplashScreen(_screenManager));
         }
 

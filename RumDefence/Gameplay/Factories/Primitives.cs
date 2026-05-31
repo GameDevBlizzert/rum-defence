@@ -7,7 +7,6 @@ public static class Primitives
 {
     private static Texture2D _pixel;
     private static SpriteFont _font;
-
     public static Texture2D Pixel
     {
         get
@@ -24,4 +23,6 @@ public static class Primitives
     public static SpriteFont Font => _font ??= RumGame.Instance.Content.Load<SpriteFont>("Fonts/KenneyFuture");
 
     public static Color FontColor => new Color(255, 200, 0);
+
+    public const float TowerSize = 1f;
 }
