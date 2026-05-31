@@ -72,7 +72,6 @@ public class Ship : Entity
 
     public Ship(Vector2 start, Vector2 holding, Vector2 target, CoastTile coast, Data data, Texture2D texture, IReadOnlyList<TroopGroup> troops, float troopSpawnDelay)
     {
-        start = new Vector2(-100, 500);
         Position = start;
         spawnPosition = start;
 
@@ -438,5 +437,67 @@ public class Ship : Entity
     private Vector2 GetForwardVector()
     {
         return new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation));
+    }
+
+    // =====================
+    // DRAW
+    // =====================
+
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        base.Draw(spriteBatch);
+
+        bool showPathfindingDebug = bool.Parse(
+            Environment.GetEnvironmentVariable("SHOW_PATHFINDING") ?? "false"
+        );
+
+        if (showPathfindingDebug)
+        {
+            DrawPathDebug(spriteBatch, pathfinding?.Path, Color.Cyan);
+            DrawPathDebug(spriteBatch, leavingPathfinding?.Path, Color.Yellow);
+        }
+    }
+
+    private void DrawPathDebug(SpriteBatch spriteBatch, IEnumerable<Vector2> path, Color color)
+    {
+        if (path == null) return;
+
+        Vector2 currentPos = Position;
+        const int dotSize = 8;
+
+        foreach (var point in path)
+        {
+            spriteBatch.Draw(
+                Primitives.Pixel,
+                new Rectangle(
+                    (int)(point.X - dotSize / 2f),
+                    (int)(point.Y - dotSize / 2f),
+                    dotSize,
+                    dotSize
+                ),
+                color
+            );
+
+            Vector2 edge = point - currentPos;
+            float length = edge.Length();
+
+            if (length > 0.001f)
+            {
+                float rot = (float)Math.Atan2(edge.Y, edge.X);
+                spriteBatch.Draw(
+                    Primitives.Pixel,
+                    currentPos,
+                    null,
+                    color,
+                    rot,
+                    Vector2.Zero,
+                    new Vector2(length, 2f),
+                    SpriteEffects.None,
+                    0f
+                );
+            }
+
+            currentPos = point;
+        }
     }
 }
