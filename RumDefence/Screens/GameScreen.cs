@@ -32,6 +32,7 @@ public class GameScreen : Screen
     public List<Explosion> Explosions = new();
     public List<NetEffect> NetEffects = new();
     public List<FireEffect> FireEffects = new();
+    public IEnumerable<Wall> Walls => walls.Values;
 
     private Dictionary<Point, BaseTower> placedTowers = new();
 
@@ -505,11 +506,8 @@ public class GameScreen : Screen
         }
     }
 
-    private void OnTroopDied(EntityWithHealth deadEntity)
+    private void OnTroopDied(Troop troop)
     {
-        if (deadEntity is not Troop troop)
-            return;
-
         foreach (var tower in placedTowers.Values)
             tower.NotifyTroopDied(troop);
     }
