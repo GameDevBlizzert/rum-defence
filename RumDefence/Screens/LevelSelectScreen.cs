@@ -17,6 +17,7 @@ public class LevelSelectScreen : Screen
 
     private SimpleButton backButton;
     private Texture2D buttonTexture;
+    private float elapsedSeconds;
 
     public LevelSelectScreen(ScreenManager manager, List<Level> levels) : base(manager)
     {
@@ -63,6 +64,7 @@ public class LevelSelectScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
+        elapsedSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
         if (InputManager.Instance.IsActionJustPressed("LevelNext"))
             currentPage = MathHelper.Clamp(currentPage + 1, 0, (levels.Count - 1) / levelsPerPage);
 
@@ -91,6 +93,10 @@ public class LevelSelectScreen : Screen
     public override void Draw(SpriteBatch spriteBatch)
     {
         RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
+
+
+        LoadingSplashScreen.DrawBackground(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
+        LoadingSplashScreen.DrawWater(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
 
         int startIndex = currentPage * levelsPerPage;
 
