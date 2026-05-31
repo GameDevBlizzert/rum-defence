@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
@@ -24,15 +24,15 @@ public class LevelButton : Button
     public override void Draw(SpriteBatch spriteBatch)
     {
         Color borderColor = isPressed
-            ? new Color(25, 25, 25)
+            ? Color.White
             : isHovering
-                ? new Color(255, 255, 255)
+                ? Color.White
                 : Color.Gray;
 
         Color panelColor = isPressed
-            ? new Color(35, 35, 35)
+            ? new Color(30, 30, 30)
             : isHovering
-                ? new Color(255, 244, 190)
+                ? new Color(165, 165, 165)
                 : new Color(180, 180, 180);
 
         spriteBatch.Draw(Primitives.Pixel, bounds, borderColor);
@@ -58,7 +58,7 @@ public class LevelButton : Button
 
         MiniMapRenderer.Draw(spriteBatch, level, mapRect, level.IsUnlocked);
 
-        var labelColor = isHovering && !isPressed ? Color.Black : Primitives.FontColor;
+        var labelColor = isPressed ? Color.White : Primitives.FontColor;
 
         spriteBatch.DrawString(
             Primitives.Font,
