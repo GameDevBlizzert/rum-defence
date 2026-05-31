@@ -50,9 +50,14 @@ namespace RumDefence
 
         protected override void Initialize()
         {
+            SaveManager.Load();
+
             _screenManager = new ScreenManager();
+
             base.Initialize();
+
             UpdateScaleMatrix();
+
             _screenManager.SetScreen(new LoadingSplashScreen(_screenManager));
         }
 

@@ -94,7 +94,6 @@ public class LevelSelectScreen : Screen
     {
         RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-
         LoadingSplashScreen.DrawBackground(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
         LoadingSplashScreen.DrawWater(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
 
@@ -105,7 +104,13 @@ public class LevelSelectScreen : Screen
             int levelIndex = startIndex + i;
             if (levelIndex >= levels.Count) break;
 
+            int row = i / 2;
+            int col = i % 2;
+
+            Rectangle rect = GetLevelRect(row, col);
+
             buttons[levelIndex].Draw(spriteBatch);
+            DrawLevelScore(spriteBatch, levels[levelIndex], rect);
         }
 
         backButton.Draw(spriteBatch);
@@ -128,5 +133,40 @@ public class LevelSelectScreen : Screen
             width,
             height
         );
+    }
+
+    private void DrawLevelScore(SpriteBatch spriteBatch, Level level, Rectangle rect)
+    {
+        var score = SaveManager.GetLevelScore(level);
+
+        string coinsText;
+        string wavesText;
+
+        if (score == null)
+        {
+            coinsText = "Best Coins: -";
+            wavesText = "Best Waves: -";
+        }
+        else
+        {
+            coinsText = $"Best Coins: {score.BestCoins}";
+            wavesText = $"Best Waves: {score.BestWaves}";
+        }
+
+        var coinsSize = font.MeasureString(coinsText);
+        var wavesSize = font.MeasureString(wavesText);
+
+        Vector2 coinsPosition = new Vector2(
+            rect.Center.X - coinsSize.X / 2,
+            rect.Bottom + 10
+        );
+
+        Vector2 wavesPosition = new Vector2(
+            rect.Center.X - wavesSize.X / 2,
+            rect.Bottom + 45
+        );
+
+        spriteBatch.DrawString(font, coinsText, coinsPosition, Primitives.FontColor);
+        spriteBatch.DrawString(font, wavesText, wavesPosition, Primitives.FontColor);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
@@ -37,5 +38,72 @@ public static class SaveManager
             File.WriteAllText(SavePath, JsonSerializer.Serialize(CurrentSave, JsonOptions));
         }
         catch { }
+    }
+
+    public static void ApplySaveDataToLevels(List<Level> levels)
+    {
+        if (levels == null)
+            return;
+
+        foreach (var level in levels)
+        {
+            if (string.IsNullOrEmpty(level.SaveKey))
+                continue;
+
+            if (CurrentSave.UnlockedLevelKeys.Contains(level.SaveKey))
+                level.IsUnlocked = true;
+        }
+    }
+
+    public static void UnlockLevel(Level level)
+    {
+        if (level == null || string.IsNullOrEmpty(level.SaveKey))
+            return;
+
+        level.IsUnlocked = true;
+        CurrentSave.UnlockedLevelKeys.Add(level.SaveKey);
+        Save();
+    }
+
+    public static void UnlockNextLevel(List<Level> levelSet, Level currentLevel)
+    {
+        if (levelSet == null || currentLevel == null)
+            return;
+
+        int index = levelSet.FindIndex(l => l.Id == currentLevel.Id);
+
+        if (index < 0 || index >= levelSet.Count - 1)
+            return;
+
+        UnlockLevel(levelSet[index + 1]);
+    }
+
+    public static void SaveWinScore(Level level, int coins, int waves)
+    {
+        if (level == null || string.IsNullOrEmpty(level.SaveKey))
+            return;
+
+        if (!CurrentSave.LevelScores.TryGetValue(level.SaveKey, out var score))
+        {
+            score = new LevelScoreData();
+            CurrentSave.LevelScores[level.SaveKey] = score;
+        }
+
+        if (coins > score.BestCoins)
+            score.BestCoins = coins;
+
+        if (waves > score.BestWaves)
+            score.BestWaves = waves;
+
+        Save();
+    }
+
+    public static LevelScoreData GetLevelScore(Level level)
+    {
+        if (level == null || string.IsNullOrEmpty(level.SaveKey))
+            return null;
+
+        CurrentSave.LevelScores.TryGetValue(level.SaveKey, out var score);
+        return score;
     }
 }
