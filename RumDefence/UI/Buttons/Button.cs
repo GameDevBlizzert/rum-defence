@@ -12,6 +12,8 @@ public abstract class Button : UIElement
     protected bool isSelected;
     protected bool wasPressed;
 
+    public bool IsHovered => isHovering;
+
     public Action OnClick;
 
     public void SetSelected(bool selected) => isSelected = selected;
@@ -21,6 +23,7 @@ public abstract class Button : UIElement
         bounds = rect;
         Position = new Vector2(rect.X, rect.Y);
     }
+
     protected virtual bool IsClickable()
     {
         return true;

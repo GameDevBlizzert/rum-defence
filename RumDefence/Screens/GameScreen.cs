@@ -138,9 +138,11 @@ public class GameScreen : Screen
                 occupiedTiles[p] = true;
                 progress.SpendCoins(data.Cost);
                 AudioManager.Instance.PlayRandomImpact();
+
+                selectedTower = null;
+
                 if (!buildManager.CtrlHeld)
                 {
-                    selectedTower = null;
                     buildManager.SetMode(BuildMode.None);
                 }
             }

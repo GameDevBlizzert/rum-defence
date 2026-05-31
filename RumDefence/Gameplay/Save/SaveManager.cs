@@ -38,4 +38,43 @@ public static class SaveManager
         }
         catch { }
     }
+
+    public static void UnlockLevel(Level level)
+    {
+        if (level == null || string.IsNullOrEmpty(level.SaveKey))
+            return;
+
+        level.IsUnlocked = true;
+        CurrentSave.UnlockedLevelKeys.Add(level.SaveKey);
+        Save();
+    }
+
+    public static void SaveLevelScore(Level level, int coins, int waves)
+    {
+        if (level == null || string.IsNullOrEmpty(level.SaveKey))
+            return;
+
+        if (!CurrentSave.LevelScores.TryGetValue(level.SaveKey, out var score))
+        {
+            score = new LevelScoreData();
+            CurrentSave.LevelScores[level.SaveKey] = score;
+        }
+
+        if (coins > score.BestCoins)
+            score.BestCoins = coins;
+
+        if (waves > score.BestWaves)
+            score.BestWaves = waves;
+
+        Save();
+    }
+
+    public static LevelScoreData GetLevelScore(Level level)
+    {
+        if (level == null || string.IsNullOrEmpty(level.SaveKey))
+            return null;
+
+        CurrentSave.LevelScores.TryGetValue(level.SaveKey, out var score);
+        return score;
+    }
 }

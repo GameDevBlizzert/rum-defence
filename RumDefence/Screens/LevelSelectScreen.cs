@@ -94,7 +94,6 @@ public class LevelSelectScreen : Screen
     {
         RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-
         LoadingSplashScreen.DrawBackground(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
         LoadingSplashScreen.DrawWater(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
 
@@ -105,7 +104,13 @@ public class LevelSelectScreen : Screen
             int levelIndex = startIndex + i;
             if (levelIndex >= levels.Count) break;
 
+            int row = i / 2;
+            int col = i % 2;
+
+            Rectangle rect = GetLevelRect(row, col);
+
             buttons[levelIndex].Draw(spriteBatch);
+            DrawLevelScore(spriteBatch, levels[levelIndex], rect);
         }
 
         backButton.Draw(spriteBatch);
@@ -127,6 +132,36 @@ public class LevelSelectScreen : Screen
             startY + row * spacingY,
             width,
             height
+        );
+    }
+
+    private void DrawLevelScore(SpriteBatch spriteBatch, Level level, Rectangle rect)
+    {
+        var score = SaveManager.GetLevelScore(level);
+
+        string text;
+
+        if (score == null)
+        {
+            text = "High Score: -";
+        }
+        else
+        {
+            text = $"Best Coins: {score.BestCoins}   Best Waves: {score.BestWaves}";
+        }
+
+        var size = font.MeasureString(text);
+
+        Vector2 position = new Vector2(
+            rect.Center.X - size.X / 2,
+            rect.Bottom + 12
+        );
+
+        spriteBatch.DrawString(
+            font,
+            text,
+            position,
+            Primitives.FontColor
         );
     }
 }

@@ -50,11 +50,25 @@ public class GameOverScreen : Screen
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
-        Vector2 buttonSize = new Vector2(300, 100);
+        Vector2 buttonSize = new Vector2(360, 100);
 
         retryButton = new SimpleButton(buttonTexture, "Retry", Vector2.Zero, buttonSize);
         menuButton = new SimpleButton(buttonTexture, "Menu", Vector2.Zero, buttonSize);
         nextLevelButton = new SimpleButton(buttonTexture, "Next Level", Vector2.Zero, buttonSize);
+
+        if (isWin)
+        {
+            SaveManager.UnlockLevel(level);
+            SaveManager.SaveLevelScore(level, coins, wavesSurvived);
+
+            int currentIndex = levelSet.FindIndex(l => l.Id == level.Id);
+
+            if (currentIndex >= 0 && currentIndex < levelSet.Count - 1)
+            {
+                Level nextLevel = levelSet[currentIndex + 1];
+                SaveManager.UnlockLevel(nextLevel);
+            }
+        }
 
         retryButton.OnClick = () =>
         {
@@ -68,11 +82,15 @@ public class GameOverScreen : Screen
 
         nextLevelButton.OnClick = () =>
         {
+            if (!isWin)
+                return;
+
             int currentIndex = levelSet.FindIndex(l => l.Id == level.Id);
 
             if (currentIndex >= 0 && currentIndex < levelSet.Count - 1)
             {
                 Level nextLevel = levelSet[currentIndex + 1];
+                SaveManager.UnlockLevel(nextLevel);
                 manager.SetScreen(new GameScreen(manager, nextLevel, levelSet));
             }
             else
@@ -80,7 +98,6 @@ public class GameOverScreen : Screen
                 manager.SetScreen(new MainMenuScreen(manager));
             }
         };
-
     }
 
     public override void Update(GameTime gameTime)
@@ -95,7 +112,7 @@ public class GameOverScreen : Screen
             panelHeight
         );
 
-        Vector2 buttonSize = new Vector2(300, 100);
+        Vector2 buttonSize = new Vector2(360, 100);
         float centerX = panelRect.Center.X;
 
         if (isWin)
