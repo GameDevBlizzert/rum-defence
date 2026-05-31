@@ -20,9 +20,9 @@ public abstract class Entity
 
     protected Color color = Color.White;
     protected Rectangle? sourceRectangle = null;
-    protected Rectangle[] sourceRectangles = null;
     protected SpriteEffects spriteEffect = SpriteEffects.None;
     protected float layerDepth = 0f;
+
 
     protected void ApplySize()
     {
@@ -36,25 +36,10 @@ public abstract class Entity
     public virtual void Draw(SpriteBatch spriteBatch)
     {
         if (Texture == null) return;
-
-        if (sourceRectangles == null || sourceRectangles.Length == 0)
-        {
-            DrawLayer(spriteBatch, sourceRectangle);
-        }
-        else
-        {
-            foreach (var rect in sourceRectangles)
-            {
-                DrawLayer(spriteBatch, rect);
-            }
-        }
-    }
-    protected void DrawLayer(SpriteBatch spriteBatch, Rectangle? source)
-    {
         spriteBatch.Draw(
             Texture,
             Position,
-            source,
+            sourceRectangle,
             color,
             rotation + rotationOffset,
             origin,

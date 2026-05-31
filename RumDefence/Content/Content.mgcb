@@ -37,7 +37,7 @@
 /processorParam:TextureFormat=Color
 /build:Art/Objects/RumBarrel.png;Art/Objects/RumBarrel
 
-#begin Art/Pirates/pirates-blue-sprite-sheet.png
+#begin Art/Pirates/pirate.bomber.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -47,9 +47,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/Pirates/pirates-blue-sprite-sheet.png;Art/Pirates/pirates-blue-sprite-sheet
+/build:Art/Pirates/pirate.bomber.png
 
-#begin Art/Pirates/pirates-gray-sprite-sheet.png
+#begin Art/Pirates/pirate.captain.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -59,9 +59,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/Pirates/pirates-gray-sprite-sheet.png;Art/Pirates/pirates-gray-sprite-sheet
+/build:Art/Pirates/pirate.captain.png
 
-#begin Art/Pirates/pirates-green-sprite-sheet.png
+#begin Art/Pirates/pirate.ghost.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -71,9 +71,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/Pirates/pirates-green-sprite-sheet.png;Art/Pirates/pirates-green-sprite-sheet
+/build:Art/Pirates/pirate.ghost.png
 
-#begin Art/Pirates/pirates-red-sprite-sheet.png
+#begin Art/Pirates/pirate.grunt.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -83,31 +83,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/Pirates/pirates-red-sprite-sheet.png;Art/Pirates/pirates-red-sprite-sheet
-
-#begin Art/Pirates/pirates-white-sprite-sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Pirates/pirates-white-sprite-sheet.png;Art/Pirates/pirates-white-sprite-sheet
-
-#begin Art/Pirates/pirates-yellow-sprite-sheet.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Pirates/pirates-yellow-sprite-sheet.png;Art/Pirates/pirates-yellow-sprite-sheet
+/build:Art/Pirates/pirate.grunt.png
 
 #begin Art/Themes/Ghost/Enemies/enemy_1.png
 /importer:TextureImporter
@@ -901,7 +877,7 @@
 /processorParam:TextureFormat=Color
 /build:Art/Themes/Grass/Walls/Xwall.png;Art/Themes/Grass/Walls/Xwall
 
-#begin Art/Towers/cannon-icon.png
+#begin Art/Towers/bandit-icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -911,7 +887,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/Towers/cannon-icon.png
+/build:Art/Towers/bandit-icon.png
+
+#begin Art/Towers/bandit.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/Towers/bandit.png
 
 #begin Art/Towers/cannon-icon.png
 /importer:TextureImporter
@@ -937,7 +925,7 @@
 /processorParam:TextureFormat=Color
 /build:Art/Towers/cannon.png
 
-#begin Art/Towers/cannon.png
+#begin Art/Towers/fire-icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -947,19 +935,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/Towers/cannon.png
-
-#begin Art/Towers/fisher-icon.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Towers/fisher-icon.png
+/build:Art/Towers/fire-icon.png
 
 #begin Art/Towers/fire.png
 /importer:TextureImporter
@@ -973,7 +949,7 @@
 /processorParam:TextureFormat=Color
 /build:Art/Towers/fire.png
 
-#begin Art/Towers/fire-icon.png
+#begin Art/Towers/fisher-icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -983,7 +959,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Art/Towers/fire-icon.png
+/build:Art/Towers/fisher-icon.png
 
 #begin Art/Towers/fisher.png
 /importer:TextureImporter
@@ -1009,18 +985,6 @@
 /processorParam:TextureFormat=Color
 /build:Art/Towers/fishing-net.png
 
-#begin Art/Towers/fishing-net.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Towers/fishing-net.png
-
 #begin Art/Towers/musket-icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1032,30 +996,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/Towers/musket-icon.png
-
-#begin Art/Towers/musket-icon.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Towers/musket-icon.png
-
-#begin Art/Towers/musket.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Art/Towers/musket.png
 
 #begin Art/Towers/musket.png
 /importer:TextureImporter
