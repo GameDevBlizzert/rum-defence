@@ -278,8 +278,7 @@ public class Ship : Entity
 
         if (Vector2.Distance(Position, leaveTarget) < 10f)
         {
-            Vector2 exitDir = dockTarget - Position;
-            if (exitDir != Vector2.Zero) exitDir.Normalize();
+            Vector2 exitDir = GetNearestScreenExitDirection(Position);
 
             leaveTarget = GetScreenExitPoint(Position, exitDir);
 
@@ -324,7 +323,37 @@ public class Ship : Entity
             if (t > 0) tMin = Math.Min(tMin, t);
         }
 
-        return from + dir * tMin;
+        return from + dir * (tMin + ExitDistance);
+    }
+
+    private Vector2 GetNearestScreenExitDirection(Vector2 from)
+    {
+        float leftDistance = from.X;
+        float rightDistance = RumGame.VirtualWidth - from.X;
+        float topDistance = from.Y;
+        float bottomDistance = RumGame.VirtualHeight - from.Y;
+
+        float minDistance = leftDistance;
+        Vector2 direction = new Vector2(-1f, 0f);
+
+        if (rightDistance < minDistance)
+        {
+            minDistance = rightDistance;
+            direction = new Vector2(1f, 0f);
+        }
+
+        if (topDistance < minDistance)
+        {
+            minDistance = topDistance;
+            direction = new Vector2(0f, -1f);
+        }
+
+        if (bottomDistance < minDistance)
+        {
+            direction = new Vector2(0f, 1f);
+        }
+
+        return direction;
     }
 
     private void UpdateLeavingToSea(GameTime gameTime)
