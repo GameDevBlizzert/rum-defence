@@ -70,6 +70,8 @@ public class AudioManager
         musicTracks["PineappleUnderTheSea"] = content.Load<SoundEffect>("Audio/PineappleUnderTheSea");
         musicTracks["WhatCloudsAreMadeOf"] = content.Load<SoundEffect>("Audio/WhatCloudsAreMadeOf");
         musicTracks["GentleBreeze"] = content.Load<SoundEffect>("Audio/GentleBreeze");
+        musicTracks["music_2"] = content.Load<SoundEffect>("Audio/music_2");
+        musicTracks["music_7"] = content.Load<SoundEffect>("Audio/music_7");
 
         SoundEffect.MasterVolume = soundVolume;
     }

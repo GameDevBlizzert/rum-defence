@@ -50,7 +50,7 @@ public class MainMenuScreen : Screen
         };
 
         // Play main menu theme music
-        AudioManager.Instance.PlayBackgroundMusic("WhatCloudsAreMadeOf");
+        AudioManager.Instance.PlayBackgroundMusic("music_7");
     }
 
     public override void Update(GameTime gameTime)
