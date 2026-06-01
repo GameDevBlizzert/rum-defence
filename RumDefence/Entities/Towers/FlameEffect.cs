@@ -15,6 +15,9 @@ public class FlameEffect : Entity
     private const float SpreadAngle = MathHelper.Pi / 12f; // 15°
     private const float FlameHeight = 60f;
 
+    private static readonly float ConeTan = MathF.Tan(SpreadAngle);
+    private static readonly float ConeOffset = FlameHeight / 2f * MathF.Cos(SpreadAngle);
+
     private readonly float _maxRange;
     private readonly float _damage;
     private readonly Vector2 _fireDir;
@@ -65,7 +68,6 @@ public class FlameEffect : Entity
         int frame = Math.Min(_animation.CurrentFrame, NumFrames - 1);
         float currentReach = (float)(frame + 1) / NumFrames * _maxRange;
 
-        float coneTan = MathF.Tan(SpreadAngle);
         foreach (var troop in GameScreen.Instance.Troops)
         {
             if (troop.IsDead || troop.IsFinished || _hitTroops.Contains(troop)) continue;
@@ -75,7 +77,7 @@ public class FlameEffect : Entity
             if (along <= 0f || along > currentReach) continue;
 
             float perp = MathF.Abs(toTroop.X * _fireDir.Y - toTroop.Y * _fireDir.X);
-            if (perp > along * coneTan) continue;
+            if (perp > along * ConeTan + ConeOffset) continue;
 
             troop.TakeDamage(_damage);
             _hitTroops.Add(troop);
