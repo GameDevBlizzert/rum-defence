@@ -176,7 +176,7 @@ public class GameScreen : Screen
         if (currentLevel.Id == 1)
             tutorialOverlay = new TutorialOverlay();
 
-        AudioManager.Instance.PlayBackgroundMusic();
+        AudioManager.Instance.PlayBackgroundMusic("battle_music");
     }
 
     public override void Update(GameTime gameTime)
@@ -488,7 +488,7 @@ public class GameScreen : Screen
         // Lose condition
         if (progress.IsLost())
         {
-            AudioManager.Instance.StopBackgroundMusic();
+            AudioManager.Instance.PlayBackgroundMusic("lose_music");
             manager.SetScreen(new GameOverScreen(
                 manager,
                 this,
@@ -510,7 +510,7 @@ public class GameScreen : Screen
         {
             levelCompleted = true;
 
-            AudioManager.Instance.StopBackgroundMusic();
+            AudioManager.Instance.PlayBackgroundMusic("win_music");
 
             manager.SetScreen(new GameOverScreen(
                 manager,

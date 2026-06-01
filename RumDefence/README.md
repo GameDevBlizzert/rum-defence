@@ -5,6 +5,7 @@
 - [Kenney Interface Sounds](https://www.kenney.nl/assets/interface-sounds)
 - [Kenney Impact Sounds](https://www.kenney.nl/assets/impact-sounds)
 - [Cozy Tunes by Pizza Doggy](https://pizzadoggy.itch.io/cozy-tunes)
+- [Free Pirate Game Music Pack](https://alkakrab.itch.io/free-pirate-game-music-pack)
 
 ## Pathfinding
 

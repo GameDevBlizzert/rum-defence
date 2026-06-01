@@ -32,7 +32,7 @@ public class PauseScreen : Screen
         // we leave it alone so ResumeAudio() can restore it perfectly.
         if (!pausedDueToFocusLoss)
         {
-            AudioManager.Instance.PlayBackgroundMusic("GentleBreeze");
+            AudioManager.Instance.PlayBackgroundMusic();
         }
 
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
@@ -47,7 +47,7 @@ public class PauseScreen : Screen
         resumeButton.OnClick = () =>
         {
             // Return to the game — restore gameplay music.
-            AudioManager.Instance.PlayBackgroundMusic("PineappleUnderTheSea");
+            AudioManager.Instance.PlayBackgroundMusic("menu_music");
             manager.SetScreen(previousScreen);
         };
 
