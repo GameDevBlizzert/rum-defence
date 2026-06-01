@@ -14,6 +14,8 @@ public class InputManager
         ["MultiPlace"] = Keys.LeftControl,
         ["LevelNext"] = Keys.D,
         ["LevelPrev"] = Keys.A,
+        ["Upgrade"] = Keys.U,
+        ["Repair"] = Keys.R,
     };
 
     public static IReadOnlyDictionary<string, Keys> DefaultBindings => Defaults;

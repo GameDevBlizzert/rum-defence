@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace RumDefence;
 
@@ -12,7 +11,6 @@ public class UpgradeMenu
     private SimpleButton upgradeButton;
     private SimpleButton targetModeButton;
     private LevelProgressSystem progress;
-    private KeyboardState previousKeyboardState;
     public bool UpgradeClicked { get; private set; }
     public bool TargetModeClicked { get; private set; }
     public bool IsDisabled { get; set; }
@@ -39,7 +37,7 @@ public class UpgradeMenu
         int y = RumGame.VirtualHeight - height - 20; // bottom right
         panelRect = new Rectangle(x, y, width, height);
 
-        upgradeButton = new SimpleButton(buttonTexture, "Upgrade (U)", new Vector2(x + 20, y + 315), new Vector2(width - 40, 52));
+        upgradeButton = new SimpleButton(buttonTexture, "Upgrade", new Vector2(x + 20, y + 315), new Vector2(width - 40, 52));
         upgradeButton.TextScale = 0.72f;
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
 
@@ -50,15 +48,6 @@ public class UpgradeMenu
 
     public void Update(GameTime gameTime)
     {
-        var keyboard = Keyboard.GetState();
-        var upgradeShortcutPressed =
-            SelectedTower != null &&
-            !IsDisabled &&
-            keyboard.IsKeyDown(Keys.U) &&
-            previousKeyboardState.IsKeyUp(Keys.U);
-
-        previousKeyboardState = keyboard;
-
         UpgradeClicked = false;
         TargetModeClicked = false;
 
@@ -68,8 +57,11 @@ public class UpgradeMenu
         if (SelectedTower == null)
             return;
 
-        if (upgradeShortcutPressed)
+        if (InputManager.Instance.IsActionJustPressed("Upgrade"))
             UpgradeClicked = true;
+
+        var upgradeKeyLabel = InputManager.GetKeyDisplayName(InputManager.Instance.GetBinding("Upgrade"));
+        upgradeButton.Text = SelectedTower.CanUpgrade ? $"Upgrade ({upgradeKeyLabel})" : "MAX LEVEL";
 
         targetModeButton.Text = SelectedTower.CurrentAttackModeLabel;
         targetModeButton.IsDisabled = false;
