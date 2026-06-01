@@ -84,7 +84,7 @@ public class BomberTroop : Troop
             if (dist <= ExplosionRadius)
             {
                 float falloff = 1f - (dist / ExplosionRadius);
-                wall.TakeDamage((int)(Wall.MaxHealth * falloff * WallDamageModifier) + 1);
+                wall.TakeDamage((int)(Wall.BaseMaxHealth * falloff * WallDamageModifier) + 1);
             }
         }
     }

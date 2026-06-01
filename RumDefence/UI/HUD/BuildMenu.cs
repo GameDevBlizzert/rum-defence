@@ -255,7 +255,7 @@ public class BuildMenu
                 0f
             );
 
-            spriteBatch.DrawString(Primitives.Font, $"HP: {Wall.MaxHealth}", new Vector2(rect.X + 20, startY + spacing), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+            spriteBatch.DrawString(Primitives.Font, $"HP: {Wall.BaseMaxHealth}", new Vector2(rect.X + 20, startY + spacing), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
             spriteBatch.DrawString(Primitives.Font, $"Cost: {BuildManager.WallCost} coins", new Vector2(rect.X + 20, startY + spacing * 2), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         }
     }
