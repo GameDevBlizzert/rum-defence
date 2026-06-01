@@ -95,9 +95,6 @@ public class PathfindingSystem : IGameLoopSystem
                 bool isDestination = next == targetPosition.Value;
                 bool isBlocked = untraversableTiles != null && untraversableTiles.Contains(next);
 
-                if (isBlocked && !isDestination)
-                    continue;
-
                 if (isDestination)
                 {
                     map[next.X, next.Y] = map[current.X, current.Y] + grid.GetTileCost(next, untraversableTiles);
