@@ -10,36 +10,29 @@ public class BaseTower : Entity
 {
     protected readonly List<Troop> Troops;
     protected readonly List<BaseProjectile> Projectiles = [];
+    private Troop _currentTarget;
+
+    public TowerData Data { get; }
 
     public int CurrentLevel { get; protected set; } = 0;
     public int MaxLevel { get; protected set; } = 3;
 
     public string Label = "";
-    protected float BaseRange = 700f;
-    protected float RangeUpgradeFlat = 50f;
-    protected float RangeUpgradePercent = 0.1f;
+    public Troop CurrentTarget => _currentTarget;
 
-    protected float BaseFireRate = 1f; // shots per second
-    protected float FireRateUpgradeFlat = 0f;
-    protected float FireRateUpgradePercent = 0.2f;
-
-    protected int BaseDamage = 25;
-    protected int DamageUpgradeFlat = 5;
-    protected float DamageUpgradePercent = 0.1f;
-
-    public float CurrentRange => (BaseRange + (CurrentLevel * RangeUpgradeFlat)) * (1f + (CurrentLevel * RangeUpgradePercent));
-    public float CurrentFireRate => (BaseFireRate + (CurrentLevel * FireRateUpgradeFlat)) * (1f + (CurrentLevel * FireRateUpgradePercent));
-    public int CurrentDamage => (int)((BaseDamage + (CurrentLevel * DamageUpgradeFlat)) * (1f + (CurrentLevel * DamageUpgradePercent)));
+    public float CurrentRange => (Data.Range + (CurrentLevel * Data.RangeUpgradeFlat)) * (1f + (CurrentLevel * Data.RangeUpgradePercent));
+    public float CurrentFireRate => (Data.FireRate + (CurrentLevel * Data.FireRateUpgradeFlat)) * (1f + (CurrentLevel * Data.FireRateUpgradePercent));
+    public int CurrentDamage => (int)((Data.Damage + (CurrentLevel * Data.DamageUpgradeFlat)) * (1f + (CurrentLevel * Data.DamageUpgradePercent)));
 
     public float ProjectileSpeed { get; set; } = 200f;
-    public AttackMode AttackMode { get; set; } = AttackMode.Closest;
-    public float RotationSpeed { get; set; } = 5f; // radians per second
+    public AttackMode AttackMode { get; set; } = AttackMode.Nearest;
+    public float RotationSpeed { get; set; } = 5f;
 
-    public int BaseUpgradeCost { get; set; } = 50;
+    public string CurrentAttackModeLabel => AttackMode.ToDisplayName();
 
     public int GetUpgradeCost()
     {
-        return (int)(BaseUpgradeCost * Math.Pow(1.5, CurrentLevel));
+        return (int)(Data.UpgradeCost * Math.Pow(1.5, CurrentLevel));
     }
 
     public bool CanUpgrade => CurrentLevel < MaxLevel;
@@ -52,27 +45,46 @@ public class BaseTower : Entity
         }
     }
 
+    public void CycleAttackMode()
+    {
+        AttackMode = AttackMode switch
+        {
+            AttackMode.Nearest => AttackMode.Strongest,
+            AttackMode.Strongest => AttackMode.Farthest,
+            _ => AttackMode.Nearest
+        };
+
+        _currentTarget = null;
+    }
+
+    public void NotifyTroopDied(Troop troop)
+    {
+        if (_currentTarget == troop)
+            _currentTarget = null;
+    }
+
     private float _fireCooldown = 0f;
-    private float _targetRotation = 0f;
+    private float _targetRotation = MathHelper.Pi;
+    private SpriteDirection _lastFacingDir = SpriteDirection.Down;
+    protected readonly Animation animation;
 
     public BaseTower(TowerData data, Vector2 location, List<Troop> troops)
     {
+        Data = data;
         Position = location;
         Troops = troops;
 
-        BaseRange = data.Range;
-        BaseFireRate = data.FireRate;
-        BaseDamage = data.Damage;
         ProjectileSpeed = data.ProjectileSpeed;
         AttackMode = data.AttackMode;
         Label = data.Label;
 
         Texture = RumGame.Instance.Content.Load<Texture2D>(data.TexturePath);
-        origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);
         rotationOffset = MathHelper.Pi;
 
-        Size = SizeSystem.Square(1f);
-        ApplySize();
+        animation = new(data.SpriteFrameSize, 1f);
+        origin = new Vector2(data.SpriteFrameSize / 2f, data.SpriteFrameSize / 2f);
+        Size = SizeSystem.Square(data.SizeInTiles);
+        scale = Size.X / data.SpriteFrameSize;
     }
 
     public override void Update(GameTime gameTime)
@@ -81,7 +93,6 @@ public class BaseTower : Entity
 
         float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        // update projectiles
         for (int i = Projectiles.Count - 1; i >= 0; i--)
         {
             Projectiles[i].Update(gameTime);
@@ -89,20 +100,30 @@ public class BaseTower : Entity
                 Projectiles.RemoveAt(i);
         }
 
-        // find target every frame so rotation stays smooth
-        Troop target = FindTarget();
+        _currentTarget = FindTarget();
+        Troop target = _currentTarget;
 
-        // rotate toward target
+        Vector2 dir = Vector2.Zero;
         if (target != null)
         {
-            Vector2 dir = target.Position - Position;
+            dir = target.Position - Position;
             _targetRotation = (float)Math.Atan2(dir.Y, dir.X);
         }
         float diff = MathHelper.WrapAngle(_targetRotation - rotation);
         rotation += diff * Math.Min(1f, RotationSpeed * dt);
 
-        // handle firing
+        if (dir != Vector2.Zero)
+            _lastFacingDir = GetFacingDirection();
+        var facingDir = _lastFacingDir;
+        animation.ActivateLayers([
+            new(SpriteAction.Rotation, facingDir),
+            new(SpriteAction.Static, facingDir),
+        ]);
+
         _fireCooldown -= dt;
+
+        animation.Update(gameTime);
+
         if (_fireCooldown > 0f) return;
         if (target == null) return;
 
@@ -137,13 +158,13 @@ public class BaseTower : Entity
             float dist = Vector2.Distance(Position, troop.Position);
             if (dist > CurrentRange) continue;
 
-            if (troop.Health - GetPendingDamage(troop) <= 0) continue;
+            if (troop.Health.Current - GetPendingDamage(troop) <= 0) continue;
 
             float value = AttackMode switch
             {
-                AttackMode.Closest => dist,
-                AttackMode.Strongest => -troop.Health,
-                AttackMode.First => (troop.Path != null && troop.Path.Count > 0 ? (troop.Path.Count * 1000f) + Vector2.Distance(troop.Position, troop.Path.Peek()) : dist),
+                AttackMode.Nearest => dist,
+                AttackMode.Strongest => -troop.Health.Current,
+                AttackMode.Farthest => -dist,
                 _ => dist
             };
 
@@ -156,15 +177,44 @@ public class BaseTower : Entity
 
         return best;
     }
-
     public override void Draw(SpriteBatch spriteBatch)
     {
-        base.Draw(spriteBatch);
+        DrawSpriteLayers(spriteBatch);
+        DrawProjectiles(spriteBatch);
+        DrawLevelStripes(spriteBatch);
+    }
+    protected SpriteDirection GetFacingDirection()
+    {
+        float angle = _targetRotation;
+        if (angle > -MathHelper.PiOver4 && angle <= MathHelper.PiOver4) return SpriteDirection.Right;
+        if (angle > MathHelper.PiOver4 && angle <= 3 * MathHelper.PiOver4) return SpriteDirection.Down;
+        if (angle > -3 * MathHelper.PiOver4 && angle <= -MathHelper.PiOver4) return SpriteDirection.Up;
+        return SpriteDirection.Left;
+    }
 
+    public void DrawSpriteLayers(SpriteBatch spriteBatch)
+    {
+        var items = animation.GetCurrentLayers();
+        foreach (var item in items)
+        {
+            float itemRotation = item.Item1.Type == SpriteAction.Rotation ? rotation + rotationOffset : 0f;
+            spriteBatch.Draw(
+                Texture,
+                Position,
+                item.Item2,
+                color,
+                itemRotation,
+                origin,
+                scale,
+                item.Item1.Effect,
+                item.Item1.Depth
+            );
+        }
+    }
+    public virtual void DrawProjectiles(SpriteBatch spriteBatch)
+    {
         foreach (var proj in Projectiles)
             proj.Draw(spriteBatch);
-
-        DrawLevelStripes(spriteBatch);
     }
 
     public virtual void DrawLevelStripes(SpriteBatch spriteBatch)

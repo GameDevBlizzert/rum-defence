@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace RumDefence;
@@ -45,15 +45,33 @@ public class SimpleButton : Button
     public override void Draw(SpriteBatch spriteBatch)
     {
         Color color;
+        Color textColor;
 
         if (IsDisabled)
+        {
             color = new Color(80, 80, 80);
+            textColor = Color.DarkGray;
+        }
+        else if (isPressed)
+        {
+            color = Color.Lerp(BaseTint, Color.Black, 0.9f);
+            textColor = Color.White;
+        }
         else if (isSelected)
-            color = Color.Gray;
+        {
+            color = Color.Lerp(BaseTint, new Color(70, 70, 70), 0.7f);
+            textColor = Primitives.FontColor;
+        }
         else if (isHovering)
-            color = Color.Multiply(BaseTint, 0.8f);
+        {
+            color = Color.Lerp(BaseTint, new Color(40, 40, 40), 0.25f);
+            textColor = Primitives.FontColor;
+        }
         else
-            color = Color.White;
+        {
+            color = BaseTint;
+            textColor = Primitives.FontColor;
+        }
 
         NineSlice.Draw(spriteBatch, texture, bounds, null, 10, color);
 
@@ -64,7 +82,6 @@ public class SimpleButton : Button
             bounds.Y + (bounds.Height - textSize.Y) / 2
         );
 
-        var textColor = IsDisabled ? Color.DarkGray : Primitives.FontColor;
         spriteBatch.DrawString(Primitives.Font, text, textPos, textColor, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
     }
 

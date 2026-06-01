@@ -7,9 +7,7 @@ namespace RumDefence;
 
 public class CannonTower : BaseTower
 {
-    private const float AoeRadius = 80f;
-
-    private Action<Vector2, int, int, float> _onProjectileHit;
+    private const float AoeRadius = 1f;
 
     private float _recoilTimer = float.MaxValue;
     private const float RecoilDuration = 0.35f;
@@ -17,28 +15,12 @@ public class CannonTower : BaseTower
 
     public CannonTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
-        BaseRange = data.Range;
-        RangeUpgradeFlat = 25f;
-        RangeUpgradePercent = 0.05f;
-
-        BaseFireRate = 0.5f;
-        FireRateUpgradeFlat = 0f;
-        FireRateUpgradePercent = 0.15f;
-
-        BaseDamage = 40;
-        DamageUpgradeFlat = 10;
-        DamageUpgradePercent = 0.2f;
-
-        ProjectileSpeed = data.ProjectileSpeed;
-        AttackMode = data.AttackMode;
-        BaseUpgradeCost = 100;
-
-        scale *= 1.4f;
-    }
-
-    public void SetProjectileHitCallback(Action<Vector2, int, int, float> callback)
-    {
-        _onProjectileHit = callback;
+        animation.AddLayerMatrix(new SpriteMatrixCell[,]
+        {
+            {
+                new(1, SpriteAction.Rotation, SpriteDirection.Left),
+            },
+        });
     }
 
     protected override void FireProjectile(Troop target)
@@ -59,7 +41,6 @@ public class CannonTower : BaseTower
         if (_recoilTimer < RecoilDuration)
         {
             float t = _recoilTimer / RecoilDuration;
-            // Quadratic ease-out: snaps back quickly then eases to rest
             float recoilAmount = RecoilDistance * (1f - t) * (1f - t);
             Vector2 backward = new Vector2(-(float)Math.Cos(rotation), -(float)Math.Sin(rotation));
             drawPos = Position + backward * recoilAmount;
@@ -77,9 +58,7 @@ public class CannonTower : BaseTower
             layerDepth
         );
 
-        foreach (var proj in Projectiles)
-            proj.Draw(spriteBatch);
-
+        DrawProjectiles(spriteBatch);
         DrawLevelStripes(spriteBatch);
     }
 }

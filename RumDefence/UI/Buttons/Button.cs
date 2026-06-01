@@ -9,8 +9,11 @@ public abstract class Button : UIElement
     protected Rectangle bounds;
 
     protected bool isHovering;
+    protected bool isPressed;
     protected bool isSelected;
     protected bool wasPressed;
+
+    public bool IsHovered => isHovering;
 
     public Action OnClick;
 
@@ -21,6 +24,7 @@ public abstract class Button : UIElement
         bounds = rect;
         Position = new Vector2(rect.X, rect.Y);
     }
+
     protected virtual bool IsClickable()
     {
         return true;
@@ -37,6 +41,7 @@ public abstract class Button : UIElement
         isHovering = mouseRect.Intersects(bounds);
 
         bool isPressed = mouse.LeftButton == ButtonState.Pressed;
+        this.isPressed = isHovering && isPressed;
 
         if (isHovering && !isPressed && wasPressed && IsClickable())
         {

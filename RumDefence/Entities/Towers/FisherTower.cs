@@ -1,73 +1,27 @@
 using Microsoft.Xna.Framework;
-using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace RumDefence;
 
 public class FisherTower : BaseTower
 {
-    private readonly MusketAnimation _animation = new MusketAnimation();
 
     public FisherTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
-        BaseRange = data.Range;
-        RangeUpgradeFlat = 50f;
-        RangeUpgradePercent = 0.1f;
-
-        BaseFireRate = data.FireRate;
-        FireRateUpgradeFlat = 1f;
-        FireRateUpgradePercent = 0.05f;
-
-        BaseDamage = data.Damage;
-        DamageUpgradeFlat = 5;
-        DamageUpgradePercent = 0.1f;
-
-        BaseUpgradeCost = 75;
-
-        ProjectileSpeed = data.ProjectileSpeed;
-        AttackMode = data.AttackMode;
-
-        // Sprite sheet is 512px wide (4 cells of 128px). Scale to one cell = one grid tile.
-        scale *= 8f;
-
-        // Rotation origin is the center of one 128×128 cell.
-        origin = new Vector2(64f, 64f);
+        // Sprite sheet columns: 0=Right, 1=Down, 2=Left, 3=Up  (4 rows)
+        animation.AddLayerMatrix(
+            [
+                new(1, SpriteAction.Static, SpriteDirection.Right),
+                new(1, SpriteAction.Static, SpriteDirection.Down),
+                new(1, SpriteAction.Static, SpriteDirection.Left),
+                new(1, SpriteAction.Static, SpriteDirection.Up),
+            ]
+        , 5);
     }
 
     protected override void FireProjectile(Troop target)
     {
         Projectiles.Add(new NetProjectile(Position, target, ProjectileSpeed, aoeRadius: 30f));
-    }
-
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        Vector2 dir = new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation));
-        bool facingHorizontal = Math.Abs(dir.X) >= Math.Abs(dir.Y);
-        SpriteEffects musketEffect = facingHorizontal && dir.X > 0
-            ? SpriteEffects.FlipVertically
-            : SpriteEffects.None;
-
-        // Barrel background — static, never rotates
-        spriteBatch.Draw(Texture, Position, _animation.GetBarrelInnerRectangle(),
-            color, 0f, origin, scale, SpriteEffects.None, layerDepth);
-
-        // Pirate — directional frames, never rotates
-        spriteBatch.Draw(Texture, Position, _animation.GetPirateRectangle(dir),
-            color, 0f, origin, scale, SpriteEffects.None, layerDepth + 0.02f);
-
-        // Barrel background — static, never rotates
-        spriteBatch.Draw(Texture, Position, _animation.GetBarrelOuterRectangle(),
-            color, 0f, origin, scale, SpriteEffects.None, layerDepth + 0.03f);
-
-        // Musket — rotates toward target
-        spriteBatch.Draw(Texture, Position, _animation.GetMusketRectangle(dir),
-            color, rotation + rotationOffset, origin, scale, musketEffect, layerDepth + 0.04f);
-
-        foreach (var proj in Projectiles)
-            proj.Draw(spriteBatch);
-
-        DrawLevelStripes(spriteBatch);
     }
 }

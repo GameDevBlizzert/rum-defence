@@ -28,19 +28,22 @@ public class GameScreen : Screen
     public ShipSpawner Spawner { get; private set; }
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
+    private HashSet<Point> latestUntraverableHashSet = new();
     public static GameScreen Instance { get; private set; }
     public List<Explosion> Explosions = new();
     public List<NetEffect> NetEffects = new();
+    public List<FireEffect> FireEffects = new();
+    public List<FlameEffect> FlameEffects = new();
+    public IEnumerable<Wall> Walls => walls.Values;
 
     private Dictionary<Point, BaseTower> placedTowers = new();
 
     private BaseTower selectedTower = null;
+    private Wall selectedWall = null;
 
     private bool levelCompleted;
 
     private LevelProgressSystem progress;
-
-    private HashSet<Point> latestUntraverableHashSet = new();
 
     private Dictionary<Point, bool> occupiedTiles = new();
 
@@ -115,11 +118,7 @@ public class GameScreen : Screen
             }
             else if (placedTowers.TryGetValue(p, out BaseTower tower))
             {
-                if (tower is CannonTower)
-                    refundAmount = (int)Math.Ceiling(TowerFactory.Cannon.Cost * 0.8f);
-                else if (tower is MusketTower)
-                    refundAmount = (int)Math.Ceiling(TowerFactory.Musket.Cost * 0.8f);
-
+                refundAmount = (int)Math.Ceiling(tower.Data.Cost * 0.8f);
                 placedTowers.Remove(p);
             }
 
@@ -131,59 +130,25 @@ public class GameScreen : Screen
             }
         });
 
-        buildManager.SetCannonTowerPlacementCallback(p =>
+        buildManager.SetTowerPlacementCallback((p, data) =>
         {
             if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
-                progress.CoinsRemaining >= TowerFactory.Cannon.Cost)
+                progress.CoinsRemaining >= data.Cost)
             {
                 currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
-                placedTowers[p] = TowerFactory.Create(
-                    TowerFactory.Cannon,
-                    grid.GridToWorld(p),
-                    Troops
-                );
+                placedTowers[p] = TowerFactory.Create(data, grid.GridToWorld(p), Troops);
                 occupiedTiles[p] = true;
-                progress.SpendCoins(TowerFactory.Cannon.Cost);
+                progress.SpendCoins(data.Cost);
                 AudioManager.Instance.PlayRandomImpact();
+
+                selectedTower = null;
+
                 if (!buildManager.CtrlHeld)
                 {
                     selectedTower = placedTowers[p];
+                    selectedWall = null;
                     buildManager.SetMode(BuildMode.None);
                 }
-            }
-        });
-
-        buildManager.SetMusketTowerPlacementCallback(p =>
-        {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
-                progress.CoinsRemaining >= TowerFactory.Musket.Cost)
-            {
-                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
-                placedTowers[p] = TowerFactory.Create(TowerFactory.Musket, grid.GridToWorld(p), Troops);
-                occupiedTiles[p] = true;
-                progress.SpendCoins(TowerFactory.Musket.Cost);
-                AudioManager.Instance.PlayRandomImpact();
-                if (!buildManager.CtrlHeld)
-                {
-                    selectedTower = placedTowers[p];
-                    buildManager.SetMode(BuildMode.None);
-                }
-            }
-        });
-
-        buildManager.SetFisherTowerPlacementCallback(p =>
-        {
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
-                progress.CoinsRemaining >= TowerFactory.Fisher.Cost)
-            {
-                currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
-                placedTowers[p] = TowerFactory.Create(TowerFactory.Fisher, grid.GridToWorld(p), Troops);
-                occupiedTiles[p] = true;
-                progress.SpendCoins(TowerFactory.Fisher.Cost);
-                AudioManager.Instance.PlayRandomImpact();
-                // Select newly placed tower
-                selectedTower = placedTowers[p];
-                buildManager.SetMode(BuildMode.None); // Auto select without button
             }
         });
 
@@ -192,11 +157,20 @@ public class GameScreen : Screen
             if (placedTowers.TryGetValue(p, out BaseTower tower))
             {
                 selectedTower = tower;
+                selectedWall = null;
+            }
+            else if (walls.TryGetValue(p, out Wall wall))
+            {
+                selectedWall = wall;
+                selectedTower = null;
             }
             else
             {
                 selectedTower = null;
+                selectedWall = null;
             }
+            hud.SetSelectedWall(selectedWall);
+            hud.SetSelectedTower(selectedTower);
         });
 
         if (currentLevel.Id == 1)
@@ -244,6 +218,20 @@ public class GameScreen : Screen
             if (NetEffects[i].IsFinished)
                 NetEffects.RemoveAt(i);
         }
+
+        for (int i = FireEffects.Count - 1; i >= 0; i--)
+        {
+            FireEffects[i].Update(gameTime);
+            if (FireEffects[i].IsFinished)
+                FireEffects.RemoveAt(i);
+        }
+
+        for (int i = FlameEffects.Count - 1; i >= 0; i--)
+        {
+            FlameEffects[i].Update(gameTime);
+            if (FlameEffects[i].IsFinished)
+                FlameEffects.RemoveAt(i);
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -278,6 +266,12 @@ public class GameScreen : Screen
         foreach (var net in NetEffects)
             net.Draw(spriteBatch);
 
+        foreach (var fire in FireEffects)
+            fire.Draw(spriteBatch);
+
+        foreach (var flame in FlameEffects)
+            flame.Draw(spriteBatch);
+
         DrawWallHealthBars(spriteBatch);
 
         var overlayRenderer = renderer.GetOverlayRenderer();
@@ -292,10 +286,14 @@ public class GameScreen : Screen
 
     private void UpdateBuildSystem(GameTime gameTime)
     {
+        wallRenderer.Update(gameTime);
+
         // If mode is reset to something else (e.g. wall building), clear selection
         if (buildManager.GetMode() != BuildMode.None)
         {
             selectedTower = null;
+            selectedWall = null;
+            hud.SetSelectedWall(null);
         }
 
         hud.SetSelectedTower(selectedTower);
@@ -315,6 +313,36 @@ public class GameScreen : Screen
                 selectedTower.ApplyUpgrade();
                 AudioManager.Instance.PlayRandomImpact();
             }
+        }
+
+        // Handle wall repair interaction
+        if (selectedWall != null && hud.WasRepairClicked())
+        {
+            int cost = selectedWall.GetRepairCostToFull();
+            if (cost > 0 && progress.CoinsRemaining >= cost && !selectedWall.IsDestroyed)
+            {
+                progress.SpendCoins(cost);
+                selectedWall.RepairToFull();
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        }
+
+        // Handle wall upgrade interaction
+        if (selectedWall != null && hud.WasWallUpgradeClicked())
+        {
+            int cost = selectedWall.GetUpgradeCost();
+            if (cost > 0 && progress.CoinsRemaining >= cost && selectedWall.CanUpgrade)
+            {
+                progress.SpendCoins(cost);
+                selectedWall.ApplyUpgrade();
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        }
+
+        if (selectedTower != null && hud.WasTargetModeClicked())
+        {
+            selectedTower.CycleAttackMode();
+            AudioManager.Instance.PlayRandomImpact();
         }
 
         if (tutorialOverlay != null)
@@ -365,7 +393,7 @@ public class GameScreen : Screen
         playbackState = playbackState switch
         {
             GamePlaybackState.Normal => GamePlaybackState.FastForward,
-            GamePlaybackState.FastForward => GamePlaybackState.Paused,
+            GamePlaybackState.FastForward => GamePlaybackState.Normal,
             _ => GamePlaybackState.Normal
         };
 
@@ -398,7 +426,10 @@ public class GameScreen : Screen
             if (Ships[i].SpawnedTroops.Count > 0)
             {
                 foreach (var troop in Ships[i].SpawnedTroops)
+                {
                     troop.GetWallAt = p => walls.TryGetValue(p, out var w) ? w : null;
+                    troop.Died += OnTroopDied;
+                }
                 Troops.AddRange(Ships[i].SpawnedTroops);
                 Ships[i].SpawnedTroops.Clear();
             }
@@ -429,24 +460,25 @@ public class GameScreen : Screen
             if (updatePaths || troop.NeedsPathInit)
                 troop.UpdatePathfinding();
 
-            if (troop.IsDead && !troop.HasDroppedReward)
+            if (troop.IsDead)
             {
-                hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
-                troop.MarkRewardGiven();
-                Spawner.NotifyTroopDefeated();
-            }
-
-            if (troop.IsFinished && !troop.IsDead)
-            {
-                progress.TakeHits(1);
-                Spawner.NotifyTroopDefeated();
-
+                if (!troop.HasDroppedReward)
+                {
+                    hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
+                    troop.MarkRewardGiven();
+                    Spawner.NotifyTroopDefeated();
+                }
                 if (troop.CanBeRemoved)
                     Troops.RemoveAt(i);
+                continue;
             }
 
-            if (troop.IsDead && troop.CanBeRemoved)
+            if (troop.IsFinished)
+            {
+                // progress.TakeHits(1);
+                // Spawner.NotifyTroopDefeated();
                 Troops.RemoveAt(i);
+            }
         }
     }
 
@@ -519,12 +551,18 @@ public class GameScreen : Screen
             int barX = (int)(center.X - barWidth / 2f);
             int barY = (int)(center.Y + grid.TileSize / 2f + barYOffset);
 
-            float pct = (float)wall.Health / Wall.MaxHealth;
+            float pct = (float)wall.Health / wall.MaxHealth;
             int healthWidth = (int)(barWidth * pct);
 
             spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
             spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, healthWidth, barHeight), Color.YellowGreen);
         }
+    }
+
+    private void OnTroopDied(Troop troop)
+    {
+        foreach (var tower in placedTowers.Values)
+            tower.NotifyTroopDied(troop);
     }
 
     /// <summary>

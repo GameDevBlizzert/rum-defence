@@ -12,15 +12,14 @@ public class LoadingSplashScreen : Screen
     private readonly Screen nextScreen;
     private float elapsedSeconds;
 
-    private Texture2D pixel;
     private Texture2D panelTexture;
     private Texture2D barrelTexture;
     private Texture2D boatTexture;
     private SpriteFont font;
 
-    public LoadingSplashScreen(ScreenManager manager, Screen nextScreen) : base(manager)
+    public LoadingSplashScreen(ScreenManager manager) : base(manager)
     {
-        this.nextScreen = nextScreen;
+        nextScreen = new MainMenuScreen(manager);
     }
 
     public override void Load()
@@ -31,9 +30,6 @@ public class LoadingSplashScreen : Screen
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         barrelTexture = content.Load<Texture2D>("Art/Objects/RumBarrel");
         boatTexture = content.Load<Texture2D>("Art/Themes/Grass/Ships/ship_1");
-
-        pixel = new Texture2D(RumGame.Instance.GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
     }
 
     public override void Update(GameTime gameTime)
@@ -51,17 +47,17 @@ public class LoadingSplashScreen : Screen
         int width = RumGame.VirtualWidth;
         int height = RumGame.VirtualHeight;
 
-        DrawBackground(spriteBatch, width, height);
-        DrawWater(spriteBatch, width, height);
+        DrawBackground(spriteBatch, width, height, elapsedSeconds);
+        DrawWater(spriteBatch, width, height, elapsedSeconds);
         DrawScene(spriteBatch, width, height);
         DrawTitlePanel(spriteBatch, width, height);
         DrawLoadingBar(spriteBatch, width, height);
     }
 
-    private void DrawBackground(SpriteBatch spriteBatch, int width, int height)
+    public static void DrawBackground(SpriteBatch spriteBatch, int width, int height, float elapsedSeconds)
     {
-        spriteBatch.Draw(pixel, new Rectangle(0, 0, width, height), new Color(13, 22, 38));
-        spriteBatch.Draw(pixel, new Rectangle(0, 0, width, height / 2), new Color(25, 58, 98) * 0.9f);
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(0, 0, width, height), new Color(13, 22, 38));
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(0, 0, width, height / 2), new Color(25, 58, 98) * 0.9f);
 
         for (int i = 0; i < 8; i++)
         {
@@ -72,7 +68,7 @@ public class LoadingSplashScreen : Screen
                 ? new Color(11, 59, 92)
                 : new Color(15, 74, 114);
 
-            spriteBatch.Draw(pixel, new Rectangle(-40, y, width + 80, bandHeight), bandColor);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(-40, y, width + 80, bandHeight), bandColor);
         }
 
         for (int i = 0; i < 14; i++)
@@ -82,11 +78,11 @@ public class LoadingSplashScreen : Screen
             int x = 120 + i * 120 + (int)(MathF.Sin(elapsedSeconds * 1.3f + i) * 14f);
             int y = 700 + (int)(MathF.Sin(elapsedSeconds * 2.6f + i * 0.35f) * 24f);
 
-            spriteBatch.Draw(pixel, new Rectangle(x, y, bubbleWidth, bubbleWidth), Color.White * 0.15f);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(x, y, bubbleWidth, bubbleWidth), Color.White * 0.15f);
         }
     }
 
-    private void DrawWater(SpriteBatch spriteBatch, int width, int height)
+    public static void DrawWater(SpriteBatch spriteBatch, int width, int height, float elapsedSeconds)
     {
         for (int i = 0; i < 6; i++)
         {
@@ -94,8 +90,8 @@ public class LoadingSplashScreen : Screen
             int y = 740 + i * 40 + (int)wave;
             Color water = i % 2 == 0 ? new Color(28, 118, 164) : new Color(18, 99, 148);
 
-            spriteBatch.Draw(pixel, new Rectangle(-20, y, width + 40, 28), water * 0.7f);
-            spriteBatch.Draw(pixel, new Rectangle(-20, y + 4, width + 40, 4), Color.White * 0.06f);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(-20, y, width + 40, 28), water * 0.7f);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(-20, y + 4, width + 40, 4), Color.White * 0.06f);
         }
     }
 
@@ -145,7 +141,7 @@ public class LoadingSplashScreen : Screen
         );
 
         spriteBatch.Draw(
-            pixel,
+            Primitives.Pixel,
             new Rectangle((int)(barrelPosition.X - 140), (int)(barrelPosition.Y - 70), 280, 140),
             new Color(255, 196, 92) * 0.08f
         );
@@ -187,8 +183,8 @@ public class LoadingSplashScreen : Screen
         var barBounds = new Rectangle(width / 2 - 360, height - 160, 720, 34);
         var fillBounds = new Rectangle(barBounds.X + 6, barBounds.Y + 6, (int)((barBounds.Width - 12) * progress), barBounds.Height - 12);
 
-        spriteBatch.Draw(pixel, barBounds, new Color(20, 12, 8) * 0.9f);
-        spriteBatch.Draw(pixel, fillBounds, new Color(245, 183, 72));
+        spriteBatch.Draw(Primitives.Pixel, barBounds, new Color(20, 12, 8) * 0.9f);
+        spriteBatch.Draw(Primitives.Pixel, fillBounds, new Color(245, 183, 72));
 
         for (int i = 0; i < 5; i++)
         {
@@ -196,7 +192,7 @@ public class LoadingSplashScreen : Screen
             int portholeY = barBounds.Y + 8;
             float pulse = 0.4f + 0.6f * MathF.Sin(elapsedSeconds * 5f + i * 0.7f);
 
-            spriteBatch.Draw(pixel, new Rectangle(portholeX, portholeY, 18, 18), new Color(255, 246, 215) * pulse * 0.5f);
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(portholeX, portholeY, 18, 18), new Color(255, 246, 215) * pulse * 0.5f);
         }
 
         string label = $"Preparing the cannon deck... {(int)(progress * 100f)}%";

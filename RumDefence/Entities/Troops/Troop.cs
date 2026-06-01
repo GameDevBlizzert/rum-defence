@@ -6,12 +6,16 @@ using RumDefence.Exceptions;
 
 namespace RumDefence;
 
-public class Troop : EntityWithHealth, ICollidable
+public abstract class Troop : Entity, ICollidable
 {
     private Vector2 target;
-    protected virtual Animation animation { get; set; }
-    protected virtual Animation _swordAttackAnimation { get; set; }
+    protected readonly Animation animation;
     private Vector2 _lastDir = Vector2.UnitY;
+    public event Action<Troop> Died;
+
+    public HealthComponent Health { get; private set; }
+    public bool IsDead => Health.IsDead;
+    public void TakeDamage(float amount) => Health.TakeDamage(amount);
 
     private float baseSpeed;
     public float SpeedMultiplier { get; set; } = 1f;
@@ -26,17 +30,19 @@ public class Troop : EntityWithHealth, ICollidable
     private List<ITroopAbility> abilities = new();
     private readonly List<IModifier> _modifiers = new();
 
-    private TroopDyingAnimation _dyingAnimation = new();
 
-    public bool CanBeRemoved { get; private set; }
-    public bool NeedsPathInit { get; private set; } = true;
+    public bool CanBeRemoved => IsDead && animation.IsFinished;
+    public bool NeedsPathInit { get; protected set; } = true;
+    private bool _wasDead;
+    protected virtual bool CanAttackWalls => true;
     protected PathfindingSystem pathfinding;
     public Queue<Vector2> Path => pathfinding?.Path;
 
     public Func<Point, Wall> GetWallAt { get; set; }
 
-    public Troop(TroopData data, Vector2 start, Vector2 targetPos) : base(16, 32, data.Health)
+    public Troop(TroopData data, Vector2 start, Vector2 targetPos)
     {
+        Health = new HealthComponent(data.Health);
         Position = start;
         target = targetPos;
 
@@ -45,28 +51,36 @@ public class Troop : EntityWithHealth, ICollidable
         CoinValue = data.CoinValue;
         SpeedMultiplier = data.InitialSpeedMultiplier;
 
-        animation = new TroopAnimation(16, 16, 0.2f, 3, true);
-        _swordAttackAnimation = new TroopSwordAttackAnimation();
-
         // https://foozlecc.itch.io/scallywag-pirates
-        Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
-        origin = new Vector2(animation.FrameHeight / 2, animation.FrameWidth / 2);
+        animation = new Animation(data.SpriteFrameSize, 0.2f);
+        animation.AddLayerMatrix(
+        [
+            new(3, SpriteAction.Idle, SpriteDirection.Down),
+            new(3, SpriteAction.Idle, SpriteDirection.Up),
+            new(3, SpriteAction.Idle, SpriteDirection.Right),
+            new(3, SpriteAction.Idle, SpriteDirection.Left),
+            new(3, SpriteAction.Walking, SpriteDirection.Down),
+            new(3, SpriteAction.Walking, SpriteDirection.Up),
+            new(3, SpriteAction.Walking, SpriteDirection.Right),
+            new(3, SpriteAction.Walking, SpriteDirection.Left),
+            new(4, SpriteAction.Dying, SpriteDirection.Right, isLoop: false),
+            new(3, SpriteAction.Attack, SpriteDirection.Down),
+            new(3, SpriteAction.Attack, SpriteDirection.Up),
+            new(3, SpriteAction.Attack, SpriteDirection.Right),
+            new(3, SpriteAction.Attack, SpriteDirection.Left),
+        ], 4);
+        animation.ActivateLayers([new(SpriteAction.Idle, SpriteDirection.Down)]);
 
-        Size = SizeSystem.Square(data.Size);
+        Texture = RumGame.Instance.Content.Load<Texture2D>(data.SpritePath);
+        origin = new Vector2(data.SpriteFrameSize / 2, data.SpriteFrameSize / 2);
+
+        Size = SizeSystem.Square(data.SizeInTiles);
+        scale = Size.X / data.SpriteFrameSize;
 
         pathfinding = new(target);
-
-        ApplySize();
     }
 
-    public Collider Collider
-    {
-        get
-        {
-            var tileSize = RumGame.Instance.CurrentGrid?.TileSize ?? 32;
-            return new CircleCollider(Position, tileSize * 0.75f);
-        }
-    }
+    public Collider Collider => new CircleCollider(Position, Size.X / 2f);
 
     public void AddAbility(ITroopAbility ability)
     {
@@ -88,11 +102,16 @@ public class Troop : EntityWithHealth, ICollidable
 
     public override void Update(GameTime gameTime)
     {
+        animation.Update(gameTime);
+
         if (IsDead)
         {
-            sourceRectangles = _dyingAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
-            if (_dyingAnimation.IsFinished)
-                CanBeRemoved = true;
+            if (!_wasDead)
+            {
+                _wasDead = true;
+                Died?.Invoke(this);
+            }
+            animation.ActivateLayers([new(SpriteAction.Dying, SpriteDirection.Right)]);
             return;
         }
 
@@ -115,7 +134,7 @@ public class Troop : EntityWithHealth, ICollidable
 
         if (IsNearBarrel())
         {
-            sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
+            animation.ActivateLayers([new(SpriteAction.Attack, VectorToSpriteDirection(_lastDir))]);
             _attackTimer += dt * AttackSpeedMultiplier;
             if (_attackTimer >= 1f)
             {
@@ -131,14 +150,32 @@ public class Troop : EntityWithHealth, ICollidable
         var troopGridPos = RumGame.Instance.CurrentGrid.WorldToGrid(Position);
         var targetGridPos = RumGame.Instance.CurrentGrid.WorldToGrid(target);
 
-        if (troopGridPos == null || targetGridPos == null || troopGridPos.Value == targetGridPos.Value)
+        if (troopGridPos == null || targetGridPos == null)
         {
             IsFinished = true;
             return;
         }
 
+        if (troopGridPos.Value == targetGridPos.Value)
+        {
+            // Troop entered the barrel's tile but circle colliders may not overlap yet
+            // (diagonal entry hits the tile corner). Walk straight to barrel center
+            // so IsNearBarrel() can trigger rather than marking the troop as escaped.
+            var toBarrel = target - Position;
+            if (toBarrel.LengthSquared() < 1f)
+            {
+                IsFinished = true;
+                return;
+            }
+            toBarrel.Normalize();
+            _lastDir = toBarrel;
+            animation.ActivateLayers([new(SpriteAction.Walking, VectorToSpriteDirection(toBarrel))]);
+            Position += toBarrel * speed * dt;
+            return;
+        }
+
         // If the next waypoint in the path is a wall, stop and attack it
-        if (GetWallAt != null && pathfinding.Path.Count > 0)
+        if (CanAttackWalls && GetWallAt != null && pathfinding.Path.Count > 0)
         {
             var grid = RumGame.Instance.CurrentGrid;
             var nextGrid = grid.WorldToGrid(pathfinding.Path.Peek());
@@ -150,7 +187,7 @@ public class Troop : EntityWithHealth, ICollidable
                     var wallDir = pathfinding.Path.Peek() - Position;
                     if (wallDir != Vector2.Zero) wallDir.Normalize();
                     _lastDir = wallDir;
-                    sourceRectangles = _swordAttackAnimation.GetCurrentLayerRectangles(gameTime, _lastDir);
+                    animation.ActivateLayers([new(SpriteAction.Attack, VectorToSpriteDirection(wallDir))]);
                     _attackTimer += dt * AttackSpeedMultiplier;
                     if (_attackTimer >= 1f)
                     {
@@ -177,19 +214,26 @@ public class Troop : EntityWithHealth, ICollidable
 
         dir.Normalize();
         _lastDir = dir;
-        sourceRectangles = animation.GetCurrentLayerRectangles(gameTime, dir);
+        animation.ActivateLayers([new(SpriteAction.Walking, VectorToSpriteDirection(dir))]);
 
         Position += dir * speed * dt;
     }
 
-    private bool IsNearBarrel()
+    private static SpriteDirection VectorToSpriteDirection(Vector2 dir)
+    {
+        if (Math.Abs(dir.X) > Math.Abs(dir.Y))
+            return dir.X > 0 ? SpriteDirection.Right : SpriteDirection.Left;
+        return dir.Y > 0 ? SpriteDirection.Down : SpriteDirection.Up;
+    }
+
+    public bool IsNearBarrel()
     {
         var barrel = RumGame.Instance.CurrentLevel?.RumBarrel;
         if (barrel == null) return false;
         return Collider.CheckIntersection(barrel.Collider);
     }
 
-    public void UpdatePathfinding()
+    public virtual void UpdatePathfinding()
     {
         NeedsPathInit = false;
         var grid = RumGame.Instance.CurrentGrid;
@@ -204,7 +248,8 @@ public class Troop : EntityWithHealth, ICollidable
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        base.Draw(spriteBatch);
+        DrawSpriteLayers(spriteBatch);
+        Health.DrawHealth(spriteBatch, Position, 16, 32);
 
         bool showPathfindingDebug = bool.Parse(
             Environment.GetEnvironmentVariable("SHOW_PATHFINDING") ?? "false"
@@ -249,6 +294,25 @@ public class Troop : EntityWithHealth, ICollidable
 
                 currentPos = point;
             }
+        }
+    }
+    public void DrawSpriteLayers(SpriteBatch spriteBatch)
+    {
+        var items = animation.GetCurrentLayers();
+        foreach (var item in items)
+        {
+            float itemRotation = item.Item1.Type == SpriteAction.Rotation ? rotation : 0f;
+            spriteBatch.Draw(
+                Texture,
+                Position,
+                item.Item2,
+                color,
+                itemRotation,
+                origin,
+                scale,
+                item.Item1.Effect,
+                item.Item1.Depth
+            );
         }
     }
 }

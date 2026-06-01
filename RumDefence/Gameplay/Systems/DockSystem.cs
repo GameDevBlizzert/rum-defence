@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace RumDefence;
@@ -29,36 +30,32 @@ public static class DockSystem
         return basePos + GetDirection(coast.TileType) * offset;
     }
 
-    public static Vector2 GetSpawnPosition(Grid grid, CoastTile coast)
+    public static Vector2 GetSpawnPosition(Grid grid)
     {
-        Vector2 basePos = grid.GridToWorld(coast.GridPos);
-        Vector2 dir = GetDirection(coast.TileType);
+        var outerWaterTiles = new List<Point>();
 
-        float margin = grid.TileSize * 2f;
+        for (int x = 0; x < grid.Width; x++)
+        {
+            for (int y = 0; y < grid.Height; y++)
+            {
+                bool isOuterTile = x == 0 || y == 0 || x == grid.Width - 1 || y == grid.Height - 1;
+                if (isOuterTile && TileRules.IsWater(grid.Tiles[y, x]))
+                    outerWaterTiles.Add(new Point(x, y));
+            }
+        }
 
-        float x = basePos.X;
-        float y = basePos.Y;
+        if (outerWaterTiles.Count == 0)
+        {
+            for (int x = 0; x < grid.Width; x++)
+                for (int y = 0; y < grid.Height; y++)
+                    if (TileRules.IsWater(grid.Tiles[y, x]))
+                        outerWaterTiles.Add(new Point(x, y));
+        }
 
-        if (dir.X < 0) x = -margin;
-        if (dir.X > 0) x = RumGame.VirtualWidth + margin;
+        if (outerWaterTiles.Count == 0)
+            return Vector2.Zero;
 
-        if (dir.Y < 0) y = -margin;
-        if (dir.Y > 0) y = RumGame.VirtualHeight + margin;
-
-        return new Vector2(x, y);
-    }
-
-    public static Vector2 GetHoldingPosition(Grid grid, CoastTile coast, float lateralOffset = 0f)
-    {
-        Vector2 basePos = grid.GridToWorld(coast.GridPos);
-        Vector2 dir = GetDirection(coast.TileType);
-
-        Vector2 holdPos = basePos + dir * (grid.TileSize * 4f);
-
-        // Offset along the approach axis so ships stagger at different depths from shore
-        float angle = MathF.Atan2(dir.Y, dir.X);
-        Vector2 approachAxis = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-
-        return holdPos + approachAxis * lateralOffset;
+        var tile = outerWaterTiles[Random.Shared.Next(outerWaterTiles.Count)];
+        return grid.GridToWorld(tile);
     }
 }

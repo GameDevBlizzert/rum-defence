@@ -26,6 +26,11 @@ public static class SizeSystem
         return FromTiles(sizeInTiles, sizeInTiles);
     }
 
+    public static float ToScale(float Width, Vector2 size)
+    {
+        return size.X / Width;
+    }
+
     /// <summary>
     /// Zet gewenste world size om naar scale voor rendering
     /// </summary>
