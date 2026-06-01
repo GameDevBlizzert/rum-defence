@@ -14,6 +14,7 @@ public class ShipSpawner
     private readonly Random random = new Random();
 
     private int waveIndex = 0;
+    private int _generationIndex = 0;
     private float spawnTimer = 0f;
     private float nextSpawnInterval = 0f;
 
@@ -23,7 +24,8 @@ public class ShipSpawner
 
     public int CurrentWave => Math.Min(waveIndex + 1, TotalWaves);
     public int TotalWaves => waves.Count;
-    public bool IsFinished => waveIndex >= waves.Count;
+    public bool IsInfinite => level.InfiniteConfig != null;
+    public bool IsFinished => !IsInfinite && waveIndex >= waves.Count;
     public bool IsAllWavesComplete => IsFinished;
 
     public int TotalTroopsInWave { get; private set; }
@@ -73,7 +75,14 @@ public class ShipSpawner
         {
             waveIndex++;
             if (waveIndex < waves.Count)
+            {
                 StartSpawning();
+            }
+            else if (level.InfiniteConfig != null)
+            {
+                waves.Add(level.InfiniteConfig.GenerateWave(_generationIndex++));
+                StartSpawning();
+            }
         }
     }
 

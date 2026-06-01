@@ -26,10 +26,14 @@ public static class GrassLevels
                     Level1Data.Create(theme, true),
                     Level2Data.Create(theme),
                     Level3Data.Create(theme),
-                    Level4Data.Create(theme)
+                    Level4Data.Create(theme),
+                    Level5Data.Create(theme),
+                    Level6Data.Create(theme),
+                    Level7Data.Create(theme),
+                    Level8Data.Create(theme),
                 };
 
-                string[] keys = { "grass_1", "grass_2", "grass_3", "grass_4" };
+                string[] keys = { "grass_1", "grass_2", "grass_3", "grass_4", "grass_5" , "grass_6", "grass_7", "grass_8" };
                 for (int i = 0; i < _all.Count; i++)
                 {
                     _all[i].SaveKey = keys[i];
