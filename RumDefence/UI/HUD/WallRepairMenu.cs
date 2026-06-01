@@ -1,6 +1,5 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace RumDefence;
 
@@ -11,7 +10,6 @@ public class WallRepairMenu
     private SimpleButton repairButton;
     private SimpleButton upgradeButton;
     private LevelProgressSystem progress;
-    private KeyboardState previousKeyboardState;
 
     public bool RepairClicked { get; private set; }
     public bool UpgradeClicked { get; private set; }
@@ -38,12 +36,12 @@ public class WallRepairMenu
         int y = RumGame.VirtualHeight - height - 320;
         panelRect = new Rectangle(x, y, width, height);
 
-        repairButton = new SimpleButton(buttonTexture, "Repair (R)", Vector2.Zero, new Vector2(width - 40, 52));
+        repairButton = new SimpleButton(buttonTexture, "Repair", Vector2.Zero, new Vector2(width - 40, 52));
         repairButton.SetBounds(new Rectangle(panelRect.X + 20, panelRect.Y + 150, width - 40, 52));
         repairButton.TextScale = 0.72f;
         repairButton.OnClick = () => { RepairClicked = true; };
 
-        upgradeButton = new SimpleButton(buttonTexture, "Upgrade (U)", Vector2.Zero, new Vector2(width - 40, 52));
+        upgradeButton = new SimpleButton(buttonTexture, "Upgrade", Vector2.Zero, new Vector2(width - 40, 52));
         upgradeButton.SetBounds(new Rectangle(panelRect.X + 20, panelRect.Y + 308, width - 40, 52));
         upgradeButton.TextScale = 0.72f;
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
@@ -51,40 +49,28 @@ public class WallRepairMenu
 
     public void Update(GameTime gameTime)
     {
-        var keyboard = Keyboard.GetState();
-
-        var repairShortcutPressed =
-            SelectedWall != null &&
-            !IsDisabled &&
-            keyboard.IsKeyDown(Keys.R) &&
-            previousKeyboardState.IsKeyUp(Keys.R);
-
-        var upgradeShortcutPressed =
-            SelectedWall != null &&
-            !IsDisabled &&
-            keyboard.IsKeyDown(Keys.U) &&
-            previousKeyboardState.IsKeyUp(Keys.U);
-
-        previousKeyboardState = keyboard;
-
         RepairClicked = false;
         UpgradeClicked = false;
 
         if (IsDisabled || SelectedWall == null)
             return;
 
-        if (repairShortcutPressed)
+        if (InputManager.Instance.IsActionJustPressed("Repair"))
             RepairClicked = true;
 
-        if (upgradeShortcutPressed)
+        if (InputManager.Instance.IsActionJustPressed("Upgrade"))
             UpgradeClicked = true;
+
+        var repairKeyLabel = InputManager.GetKeyDisplayName(InputManager.Instance.GetBinding("Repair"));
+        var upgradeKeyLabel = InputManager.GetKeyDisplayName(InputManager.Instance.GetBinding("Upgrade"));
 
         int repairCost = SelectedWall.GetRepairCostToFull();
         repairButton.IsDisabled = SelectedWall.IsDestroyed || !SelectedWall.IsDamaged || progress.CoinsRemaining < repairCost || repairCost <= 0;
+        repairButton.Text = $"Repair ({repairKeyLabel})";
 
         int upgradeCost = SelectedWall.GetUpgradeCost();
         upgradeButton.IsDisabled = !SelectedWall.CanUpgrade || progress.CoinsRemaining < upgradeCost;
-        upgradeButton.Text = SelectedWall.CanUpgrade ? "Upgrade (U)" : "MAX LEVEL";
+        upgradeButton.Text = SelectedWall.CanUpgrade ? $"Upgrade ({upgradeKeyLabel})" : "MAX LEVEL";
 
         repairButton.Update(gameTime);
         upgradeButton.Update(gameTime);
