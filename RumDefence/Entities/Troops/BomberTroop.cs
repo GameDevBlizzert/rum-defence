@@ -6,7 +6,7 @@ namespace RumDefence;
 public class BomberTroop : Troop
 {
     private bool _hasExploded;
-    private const float ExplosionRadius = 96f;
+    private const float ExplosionRadius = 1f;
     private const float WallDamageModifier = 4f;
     public BomberTroop(TroopData data, Vector2 start, Vector2 target)
         : base(data, start, target)
@@ -74,16 +74,17 @@ public class BomberTroop : Troop
     private void Explode()
     {
         _hasExploded = true;
-        GameScreen.Instance.Explosions.Add(new Explosion(Position, ExplosionRadius));
+        var explosion = new Explosion(Position, ExplosionRadius);
+        GameScreen.Instance.Explosions.Add(explosion);
 
         var grid = RumGame.Instance.CurrentGrid;
         foreach (var wall in GameScreen.Instance.Walls)
         {
             var wallPos = grid.GridToWorld(wall.GridPos);
             float dist = Vector2.Distance(Position, wallPos);
-            if (dist <= ExplosionRadius)
+            if (dist <= explosion.Size.X / 2)
             {
-                float falloff = 1f - (dist / ExplosionRadius);
+                float falloff = 1f - (dist / explosion.Size.X / 2);
                 wall.TakeDamage((int)(Wall.MaxHealth * falloff * WallDamageModifier) + 1);
             }
         }

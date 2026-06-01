@@ -6,7 +6,7 @@ using RumDefence.Exceptions;
 
 namespace RumDefence;
 
-public class Troop : Entity, ICollidable
+public abstract class Troop : Entity, ICollidable
 {
     private Vector2 target;
     protected readonly Animation animation;
@@ -31,8 +31,9 @@ public class Troop : Entity, ICollidable
     private readonly List<IModifier> _modifiers = new();
 
 
-    public bool CanBeRemoved { get; private set; }
+    public bool CanBeRemoved => IsDead && animation.IsFinished;
     public bool NeedsPathInit { get; protected set; } = true;
+    private bool _wasDead;
     protected virtual bool CanAttackWalls => true;
     protected PathfindingSystem pathfinding;
     public Queue<Vector2> Path => pathfinding?.Path;
@@ -102,18 +103,15 @@ public class Troop : Entity, ICollidable
     public override void Update(GameTime gameTime)
     {
         animation.Update(gameTime);
-        bool wasDead = IsDead;
 
         if (IsDead)
         {
-            if (!wasDead && IsDead)
+            if (!_wasDead)
             {
+                _wasDead = true;
                 Died?.Invoke(this);
             }
             animation.ActivateLayers([new(SpriteAction.Dying, SpriteDirection.Right)]);
-            if (animation.IsFinished)
-                CanBeRemoved = true;
-
             return;
         }
 
@@ -152,9 +150,27 @@ public class Troop : Entity, ICollidable
         var troopGridPos = RumGame.Instance.CurrentGrid.WorldToGrid(Position);
         var targetGridPos = RumGame.Instance.CurrentGrid.WorldToGrid(target);
 
-        if (troopGridPos == null || targetGridPos == null || troopGridPos.Value == targetGridPos.Value)
+        if (troopGridPos == null || targetGridPos == null)
         {
             IsFinished = true;
+            return;
+        }
+
+        if (troopGridPos.Value == targetGridPos.Value)
+        {
+            // Troop entered the barrel's tile but circle colliders may not overlap yet
+            // (diagonal entry hits the tile corner). Walk straight to barrel center
+            // so IsNearBarrel() can trigger rather than marking the troop as escaped.
+            var toBarrel = target - Position;
+            if (toBarrel.LengthSquared() < 1f)
+            {
+                IsFinished = true;
+                return;
+            }
+            toBarrel.Normalize();
+            _lastDir = toBarrel;
+            animation.ActivateLayers([new(SpriteAction.Walking, VectorToSpriteDirection(toBarrel))]);
+            Position += toBarrel * speed * dt;
             return;
         }
 
@@ -282,7 +298,6 @@ public class Troop : Entity, ICollidable
     }
     public void DrawSpriteLayers(SpriteBatch spriteBatch)
     {
-        // if (IsFinished) return;
         var items = animation.GetCurrentLayers();
         foreach (var item in items)
         {
