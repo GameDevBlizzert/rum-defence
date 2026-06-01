@@ -41,11 +41,7 @@ public class AudioManager
     public float SoundVolume
     {
         get => soundVolume;
-        set
-        {
-            soundVolume = MathHelper.Clamp(value, 0f, 1f);
-            SoundEffect.MasterVolume = soundVolume;
-        }
+        set => soundVolume = MathHelper.Clamp(value, 0f, 1f);
     }
 
     public void LoadContent()
@@ -70,8 +66,11 @@ public class AudioManager
         musicTracks["PineappleUnderTheSea"] = content.Load<SoundEffect>("Audio/PineappleUnderTheSea");
         musicTracks["WhatCloudsAreMadeOf"] = content.Load<SoundEffect>("Audio/WhatCloudsAreMadeOf");
         musicTracks["GentleBreeze"] = content.Load<SoundEffect>("Audio/GentleBreeze");
+        musicTracks["menu_music"] = content.Load<SoundEffect>("Audio/music_7");
+        musicTracks["win_music"] = content.Load<SoundEffect>("Audio/music_1");
+        musicTracks["lose_music"] = content.Load<SoundEffect>("Audio/music_6");
+        musicTracks["battle_music"] = content.Load<SoundEffect>("Audio/music_8");
 
-        SoundEffect.MasterVolume = soundVolume;
     }
 
     public void PlaySound(string soundName, int? maxConcurrentInstances = null)
@@ -149,7 +148,7 @@ public class AudioManager
         }
     }
 
-    public void PlayBackgroundMusic(string songName = "PineappleUnderTheSea")
+    public void PlayBackgroundMusic(string songName = "menu_music")
     {
         if (!musicTracks.TryGetValue(songName, out var track))
         {
@@ -157,6 +156,7 @@ public class AudioManager
             return;
         }
 
+        bool trackChanged = currentMusicTrack != track;
         currentMusicTrack = track;
         isMusicActive = true;
 
@@ -165,7 +165,7 @@ public class AudioManager
             if (isSuspended)
                 return;
 
-            if (currentMusicInstance != null && currentMusicInstance.State == SoundState.Playing)
+            if (!trackChanged && currentMusicInstance != null && currentMusicInstance.State == SoundState.Playing)
                 return;
 
             StartCurrentMusic();

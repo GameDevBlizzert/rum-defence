@@ -59,7 +59,7 @@ public class LevelSelectScreen : Screen
         }
 
         // Play theme music
-        AudioManager.Instance.PlayBackgroundMusic("WhatCloudsAreMadeOf");
+        AudioManager.Instance.PlayBackgroundMusic();
     }
 
     public override void Update(GameTime gameTime)

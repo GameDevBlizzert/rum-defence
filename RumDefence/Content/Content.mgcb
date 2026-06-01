@@ -1261,6 +1261,54 @@
 /processorParam:Quality=Best
 /build:Audio/impactMining_004.ogg
 
+#begin Audio/music_1.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/music_1.ogg
+
+#begin Audio/music_2.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/music_2.ogg
+
+#begin Audio/music_3.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/music_3.ogg
+
+#begin Audio/music_4.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/music_4.ogg
+
+#begin Audio/music_5.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/music_5.ogg
+
+#begin Audio/music_6.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/music_6.ogg
+
+#begin Audio/music_7.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/music_7.ogg
+
+#begin Audio/music_8.ogg
+/importer:OggImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/music_8.ogg
+
 #begin Audio/PineappleUnderTheSea.ogg
 /importer:OggImporter
 /processor:SoundEffectProcessor
