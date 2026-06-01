@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
@@ -7,8 +6,6 @@ namespace RumDefence;
 
 public class FireTower : BaseTower
 {
-    private const float AoeRadius = 70f;
-
     public FireTower(TowerData data, Vector2 location, List<Troop> troops) : base(data, location, troops)
     {
         animation.AddLayerMatrix(
@@ -31,24 +28,8 @@ public class FireTower : BaseTower
 
     protected override void FireProjectile(Troop target)
     {
-        AudioManager.Instance.PlaySound("shoot", maxConcurrentInstances: 4);
-        Projectiles.Add(new FireProjectile(Position, target, ProjectileSpeed, CurrentDamage, AoeRadius));
+        // AudioManager.Instance.PlaySound("shoot", maxConcurrentInstances: 4);
+        var dir = new Vector2(MathF.Cos(rotation), MathF.Sin(rotation));
+        GameScreen.Instance.FlameEffects.Add(new FlameEffect(Position, dir, CurrentRange, CurrentDamage));
     }
-
-    // public override void Draw(SpriteBatch spriteBatch)
-    // {
-    //     spriteBatch.Draw(
-    //         Texture,
-    //         Position,
-    //         null,
-    //         color,
-    //         rotation + rotationOffset,
-    //         origin,
-    //         scale,
-    //         spriteEffect,
-    //         layerDepth
-    //     );
-    //     DrawProjectiles(spriteBatch);
-    //     DrawLevelStripes(spriteBatch);
-    // }
 }

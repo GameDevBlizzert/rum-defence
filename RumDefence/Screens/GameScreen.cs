@@ -28,10 +28,12 @@ public class GameScreen : Screen
     public ShipSpawner Spawner { get; private set; }
     public List<Ship> Ships { get; private set; } = new();
     public List<Troop> Troops { get; private set; } = new();
+    private HashSet<Point> latestUntraverableHashSet = new();
     public static GameScreen Instance { get; private set; }
     public List<Explosion> Explosions = new();
     public List<NetEffect> NetEffects = new();
     public List<FireEffect> FireEffects = new();
+    public List<FlameEffect> FlameEffects = new();
     public IEnumerable<Wall> Walls => walls.Values;
 
     private Dictionary<Point, BaseTower> placedTowers = new();
@@ -42,8 +44,6 @@ public class GameScreen : Screen
     private bool levelCompleted;
 
     private LevelProgressSystem progress;
-
-    private HashSet<Point> latestUntraverableHashSet = new();
 
     private Dictionary<Point, bool> occupiedTiles = new();
 
@@ -225,6 +225,13 @@ public class GameScreen : Screen
             if (FireEffects[i].IsFinished)
                 FireEffects.RemoveAt(i);
         }
+
+        for (int i = FlameEffects.Count - 1; i >= 0; i--)
+        {
+            FlameEffects[i].Update(gameTime);
+            if (FlameEffects[i].IsFinished)
+                FlameEffects.RemoveAt(i);
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -261,6 +268,9 @@ public class GameScreen : Screen
 
         foreach (var fire in FireEffects)
             fire.Draw(spriteBatch);
+
+        foreach (var flame in FlameEffects)
+            flame.Draw(spriteBatch);
 
         DrawWallHealthBars(spriteBatch);
 
@@ -450,24 +460,25 @@ public class GameScreen : Screen
             if (updatePaths || troop.NeedsPathInit)
                 troop.UpdatePathfinding();
 
-            if (troop.IsDead && !troop.HasDroppedReward)
+            if (troop.IsDead)
             {
-                hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
-                troop.MarkRewardGiven();
-                Spawner.NotifyTroopDefeated();
-            }
-
-            if (troop.IsFinished && !troop.IsDead)
-            {
-                progress.TakeHits(1);
-                Spawner.NotifyTroopDefeated();
-
+                if (!troop.HasDroppedReward)
+                {
+                    hud.GetCoinManager().SpawnCoin(troop.Position, troop.CoinValue);
+                    troop.MarkRewardGiven();
+                    Spawner.NotifyTroopDefeated();
+                }
                 if (troop.CanBeRemoved)
                     Troops.RemoveAt(i);
+                continue;
             }
 
-            if (troop.IsDead && troop.CanBeRemoved)
+            if (troop.IsFinished)
+            {
+                // progress.TakeHits(1);
+                // Spawner.NotifyTroopDefeated();
                 Troops.RemoveAt(i);
+            }
         }
     }
 

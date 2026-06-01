@@ -7,7 +7,7 @@ namespace RumDefence;
 
 public class CannonTower : BaseTower
 {
-    private const float AoeRadius = 80f;
+    private const float AoeRadius = 1f;
 
     private float _recoilTimer = float.MaxValue;
     private const float RecoilDuration = 0.35f;
