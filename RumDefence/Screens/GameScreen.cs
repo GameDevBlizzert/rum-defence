@@ -33,6 +33,7 @@ public class GameScreen : Screen
     public List<Explosion> Explosions = new();
     public List<NetEffect> NetEffects = new();
     public List<FireEffect> FireEffects = new();
+    public List<FlameEffect> FlameEffects = new();
     public IEnumerable<Wall> Walls => walls.Values;
 
     private Dictionary<Point, BaseTower> placedTowers = new();
@@ -224,6 +225,13 @@ public class GameScreen : Screen
             if (FireEffects[i].IsFinished)
                 FireEffects.RemoveAt(i);
         }
+
+        for (int i = FlameEffects.Count - 1; i >= 0; i--)
+        {
+            FlameEffects[i].Update(gameTime);
+            if (FlameEffects[i].IsFinished)
+                FlameEffects.RemoveAt(i);
+        }
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -260,6 +268,9 @@ public class GameScreen : Screen
 
         foreach (var fire in FireEffects)
             fire.Draw(spriteBatch);
+
+        foreach (var flame in FlameEffects)
+            flame.Draw(spriteBatch);
 
         DrawWallHealthBars(spriteBatch);
 
