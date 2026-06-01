@@ -49,7 +49,7 @@ public class MainMenuScreen : Screen
         };
 
         // Play main menu theme music
-        AudioManager.Instance.PlayBackgroundMusic("music_7");
+        AudioManager.Instance.PlayBackgroundMusic();
     }
 
     public override void Update(GameTime gameTime)
