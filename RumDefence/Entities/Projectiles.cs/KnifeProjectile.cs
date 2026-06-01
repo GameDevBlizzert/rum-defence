@@ -18,7 +18,6 @@ public class KnifeProjectile : BaseProjectile
         scale = SizeSystem.ToScale(FrameWidth, Size);
     }
 
-    // 2% of max HP per tick over 4 seconds — scales naturally against high-HP units.
     private const float PoisonDuration = 4f;
     private const float PoisonDamagePercentPerTick = 0.02f;
     private const float PoisonTickInterval = 0.5f;
@@ -33,6 +32,10 @@ public class KnifeProjectile : BaseProjectile
         base.Update(gameTime);
 
         if (IsFinished && !Target.IsDead)
+        {
             Target.ApplyModifier(new PoisonModifier(PoisonDuration, PoisonDamagePercentPerTick, PoisonTickInterval));
+            Target.ApplyModifier(new SpeedModifier(PoisonDuration, 0.65f));
+            Target.ApplyModifier(new AttackSpeedModifier(PoisonDuration, 0.65f));
+        }
     }
 }
