@@ -47,7 +47,7 @@ public class PauseScreen : Screen
         resumeButton.OnClick = () =>
         {
             // Return to the game — restore gameplay music.
-            AudioManager.Instance.PlayBackgroundMusic("menu_music");
+            AudioManager.Instance.PlayBackgroundMusic("battle_music");
             manager.SetScreen(previousScreen);
         };
 
