@@ -40,6 +40,7 @@ public class Hud
     {
         buildMenu.SetPlaybackState(playbackState);
         upgradeMenu.IsDisabled = playbackState == GamePlaybackState.Paused;
+        wallRepairMenu.IsDisabled = playbackState == GamePlaybackState.Paused;
     }
 
     public CoinManager GetCoinManager()
@@ -110,5 +111,10 @@ public class Hud
     public bool WasRepairClicked()
     {
         return wallRepairMenu.RepairClicked;
+    }
+
+    public bool WasWallUpgradeClicked()
+    {
+        return wallRepairMenu.UpgradeClicked;
     }
 }

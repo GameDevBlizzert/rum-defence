@@ -5,18 +5,31 @@ namespace RumDefence;
 
 public class Wall
 {
-    public const int MaxHealth = 20;
+    public const int BaseMaxHealth = 20;
+    public const int MaxUpgradeLevel = 3;
+
+    private static readonly int[] MaxHealthByLevel = { 20, 35, 55, 80 };
+    private static readonly int[] UpgradeCostByLevel = { 20, 35, 55 };
 
     public Point GridPos;
     public bool IsDiagonal;
 
-    public int Health { get; private set; } = MaxHealth;
+    public int UpgradeLevel { get; private set; } = 0;
+
+    public int MaxHealth => MaxHealthByLevel[UpgradeLevel];
+    public int NextMaxHealth => CanUpgrade ? MaxHealthByLevel[UpgradeLevel + 1] : MaxHealth;
+
+    public int Health { get; private set; }
+
     public bool IsDamaged => Health < MaxHealth;
     public bool IsDestroyed => Health <= 0;
+    public bool CanUpgrade => UpgradeLevel < MaxUpgradeLevel;
 
     public Wall(Point gridPos, bool isDiagonal = false)
     {
         GridPos = gridPos;
+        IsDiagonal = isDiagonal;
+        Health = MaxHealth;
     }
 
     public void TakeDamage(int amount)
@@ -24,34 +37,36 @@ public class Wall
         Health = Math.Max(0, Health - amount);
     }
 
-    /// <summary>
-    /// Repair the wall by a fixed amount of health.
-    /// </summary>
     public void Repair(int amount)
     {
         if (amount <= 0) return;
         Health = Math.Min(MaxHealth, Health + amount);
     }
 
-    /// <summary>
-    /// Repair the wall back to full health.
-    /// </summary>
     public void RepairToFull()
     {
         Health = MaxHealth;
     }
 
-    /// <summary>
-    /// Get the coin cost to repair this wall back to full health.
-    /// Cost scales linearly with missing health relative to `BuildManager.WallCost`.
-    /// </summary>
     public int GetRepairCostToFull()
     {
         int missing = MaxHealth - Health;
         if (missing <= 0) return 0;
 
-        // Linearly scale: fully destroyed costs the same as building a new wall.
-        float costPerHp = BuildManager.WallCost / (float)MaxHealth;
+        float costPerHp = BuildManager.WallCost / (float)BaseMaxHealth;
         return (int)Math.Ceiling(missing * costPerHp);
+    }
+
+    public int GetUpgradeCost()
+    {
+        if (!CanUpgrade) return 0;
+        return UpgradeCostByLevel[UpgradeLevel];
+    }
+
+    public void ApplyUpgrade()
+    {
+        if (!CanUpgrade) return;
+        UpgradeLevel++;
+        RepairToFull();
     }
 }

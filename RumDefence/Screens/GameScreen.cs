@@ -286,6 +286,8 @@ public class GameScreen : Screen
 
     private void UpdateBuildSystem(GameTime gameTime)
     {
+        wallRenderer.Update(gameTime);
+
         // If mode is reset to something else (e.g. wall building), clear selection
         if (buildManager.GetMode() != BuildMode.None)
         {
@@ -321,6 +323,18 @@ public class GameScreen : Screen
             {
                 progress.SpendCoins(cost);
                 selectedWall.RepairToFull();
+                AudioManager.Instance.PlayRandomImpact();
+            }
+        }
+
+        // Handle wall upgrade interaction
+        if (selectedWall != null && hud.WasWallUpgradeClicked())
+        {
+            int cost = selectedWall.GetUpgradeCost();
+            if (cost > 0 && progress.CoinsRemaining >= cost && selectedWall.CanUpgrade)
+            {
+                progress.SpendCoins(cost);
+                selectedWall.ApplyUpgrade();
                 AudioManager.Instance.PlayRandomImpact();
             }
         }
@@ -537,7 +551,7 @@ public class GameScreen : Screen
             int barX = (int)(center.X - barWidth / 2f);
             int barY = (int)(center.Y + grid.TileSize / 2f + barYOffset);
 
-            float pct = (float)wall.Health / Wall.MaxHealth;
+            float pct = (float)wall.Health / wall.MaxHealth;
             int healthWidth = (int)(barWidth * pct);
 
             spriteBatch.Draw(Primitives.Pixel, new Rectangle(barX, barY, barWidth, barHeight), Color.Red);
