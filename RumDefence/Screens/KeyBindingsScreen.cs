@@ -18,7 +18,7 @@ public class KeyBindingsScreen : Screen
     private const int PanelLeft = 560;
     private const int PanelTop = 190;
     private const int PanelWidth = 800;
-    private const int PanelHeight = 620;
+    private const int PanelHeight = 760;
 
     private const int RowHeight = 78;
     private const int RowsStartY = PanelTop + 110;
@@ -30,6 +30,8 @@ public class KeyBindingsScreen : Screen
         ("MultiPlace", "Multi-Place Mode"),
         ("LevelNext",  "Next Level Page"),
         ("LevelPrev",  "Prev Level Page"),
+        ("Upgrade",    "Upgrade Tower / Wall"),
+        ("Repair",     "Repair Wall"),
     };
 
     private string rebindingAction = null;
