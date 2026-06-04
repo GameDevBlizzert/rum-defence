@@ -13,8 +13,6 @@ public class LevelSelectScreen : Screen
     private int currentPage = 0;
     private int levelsPerPage = 4;
 
-    private SpriteFont font;
-
     private SimpleButton backButton;
     private Texture2D buttonTexture;
     private float elapsedSeconds;
@@ -28,7 +26,6 @@ public class LevelSelectScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
         buttons.Clear();
@@ -153,8 +150,8 @@ public class LevelSelectScreen : Screen
             wavesText = $"Best Waves: {score.BestWaves}";
         }
 
-        var coinsSize = font.MeasureString(coinsText);
-        var wavesSize = font.MeasureString(wavesText);
+        var coinsSize = Primitives.Font.MeasureString(coinsText);
+        var wavesSize = Primitives.Font.MeasureString(wavesText);
 
         Vector2 coinsPosition = new Vector2(
             rect.Center.X - coinsSize.X / 2,
@@ -166,7 +163,7 @@ public class LevelSelectScreen : Screen
             rect.Bottom + 45
         );
 
-        spriteBatch.DrawString(font, coinsText, coinsPosition, Primitives.FontColor);
-        spriteBatch.DrawString(font, wavesText, wavesPosition, Primitives.FontColor);
+        spriteBatch.DrawString(Primitives.Font, coinsText, coinsPosition, Primitives.FontColor);
+        spriteBatch.DrawString(Primitives.Font, wavesText, wavesPosition, Primitives.FontColor);
     }
 }

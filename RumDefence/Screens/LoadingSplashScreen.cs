@@ -15,7 +15,6 @@ public class LoadingSplashScreen : Screen
     private Texture2D panelTexture;
     private Texture2D barrelTexture;
     private Texture2D boatTexture;
-    private SpriteFont font;
 
     public LoadingSplashScreen(ScreenManager manager) : base(manager)
     {
@@ -26,7 +25,6 @@ public class LoadingSplashScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        font = content.Load<SpriteFont>("Fonts/KenneyFuture");
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         barrelTexture = content.Load<Texture2D>("Art/Objects/RumBarrel");
         boatTexture = content.Load<Texture2D>("Art/Themes/Grass/Ships/ship_1");
@@ -158,18 +156,18 @@ public class LoadingSplashScreen : Screen
         string title = "DEFEND THE RUM";
         string loading = GetLoadingText();
 
-        Vector2 titleSize = font.MeasureString(title);
-        Vector2 loadingSize = font.MeasureString(loading);
+        Vector2 titleSize = Primitives.Font.MeasureString(title);
+        Vector2 loadingSize = Primitives.Font.MeasureString(loading);
 
         spriteBatch.DrawString(
-            font,
+            Primitives.Font,
             title,
             new Vector2(panelRect.Center.X - titleSize.X / 2f, panelRect.Y + 36),
             new Color(38, 23, 12)
         );
 
         spriteBatch.DrawString(
-            font,
+            Primitives.Font,
             loading,
             new Vector2(panelRect.Center.X - loadingSize.X / 2f, panelRect.Y + 128),
             new Color(64, 36, 16)
@@ -196,10 +194,10 @@ public class LoadingSplashScreen : Screen
         }
 
         string label = $"Preparing the cannon deck... {(int)(progress * 100f)}%";
-        Vector2 labelSize = font.MeasureString(label);
+        Vector2 labelSize = Primitives.Font.MeasureString(label);
 
         spriteBatch.DrawString(
-            font,
+            Primitives.Font,
             label,
             new Vector2(width / 2f - labelSize.X / 2f, barBounds.Y - 44),
             Color.White

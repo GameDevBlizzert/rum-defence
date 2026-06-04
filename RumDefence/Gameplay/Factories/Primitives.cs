@@ -20,7 +20,7 @@ public static class Primitives
         }
     }
 
-    public static SpriteFont Font => _font ??= RumGame.Instance.Content.Load<SpriteFont>("Fonts/KenneyFuture");
+    public static SpriteFont Font => _font ??= RumGame.Instance.Content.Load<SpriteFont>("Fonts/font");
 
     public static Color FontColor => new Color(255, 200, 0);
 
