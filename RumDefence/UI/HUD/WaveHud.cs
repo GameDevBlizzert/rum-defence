@@ -33,7 +33,7 @@ public class WaveHud
             : Math.Max(Math.Max(waveSize.X, BarMinWidth), pctSize.X);
 
         float panelWidth = innerWidth + PanelPaddingX * 2;
-        float panelHeight = waveSize.Y + LineSpacing + (spawner.IsFinished ? pctSize.Y : BarHeight) + PanelPaddingY * 2;
+        float panelHeight = waveSize.Y + pctSize.Y;
         float panelX = (RumGame.VirtualWidth - panelWidth) / 2f;
         float panelY = 20f;
 

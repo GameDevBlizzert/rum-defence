@@ -15,24 +15,19 @@ public class ThemeSelectScreen : Screen
     private SimpleButton devButton;
     private SimpleButton backButton;
 
-    private Texture2D buttonTexture;
     private float elapsedSeconds;
 
     public ThemeSelectScreen(ScreenManager manager) : base(manager) { }
 
     public override void Load()
     {
-        var content = RumGame.Instance.Content;
-
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
-        grassButton = new SimpleButton(buttonTexture, "Grass",
+        grassButton = new SimpleButton(Primitives.ButtonTexture, "Grass",
             new Vector2(800, 400), new Vector2(300, 100));
 
-        stoneButton = new SimpleButton(buttonTexture, "Stone",
+        stoneButton = new SimpleButton(Primitives.ButtonTexture, "Stone",
             new Vector2(800, 550), new Vector2(300, 100));
 
-        backButton = new SimpleButton(buttonTexture, "Back",
+        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
             new Vector2(20, 20), new Vector2(200, 80));
 
 
@@ -40,7 +35,7 @@ public class ThemeSelectScreen : Screen
 
         if (devMode)
         {
-            devButton = new SimpleButton(buttonTexture, "Dev",
+            devButton = new SimpleButton(Primitives.ButtonTexture, "Dev",
                 new Vector2(800, 700), new Vector2(300, 100));
             devButton.OnClick = () =>
             {

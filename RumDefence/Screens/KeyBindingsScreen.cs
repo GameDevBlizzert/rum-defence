@@ -8,9 +8,6 @@ public class KeyBindingsScreen : Screen
 {
     private readonly Screen previous;
 
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
-
     private SimpleButton backButton;
     private Rectangle panelRect;
     private MouseState prevMouse;
@@ -43,14 +40,10 @@ public class KeyBindingsScreen : Screen
 
     public override void Load()
     {
-        var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
 
         int backX = PanelLeft + (PanelWidth - 200) / 2;
-        backButton = new SimpleButton(buttonTexture, "Back",
+        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
             new Vector2(backX, PanelTop + PanelHeight - 110),
             new Vector2(200, 70));
 
@@ -129,7 +122,7 @@ public class KeyBindingsScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         var title = "Key Bindings";
         var titleSize = Primitives.Font.MeasureString(title);

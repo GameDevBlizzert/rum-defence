@@ -5,8 +5,6 @@ namespace RumDefence;
 
 public class UpgradeMenu
 {
-    private Texture2D panelTexture;
-
     private Rectangle panelRect;
     private SimpleButton upgradeButton;
     private SimpleButton targetModeButton;
@@ -27,21 +25,17 @@ public class UpgradeMenu
     {
         this.progress = progress;
 
-        var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         int width = 340;
         int height = 400;
         int x = RumGame.VirtualWidth - width - 20; // right side
         int y = RumGame.VirtualHeight - height - 20; // bottom right
         panelRect = new Rectangle(x, y, width, height);
 
-        upgradeButton = new SimpleButton(buttonTexture, "Upgrade", new Vector2(x + 20, y + 315), new Vector2(width - 40, 52));
+        upgradeButton = new SimpleButton(Primitives.ButtonTexture, "Upgrade", new Vector2(x + 20, y + 315), new Vector2(width - 40, 52));
         upgradeButton.TextScale = 0.72f;
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
 
-        targetModeButton = new SimpleButton(buttonTexture, "Nearest", new Vector2(x + 20, y + 205), new Vector2(width - 40, 52));
+        targetModeButton = new SimpleButton(Primitives.ButtonTexture, "Nearest", new Vector2(x + 20, y + 205), new Vector2(width - 40, 52));
         targetModeButton.TextScale = 0.72f;
         targetModeButton.OnClick = () => { TargetModeClicked = true; };
     }
@@ -82,7 +76,7 @@ public class UpgradeMenu
 
     private void DrawForTower(SpriteBatch spriteBatch)
     {
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         var title = SelectedTower.Label;
         title += $" LVL {SelectedTower.CurrentLevel + 1}";
@@ -126,7 +120,7 @@ public class UpgradeMenu
 
     private void DrawPreview(SpriteBatch spriteBatch)
     {
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         var title = PreviewData.Label + " LVL 1";
         float titleScale = 0.8f;
