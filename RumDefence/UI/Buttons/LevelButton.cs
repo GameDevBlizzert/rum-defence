@@ -7,10 +7,13 @@ namespace RumDefence;
 public class LevelButton : Button
 {
     private Level level;
+    private Texture2D buttonTexture;
 
     public LevelButton(Level level)
     {
+        var content = RumGame.Instance.Content;
         this.level = level;
+        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
     }
 
     public override void Update(GameTime gameTime)
@@ -23,20 +26,6 @@ public class LevelButton : Button
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        Color borderColor = isPressed
-            ? Color.White
-            : isHovering
-                ? Color.White
-                : Color.Gray;
-
-        Color panelColor = isPressed
-            ? new Color(30, 30, 30)
-            : isHovering
-                ? new Color(165, 165, 165)
-                : new Color(180, 180, 180);
-
-        spriteBatch.Draw(Primitives.Pixel, bounds, borderColor);
-
         Rectangle panel = new Rectangle(
             bounds.X + 4,
             bounds.Y + 4,
@@ -44,7 +33,12 @@ public class LevelButton : Button
             bounds.Height - 8
         );
 
-        spriteBatch.Draw(Primitives.Pixel, panel, panelColor);
+        NineSlice.Draw(spriteBatch, buttonTexture, panel, new Rectangle(
+            0,
+            0,
+            buttonTexture.Width,
+            buttonTexture.Height
+        ), 20, Color.White * 0.96f);
 
         int mapWidth = 340;
         int mapHeight = 200;
@@ -63,7 +57,7 @@ public class LevelButton : Button
         spriteBatch.DrawString(
             Primitives.Font,
             $"LEVEL {level.Id}",
-            new Vector2(bounds.X + 10, bounds.Y + 5),
+            new Vector2(panel.X + (panel.Width - mapWidth) / 2, bounds.Y + 5),
             labelColor
         );
 
