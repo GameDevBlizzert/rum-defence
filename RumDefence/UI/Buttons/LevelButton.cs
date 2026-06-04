@@ -48,6 +48,11 @@ public class LevelButton : Button
         );
 
         MiniMapRenderer.Draw(spriteBatch, level, mapRect, level.IsUnlocked);
+        spriteBatch.Draw(
+            Primitives.Pixel,
+            mapRect,
+            Color.White * 0.4f
+        );
         DrawLevelScore(spriteBatch, level, mapRect);
 
         var labelColor = isPressed ? Color.White : Primitives.FontColor;
@@ -78,7 +83,7 @@ public class LevelButton : Button
         spriteBatch.DrawString(Primitives.Font, levelScore, new Vector2(
             rect.X + 4,
             rect.Top + 1
-        ), Primitives.FontLightColor);
+        ), Color.SaddleBrown);
     }
     protected override bool IsClickable()
     {
