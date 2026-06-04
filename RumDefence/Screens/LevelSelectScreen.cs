@@ -14,7 +14,6 @@ public class LevelSelectScreen : Screen
     private int levelsPerPage = 4;
 
     private SimpleButton backButton;
-    private Texture2D buttonTexture;
     private float elapsedSeconds;
 
     public LevelSelectScreen(ScreenManager manager, List<Level> levels) : base(manager)
@@ -24,13 +23,9 @@ public class LevelSelectScreen : Screen
 
     public override void Load()
     {
-        var content = RumGame.Instance.Content;
-
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         buttons.Clear();
 
-        backButton = new SimpleButton(buttonTexture, "Back",
+        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
             new Vector2(20, 20), new Vector2(200, 80));
 
         backButton.OnClick = () =>

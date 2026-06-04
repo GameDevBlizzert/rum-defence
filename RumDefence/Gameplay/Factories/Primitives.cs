@@ -22,6 +22,12 @@ public static class Primitives
 
     public static SpriteFont Font => _font ??= RumGame.Instance.Content.Load<SpriteFont>("Fonts/font");
 
+    private static Texture2D _panelTexture;
+    public static Texture2D PanelTexture => _panelTexture ??= RumGame.Instance.Content.Load<Texture2D>("Art/UI/Panels/panel");
+
+    private static Texture2D _buttonTexture;
+    public static Texture2D ButtonTexture => _buttonTexture ??= RumGame.Instance.Content.Load<Texture2D>("Art/UI/Buttons/button");
+
     public static Color FontColor => new Color(255, 200, 0);
 
     public const float TowerSize = 1f;

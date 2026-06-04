@@ -10,9 +10,6 @@ public class ConfirmScreen : Screen
     private Action onConfirm;
     private Screen previous;
 
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
-
     private SimpleButton yesButton;
     private SimpleButton noButton;
 
@@ -27,15 +24,10 @@ public class ConfirmScreen : Screen
 
     public override void Load()
     {
-        var content = RumGame.Instance.Content;
-
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         panelRect = new Rectangle(600, 300, 700, 400);
 
-        yesButton = new SimpleButton(buttonTexture, "Yes", new Vector2(700, 550), new Vector2(200, 100));
-        noButton = new SimpleButton(buttonTexture, "No", new Vector2(1000, 550), new Vector2(200, 100));
+        yesButton = new SimpleButton(Primitives.ButtonTexture, "Yes", new Vector2(700, 550), new Vector2(200, 100));
+        noButton = new SimpleButton(Primitives.ButtonTexture, "No", new Vector2(1000, 550), new Vector2(200, 100));
 
         yesButton.OnClick = () =>
         {
@@ -60,7 +52,7 @@ public class ConfirmScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         const int messageWidth = 600;
         var wrappedMessage = WrapText(Primitives.Font, message, messageWidth);

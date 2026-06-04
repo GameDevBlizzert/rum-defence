@@ -7,13 +7,10 @@ namespace RumDefence;
 public class LevelButton : Button
 {
     private Level level;
-    private Texture2D buttonTexture;
 
     public LevelButton(Level level)
     {
-        var content = RumGame.Instance.Content;
         this.level = level;
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
     }
 
     public override void Update(GameTime gameTime)
@@ -33,11 +30,11 @@ public class LevelButton : Button
             bounds.Height - 8
         );
 
-        NineSlice.Draw(spriteBatch, buttonTexture, panel, new Rectangle(
+        NineSlice.Draw(spriteBatch, Primitives.ButtonTexture, panel, new Rectangle(
             0,
             0,
-            buttonTexture.Width,
-            buttonTexture.Height
+            Primitives.ButtonTexture.Width,
+            Primitives.ButtonTexture.Height
         ), 20, Color.White * 0.96f);
 
         int mapWidth = 340;

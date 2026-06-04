@@ -8,9 +8,6 @@ public class SettingsScreen : Screen
 {
     private Screen previous;
 
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
-
     private SimpleButton keyBindingsButton;
     private SimpleButton backButton;
 
@@ -29,19 +26,15 @@ public class SettingsScreen : Screen
 
     public override void Load()
     {
-        var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
 
         int centerX = PanelLeft + PanelWidth / 2;
 
-        keyBindingsButton = new SimpleButton(buttonTexture, "Key Bindings",
+        keyBindingsButton = new SimpleButton(Primitives.ButtonTexture, "Key Bindings",
             new Vector2(centerX - 200, PanelTop + 430),
             new Vector2(400, 70));
 
-        backButton = new SimpleButton(buttonTexture, "Back",
+        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
             new Vector2(centerX - 100, PanelTop + 520),
             new Vector2(200, 70));
 
@@ -112,7 +105,7 @@ public class SettingsScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         var title = "Settings";
         var titleSize = Primitives.Font.MeasureString(title);
