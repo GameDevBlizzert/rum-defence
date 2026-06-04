@@ -134,17 +134,17 @@ public class SettingsScreen : Screen
         var pct = $"{(int)(value * 100)}%";
         var pctSize = Primitives.Font.MeasureString(pct);
         spriteBatch.DrawString(Primitives.Font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Primitives.FontColor);
-
-        spriteBatch.Draw(Primitives.Pixel, track, new Color(170, 170, 170));
+        var gap = 30;
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y + gap, track.Width, track.Height), new Color(170, 170, 170));
 
         int filledWidth = (int)(track.Width * value);
         if (filledWidth > 0)
-            spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y, filledWidth, track.Height), new Color(70, 130, 200));
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y + gap, filledWidth, track.Height), new Color(70, 130, 200));
 
         int thumbSize = 28;
         int thumbX = track.X + filledWidth - thumbSize / 2;
         int thumbY = track.Y + track.Height / 2 - thumbSize / 2;
-        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX, thumbY, thumbSize, thumbSize), Color.White);
-        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX + 3, thumbY + 3, thumbSize - 6, thumbSize - 6), new Color(40, 100, 180));
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX, thumbY + gap, thumbSize, thumbSize), Color.White);
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX + 3, thumbY + 3 + gap, thumbSize - 6, thumbSize - 6), new Color(40, 100, 180));
     }
 }
