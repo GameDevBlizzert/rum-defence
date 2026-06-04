@@ -199,8 +199,8 @@ public class LoadingSplashScreen : Screen
         spriteBatch.DrawString(
             Primitives.Font,
             label,
-            new Vector2(width / 2f - labelSize.X / 2f, barBounds.Y - 44),
-            Color.White
+            new Vector2(width / 2f - labelSize.X / 2f, barBounds.Y - 74),
+            Primitives.FontLightColor
         );
     }
 
