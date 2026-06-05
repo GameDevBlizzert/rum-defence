@@ -4,13 +4,12 @@ using System.Collections.Generic;
 
 namespace RumDefence.UI.Box;
 
+// Align the contents
 public enum Align { Start, Center, Between, End }
 public enum Direction { Row, Column }
 
 public interface IBox : IBoxItem
 {
-    Align AlignX { get; set; }
-    Align AlignY { get; set; }
     int Columns { get; set; }
     int Rows { get; set; }
     int Gap { get; set; }

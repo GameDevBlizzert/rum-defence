@@ -10,7 +10,7 @@ public class Box : IBox
     public Align AlignY { get; set; } = Align.Start;
     public int Columns { get; set; } = 1;
     public int Rows { get; set; } = 1;
-    public int Span { get; set; } = 1;
+    public int Span { get; set; } = 12;
     public Color Color { get; set; } = Color.White;
     public int Gap { get; set; } = 8;
     public int Padding { get; set; } = 16;
@@ -30,14 +30,27 @@ public class Box : IBox
     public virtual Vector2 Measure()
     {
         Vector2 size = Vector2.Zero;
-        // Vector2 childSize;
+        Vector2 childSize;
         foreach (var child in Children)
         {
-            size += child.Measure();
+            childSize = GetChildSize(child);
+            size += childSize;
         }
         size.Y += (Children.Count - 1) * Gap;
         size.X += (Children.Count - 1) * Gap;
         return size;
+    }
+
+    private Vector2 GetChildSize(IBoxItem child)
+    {
+        int spanX;
+        Vector2 childSize = child.Measure();
+        if (Span > 0)
+        {
+            spanX = Width / Span * child.Span;
+            childSize.X = MathHelper.Max(spanX, childSize.X);
+        }
+        return childSize;
     }
 
     // sets Rectangles (location and size) for all children
@@ -70,8 +83,7 @@ public class Box : IBox
         for (int i = 0; i < Children.Count; i++)
         {
             child = Children[i];
-            childSize = child.Measure();
-
+            childSize = GetChildSize(child);
             // if (DirectionItems == Direction.Row)
             // {
             // y += i * Gap;
@@ -98,7 +110,6 @@ public class Box : IBox
     {
         Slot = new Rectangle((int)offset.X, (int)offset.Y, Width, Height);
     }
-
     public virtual void Update(GameTime gameTime)
     {
         Arrange(Slot);

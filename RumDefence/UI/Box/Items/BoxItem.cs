@@ -5,6 +5,8 @@ namespace RumDefence.UI.Box;
 
 public interface IBoxItem
 {
+    Align AlignX { get; set; }
+    Align AlignY { get; set; }
     int Span { get; set; }
     Rectangle Slot { get; set; }
     Vector2 Measure();
@@ -15,9 +17,12 @@ public interface IBoxItem
 
 public abstract class BoxItem : IBoxItem
 {
+    public Align AlignX { get; set; } = Align.Center;
+    public Align AlignY { get; set; } = Align.Center;
     public int Span { get; set; } = 1;
     public Color Color { get; set; } = Color.White;
     public Rectangle Slot { get; set; }
+    // Measure the contents
     public virtual Vector2 Measure()
     {
         return Vector2.Zero;

@@ -6,13 +6,11 @@ namespace RumDefence.UI.Box;
 
 public class TextItem : BoxItem
 {
-    public string Text { get; set; }
-    public float Scale { get; set; }
-    public TextItem(string text, float scale = 1f, Color? color = null)
+    public string Text { get; set; } = "";
+    public float Scale { get; set; } = 1f;
+    public TextItem()
     {
-        Text = text;
-        Scale = scale;
-        Color = color ?? Primitives.FontColor;
+        Color = Primitives.FontColor;
     }
     public override Vector2 Measure()
     {

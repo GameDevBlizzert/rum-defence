@@ -66,8 +66,8 @@ namespace RumDefence
                 Height = VirtualHeight
             };
             // testbox.AddBackground(new ImageItem(Primitives.PanelTexture, new Vector2(testbox.Width, testbox.Height)));
-            testbox.Add(new TextItem("hello"));
-            testbox.Add(new TextItem("hello21"));
+            testbox.Add(new TextItem() { Text = "hello" });
+            testbox.Add(new TextItem() { Text = "hooiii", Span = 2 });
             // testbox.Arrange(new(0, 0, 100, 100));
             testbox.PlaceAt(Vector2.Zero);
 
