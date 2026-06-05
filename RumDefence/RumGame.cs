@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using RumDefence.UI.Box;
 
 namespace RumDefence
 {
@@ -47,14 +48,28 @@ namespace RumDefence
             float scaleY = (float)GraphicsDevice.Viewport.Height / VirtualHeight;
             scaleMatrix = Matrix.CreateScale(scaleX, scaleY, 1f);
         }
-
+        // wip
+        private Box testbox;
         protected override void Initialize()
         {
             SaveManager.Load();
 
             _screenManager = new ScreenManager();
 
+
             base.Initialize();
+            // wip
+            testbox = new Box()
+            {
+                AlignX = Align.Center,
+                Width = VirtualWidth,
+                Height = VirtualHeight
+            };
+            // testbox.AddBackground(new ImageItem(Primitives.PanelTexture, new Vector2(testbox.Width, testbox.Height)));
+            testbox.Add(new TextItem("hello"));
+            testbox.Add(new TextItem("hello21"));
+            // testbox.Arrange(new(0, 0, 100, 100));
+            testbox.PlaceAt(Vector2.Zero);
 
             UpdateScaleMatrix();
             SaveManager.Load();
@@ -75,6 +90,10 @@ namespace RumDefence
 
         protected override void Update(GameTime gameTime)
         {
+
+            // wip
+            testbox.Update(gameTime);
+            return;
             // Used for disabling behavior while using the debugger
             bool pauseOnBlurDisabled = bool.Parse(
                 System.Environment.GetEnvironmentVariable("DISABLE_PAUSE_ON_BLUR") ?? "false"
@@ -118,8 +137,13 @@ namespace RumDefence
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(new Color(30, 144, 255));
+            _spriteBatch.Begin(transformMatrix: scaleMatrix);
 
-            _screenManager.Draw(_spriteBatch, scaleMatrix);
+            // wip
+            testbox.Draw(_spriteBatch);
+
+            _spriteBatch.End();
+            // _screenManager.Draw(_spriteBatch, scaleMatrix);
             base.Draw(gameTime);
         }
     }

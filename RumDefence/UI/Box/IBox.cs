@@ -9,11 +9,13 @@ public enum Direction { Row, Column }
 
 public interface IBox : IBoxItem
 {
-    Align AlignItems { get; set; }
-    Direction DirectionItems { get; set; }
+    Align AlignX { get; set; }
+    Align AlignY { get; set; }
+    int Columns { get; set; }
+    int Rows { get; set; }
     int Gap { get; set; }
     int Padding { get; set; }
-    int MaxWidth { get; set; }
-    int MaxHeight { get; set; }
+    int Width { get; set; }
+    int Height { get; set; }
 
 }
