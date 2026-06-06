@@ -66,7 +66,7 @@ namespace RumDefence
             testbox = new Box()
             {
                 // SpanCol = 2,
-                // Direction = Direction.Row
+                Direction = Direction.Row
                 // AlignX = Align.Center,
                 // Width = 800,
                 // Height = 500
@@ -77,8 +77,8 @@ namespace RumDefence
             // testbox.Add(box2);
             testbox.Add(new TextItem() { Text = "hooiii" });
             testbox.Add(new TextItem() { Text = "hooiii222efffg" });
-            // testbox.Arrange(new(0, 0, 100, 100));
-            testbox.PlaceAt(0, 0);
+            testbox.Add(new PixelBox(Color.AntiqueWhite, 300, 100));
+            testbox.AddBackground(new PixelBox(Color.Beige));
             testbox.PlaceAt(0, 0, VirtualWidth, VirtualHeight);
 
             UpdateScaleMatrix();

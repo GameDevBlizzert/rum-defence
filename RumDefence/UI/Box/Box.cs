@@ -103,6 +103,14 @@ public class Box : IBox
             else
                 child.Deactivate();
         }
+        if (Background != null)
+        {
+            Background.Arrange(rect);
+            if (IsActive)
+                Background.Activate();
+            else
+                Background.Deactivate();
+        }
     }
     public void PlaceAt(int x = 0, int y = 0, int width = 0, int height = 0)
     {
@@ -117,6 +125,7 @@ public class Box : IBox
     public override void Update(GameTime gameTime)
     {
         Arrange(Slot);
+        Background?.Update(gameTime);
         foreach (var child in Children)
             child.Update(gameTime);
     }
@@ -124,12 +133,8 @@ public class Box : IBox
     public override void DrawBox(SpriteBatch spriteBatch)
     {
         // wip
-        spriteBatch.Draw(Primitives.Pixel, Slot, Color.GreenYellow);
-        if (Background != null)
-        {
-            Background.Draw(spriteBatch);
-            // NineSlice.Draw(spriteBatch, Primitives.PanelTexture, arrangedRect, new Rectangle(0, 0, 128, 128), 20, PanelTint);
-        }
+        Background?.Draw(spriteBatch);
+        // NineSlice.Draw(spriteBatch, Primitives.PanelTexture, arrangedRect, new Rectangle(0, 0, 128, 128), 20, PanelTint);
 
         foreach (var child in Children)
             child.Draw(spriteBatch);
