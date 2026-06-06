@@ -59,21 +59,26 @@ namespace RumDefence
 
             base.Initialize();
             // wip
+            var box2 = new Box()
+            {
+            };
             testbox = new Box()
             {
                 // SpanCol = 2,
-                AlignX = Align.Center,
-                Width = VirtualWidth,
-                Height = VirtualHeight
+                Direction = Direction.Row
+                // AlignX = Align.Center,
+                // Width = 800,
+                // Height = 500
             };
             // testbox.AddBackground(new ImageItem(Primitives.PanelTexture, new Vector2(testbox.Width, testbox.Height)));
-            testbox.Add(new TextItem() { Text = "helloooooooooooooooooooooo" });
+            // box2.Add(new TextItem() { Text = "helloooooooooooooooooooooo" });
+            // box2.Add(new TextItem() { Text = "hooiii" });
+            // testbox.Add(box2);
             testbox.Add(new TextItem() { Text = "hooiii" });
-            // testbox.Add(new TextItem() { Text = "hooiii", SpanRow = 2 });
-            // testbox.Add(new TextItem() { Text = "hooiii", SpanCol = 2 });
-            // testbox.Add(new TextItem() { Text = "hooiii", SpanCol = 2 });
+            testbox.Add(new TextItem() { Text = "hooiii222efffg" });
             // testbox.Arrange(new(0, 0, 100, 100));
-            testbox.PlaceAt(Vector2.Zero);
+            // testbox.PlaceAt(0, 0);
+            // testbox.PlaceAt(0, 0, VirtualWidth);
 
             UpdateScaleMatrix();
             SaveManager.Load();

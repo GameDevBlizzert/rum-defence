@@ -4,7 +4,7 @@ using System;
 
 namespace RumDefence.UI.Box;
 
-public class TextItem : BoxItem
+public class TextItem : IBoxItem
 {
     public string Text { get; set; } = "";
     public float Scale { get; set; } = 1f;
