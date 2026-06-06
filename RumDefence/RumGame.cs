@@ -61,13 +61,17 @@ namespace RumDefence
             // wip
             testbox = new Box()
             {
+                // SpanCol = 2,
                 AlignX = Align.Center,
                 Width = VirtualWidth,
                 Height = VirtualHeight
             };
             // testbox.AddBackground(new ImageItem(Primitives.PanelTexture, new Vector2(testbox.Width, testbox.Height)));
-            testbox.Add(new TextItem() { Text = "hello" });
-            testbox.Add(new TextItem() { Text = "hooiii", Span = 2 });
+            testbox.Add(new TextItem() { Text = "helloooooooooooooooooooooo" });
+            testbox.Add(new TextItem() { Text = "hooiii" });
+            // testbox.Add(new TextItem() { Text = "hooiii", SpanRow = 2 });
+            // testbox.Add(new TextItem() { Text = "hooiii", SpanCol = 2 });
+            // testbox.Add(new TextItem() { Text = "hooiii", SpanCol = 2 });
             // testbox.Arrange(new(0, 0, 100, 100));
             testbox.PlaceAt(Vector2.Zero);
 

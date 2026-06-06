@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,9 +9,10 @@ public class Box : IBox
 {
     public Align AlignX { get; set; } = Align.Start;
     public Align AlignY { get; set; } = Align.Start;
-    public int Columns { get; set; } = 1;
-    public int Rows { get; set; } = 1;
-    public int Span { get; set; } = 12;
+    public int Columns { get; set; } = 12;
+    public int Rows { get; set; } = 12;
+    public int SpanCol { get; set; } = 1;
+    public int SpanRow { get; set; } = 1;
     public Color Color { get; set; } = Color.White;
     public int Gap { get; set; } = 8;
     public int Padding { get; set; } = 16;
@@ -40,24 +42,41 @@ public class Box : IBox
         size.X += (Children.Count - 1) * Gap;
         return size;
     }
+    public virtual Vector2 MeasureChildren()
+    {
+        Vector2 size = Vector2.Zero;
+        foreach (var child in Children)
+        {
+            size += child.Measure() + new Vector2(Gap);
+        }
+        return size;
+    }
 
     private Vector2 GetChildSize(IBoxItem child)
     {
-        int spanX;
         Vector2 childSize = child.Measure();
-        if (Span > 0)
+        if (SpanCol > 0)
         {
-            spanX = Width / Span * child.Span;
-            childSize.X = MathHelper.Max(spanX, childSize.X);
+            childSize.X = MathHelper.Max(Width / SpanCol * child.SpanCol, childSize.X);
+            childSize.Y = MathHelper.Max(Height / SpanRow * child.SpanRow, childSize.Y);
         }
         return childSize;
+    }
+    private int RowLength { get => Height / Rows; }
+    private int ColumnLength { get => Width / Columns; }
+    private Vector2 GetSpan(IBoxItem child)
+    {
+        var childSize = child.Measure();
+        int SpanX = ((int)childSize.X + ColumnLength - 1) / ColumnLength;
+        int SpanY = ((int)childSize.Y + RowLength - 1) / RowLength;
+        return new(SpanX, SpanY);
     }
 
     // sets Rectangles (location and size) for all children
     public virtual void Arrange(Rectangle rect)
     {
         IBoxItem child;
-        Vector2 childSize;
+        Vector2 childSpan;
         Rectangle childRect;
 
         // think of a grid with col as x-axis and row as y-axis
@@ -67,7 +86,7 @@ public class Box : IBox
         col = rect.X + Padding;
         row = rect.Y + Padding;
 
-        var childrenMeasured = Measure();
+        var childrenMeasured = MeasureChildren();
         // Align of content items (assuming from (0,0) Point):
         // Align.Start the first item is top left
         // Align.Center to center the contents
@@ -83,23 +102,21 @@ public class Box : IBox
         for (int i = 0; i < Children.Count; i++)
         {
             child = Children[i];
-            childSize = GetChildSize(child);
-            // if (DirectionItems == Direction.Row)
-            // {
-            // y += i * Gap;
-            // }
-            // else if (DirectionItems == Direction.Column)
-            // {
-            // }
+            // childSize = GetChildSize(child);
+            // childSize = child.Measure();
+            childSpan = GetSpan(child);
+            child.SpanRow = (int)childSpan.X;
+            child.SpanCol = (int)childSpan.Y;
 
             // add gaps between children
-            col += i * Gap;
+            col += Gap;
+            row += Gap;
             // apply location and size to children
-            childRect = new Rectangle(col, row, (int)childSize.X, (int)childSize.Y);
+            childRect = new Rectangle(col, row, child.SpanRow * RowLength, child.SpanCol * ColumnLength);
             child.Arrange(childRect);
 
-            col += (int)childSize.X;
-
+            col += childRect.Width;
+            row += childRect.Height;
         }
     }
     public void PlaceAt(int x, int y)
