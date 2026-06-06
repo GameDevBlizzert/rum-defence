@@ -4,7 +4,7 @@ using System;
 
 namespace RumDefence.UI.Box;
 
-public class TextItem : IBoxItem
+public class TextItem : IBox
 {
     public string Text { get; set; } = "";
     public float Scale { get; set; } = 1f;
@@ -17,7 +17,7 @@ public class TextItem : IBoxItem
         var s = Primitives.Font.MeasureString(Text);
         return new Vector2(s.X * Scale, s.Y * Scale);
     }
-    public override void Draw(SpriteBatch spriteBatch)
+    public override void DrawBox(SpriteBatch spriteBatch)
     {
         // wip
         spriteBatch.Draw(Primitives.Pixel, Slot, Color.Red);

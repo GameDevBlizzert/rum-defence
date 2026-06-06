@@ -8,11 +8,7 @@ namespace RumDefence.UI.Box;
 public enum Direction { Row, Column }
 public class Box : IBox
 {
-    public Align AlignX { get; set; } = Align.Center;
-    public Align AlignY { get; set; } = Align.Center;
-    public Color Color { get; set; } = Color.White;
     public Direction Direction { get; set; } = Direction.Column;
-    public Rectangle Slot { get; set; } = new();
     public int Gap { get; set; } = 8;
     public int Padding { get; set; } = 16;
     protected readonly List<IBox> Children = [];
@@ -25,7 +21,7 @@ public class Box : IBox
     {
         Background = item;
     }
-    public virtual Vector2 Measure()
+    public override Vector2 Measure()
     {
         Vector2 size = Vector2.Zero;
         Vector2 childSize;
@@ -53,7 +49,7 @@ public class Box : IBox
         return size;
     }
     // sets Rectangles (location and size) for all children
-    public virtual void Arrange(Rectangle rect)
+    public override void Arrange(Rectangle rect)
     {
         IBox child;
         Vector2 childSize;
@@ -102,9 +98,13 @@ public class Box : IBox
                 y += GapBetween;
                 y += (int)childSize.Y;
             }
+            if (IsActive)
+                child.Activate();
+            else
+                child.Deactivate();
         }
     }
-    public void PlaceAt(int x, int y, int width = 0, int height = 0)
+    public void PlaceAt(int x = 0, int y = 0, int width = 0, int height = 0)
     {
         var childrenMeasured = Measure();
         if (width == 0)
@@ -112,15 +112,16 @@ public class Box : IBox
         if (height == 0)
             height = (int)childrenMeasured.Y;
         Slot = new(x, y, width + 2 * Padding, height + 2 * Padding);
+        Activate();
     }
-    public virtual void Update(GameTime gameTime)
+    public override void Update(GameTime gameTime)
     {
         Arrange(Slot);
         foreach (var child in Children)
             child.Update(gameTime);
     }
 
-    public virtual void Draw(SpriteBatch spriteBatch)
+    public override void DrawBox(SpriteBatch spriteBatch)
     {
         // wip
         spriteBatch.Draw(Primitives.Pixel, Slot, Color.GreenYellow);

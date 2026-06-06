@@ -6,23 +6,14 @@ namespace RumDefence.UI.Box;
 
 // Align the contents
 public enum Align { Start, Center, Between, End }
-public interface IBox
-{
-    Align AlignX { get; set; }
-    Align AlignY { get; set; }
-    Rectangle Slot { get; set; }
-    // Measure the contents
-    Vector2 Measure();
-    void Update(GameTime gameTime);
-    void Arrange(Rectangle rect);
-    void Draw(SpriteBatch spriteBatch);
-}
-public abstract class IBoxItem : IBox
+public abstract class IBox
 {
     public Align AlignX { get; set; } = Align.Center;
     public Align AlignY { get; set; } = Align.Center;
     public Color Color { get; set; } = Color.White;
     public Rectangle Slot { get; set; }
+    private bool isActive = false;
+    protected bool IsActive { get => isActive; }
     public virtual Vector2 Measure()
     {
         return Vector2.Zero;
@@ -31,6 +22,19 @@ public abstract class IBoxItem : IBox
     {
         Slot = rect;
     }
+    public void Activate()
+    {
+        isActive = true;
+    }
+    public void Deactivate()
+    {
+        isActive = false;
+    }
     public virtual void Update(GameTime gameTime) { }
-    public virtual void Draw(SpriteBatch spriteBatch) { }
+    public virtual void DrawBox(SpriteBatch spriteBatch) { }
+    public void Draw(SpriteBatch spriteBatch)
+    {
+        if (!IsActive) return;
+        DrawBox(spriteBatch);
+    }
 }
