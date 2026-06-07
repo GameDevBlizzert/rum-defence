@@ -3,6 +3,16 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace RumDefence;
 
+public enum Depth
+{
+    Map,
+    Obstacles,
+    Decorations,
+    Troop,
+    Towers,
+    VisualEffects,
+    UI,
+}
 public static class Primitives
 {
     private static Texture2D _pixel;
