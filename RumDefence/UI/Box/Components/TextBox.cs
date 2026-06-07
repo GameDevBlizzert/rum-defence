@@ -12,6 +12,15 @@ public class TextItem : IBox
     {
         Color = Primitives.FontColor;
     }
+    public TextItem(string text, float scale = 1f, Color? color = null)
+    {
+        if (color != null)
+            Color = (Color)color;
+        else
+            Color = Primitives.FontColor;
+        Text = text;
+        Scale = scale;
+    }
     public override Vector2 Measure()
     {
         var s = Primitives.Font.MeasureString(Text);
@@ -19,8 +28,6 @@ public class TextItem : IBox
     }
     public override void DrawBox(SpriteBatch spriteBatch)
     {
-        // wip
-        spriteBatch.Draw(Primitives.Pixel, Slot, Color.Red);
         spriteBatch.DrawString(
             Primitives.Font,
             Text,
