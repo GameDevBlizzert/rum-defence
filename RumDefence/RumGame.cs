@@ -50,7 +50,7 @@ namespace RumDefence
             scaleMatrix = Matrix.CreateScale(scaleX, scaleY, 1f);
         }
         // wip
-        private Box testbox;
+        // private Box testbox;
         protected override void Initialize()
         {
             SaveManager.Load();
@@ -60,33 +60,33 @@ namespace RumDefence
 
             base.Initialize();
             // wip
-            var box2 = new Box() { Padding = 0, AlignX = Align.End, Direction = Direction.Column };
-            box2.Add(new TextItem() { Text = "helloooooooooooooooooooooo" });
-            box2.Add(new TextItem() { Text = "hooiii" });
+            // var box2 = new Box() { Padding = 0, AlignX = Align.End, Direction = Direction.Column };
+            // box2.Add(new TextItem() { Text = "helloooooooooooooooooooooo" });
+            // box2.Add(new TextItem() { Text = "hooiii" });
             // box2.Add(new ImageBox(Primitives.PanelTexture, 128 * 3, 128 * 3));
-            testbox = new Box()
-            {
-                // SpanCol = 2,
-                AlignY = Align.Start,
-                AlignX = Align.Start,
-                // Direction = Direction.Row
-                // AlignX = Align.Center,
-                // Width = 800,
-                // Height = 500
-            };
+            // testbox = new Box()
+            // {
+            //     // SpanCol = 2,
+            //     AlignY = Align.Start,
+            //     AlignX = Align.Start,
+            //     // Direction = Direction.Row
+            //     // AlignX = Align.Center,
+            //     // Width = 800,
+            //     // Height = 500
+            // };
             // testbox.AddBackground(new ImageItem(Primitives.PanelTexture, new Vector2(testbox.Width, testbox.Height)));
 
             // testbox.Add(box2);
-            testbox.Add(new ImageBox(Primitives.PanelTexture, 40, 64 * 2));
-            testbox.Add(new ImageBox(Primitives.PanelTexture, 40 * 16, 64 * 8));
+            // testbox.Add(new ImageBox(Primitives.PanelTexture, 40, 64 * 2));
+            // testbox.Add(new ImageBox(Primitives.PanelTexture, 40 * 16, 64 * 8));
             // testbox.Add(new ImageBox(Primitives.PanelTexture, 64 * 2, 64));
             // testbox.Add(new ImageBox(Primitives.ButtonTexture, 64 * 2, 64));
             // testbox.Add(new TextItem() { Text = "hooiii" });
             // testbox.Add(new TextItem() { Text = "hooiii222efffg" });
             // testbox.Add(new PixelBox(Color.AntiqueWhite, 300, 100));
             // testbox.Add(box2);
-            testbox.AddBackground(new PixelBox(Color.Beige));
-            testbox.PlaceAt(0, 0, VirtualWidth, VirtualHeight);
+            // testbox.AddBackground(new PixelBox(Color.Beige));
+            // testbox.PlaceAt(0, 0, VirtualWidth, VirtualHeight);
 
             UpdateScaleMatrix();
             SaveManager.Load();
@@ -109,8 +109,8 @@ namespace RumDefence
         {
 
             // wip
-            testbox.Update(gameTime);
-            return;
+            // testbox.Update(gameTime);
+            // return;
             // Used for disabling behavior while using the debugger
             bool pauseOnBlurDisabled = bool.Parse(
                 System.Environment.GetEnvironmentVariable("DISABLE_PAUSE_ON_BLUR") ?? "false"
@@ -157,10 +157,10 @@ namespace RumDefence
             _spriteBatch.Begin(transformMatrix: scaleMatrix);
 
             // wip
-            testbox.Draw(_spriteBatch);
+            // testbox.Draw(_spriteBatch);
 
             _spriteBatch.End();
-            // _screenManager.Draw(_spriteBatch, scaleMatrix);
+            _screenManager.Draw(_spriteBatch, scaleMatrix);
             base.Draw(gameTime);
         }
     }
