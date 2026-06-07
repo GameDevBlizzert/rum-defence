@@ -60,16 +60,16 @@ namespace RumDefence
 
             base.Initialize();
             // wip
-            var box2 = new Box() { Padding = 0, AlignX = Align.End, Direction = Direction.Row };
+            var box2 = new Box() { Padding = 0, AlignX = Align.End, Direction = Direction.Column };
             box2.Add(new TextItem() { Text = "helloooooooooooooooooooooo" });
             box2.Add(new TextItem() { Text = "hooiii" });
-            box2.Add(new ImageBox(Primitives.PanelTexture, 400, 200));
+            // box2.Add(new ImageBox(Primitives.PanelTexture, 128 * 3, 128 * 3));
             testbox = new Box()
             {
                 // SpanCol = 2,
-                AlignY = Align.End,
-                // AlignX = Align.Center,
-                // Direction = Direction.Row
+                AlignY = Align.Start,
+                AlignX = Align.Start,
+                Direction = Direction.Row
                 // AlignX = Align.Center,
                 // Width = 800,
                 // Height = 500
@@ -77,6 +77,7 @@ namespace RumDefence
             // testbox.AddBackground(new ImageItem(Primitives.PanelTexture, new Vector2(testbox.Width, testbox.Height)));
 
             // testbox.Add(box2);
+            testbox.Add(new ImageBox(Primitives.PanelTexture, 64 * 16, 64 * 12));
             testbox.Add(new TextItem() { Text = "hooiii" });
             testbox.Add(new TextItem() { Text = "hooiii222efffg" });
             testbox.Add(new PixelBox(Color.AntiqueWhite, 300, 100));
