@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,17 +8,12 @@ public enum Direction { Row, Column }
 public class Box : IBox
 {
     public Direction Direction { get; set; } = Direction.Column;
-    public int Gap { get; set; } = 8;
-    public int Padding { get; set; } = 16;
+    public int Gap { get; set; } = 2;
+    public int Padding { get; set; } = 4;
     protected readonly List<IBox> Children = [];
-    protected IBox Background;
     public void Add(IBox item)
     {
         Children.Add(item);
-    }
-    public void AddBackground(IBox item)
-    {
-        Background = item;
     }
     public override Vector2 Measure()
     {
@@ -65,6 +59,7 @@ public class Box : IBox
         x += Padding;
         y += Padding;
 
+        // Align content between box and children
         if (AlignX == Align.Center)
             x += (Width - (int)childrenMeasured.X) / 2;
         else if (AlignX == Align.End)
@@ -86,6 +81,7 @@ public class Box : IBox
             childY = y;
             child = Children[^i];
             childSize = child.Measure();
+            // Align Content and Direction between children and child 
             if (Direction == Direction.Row)
                 if (AlignX == Align.Center)
                     childX += ((int)childrenMeasured.X - (int)childSize.X) / 2;
@@ -97,8 +93,11 @@ public class Box : IBox
                     childY += ((int)childrenMeasured.Y - (int)childSize.Y) / 2;
                 else if (AlignY == Align.End)
                     childY += (int)childrenMeasured.Y - (int)childSize.Y;
+
             childRect = new Rectangle(childX, childY, (int)childSize.X, (int)childSize.Y);
             child.Arrange(childRect);
+
+            // Direction stacking of Gap and child
             if (Direction == Direction.Column)
             {
                 x += GetGap(i);
@@ -114,34 +113,23 @@ public class Box : IBox
             else
                 child.Deactivate();
         }
-        if (Background != null)
-        {
-            Background.Arrange(rect);
-            if (IsActive)
-                Background.Activate();
-            else
-                Background.Deactivate();
-        }
-        Slot = rect;
+        base.Arrange(rect);
     }
-    public void PlaceAt(int x = 0, int y = 0, int width = 0, int height = 0)
+    public virtual void PlaceAt(int x = 0, int y = 0, int width = 0, int height = 0)
     {
         Arrange(new(x, y, width, height));
         Activate();
     }
-    public override void Update(GameTime gameTime)
+    public override void UpdateBox(GameTime gameTime)
     {
         Arrange(Slot);
-        Background?.Update(gameTime);
         foreach (var child in Children)
             child.Update(gameTime);
     }
     public override void DrawBox(SpriteBatch spriteBatch)
     {
         // wip
-        Background?.Draw(spriteBatch);
         // NineSlice.Draw(spriteBatch, Primitives.PanelTexture, arrangedRect, new Rectangle(0, 0, 128, 128), 20, PanelTint);
-
         foreach (var child in Children)
             child.Draw(spriteBatch);
     }
