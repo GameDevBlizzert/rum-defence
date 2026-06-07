@@ -69,7 +69,7 @@ namespace RumDefence
                 // SpanCol = 2,
                 AlignY = Align.Start,
                 AlignX = Align.Start,
-                Direction = Direction.Row
+                // Direction = Direction.Row
                 // AlignX = Align.Center,
                 // Width = 800,
                 // Height = 500
@@ -78,10 +78,12 @@ namespace RumDefence
 
             // testbox.Add(box2);
             testbox.Add(new ImageBox(Primitives.PanelTexture, 64 * 16, 64 * 12));
-            testbox.Add(new TextItem() { Text = "hooiii" });
-            testbox.Add(new TextItem() { Text = "hooiii222efffg" });
-            testbox.Add(new PixelBox(Color.AntiqueWhite, 300, 100));
-            testbox.Add(box2);
+            testbox.Add(new ImageBox(Primitives.PanelTexture, 64 * 2, 64));
+            testbox.Add(new ImageBox(Primitives.ButtonTexture, 64 * 2, 64));
+            // testbox.Add(new TextItem() { Text = "hooiii" });
+            // testbox.Add(new TextItem() { Text = "hooiii222efffg" });
+            // testbox.Add(new PixelBox(Color.AntiqueWhite, 300, 100));
+            // testbox.Add(box2);
             testbox.AddBackground(new PixelBox(Color.Beige));
             testbox.PlaceAt(0, 0, VirtualWidth, VirtualHeight);
 
