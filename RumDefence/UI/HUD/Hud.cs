@@ -53,13 +53,6 @@ public class Hud
         buildMenu.Update(gameTime);
         coinManager.Update(gameTime);
 
-        if (upgradeMenu.SelectedTower == null)
-        {
-            upgradeMenu.PreviewData = buildManager.GetMode() == BuildMode.Tower
-                ? buildManager.SelectedTowerData
-                : null;
-        }
-
         upgradeMenu.Update(gameTime);
         wallRepairMenu.Update(gameTime);
     }
@@ -67,8 +60,6 @@ public class Hud
     public void SetSelectedTower(BaseTower tower)
     {
         upgradeMenu.SelectedTower = tower;
-        if (tower != null)
-            upgradeMenu.PreviewData = null;
     }
 
     public void SetSelectedWall(Wall wall)
@@ -90,7 +81,7 @@ public class Hud
 
     public bool IsMouseOverUpgradeMenu(Vector2 mousePos)
     {
-        bool upgradeVisible = (upgradeMenu.SelectedTower != null || upgradeMenu.PreviewData != null) && upgradeMenu.IsMouseOver(mousePos);
+        bool upgradeVisible = upgradeMenu.SelectedTower != null && upgradeMenu.IsMouseOver(mousePos);
         bool repairVisible = wallRepairMenu.SelectedWall != null && wallRepairMenu.IsMouseOver(mousePos);
         return upgradeVisible || repairVisible;
     }

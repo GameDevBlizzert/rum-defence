@@ -1,6 +1,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using RumDefence.UI.Box;
+using RumDefence.UI.Box.Components;
 
 namespace RumDefence;
 
@@ -8,7 +10,8 @@ public class KeyBindingsScreen : Screen
 {
     private readonly Screen previous;
 
-    private SimpleButton backButton;
+    private ButtonBox backButton;
+    private Box panel;
     private Rectangle panelRect;
     private MouseState prevMouse;
 
@@ -42,10 +45,13 @@ public class KeyBindingsScreen : Screen
     {
         panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
 
+        panel = new Box();
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Arrange(panelRect);
+
         int backX = PanelLeft + (PanelWidth - 200) / 2;
-        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
-            new Vector2(backX, PanelTop + PanelHeight - 110),
-            new Vector2(200, 70));
+        backButton = new ButtonBox(Primitives.ButtonTexture, "Back");
+        backButton.Arrange(new Rectangle(backX, PanelTop + PanelHeight - 110, 200, 70));
 
         backButton.OnClick = () =>
         {
@@ -122,7 +128,7 @@ public class KeyBindingsScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        panel.Draw(spriteBatch);
 
         var title = "Key Bindings";
         var titleSize = Primitives.Font.MeasureString(title);

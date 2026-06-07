@@ -5,15 +5,16 @@ using RumDefence.Gameplay.Levels.Dev;
 using RumDefence.Gameplay.Levels.Ghost;
 using RumDefence.Levels.Ghost;
 using RumDefence.Levels.Grass;
+using RumDefence.UI.Box.Components;
 
 namespace RumDefence;
 
 public class ThemeSelectScreen : Screen
 {
-    private SimpleButton grassButton;
-    private SimpleButton stoneButton;
-    private SimpleButton devButton;
-    private SimpleButton backButton;
+    private ButtonBox grassButton;
+    private ButtonBox stoneButton;
+    private ButtonBox devButton;
+    private ButtonBox backButton;
 
     private float elapsedSeconds;
 
@@ -21,22 +22,22 @@ public class ThemeSelectScreen : Screen
 
     public override void Load()
     {
-        grassButton = new SimpleButton(Primitives.ButtonTexture, "Grass",
-            new Vector2(800, 400), new Vector2(300, 100));
+        grassButton = new ButtonBox(Primitives.ButtonTexture, "Grass");
+        grassButton.Arrange(new Rectangle(800, 400, 300, 100));
 
-        stoneButton = new SimpleButton(Primitives.ButtonTexture, "Stone",
-            new Vector2(800, 550), new Vector2(300, 100));
+        stoneButton = new ButtonBox(Primitives.ButtonTexture, "Stone");
+        stoneButton.Arrange(new Rectangle(800, 550, 300, 100));
 
-        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
-            new Vector2(20, 20), new Vector2(200, 80));
+        backButton = new ButtonBox(Primitives.ButtonTexture, "Back");
+        backButton.Arrange(new Rectangle(20, 20, 200, 80));
 
 
         bool devMode = Environment.GetEnvironmentVariable("RUM_DEV") == "true";
 
         if (devMode)
         {
-            devButton = new SimpleButton(Primitives.ButtonTexture, "Dev",
-                new Vector2(800, 700), new Vector2(300, 100));
+            devButton = new ButtonBox(Primitives.ButtonTexture, "Dev");
+            devButton.Arrange(new Rectangle(800, 700, 300, 100));
             devButton.OnClick = () =>
             {
                 manager.SetScreen(new LevelSelectScreen(manager, DevLevels.All));

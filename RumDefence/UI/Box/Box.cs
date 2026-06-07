@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -12,11 +11,6 @@ public class Box : IBox
     public Direction Direction { get; set; } = Direction.Column;
     public int Gap { get; set; } = 2;
     public int Padding { get; set; } = 4;
-    protected readonly List<IBox> Children = [];
-    public void Add(IBox item)
-    {
-        Children.Add(item);
-    }
     public override Vector2 Measure()
     {
         Vector2 size = Vector2.Zero;
@@ -110,17 +104,12 @@ public class Box : IBox
                 y += GetGap(i);
                 y += (int)childSize.Y;
             }
-            if (IsActive)
-                child.Activate();
-            else
-                child.Deactivate();
         }
         base.Arrange(rect);
     }
     public virtual void PlaceAt(int x = 0, int y = 0, int width = 0, int height = 0)
     {
         Arrange(new(x, y, width, height));
-        Activate();
     }
     public override void UpdateBox(GameTime gameTime)
     {

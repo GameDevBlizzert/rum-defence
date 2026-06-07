@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -9,12 +10,15 @@ public abstract class IBox
 {
     public Color Color { get; set; } = Color.White;
     public Rectangle Slot { get; set; }
-    private bool isActive = false;
     protected IBox Background;
-    protected bool IsActive { get => isActive; }
+    protected readonly List<IBox> Children = [];
     public void AddBackground(IBox item)
     {
         Background = item;
+    }
+    public void Add(IBox item)
+    {
+        Children.Add(item);
     }
     public virtual Vector2 Measure()
     {
@@ -25,16 +29,6 @@ public abstract class IBox
         Slot = rect;
         Background?.Arrange(rect);
     }
-    public void Activate()
-    {
-        isActive = true;
-        Background?.Activate();
-    }
-    public void Deactivate()
-    {
-        isActive = false;
-        Background?.Deactivate();
-    }
     public virtual void UpdateBox(GameTime gameTime) { }
     public void Update(GameTime gameTime)
     {
@@ -44,7 +38,6 @@ public abstract class IBox
     public virtual void DrawBox(SpriteBatch spriteBatch) { }
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (!IsActive) return;
         Background?.Draw(spriteBatch);
         DrawBox(spriteBatch);
     }

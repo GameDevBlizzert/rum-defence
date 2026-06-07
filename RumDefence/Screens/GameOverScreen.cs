@@ -1,14 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
+using RumDefence.UI.Box.Components;
 using System.Collections.Generic;
 
 namespace RumDefence;
 
 public class GameOverScreen : Screen
 {
-    private SimpleButton retryButton;
-    private SimpleButton menuButton;
-    private SimpleButton nextLevelButton;
+    private ButtonBox retryButton;
+    private ButtonBox menuButton;
+    private ButtonBox nextLevelButton;
+
+    private Box panel;
 
     private Level level;
     private List<Level> levelSet;
@@ -42,11 +46,37 @@ public class GameOverScreen : Screen
 
     public override void Load()
     {
-        Vector2 buttonSize = new Vector2(360, 100);
+        var buttonSize = new Vector2(360, 100);
 
-        retryButton = new SimpleButton(Primitives.ButtonTexture, "Retry", Vector2.Zero, buttonSize);
-        menuButton = new SimpleButton(Primitives.ButtonTexture, "Menu", Vector2.Zero, buttonSize);
-        nextLevelButton = new SimpleButton(Primitives.ButtonTexture, "Next Level", Vector2.Zero, buttonSize);
+        retryButton = new ButtonBox(Primitives.ButtonTexture, "Retry", size: buttonSize);
+        menuButton = new ButtonBox(Primitives.ButtonTexture, "Menu", size: buttonSize);
+        nextLevelButton = new ButtonBox(Primitives.ButtonTexture, "Next Level", size: buttonSize);
+
+        int panelWidth = 700;
+        int panelHeight = 700;
+        var panelRect = new Rectangle(
+            screenWidth / 2 - panelWidth / 2,
+            screenHeight / 2 - panelHeight / 2,
+            panelWidth,
+            panelHeight
+        );
+
+        panel = new Box
+        {
+            Direction = Direction.Row,
+            AlignX = Align.Center,
+            AlignY = Align.End,
+            Gap = 20,
+            Padding = 60
+        };
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+
+        if (isWin)
+            panel.Add(nextLevelButton);
+        panel.Add(retryButton);
+        panel.Add(menuButton);
+
+        panel.Arrange(panelRect);
 
         if (isWin)
         {
@@ -95,63 +125,7 @@ public class GameOverScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
-        int panelWidth = 700;
-        int panelHeight = 700;
-
-        var panelRect = new Rectangle(
-            screenWidth / 2 - panelWidth / 2,
-            screenHeight / 2 - panelHeight / 2,
-            panelWidth,
-            panelHeight
-        );
-
-        Vector2 buttonSize = new Vector2(360, 100);
-        float centerX = panelRect.Center.X;
-
-        if (isWin)
-        {
-            nextLevelButton.SetBounds(new Rectangle(
-                (int)(centerX - buttonSize.X / 2),
-                panelRect.Y + 300,
-                (int)buttonSize.X,
-                (int)buttonSize.Y
-            ));
-
-            retryButton.SetBounds(new Rectangle(
-                (int)(centerX - buttonSize.X / 2),
-                panelRect.Y + 420,
-                (int)buttonSize.X,
-                (int)buttonSize.Y
-            ));
-
-            menuButton.SetBounds(new Rectangle(
-                (int)(centerX - buttonSize.X / 2),
-                panelRect.Y + 540,
-                (int)buttonSize.X,
-                (int)buttonSize.Y
-            ));
-
-            nextLevelButton.Update(gameTime);
-        }
-        else
-        {
-            retryButton.SetBounds(new Rectangle(
-                (int)(centerX - buttonSize.X / 2),
-                panelRect.Y + 320,
-                (int)buttonSize.X,
-                (int)buttonSize.Y
-            ));
-
-            menuButton.SetBounds(new Rectangle(
-                (int)(centerX - buttonSize.X / 2),
-                panelRect.Y + 440,
-                (int)buttonSize.X,
-                (int)buttonSize.Y
-            ));
-        }
-
-        retryButton.Update(gameTime);
-        menuButton.Update(gameTime);
+        panel.Update(gameTime);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -174,7 +148,7 @@ public class GameOverScreen : Screen
             panelHeight
         );
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        panel.Draw(spriteBatch);
 
         var title = isWin ? "YOU WIN!" : "GAME OVER";
         var titleSize = Primitives.Font.MeasureString(title);
@@ -188,12 +162,6 @@ public class GameOverScreen : Screen
 
         DrawCenteredText(spriteBatch, $"Waves: {wavesSurvived}", panelRect.Center.X, panelRect.Y + 140);
         DrawCenteredText(spriteBatch, $"Coins: {coins}", panelRect.Center.X, panelRect.Y + 190);
-
-        if (isWin)
-            nextLevelButton.Draw(spriteBatch);
-
-        retryButton.Draw(spriteBatch);
-        menuButton.Draw(spriteBatch);
     }
 
     private void DrawCenteredText(SpriteBatch spriteBatch, string text, float centerX, float y)

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
+using RumDefence.UI.Box.Components;
 using System;
 
 namespace RumDefence;
@@ -11,9 +13,10 @@ public class ConfirmScreen : Screen
     private Screen previous;
     private const int messageWidth = 600;
 
-    private SimpleButton yesButton;
-    private SimpleButton noButton;
+    private ButtonBox yesButton;
+    private ButtonBox noButton;
 
+    private Box panel;
     private Rectangle panelRect;
 
     public ConfirmScreen(ScreenManager manager, Screen previous, string message, Action onConfirm) : base(manager)
@@ -37,8 +40,14 @@ public class ConfirmScreen : Screen
         var buttonY = panelY + padding + messageHeight + padding;
         var yesX = panelX + panelWidth / 2 - (int)buttonSize.X - padding / 2;
         var noX = panelX + panelWidth / 2 + padding / 2;
-        yesButton = new SimpleButton(Primitives.ButtonTexture, "Yes", new Vector2(yesX, buttonY), buttonSize);
-        noButton = new SimpleButton(Primitives.ButtonTexture, "No", new Vector2(noX, buttonY), buttonSize);
+        yesButton = new ButtonBox(Primitives.ButtonTexture, "Yes");
+        noButton = new ButtonBox(Primitives.ButtonTexture, "No");
+        yesButton.Arrange(new Rectangle(yesX, buttonY, (int)buttonSize.X, (int)buttonSize.Y));
+        noButton.Arrange(new Rectangle(noX, buttonY, (int)buttonSize.X, (int)buttonSize.Y));
+
+        panel = new Box();
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Arrange(panelRect);
 
         yesButton.OnClick = () =>
         {
@@ -66,7 +75,7 @@ public class ConfirmScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.3f);
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        panel.Draw(spriteBatch);
 
         spriteBatch.DrawString(Primitives.Font, message, new Vector2(panelRect.X + (panelRect.Width - messageWidth) / 2, panelRect.Y + 10), Primitives.FontColor);
 

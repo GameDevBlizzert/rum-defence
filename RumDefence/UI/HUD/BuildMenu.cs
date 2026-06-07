@@ -1,18 +1,22 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
+using RumDefence.UI.Box.Components;
 
 namespace RumDefence;
 
 public class BuildMenu
 {
     private Rectangle panelRect;
+    private Box panel;
+    private Box hoverInfoPanel;
 
-    private readonly (IconButton button, TowerData data)[] towerButtons;
-    private IconButton wallButton;
-    private IconButton removeButton;
-    private IconButton speedButton;
-    private IconButton pauseMenuButton;
+    private readonly (IconButtonBox button, TowerData data)[] towerButtons;
+    private IconButtonBox wallButton;
+    private IconButtonBox removeButton;
+    private IconButtonBox speedButton;
+    private IconButtonBox pauseMenuButton;
 
     private readonly Texture2D playIcon;
     private readonly Texture2D pauseIcon;
@@ -74,27 +78,27 @@ public class BuildMenu
         var buttonSourceRect = new Rectangle(0, 0, 64, 64);
 
         var allTowers = TowerFactory.All;
-        towerButtons = new (IconButton, TowerData)[allTowers.Length];
+        towerButtons = new (IconButtonBox, TowerData)[allTowers.Length];
         for (int i = 0; i < allTowers.Length; i++)
         {
             var data = allTowers[i];
             var icon = content.Load<Texture2D>(data.IconTexturePath);
-            var btn = new IconButton(Primitives.ButtonTexture, icon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-            btn.BackgroundSourceRect = buttonSourceRect;
+            var btn = new IconButtonBox(Primitives.ButtonTexture, icon, buttonSourceRect);
+            btn.Arrange(new Rectangle(buttonX, currentY, ButtonWidth, ButtonHeight));
             btn.OnClick = () => buildManager.SetTowerMode(data);
             btn.CostLabel = data.Cost.ToString();
             towerButtons[i] = (btn, data);
             currentY += ButtonHeight + spacing;
         }
 
-        wallButton = new IconButton(Primitives.ButtonTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        wallButton.BackgroundSourceRect = buttonSourceRect;
+        wallButton = new IconButtonBox(Primitives.ButtonTexture, wallIcon, buttonSourceRect);
+        wallButton.Arrange(new Rectangle(buttonX, currentY, ButtonWidth, ButtonHeight));
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
         wallButton.CostLabel = BuildManager.WallCost.ToString();
         currentY += ButtonHeight + spacing;
 
-        removeButton = new IconButton(Primitives.ButtonTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        removeButton.BackgroundSourceRect = buttonSourceRect;
+        removeButton = new IconButtonBox(Primitives.ButtonTexture, removeIcon, buttonSourceRect);
+        removeButton.Arrange(new Rectangle(buttonX, currentY, ButtonWidth, ButtonHeight));
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
 
@@ -103,14 +107,18 @@ public class BuildMenu
         fastForwardIcon = CreateFastForwardIcon(RumGame.Instance.GraphicsDevice);
 
         int speedButtonY = panelY + panelHeight - (ButtonHeight + spacing) * 2 - 20;
-        speedButton = new IconButton(Primitives.ButtonTexture, fastForwardIcon, new Vector2(buttonX, speedButtonY), new Vector2(ButtonWidth, ButtonHeight));
-        speedButton.BackgroundSourceRect = buttonSourceRect;
+        speedButton = new IconButtonBox(Primitives.ButtonTexture, fastForwardIcon, buttonSourceRect);
+        speedButton.Arrange(new Rectangle(buttonX, speedButtonY, ButtonWidth, ButtonHeight));
         speedButton.OnClick = () => OnSpeedRequested?.Invoke();
 
         int pauseMenuButtonY = panelY + panelHeight - ButtonHeight - 20;
-        pauseMenuButton = new IconButton(Primitives.ButtonTexture, pauseIcon, new Vector2(buttonX, pauseMenuButtonY), new Vector2(ButtonWidth, ButtonHeight));
-        pauseMenuButton.BackgroundSourceRect = buttonSourceRect;
+        pauseMenuButton = new IconButtonBox(Primitives.ButtonTexture, pauseIcon, buttonSourceRect);
+        pauseMenuButton.Arrange(new Rectangle(buttonX, pauseMenuButtonY, ButtonWidth, ButtonHeight));
         pauseMenuButton.OnClick = () => OnMenuRequested?.Invoke();
+
+        panel = new Box();
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Arrange(panelRect);
     }
 
     public void SetPlaybackState(GamePlaybackState state)
@@ -210,7 +218,13 @@ public class BuildMenu
 
         var rect = new Rectangle(x, y, width, height);
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, rect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        if (hoverInfoPanel == null)
+        {
+            hoverInfoPanel = new Box();
+            hoverInfoPanel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        }
+        hoverInfoPanel.Arrange(rect);
+        hoverInfoPanel.Draw(spriteBatch);
 
         float titleScale = 0.75f;
         float statScale = 0.6f;
@@ -261,10 +275,10 @@ public class BuildMenu
         var selectedData = buildManager.SelectedTowerData;
 
         foreach (var (button, data) in towerButtons)
-            button.SetSelected(mode == BuildMode.Tower && selectedData == data);
+            button.IsSelected = mode == BuildMode.Tower && selectedData == data;
 
-        wallButton.SetSelected(mode == BuildMode.Wall);
-        removeButton.SetSelected(mode == BuildMode.Remove);
+        wallButton.IsSelected = mode == BuildMode.Wall;
+        removeButton.IsSelected = mode == BuildMode.Remove;
 
         bool isPaused = playbackState == GamePlaybackState.Paused;
 
@@ -302,7 +316,7 @@ public class BuildMenu
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        panel.Draw(spriteBatch);
 
         healthBar.Draw(spriteBatch);
 

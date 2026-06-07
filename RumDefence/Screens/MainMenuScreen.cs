@@ -1,14 +1,17 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
+using RumDefence.UI.Box.Components;
 
 namespace RumDefence;
 
 public class MainMenuScreen : Screen
 {
-    private SimpleButton levelsButton;
-    private SimpleButton settingsButton;
-    private SimpleButton quitButton;
+    private ButtonBox levelsButton;
+    private ButtonBox settingsButton;
+    private ButtonBox quitButton;
 
+    private Box panel;
     private Rectangle panelRect;
     private float elapsedSeconds;
     public MainMenuScreen(ScreenManager manager) : base(manager) { }
@@ -16,9 +19,25 @@ public class MainMenuScreen : Screen
     {
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        levelsButton = new SimpleButton(Primitives.ButtonTexture, "Levels", new Vector2(800, 300), new Vector2(300, 100));
-        settingsButton = new SimpleButton(Primitives.ButtonTexture, "Settings", new Vector2(800, 450), new Vector2(300, 100));
-        quitButton = new SimpleButton(Primitives.ButtonTexture, "Quit", new Vector2(800, 600), new Vector2(300, 100));
+        var buttonSize = new Vector2(300, 100);
+
+        levelsButton = new ButtonBox(Primitives.ButtonTexture, "Levels", size: buttonSize);
+        settingsButton = new ButtonBox(Primitives.ButtonTexture, "Settings", size: buttonSize);
+        quitButton = new ButtonBox(Primitives.ButtonTexture, "Quit", size: buttonSize);
+
+        panel = new Box
+        {
+            Direction = Direction.Row,
+            AlignX = Align.Center,
+            AlignY = Align.Center,
+            Gap = 40,
+            Padding = 60
+        };
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Add(levelsButton);
+        panel.Add(settingsButton);
+        panel.Add(quitButton);
+        panel.Arrange(panelRect);
 
         levelsButton.OnClick = () =>
         {
@@ -47,9 +66,7 @@ public class MainMenuScreen : Screen
     public override void Update(GameTime gameTime)
     {
         elapsedSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
-        levelsButton.Update(gameTime);
-        settingsButton.Update(gameTime);
-        quitButton.Update(gameTime);
+        panel.Update(gameTime);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -59,10 +76,6 @@ public class MainMenuScreen : Screen
         LoadingSplashScreen.DrawBackground(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
         LoadingSplashScreen.DrawWater(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
-
-        levelsButton.Draw(spriteBatch);
-        settingsButton.Draw(spriteBatch);
-        quitButton.Draw(spriteBatch);
+        panel.Draw(spriteBatch);
     }
 }

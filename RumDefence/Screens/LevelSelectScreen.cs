@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using RumDefence.UI.Box.Components;
 using System.Collections.Generic;
 
 namespace RumDefence;
@@ -13,7 +14,7 @@ public class LevelSelectScreen : Screen
     private int currentPage = 0;
     private int levelsPerPage = 4;
 
-    private SimpleButton backButton;
+    private ButtonBox backButton;
     private float elapsedSeconds;
 
     public LevelSelectScreen(ScreenManager manager, List<Level> levels) : base(manager)
@@ -25,8 +26,8 @@ public class LevelSelectScreen : Screen
     {
         buttons.Clear();
 
-        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
-            new Vector2(20, 20), new Vector2(200, 80));
+        backButton = new ButtonBox(Primitives.ButtonTexture, "Back");
+        backButton.Arrange(new Rectangle(20, 20, 200, 80));
 
         backButton.OnClick = () =>
         {
@@ -75,7 +76,7 @@ public class LevelSelectScreen : Screen
 
             Rectangle rect = GetLevelRect(row, col);
 
-            buttons[levelIndex].SetBounds(rect);
+            buttons[levelIndex].Arrange(rect);
             buttons[levelIndex].Update(gameTime);
         }
 

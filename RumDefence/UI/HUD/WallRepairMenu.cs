@@ -1,13 +1,16 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
+using RumDefence.UI.Box.Components;
 
 namespace RumDefence;
 
 public class WallRepairMenu
 {
     private Rectangle panelRect;
-    private SimpleButton repairButton;
-    private SimpleButton upgradeButton;
+    private Box panel;
+    private ButtonBox repairButton;
+    private ButtonBox upgradeButton;
     private LevelProgressSystem progress;
 
     public bool RepairClicked { get; private set; }
@@ -31,14 +34,16 @@ public class WallRepairMenu
         int y = RumGame.VirtualHeight - height - 320;
         panelRect = new Rectangle(x, y, width, height);
 
-        repairButton = new SimpleButton(Primitives.ButtonTexture, "Repair", Vector2.Zero, new Vector2(width - 40, 52));
-        repairButton.SetBounds(new Rectangle(panelRect.X + 20, panelRect.Y + 150, width - 40, 52));
-        repairButton.TextScale = 0.72f;
+        panel = new Box();
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Arrange(panelRect);
+
+        repairButton = new ButtonBox(Primitives.ButtonTexture, "Repair", 0.72f);
+        repairButton.Arrange(new Rectangle(panelRect.X + 20, panelRect.Y + 150, width - 40, 52));
         repairButton.OnClick = () => { RepairClicked = true; };
 
-        upgradeButton = new SimpleButton(Primitives.ButtonTexture, "Upgrade", Vector2.Zero, new Vector2(width - 40, 52));
-        upgradeButton.SetBounds(new Rectangle(panelRect.X + 20, panelRect.Y + 308, width - 40, 52));
-        upgradeButton.TextScale = 0.72f;
+        upgradeButton = new ButtonBox(Primitives.ButtonTexture, "Upgrade", 0.72f);
+        upgradeButton.Arrange(new Rectangle(panelRect.X + 20, panelRect.Y + 308, width - 40, 52));
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
     }
 
@@ -61,11 +66,11 @@ public class WallRepairMenu
 
         int repairCost = SelectedWall.GetRepairCostToFull();
         repairButton.IsDisabled = SelectedWall.IsDestroyed || !SelectedWall.IsDamaged || progress.CoinsRemaining < repairCost || repairCost <= 0;
-        repairButton.Text = $"Repair ({repairKeyLabel})";
+        repairButton.Label.Text = $"Repair ({repairKeyLabel})";
 
         int upgradeCost = SelectedWall.GetUpgradeCost();
         upgradeButton.IsDisabled = !SelectedWall.CanUpgrade || progress.CoinsRemaining < upgradeCost;
-        upgradeButton.Text = SelectedWall.CanUpgrade ? $"Upgrade ({upgradeKeyLabel})" : "MAX LEVEL";
+        upgradeButton.Label.Text = SelectedWall.CanUpgrade ? $"Upgrade ({upgradeKeyLabel})" : "MAX LEVEL";
 
         repairButton.Update(gameTime);
         upgradeButton.Update(gameTime);
@@ -75,7 +80,7 @@ public class WallRepairMenu
     {
         if (SelectedWall == null) return;
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        panel.Draw(spriteBatch);
 
         // Title + level
         string title = SelectedWall.UpgradeLevel > 0
