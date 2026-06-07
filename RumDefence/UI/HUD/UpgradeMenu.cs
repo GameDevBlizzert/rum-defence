@@ -76,8 +76,6 @@ public class UpgradeMenu
     {
         if (SelectedTower != null)
             DrawForTower(spriteBatch);
-        else if (PreviewData != null)
-            DrawPreview(spriteBatch);
     }
 
     private void DrawForTower(SpriteBatch spriteBatch)
