@@ -185,7 +185,7 @@ public class GameScreen : Screen
 
         UpdateBuildSystem(gameTime);
 
-        if (playbackState == GamePlaybackState.Paused)
+        if (playbackState == GamePlaybackState.Paused || ShouldFreezeGameplayForTutorial())
             return;
 
         var gameplayGameTime = GetGameplayGameTime(gameTime);
@@ -622,5 +622,10 @@ public class GameScreen : Screen
             new Vector2(0, 0.5f),
             SpriteEffects.None,
             0);
+    }
+
+    private bool ShouldFreezeGameplayForTutorial()
+    {
+        return tutorialOverlay?.IsIntroActive == true;
     }
 }
