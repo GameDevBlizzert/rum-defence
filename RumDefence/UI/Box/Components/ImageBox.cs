@@ -10,12 +10,17 @@ public class ImageBox : IBox
     public float Scale { get; set; } = 1f;
     private Vector2 size;
     private Rectangle? srcRectangle = null;
+    public ImageBox(Texture2D texture2D, Rectangle? source = null)
+    {
+        Texture = texture2D;
+        srcRectangle = source;
+    }
+
     public ImageBox(Texture2D texture2D, int width, int height, Rectangle? source = null)
     {
         Texture = texture2D;
         size = new(width, height);
-        if (source != null)
-            srcRectangle = (Rectangle)source;
+        srcRectangle = source;
     }
     public override Vector2 Measure()
     {

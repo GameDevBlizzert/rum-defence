@@ -24,41 +24,40 @@ public static class StretchSprite
 
         float scaleX = 1f * destination.Size.X / _source.Size.X;
         float scaleY = 1f * destination.Size.Y / _source.Size.Y;
-        // var a = 4 / texture.Bounds.Size.X;
 
-        // spriteBatch.Draw(texture, destCorners.Item1.Location.ToVector2(), sourceCorners.Item1, _color, rotation: 0f, origin: Vector2.Zero, scale: new Vector2(scaleX, scaleY), SpriteEffects.None, layerDepth: 1f);
 
         // dynamic draw corners, edges and center,
         Rectangle destRect, sourceRect;
         int x1, y1, x2, y2;
-        // scaleX
-        for (int x = 0; x < scaleX * 3; x++)
+        // var rows = MathHelper.Clamp(scaleX * 3, 2, scaleX * 3);
+        // var cols = MathHelper.Clamp(scaleY * 3, 2, scaleX * 3);
+        var rows = scaleX * 3;
+        var cols = scaleY * 3;
+        for (int x = 0; x < rows; x++)
         {
-            for (int y = 0; y < scaleY * 3; y++)
+            for (int y = 0; y < cols; y++)
             {
                 x1 = destination.X + tileSize.X * x;
                 y1 = destination.Y + tileSize.Y * y;
                 destRect = new Rectangle(x1, y1, tileSize.X, tileSize.Y);
                 if (x == 0)
                     x2 = 0;
-                else if (x < scaleX * 3 - 1)
+                else if (x < rows - 1)
                     x2 = tileSize.X;
                 else
                     x2 = tileSize.X * 2;
 
                 if (y == 0)
                     y2 = 0;
-                else if (y < scaleY * 3 - 1)
+                else if (y < cols - 1)
                     y2 = tileSize.Y;
                 else
                     y2 = tileSize.Y * 2;
                 sourceRect = new Rectangle(x2, y2, tileSize.X, tileSize.Y);
-                // Console.WriteLine(sourceRect.ToString());
                 spriteBatch.Draw(texture, destRect, sourceRect, _color);
             }
         }
-        int a;
-        // Console.WriteLine();
-        // spriteBatch.Draw(texture, destination, _color);
+        // todo: scaling if needed
+        // spriteBatch.Draw(texture, destCorners.Item1.Location.ToVector2(), sourceCorners.Item1, _color, rotation: 0f, origin: Vector2.Zero, scale: new Vector2(scaleX, scaleY), SpriteEffects.None, layerDepth: 1f);
     }
 }
