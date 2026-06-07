@@ -63,6 +63,7 @@ namespace RumDefence
             var box2 = new Box() { Padding = 0, AlignX = Align.End, Direction = Direction.Row };
             box2.Add(new TextItem() { Text = "helloooooooooooooooooooooo" });
             box2.Add(new TextItem() { Text = "hooiii" });
+            box2.Add(new ImageBox(Primitives.PanelTexture, 400, 200));
             testbox = new Box()
             {
                 // SpanCol = 2,
