@@ -26,38 +26,36 @@ public class Box : IBox
         Vector2 size = Vector2.Zero;
         Vector2 childSize;
         IBox child;
-        int GapBetween;
-        for (int i = 0; i < Children.Count; i++)
+        for (int i = Children.Count; i > 0; i--)
         {
-            child = Children[i];
+            child = Children[^i];
             childSize = child.Measure();
-            if (i + 1 < Children.Count)
-                GapBetween = Gap;
-            else
-                GapBetween = 0;
             if (Direction == Direction.Column)
             {
-                size.X += childSize.X + GapBetween;
+                size.X += childSize.X + GetGap(i);
                 size.Y = MathHelper.Max(childSize.Y, size.Y);
             }
             else if (Direction == Direction.Row)
             {
                 size.X = MathHelper.Max(childSize.X, size.X);
-                size.Y += childSize.Y + GapBetween;
+                size.Y += childSize.Y + GetGap(i);
             }
         }
         return size;
     }
     // sets Rectangles (location and size) for all children
+    private int GetGap(int index)
+    {
+        return (1 % index + 0) * Gap;
+    }
     public override void Arrange(Rectangle rect)
     {
-        IBox child;
-        Vector2 childSize;
-        Rectangle childRect;
-
-        var childrenMeasured = Measure();
-
         int x, y;
+        var childrenMeasured = Measure();
+        if (rect.Width == 0 || rect.Width < childrenMeasured.X)
+            rect.Width = (int)childrenMeasured.X;
+        if (rect.Height == 0 || rect.Height < childrenMeasured.Y)
+            rect.Height = (int)childrenMeasured.Y;
         x = rect.X;
         y = rect.Y;
         var Width = rect.Width - 2 * Padding;
@@ -77,25 +75,38 @@ public class Box : IBox
         else if (AlignY == Align.End)
             y += Height - (int)childrenMeasured.Y;
 
-        int GapBetween;
-        for (int i = 0; i < Children.Count; i++)
+        IBox child;
+        Vector2 childSize;
+        Rectangle childRect;
+        int childX;
+        int childY;
+        for (int i = Children.Count; i > 0; i--)
         {
-            child = Children[i];
+            childX = x;
+            childY = y;
+            child = Children[^i];
             childSize = child.Measure();
-            if (i + 1 < Children.Count)
-                GapBetween = Gap;
-            else
-                GapBetween = 0;
-            childRect = new Rectangle(x, y, (int)childSize.X, (int)childSize.Y);
+            if (Direction == Direction.Row)
+                if (AlignX == Align.Center)
+                    childX += ((int)childrenMeasured.X - (int)childSize.X) / 2;
+                else if (AlignX == Align.End)
+                    childX += (int)childrenMeasured.X - (int)childSize.X;
+
+            if (Direction == Direction.Column)
+                if (AlignY == Align.Center)
+                    childY += ((int)childrenMeasured.Y - (int)childSize.Y) / 2;
+                else if (AlignY == Align.End)
+                    childY += (int)childrenMeasured.Y - (int)childSize.Y;
+            childRect = new Rectangle(childX, childY, (int)childSize.X, (int)childSize.Y);
             child.Arrange(childRect);
             if (Direction == Direction.Column)
             {
-                x += GapBetween;
+                x += GetGap(i);
                 x += (int)childSize.X;
             }
             else if (Direction == Direction.Row)
             {
-                y += GapBetween;
+                y += GetGap(i);
                 y += (int)childSize.Y;
             }
             if (IsActive)
@@ -111,15 +122,11 @@ public class Box : IBox
             else
                 Background.Deactivate();
         }
+        Slot = rect;
     }
     public void PlaceAt(int x = 0, int y = 0, int width = 0, int height = 0)
     {
-        var childrenMeasured = Measure();
-        if (width == 0)
-            width = (int)childrenMeasured.X;
-        if (height == 0)
-            height = (int)childrenMeasured.Y;
-        Slot = new(x, y, width + 2 * Padding, height + 2 * Padding);
+        Arrange(new(x, y, width, height));
         Activate();
     }
     public override void Update(GameTime gameTime)
@@ -129,7 +136,6 @@ public class Box : IBox
         foreach (var child in Children)
             child.Update(gameTime);
     }
-
     public override void DrawBox(SpriteBatch spriteBatch)
     {
         // wip
