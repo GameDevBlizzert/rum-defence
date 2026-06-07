@@ -7,6 +7,8 @@ namespace RumDefence.UI.Box;
 public enum Direction { Row, Column }
 public class Box : IBox
 {
+    public Align AlignX { get; set; } = Align.Center;
+    public Align AlignY { get; set; } = Align.Center;
     public Direction Direction { get; set; } = Direction.Column;
     public int Gap { get; set; } = 2;
     public int Padding { get; set; } = 4;
@@ -128,8 +130,6 @@ public class Box : IBox
     }
     public override void DrawBox(SpriteBatch spriteBatch)
     {
-        // wip
-        // NineSlice.Draw(spriteBatch, Primitives.PanelTexture, arrangedRect, new Rectangle(0, 0, 128, 128), 20, PanelTint);
         foreach (var child in Children)
             child.Draw(spriteBatch);
     }

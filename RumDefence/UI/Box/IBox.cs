@@ -7,8 +7,6 @@ namespace RumDefence.UI.Box;
 public enum Align { Start, Center, Between, End }
 public abstract class IBox
 {
-    public Align AlignX { get; set; } = Align.Center;
-    public Align AlignY { get; set; } = Align.Center;
     public Color Color { get; set; } = Color.White;
     public Rectangle Slot { get; set; }
     private bool isActive = false;
