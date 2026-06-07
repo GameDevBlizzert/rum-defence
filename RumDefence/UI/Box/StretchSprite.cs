@@ -29,27 +29,15 @@ public static class StretchSprite
         float scaleX = 1f * destination.Size.X / texture.Bounds.Size.X;
         float scaleY = 1f * destination.Size.Y / texture.Bounds.Size.Y;
         // var a = 4 / texture.Bounds.Size.X;
-        // Corners
-        // Vector2 TopLeftCorner = tileSize;
-        // Vector2 TopRightCorner = tileSize;
 
+        // Corners
         var sourceCorners = GetCorners(src, tileSize);
         var destCorners = GetCorners(destination, tileSize);
-        // var TopLeftCorner = new Rectangle(destination.Left, destination.Top, tileSize.X, tileSize.Y);
-        // var TopRightCorner = new Rectangle(destination.Right - tileSize.X, destination.Top, tileSize.X, tileSize.Y);
-        // var BottomLeftCorner = new Rectangle(destination.X, destination.Bottom - tileSize.Y, tileSize.X, tileSize.Y);
-        // var BottomRightCorner = new Rectangle(destination.Right - tileSize.X, destination.Bottom - tileSize.Y, tileSize.X, tileSize.Y);
-
-        // var TopLeftCornerSource = new Rectangle(src.Left, src.Top, tileSize.X, tileSize.Y);
-        // var TopRightCornerSource = new Rectangle(src.Right - tileSize.X, src.Top, tileSize.X, tileSize.Y);
-        // var BottomLeftCornerSource = new Rectangle(src.Left, src.Bottom - tileSize.Y, tileSize.X, tileSize.Y);
-        // var BottomRightCornerSource = new Rectangle(src.Right - tileSize.X, src.Bottom - tileSize.Y, tileSize.X, tileSize.Y);
-
-        // spriteBatch.Draw(texture, destCorners.Item1, sourceCorners.Item1, _color);
         for (int i = 0; i < sourceCorners.Length; i++)
         {
             spriteBatch.Draw(texture, destCorners[i], sourceCorners[i], _color);
         }
+
         // spriteBatch.Draw(texture, destCorners.Item1.Location.ToVector2(), sourceCorners.Item1, _color, rotation: 0f, origin: Vector2.Zero, scale: new Vector2(scaleX, scaleY), SpriteEffects.None, layerDepth: 1f);
         for (int x = 0; x < scaleX; x++)
         {
