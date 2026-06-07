@@ -24,10 +24,12 @@ public static class Primitives
 
     private static Texture2D _panelTexture;
     public static Texture2D PanelTexture => _panelTexture ??= RumGame.Instance.Content.Load<Texture2D>("Art/UI/Panels/panel");
-
+    private static Texture2D _panelInvertedTexture;
+    public static Texture2D PanelInvertedTexture => _panelInvertedTexture ??= RumGame.Instance.Content.Load<Texture2D>("Art/UI/Panels/panel.inverted");
     private static Texture2D _buttonTexture;
     public static Texture2D ButtonTexture => _buttonTexture ??= RumGame.Instance.Content.Load<Texture2D>("Art/UI/Buttons/button");
-
+    private static Texture2D _buttonInvertedTexture;
+    public static Texture2D ButtonInvertedTexture => _buttonInvertedTexture ??= RumGame.Instance.Content.Load<Texture2D>("Art/UI/buttonInverteds/button.inverted");
     public static Color FontColor => new Color(255, 200, 0);
     public static Color FontDarkColor => new Color(215, 90, 0);
     public static Color FontLightColor => new Color(255, 225, 120);
