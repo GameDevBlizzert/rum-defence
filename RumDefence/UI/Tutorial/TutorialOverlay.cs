@@ -40,6 +40,8 @@ public class TutorialOverlay
     private static readonly int WaveNotifX = (RumGame.VirtualWidth - WaveNotifWidth) / 2;
     private const int WaveNotifY = 80;
 
+    public bool IsIntroActive => !introComplete;
+
     public TutorialOverlay()
     {
         var content = RumGame.Instance.Content;
