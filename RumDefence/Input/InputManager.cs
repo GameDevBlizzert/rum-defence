@@ -16,6 +16,8 @@ public class InputManager
         ["LevelPrev"] = Keys.A,
         ["Upgrade"] = Keys.U,
         ["Repair"] = Keys.R,
+        ["TogglePause"] = Keys.Space,
+        ["ToggleFastForward"] = Keys.F,
     };
 
     public static IReadOnlyDictionary<string, Keys> DefaultBindings => Defaults;
