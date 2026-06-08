@@ -28,13 +28,16 @@ public class BuildManager
 
     public bool CtrlHeld { get; private set; }
 
-    public void Update(Vector2 mousePosition, bool isClick, bool ctrlHeld = false)
+    public void Update(Vector2 mousePosition, bool isClick, bool ctrlHeld = false, bool isRightClick = false)
     {
         CtrlHeld = ctrlHeld;
         hoveredTile = grid.WorldToGrid(mousePosition);
 
         bool isNewClick = isClick && !wasClickDown;
         wasClickDown = isClick;
+
+        if (isRightClick && currentMode != BuildMode.None)
+            SetMode(BuildMode.None);
 
         if (hoveredTile == null) return;
 
