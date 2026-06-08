@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace RumDefence.UI.Box.Components;
+namespace RumDefence.UI.Box;
 
 public class PixelBox : IBox
 {

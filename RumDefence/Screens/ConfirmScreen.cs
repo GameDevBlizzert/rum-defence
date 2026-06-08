@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RumDefence.UI.Box;
-using RumDefence.UI.Box.Components;
+using RumDefence.UI.Box;
 using System;
 
 namespace RumDefence;

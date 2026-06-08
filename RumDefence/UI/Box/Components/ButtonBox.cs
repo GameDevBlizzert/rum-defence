@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 
-namespace RumDefence.UI.Box.Components;
+namespace RumDefence.UI.Box;
 
 public class ButtonBox : Box
 {

@@ -5,7 +5,7 @@ using RumDefence.Gameplay.Levels.Dev;
 using RumDefence.Gameplay.Levels.Ghost;
 using RumDefence.Levels.Ghost;
 using RumDefence.Levels.Grass;
-using RumDefence.UI.Box.Components;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 

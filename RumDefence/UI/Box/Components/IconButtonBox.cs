@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace RumDefence.UI.Box.Components;
+namespace RumDefence.UI.Box;
 
 // A ButtonBox that centers an icon (optionally beside a cost label) instead of a text label.
 public class IconButtonBox : ButtonBox
