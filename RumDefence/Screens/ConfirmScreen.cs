@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RumDefence.UI.Box;
 using RumDefence.UI.Box.Components;
@@ -29,24 +29,40 @@ public class ConfirmScreen : Screen
     public override void Load()
     {
         const int panelWidth = 700;
-        const int padding = 30;
         var buttonSize = new Vector2(200, 70);
-        var messageHeight = (int)Primitives.Font.MeasureString(message).Y;
-        var panelHeight = padding + messageHeight + padding + (int)buttonSize.Y + padding;
-        var panelX = (RumGame.VirtualWidth - panelWidth) / 2;
-        var panelY = (RumGame.VirtualHeight - panelHeight) / 2;
-        panelRect = new Rectangle(panelX, panelY, panelWidth, panelHeight);
 
-        var buttonY = panelY + padding + messageHeight + padding;
-        var yesX = panelX + panelWidth / 2 - (int)buttonSize.X - padding / 2;
-        var noX = panelX + panelWidth / 2 + padding / 2;
-        yesButton = new ButtonBox(Primitives.ButtonTexture, "Yes");
-        noButton = new ButtonBox(Primitives.ButtonTexture, "No");
-        yesButton.Arrange(new Rectangle(yesX, buttonY, (int)buttonSize.X, (int)buttonSize.Y));
-        noButton.Arrange(new Rectangle(noX, buttonY, (int)buttonSize.X, (int)buttonSize.Y));
+        var messageText = new TextItem(message);
 
-        panel = new Box();
+        var buttonRow = new Box
+        {
+            Direction = Direction.Column,
+            AlignX = Align.Center,
+            AlignY = Align.Center,
+            Gap = 30,
+            Padding = 0
+        };
+
+        yesButton = new ButtonBox(Primitives.ButtonTexture, "Yes", size: buttonSize);
+        noButton = new ButtonBox(Primitives.ButtonTexture, "No", size: buttonSize);
+        buttonRow.Add(yesButton);
+        buttonRow.Add(noButton);
+
+        panel = new Box
+        {
+            Direction = Direction.Row,
+            AlignX = Align.Center,
+            AlignY = Align.Center,
+            Gap = 30,
+            Padding = 30
+        };
         panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Add(messageText);
+        panel.Add(buttonRow);
+
+        var contentHeight = (int)panel.Measure().Y + 2 * panel.Padding;
+        var panelX = (RumGame.VirtualWidth - panelWidth) / 2;
+        var panelY = (RumGame.VirtualHeight - contentHeight) / 2;
+        panelRect = new Rectangle(panelX, panelY, panelWidth, contentHeight);
         panel.Arrange(panelRect);
 
         yesButton.OnClick = () =>
@@ -62,8 +78,7 @@ public class ConfirmScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
-        yesButton.Update(gameTime);
-        noButton.Update(gameTime);
+        panel.Update(gameTime);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -76,11 +91,6 @@ public class ConfirmScreen : Screen
             Color.Black * 0.3f);
 
         panel.Draw(spriteBatch);
-
-        spriteBatch.DrawString(Primitives.Font, message, new Vector2(panelRect.X + (panelRect.Width - messageWidth) / 2, panelRect.Y + 10), Primitives.FontColor);
-
-        yesButton.Draw(spriteBatch);
-        noButton.Draw(spriteBatch);
     }
 
     private static string WrapText(SpriteFont font, string text, float maxWidth)
