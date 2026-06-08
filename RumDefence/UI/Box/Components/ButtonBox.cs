@@ -5,7 +5,7 @@ using System;
 
 namespace RumDefence.UI.Box;
 
-public class ButtonBox : Box
+public class ButtonBox : IBox
 {
     public Action OnClick;
     public Color BaseTint { get; set; } = Color.White;
@@ -16,6 +16,7 @@ public class ButtonBox : Box
     public ImageBox Icon { get; set; }
 
     public Vector2 Size { get; set; }
+    public int Padding { get; set; } = 4;
 
     private bool isHovering;
     private bool isPressed;
@@ -58,9 +59,17 @@ public class ButtonBox : Box
 
     protected virtual bool IsClickable() => true;
 
+    public override void DrawBox(SpriteBatch spriteBatch)
+    {
+        foreach (var child in Children)
+            child.Draw(spriteBatch);
+    }
+
     public override void UpdateBox(GameTime gameTime)
     {
-        base.UpdateBox(gameTime);
+        Arrange(Slot);
+        foreach (var child in Children)
+            child.Update(gameTime);
 
         var mousePos = ScreenManager.GetMousePositionScaled();
         var mouseRect = new Rectangle((int)mousePos.X, (int)mousePos.Y, 1, 1);
