@@ -28,18 +28,15 @@ public class BuildMenu
     private BuildManager buildManager;
     private LevelProgressSystem progress;
 
-    private HudHealthBar healthBar;
-    private Texture2D coinIcon;
+    private ProgressBarBox healthBar;
+    private ImageBox coinIconBox;
+    private TextItem coinText;
     public TowerData HoveredTowerData { get; private set; }
     public bool IsWallHovered { get; private set; }
 
-    private int coinAreaY;
-    private int coinIconSize;
-    private int panelX;
-
-    private const int PanelWidth = 180;
+    private const int PanelWidth = 200;
     private const int ButtonWidth = PanelWidth - 20;
-    private const int ButtonHeight = 60;
+    private const int ButtonHeight = 64;
 
     public BuildMenu(BuildManager buildManager, LevelProgressSystem progress)
     {
@@ -50,31 +47,36 @@ public class BuildMenu
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
         var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
 
-        panelX = 20;
-        int panelY = 20;
-        int panelHeight = RumGame.VirtualHeight - 40;
+        int panelX = 0;
+        int panelY = 0;
+        int panelHeight = RumGame.VirtualHeight;
         panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
 
-        coinIcon = content.Load<Texture2D>("Art/UI/Coin");
+        var coinIcon = content.Load<Texture2D>("Art/UI/Coin");
 
-        const int barMargin = 8;
         int fontHeight = (int)Primitives.Font.MeasureString("0").Y;
         int barHeight = fontHeight + 8;
-        coinIconSize = fontHeight;
-        int coinHeight = fontHeight;
+        int coinIconSize = fontHeight;
+        const int iconTextGap = 4;
         const int spacing = 8;
 
-        int currentY = panelY + 70;
-        int buttonX = panelX + (PanelWidth - ButtonWidth) / 2;
-
-        var healthBarBounds = new Rectangle(panelX + barMargin, currentY, PanelWidth - barMargin * 2, barHeight);
-        healthBar = new HudHealthBar(progress, healthBarBounds);
-        currentY += barHeight + spacing;
-
-        coinAreaY = currentY;
-        currentY += coinHeight + spacing;
-
+        var buttonSize = new Vector2(ButtonWidth, ButtonHeight);
         var buttonSourceRect = new Rectangle(0, 0, 64, 64);
+
+        healthBar = new ProgressBarBox
+        {
+            Size = new Vector2(ButtonWidth, barHeight),
+            Padding = 24,
+            TrackColor = new Color(60, 0, 0),
+            FillColorFunc = pct => Color.Lerp(Color.Red, Color.LimeGreen, pct)
+        };
+        healthBar.AddBackground(new ImageBox(Primitives.ButtonTexture));
+
+        coinIconBox = new ImageBox(coinIcon, coinIconSize, coinIconSize);
+        coinText = new TextItem("");
+        var coinRow = new Box { Direction = Direction.Column, Gap = iconTextGap, Padding = iconTextGap };
+        coinRow.Add(coinIconBox);
+        coinRow.Add(coinText);
 
         var allTowers = TowerFactory.All;
         towerButtons = new (IconButtonBox, TowerData)[allTowers.Length];
@@ -83,21 +85,19 @@ public class BuildMenu
             var data = allTowers[i];
             var icon = content.Load<Texture2D>(data.IconTexturePath);
             var btn = new IconButtonBox(Primitives.ButtonTexture, icon, buttonSourceRect);
-            btn.Arrange(new Rectangle(buttonX, currentY, ButtonWidth, ButtonHeight));
+            btn.Size = buttonSize;
             btn.OnClick = () => buildManager.SetTowerMode(data);
             btn.CostLabel = data.Cost.ToString();
             towerButtons[i] = (btn, data);
-            currentY += ButtonHeight + spacing;
         }
 
         wallButton = new IconButtonBox(Primitives.ButtonTexture, wallIcon, buttonSourceRect);
-        wallButton.Arrange(new Rectangle(buttonX, currentY, ButtonWidth, ButtonHeight));
+        wallButton.Size = buttonSize;
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
         wallButton.CostLabel = BuildManager.WallCost.ToString();
-        currentY += ButtonHeight + spacing;
 
         removeButton = new IconButtonBox(Primitives.ButtonTexture, removeIcon, buttonSourceRect);
-        removeButton.Arrange(new Rectangle(buttonX, currentY, ButtonWidth, ButtonHeight));
+        removeButton.Size = buttonSize;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
 
@@ -105,18 +105,30 @@ public class BuildMenu
         pauseIcon = CreatePauseIcon(RumGame.Instance.GraphicsDevice);
         fastForwardIcon = CreateFastForwardIcon(RumGame.Instance.GraphicsDevice);
 
-        int speedButtonY = panelY + panelHeight - (ButtonHeight + spacing) * 2 - 20;
         speedButton = new IconButtonBox(Primitives.ButtonTexture, fastForwardIcon, buttonSourceRect);
-        speedButton.Arrange(new Rectangle(buttonX, speedButtonY, ButtonWidth, ButtonHeight));
+        speedButton.Size = buttonSize;
         speedButton.OnClick = () => OnSpeedRequested?.Invoke();
 
-        int pauseMenuButtonY = panelY + panelHeight - ButtonHeight - 20;
         pauseMenuButton = new IconButtonBox(Primitives.ButtonTexture, pauseIcon, buttonSourceRect);
-        pauseMenuButton.Arrange(new Rectangle(buttonX, pauseMenuButtonY, ButtonWidth, ButtonHeight));
+        pauseMenuButton.Size = buttonSize;
         pauseMenuButton.OnClick = () => OnMenuRequested?.Invoke();
 
-        panel = new Box();
+        var contentBox = new Box { Direction = Direction.Row, Gap = spacing, Padding = 0, AlignX = Align.Center };
+        contentBox.Add(healthBar);
+        contentBox.Add(coinRow);
+        foreach (var (button, _) in towerButtons)
+            contentBox.Add(button);
+        contentBox.Add(wallButton);
+        contentBox.Add(removeButton);
+        contentBox.Add(speedButton);
+
+        var bottomContent = new Box() { Direction = Direction.Row, Gap = spacing, Padding = 0, AlignX = Align.Center };
+        bottomContent.Add(speedButton);
+        bottomContent.Add(pauseMenuButton);
+        panel = new Box() { Direction = Direction.Row, AlignY = Align.Between, Padding = 20, AlignX = Align.Center };
         panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Add(contentBox);
+        panel.Add(bottomContent);
         panel.Arrange(panelRect);
     }
 
@@ -189,11 +201,7 @@ public class BuildMenu
 
     public Vector2 GetCoinTargetPosition()
     {
-        var size = Primitives.Font.MeasureString(progress.CoinsRemaining.ToString());
-        const int iconTextGap = 4;
-        float totalWidth = coinIconSize + iconTextGap + size.X;
-        float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
-        return new Vector2(coinRowX + coinIconSize / 2f, coinAreaY + coinIconSize / 2f);
+        return new Vector2(coinIconBox.Slot.Center.X, coinIconBox.Slot.Center.Y);
     }
 
     private void DrawHoverInfo(SpriteBatch spriteBatch)
@@ -304,9 +312,6 @@ public class BuildMenu
                 HoveredTowerData = data;
         }
 
-        foreach (var (button, _) in towerButtons)
-            button.Update(gameTime);
-
         wallButton.Update(gameTime);
         removeButton.Update(gameTime);
         speedButton.Update(gameTime);
@@ -315,35 +320,15 @@ public class BuildMenu
 
     public void Draw(SpriteBatch spriteBatch)
     {
+        healthBar.Progress = progress.LivesTotal > 0
+            ? MathHelper.Clamp((float)progress.LivesRemaining / progress.LivesTotal, 0f, 1f)
+            : 0f;
+        healthBar.Label = $"{progress.LivesRemaining}";
+
+        coinText.Text = progress.CoinsRemaining.ToString();
+
+        panel.Arrange(panelRect);
         panel.Draw(spriteBatch);
-
-        healthBar.Draw(spriteBatch);
-
-        var coinText = progress.CoinsRemaining.ToString();
-        var coinSize = Primitives.Font.MeasureString(coinText);
-        const int iconTextGap = 4;
-        float totalWidth = coinIconSize + iconTextGap + coinSize.X;
-        float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
-        var iconRect = new Rectangle((int)coinRowX, coinAreaY, coinIconSize, coinIconSize);
-
-        spriteBatch.Draw(coinIcon, iconRect, Color.White);
-
-        float textY = coinAreaY + (coinIconSize - coinSize.Y) / 2f;
-
-        spriteBatch.DrawString(
-            Primitives.Font,
-            coinText,
-            new Vector2(coinRowX + coinIconSize + iconTextGap, textY),
-            Primitives.FontColor
-        );
-
-        foreach (var (button, _) in towerButtons)
-            button.Draw(spriteBatch);
-
-        wallButton.Draw(spriteBatch);
-        removeButton.Draw(spriteBatch);
-        speedButton.Draw(spriteBatch);
-        pauseMenuButton.Draw(spriteBatch);
 
         DrawHoverInfo(spriteBatch);
     }
