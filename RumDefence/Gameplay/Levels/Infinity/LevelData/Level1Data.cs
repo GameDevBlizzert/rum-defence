@@ -25,40 +25,40 @@ public static class Level1Data
     private static InfiniteWaveConfig InfiniteConfig => new()
     {
         NormalShip = NormalShip,
-        BossShip   = BossShip,
+        BossShip = BossShip,
 
         // Base counts for the first generated wave
-        BaseShipCount         = 4,
+        BaseShipCount = 4,
         BaseTroopCountPerShip = 5,
-        BaseTroopSpawnDelay   = 0.8f,
-        BaseMinSpawnTime      = 6f,
-        BaseMaxSpawnTime      = 12f,
+        BaseTroopSpawnDelay = 0.8f,
+        BaseMinSpawnTime = 6f,
+        BaseMaxSpawnTime = 12f,
 
         // Per-wave multiplicative growth
-        HealthScalePerWave     = 1.15f,  // +15% HP each wave
-        ShipCountScalePerWave  = 1.10f,  // +10% ships each wave
+        HealthScalePerWave = 1.15f,  // +15% HP each wave
+        ShipCountScalePerWave = 1.10f,  // +10% ships each wave
         TroopCountScalePerWave = 1.10f,  // +10% troops per ship each wave
-        SpawnTimeScalePerWave  = 0.93f,  // -7% spawn interval each wave (faster)
+        SpawnTimeScalePerWave = 0.93f,  // -7% spawn interval each wave (faster)
 
         // Floors so timing never reaches zero
         MinSpawnTimeFloor = 0.5f,
         MaxSpawnTimeFloor = 2.0f,
 
         // Hard caps to keep late waves manageable
-        MaxShipCount         = 12,
+        MaxShipCount = 12,
         MaxTroopCountPerShip = 15,
 
         // Ghost wave: every 4th infinite wave also sends a ghost ship
-        GhostWaveInterval    = 4,
+        GhostWaveInterval = 4,
         GhostTroopCountRatio = 0.6f,
 
         // Bomber wave: every 3rd infinite wave adds bombers
-        BomberWaveInterval    = 3,
+        BomberWaveInterval = 3,
         BomberTroopCountRatio = 0.5f,
 
         // Boss wave: every 5th infinite wave sends a boss ship
-        BossWaveInterval          = 5,
-        BaseBossCount             = 1,
+        BossWaveInterval = 5,
+        BaseBossCount = 1,
         BossCountScalePerBossWave = 1.3f,  // bosses grow per boss wave: 1, 1, 2, 2, 3...
     };
 
@@ -76,7 +76,7 @@ public static class Level1Data
     }
 
     private static readonly TroopData Regular = TroopFactory.Regular;
-    private static readonly TroopData Boss     = TroopFactory.Boss;
+    private static readonly TroopData Boss = TroopFactory.Boss;
 
     // Four intro waves identical to Level 2 — eases players in before infinite generation
     private static List<Wave> SeedWaves => new()
@@ -91,7 +91,7 @@ public static class Level1Data
 
     private static string[] MapData => StandardMap.Layout;
 
-   
+
 
     private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, params (Ship.Data data, int count, (TroopData troop, int n, int hp)[] troops, float spawnDelay)[] groups)
     {
