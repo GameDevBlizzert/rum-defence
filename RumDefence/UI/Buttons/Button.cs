@@ -14,6 +14,7 @@ public abstract class Button : UIElement
     protected bool wasPressed;
 
     public bool IsHovered => isHovering;
+    public Rectangle Bounds => bounds;
 
     public Action OnClick;
 

@@ -13,12 +13,12 @@ public class Hud
     private UpgradeMenu upgradeMenu;
     private WallRepairMenu wallRepairMenu;
 
-    public Hud(BuildManager buildManager, LevelProgressSystem levelProgress, ShipSpawner spawner)
+    public Hud(BuildManager buildManager, LevelProgressSystem levelProgress, ShipSpawner spawner, System.Func<TowerData, bool> isTowerAvailable = null)
     {
         this.buildManager = buildManager;
         this.levelProgress = levelProgress;
 
-        buildMenu = new BuildMenu(buildManager, levelProgress);
+        buildMenu = new BuildMenu(buildManager, levelProgress, isTowerAvailable);
         coinManager = new CoinManager(buildMenu.GetCoinTargetPosition, levelProgress);
         waveHud = new WaveHud(spawner);
 
@@ -34,6 +34,21 @@ public class Hud
     public System.Action OnMenuRequested
     {
         set => buildMenu.OnMenuRequested = value;
+    }
+
+    public void RefreshAvailableTowers()
+    {
+        buildMenu.RefreshAvailableTowers();
+    }
+
+    public TowerType? FreeTowerType
+    {
+        set => buildMenu.FreeTowerType = value;
+    }
+
+    public TowerType? HighlightedTower
+    {
+        set => buildMenu.HighlightedTower = value;
     }
 
     public void SetPlaybackState(GamePlaybackState playbackState)
