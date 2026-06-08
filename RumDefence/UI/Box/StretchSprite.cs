@@ -31,6 +31,11 @@ public static class StretchSprite
         int x1, y1, x2, y2;
         // var rows = MathHelper.Clamp(scaleX * 3, 2, scaleX * 3);
         // var cols = MathHelper.Clamp(scaleY * 3, 2, scaleX * 3);
+        if (scaleX < 1 || scaleY < 1)
+        {
+            spriteBatch.Draw(texture, destination, _source, _color);
+            return;
+        }
         var rows = scaleX * 3;
         var cols = scaleY * 3;
         for (int x = 0; x < rows; x++)
