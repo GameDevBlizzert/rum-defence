@@ -19,50 +19,47 @@ public static class StretchSprite
         var _color = color ?? Color.White;
         // expects the texture to be a rectangle.
         var _source = source ?? new Rectangle(0, 0, texture.Width, texture.Height);
-        // splits source rectangle into 9 tileSizes. X and Y divided by 3.
-        var tileSize = (_source.Size.ToVector2() / 3).ToPoint();
+        // splits source rectangle into 9 tiles. X and Y divided by 3.
+        var srcTileSize = (_source.Size.ToVector2() / 3).ToPoint();
 
-        float scaleX = 1f * destination.Size.X / _source.Size.X;
-        float scaleY = 1f * destination.Size.Y / _source.Size.Y;
-
-
-        // dynamic draw corners, edges and center,
-        Rectangle destRect, sourceRect;
-        int x1, y1, x2, y2;
-        // var rows = MathHelper.Clamp(scaleX * 3, 2, scaleX * 3);
-        // var cols = MathHelper.Clamp(scaleY * 3, 2, scaleX * 3);
-        if (scaleX < 1 || scaleY < 1)
+        if (destination.Width < _source.Width && destination.Height < _source.Height)
         {
             spriteBatch.Draw(texture, destination, _source, _color);
             return;
         }
-        var rows = scaleX * 3;
-        var cols = scaleY * 3;
-        for (int x = 0; x < rows; x++)
-        {
-            for (int y = 0; y < cols; y++)
-            {
-                x1 = destination.X + tileSize.X * x;
-                y1 = destination.Y + tileSize.Y * y;
-                destRect = new Rectangle(x1, y1, tileSize.X, tileSize.Y);
-                if (x == 0)
-                    x2 = 0;
-                else if (x < rows - 1)
-                    x2 = tileSize.X;
-                else
-                    x2 = tileSize.X * 2;
 
-                if (y == 0)
-                    y2 = 0;
-                else if (y < cols - 1)
-                    y2 = tileSize.Y;
-                else
-                    y2 = tileSize.Y * 2;
-                sourceRect = new Rectangle(x2, y2, tileSize.X, tileSize.Y);
+        // corners keep their native source size, clamped so they never overlap
+        // when the destination is smaller than two corners along an axis.
+        int cornerW = Math.Min(srcTileSize.X, destination.Width / 2);
+        int cornerH = Math.Min(srcTileSize.Y, destination.Height / 2);
+
+        int[] destXs = { destination.Left, destination.Left + cornerW, destination.Right - cornerW, destination.Right };
+        int[] destYs = { destination.Top, destination.Top + cornerH, destination.Bottom - cornerH, destination.Bottom };
+        int[] srcXs = { _source.Left, _source.Left + srcTileSize.X, _source.Right - srcTileSize.X, _source.Right };
+        int[] srcYs = { _source.Top, _source.Top + srcTileSize.Y, _source.Bottom - srcTileSize.Y, _source.Top };
+        srcYs[3] = _source.Bottom;
+
+        for (int x = 0; x < 3; x++)
+        {
+            int destX = destXs[x];
+            int destW = destXs[x + 1] - destXs[x];
+            int srcX = srcXs[x];
+            int srcW = srcXs[x + 1] - srcXs[x];
+
+            for (int y = 0; y < 3; y++)
+            {
+                int destY = destYs[y];
+                int destH = destYs[y + 1] - destYs[y];
+                int srcY = srcYs[y];
+                int srcH = srcYs[y + 1] - srcYs[y];
+
+                if (destW <= 0 || destH <= 0)
+                    continue;
+
+                var destRect = new Rectangle(destX, destY, destW, destH);
+                var sourceRect = new Rectangle(srcX, srcY, srcW, srcH);
                 spriteBatch.Draw(texture, destRect, sourceRect, _color);
             }
         }
-        // todo: scaling if needed
-        // spriteBatch.Draw(texture, destCorners.Item1.Location.ToVector2(), sourceCorners.Item1, _color, rotation: 0f, origin: Vector2.Zero, scale: new Vector2(scaleX, scaleY), SpriteEffects.None, layerDepth: 1f);
     }
 }
