@@ -16,6 +16,11 @@ public class InputManager
         ["LevelPrev"] = Keys.A,
         ["Upgrade"] = Keys.U,
         ["Repair"] = Keys.R,
+        ["BuildTower1"] = Keys.D1,
+        ["BuildTower2"] = Keys.D2,
+        ["BuildTower3"] = Keys.D3,
+        ["BuildTower4"] = Keys.D4,
+        ["BuildTower5"] = Keys.D5,
     };
 
     public static IReadOnlyDictionary<string, Keys> DefaultBindings => Defaults;
@@ -46,9 +51,6 @@ public class InputManager
     public bool IsLeftClick() =>
         currentMouse.LeftButton == ButtonState.Pressed &&
         previousMouse.LeftButton == ButtonState.Released;
-
-    public bool IsKeyJustPressed(Keys key) =>
-        currentKeyboard.IsKeyDown(key) && !previousKeyboard.IsKeyDown(key);
 
     public bool IsActionJustPressed(string action) =>
         bindings.TryGetValue(action, out var key) &&

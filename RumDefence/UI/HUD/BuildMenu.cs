@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace RumDefence;
 
@@ -322,24 +321,23 @@ public class BuildMenu
         }
     }
 
-    private static readonly Keys[] NumberKeys =
+    private static readonly string[] TowerSlotActions =
     [
-        Keys.D1, Keys.D2, Keys.D3, Keys.D4, Keys.D5,
-        Keys.D6, Keys.D7, Keys.D8, Keys.D9
+        "BuildTower1", "BuildTower2", "BuildTower3", "BuildTower4", "BuildTower5"
     ];
 
-    private void HandleNumberShortcuts()
+    private void HandleTowerSlotShortcuts()
     {
-        for (int i = 0; i < towerButtons.Length && i < NumberKeys.Length; i++)
+        for (int i = 0; i < towerButtons.Length && i < TowerSlotActions.Length; i++)
         {
-            if (InputManager.Instance.IsKeyJustPressed(NumberKeys[i]))
+            if (InputManager.Instance.IsActionJustPressed(TowerSlotActions[i]))
                 buildManager.SetTowerMode(towerButtons[i].data);
         }
     }
 
     public void Update(GameTime gameTime)
     {
-        HandleNumberShortcuts();
+        HandleTowerSlotShortcuts();
 
         var mode = buildManager.GetMode();
         var selectedData = buildManager.SelectedTowerData;
