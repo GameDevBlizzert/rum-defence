@@ -18,6 +18,7 @@ public class Box : IBox
         IBox child;
         for (int i = Children.Count; i > 0; i--)
         {
+            // iets nieuws geleerd https://learn.microsoft.com/en-us/dotnet/csharp/tutorials/ranges-indexes
             child = Children[^i];
             childSize = child.Measure();
             if (Direction == Direction.Column)
@@ -39,6 +40,7 @@ public class Box : IBox
     }
     private int GetGap(int index, Align align, int extraSpace)
     {
+        // children verdelen 51% aan het begin en 49% aan het eind 
         if (align == Align.Between && Children.Count > 1 && index == Children.Count / 2 + 1)
             return Gap + extraSpace;
         return GetGap(index);
@@ -47,6 +49,7 @@ public class Box : IBox
     public override void Arrange(Rectangle rect)
     {
         int x, y;
+        // backup. ingeval iemand 0 om 0 geeft.
         var childrenMeasured = Measure();
         if (rect.Width == 0 || rect.Width < childrenMeasured.X)
             rect.Width = (int)childrenMeasured.X;
@@ -57,7 +60,7 @@ public class Box : IBox
         var Width = rect.Width - 2 * Padding;
         var Height = rect.Height - 2 * Padding;
 
-        // add padding between the Box edges and content (children)
+        // padding tussen the Box edges en content (children)
         x += Padding;
         y += Padding;
 

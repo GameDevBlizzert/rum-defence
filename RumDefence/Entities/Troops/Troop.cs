@@ -51,7 +51,8 @@ public abstract class Troop : Entity, ICollidable
         CoinValue = data.CoinValue;
         SpeedMultiplier = data.InitialSpeedMultiplier;
 
-        // https://foozlecc.itch.io/scallywag-pirates
+        // basis sprite van https://foozlecc.itch.io/scallywag-pirates
+        // en nog wat custom aanpassing dmv pixelorama
         animation = new Animation(data.SpriteFrameSize, 0.2f);
         animation.AddLayerMatrix(
         [

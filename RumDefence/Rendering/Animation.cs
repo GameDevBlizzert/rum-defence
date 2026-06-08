@@ -5,6 +5,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace RumDefence;
 
+// notes voor spritesheet textures:
+// - De Animation class is ingesteld op de layers, inrichting, structuur van pixelorama, dus Pixelorama is aanbevolen.
+// - Een frame kan SpriteAction en SpriteDirection hebben.
+// - In de spritesheet zijn 
+//      - rows de lagen/layers. De eerste laag komt aan de voorkant en de laatste laag komt aan de achterkant. 
+//      - columns de SpriteAction EN SpriteDirection. 
 public enum SpriteAction
 {
     None,
@@ -23,6 +29,8 @@ public enum SpriteDirection
     Right,
     Left,
 }
+// bewaren van SpriteEffect en LayerDepth. de andere values worden niet meer gebruikt.
+// wordt alleen gebruikt voor GetCurrentLayers()
 public readonly struct SpriteLayer
 {
     public SpriteAction Type { get; }
@@ -48,7 +56,7 @@ public readonly struct SpriteLayer
         Direction = direction;
     }
 }
-
+// richt je een sprite in met SpriteMatrixCell.
 public readonly struct SpriteMatrixCell
 {
     public SpriteDirection Direction { get; }
@@ -56,11 +64,14 @@ public readonly struct SpriteMatrixCell
     public SpriteEffects Effect { get; }
     public int Frames { get; }
     public bool IsLoop { get; }
+
     public SpriteMatrixCell(
+        // Aantal Frames voor de huidige Action en Direction.
         int frames = 1,
         SpriteAction action = SpriteAction.None,
         SpriteDirection direction = SpriteDirection.None,
         SpriteEffects effect = SpriteEffects.None,
+        // speel animatie in een loop 
         bool isLoop = true
     )
     {
@@ -123,6 +134,7 @@ public class Animation : IAnimation
         SpriteMatrices = null;
     }
 
+    // voeg een hele matrix toe. handig als je hele specifieke groepen (Action & Direction) moet activeren.
     public void AddLayerMatrix(SpriteMatrixCell[,] matrixCells)
     {
         if (SpriteMatrices == null || SpriteMatrices.Length < 1) { SpriteMatrices = matrixCells; return; }
@@ -139,6 +151,7 @@ public class Animation : IAnimation
         SpriteMatrices = merged;
     }
 
+    // om herhaling te verminderen kan je dit gebruiken.
     public void AddLayerMatrix(SpriteMatrixCell[] row, int rowCount = 1)
     {
         var matrix = new SpriteMatrixCell[rowCount, row.Length];
@@ -148,6 +161,7 @@ public class Animation : IAnimation
         AddLayerMatrix(matrix);
     }
 
+    // trigger en activeer de gewenste Action en Direction groep. 
     public void ActivateLayers(Tuple<SpriteAction, SpriteDirection>[] spriteLayers)
     {
         if (!LayersEqual(ActiveSpriteLayer, spriteLayers))
@@ -172,6 +186,7 @@ public class Animation : IAnimation
         return GetCurrentLayers();
     }
 
+    // geeft de huidige frame (op basis van de gametime) en de geactiveerde SpriteAction en SpriteDirection
     public virtual Tuple<SpriteLayer, Rectangle>[] GetCurrentLayers()
     {
         if (SpriteMatrices == null) return [];
@@ -213,8 +228,7 @@ public class Animation : IAnimation
                 colOffset += cell.Frames;
             }
         }
-
-        // Deferred sort mode uses draw order, not depth. Reverse so row 0 is drawn last = on top.
+        // layerdepth werkt niet. dit is een quick fix.
         results.Reverse();
         return results.ToArray();
     }

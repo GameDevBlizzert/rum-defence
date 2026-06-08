@@ -4,7 +4,6 @@ using System;
 
 namespace RumDefence.UI.Box;
 
-// A ButtonBox that centers an icon (optionally beside a cost label) instead of a text label.
 public class IconButtonBox : ButtonBox
 {
     private const float IconScale = 0.62f;
