@@ -11,19 +11,18 @@ public class ProgressBarBox : IBox
     public Color FillColor { get; set; } = Color.White;
     public Func<float, Color> FillColorFunc { get; set; }
     public string Label { get; set; }
-
+    public int Padding { get; set; } = 4;
     public Vector2 Size { get; set; }
-
     public override Vector2 Measure() => Size;
-
     public override void DrawBox(SpriteBatch spriteBatch)
     {
         var pct = MathHelper.Clamp(Progress, 0f, 1f);
         var fillColor = FillColorFunc?.Invoke(pct) ?? FillColor;
 
-        spriteBatch.Draw(Primitives.Pixel, Slot, TrackColor);
-
-        var fillRect = new Rectangle(Slot.X, Slot.Y, (int)(Slot.Width * pct), Slot.Height);
+        var halfPadding = Padding / 2;
+        var TrackRect = new Rectangle(Slot.X + halfPadding, Slot.Y + halfPadding, Slot.Width - Padding, Slot.Height - Padding);
+        spriteBatch.Draw(Primitives.Pixel, TrackRect, TrackColor);
+        var fillRect = new Rectangle(Slot.X + halfPadding * 2, Slot.Y + halfPadding * 2, (int)(Slot.Width * pct) - Padding * 2, Slot.Height - Padding * 2);
         spriteBatch.Draw(Primitives.Pixel, fillRect, fillColor);
 
         if (string.IsNullOrEmpty(Label))
