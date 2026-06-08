@@ -13,6 +13,7 @@ public abstract class Troop : Entity, ICollidable
     private Vector2 _lastDir = Vector2.UnitY;
     public event Action<Troop> Died;
 
+    public TroopData Data { get; private set; }
     public HealthComponent Health { get; private set; }
     public bool IsDead => Health.IsDead;
     public void TakeDamage(float amount) => Health.TakeDamage(amount);
@@ -42,6 +43,7 @@ public abstract class Troop : Entity, ICollidable
 
     public Troop(TroopData data, Vector2 start, Vector2 targetPos)
     {
+        Data = data;
         Health = new HealthComponent(data.Health);
         Position = start;
         target = targetPos;

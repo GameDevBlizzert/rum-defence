@@ -20,11 +20,14 @@ public class ThemeSelectScreen : Screen
     private SimpleButton backButton;
 
     private float elapsedSeconds;
+    private bool grassCompleted;
 
     public ThemeSelectScreen(ScreenManager manager) : base(manager) { }
 
     public override void Load()
     {
+        grassCompleted = SaveManager.HasCompletedAllGrassLevels();
+
         grassButton = new SimpleButton(Primitives.ButtonTexture, "Grass",
             new Vector2(800, 400), new Vector2(300, 100));
 
@@ -60,18 +63,25 @@ public class ThemeSelectScreen : Screen
 
         stoneButton.OnClick = () =>
         {
-            manager.SetScreen(new LevelSelectScreen(manager, GhostLevels.All));
+            if (grassCompleted)
+                manager.SetScreen(new LevelSelectScreen(manager, GhostLevels.All));
         };
 
         oneHpButton.OnClick = () =>
         {
-            manager.SetScreen(new LevelSelectScreen(manager, OneHpLevels.All));
+            if (grassCompleted)
+                manager.SetScreen(new LevelSelectScreen(manager, OneHpLevels.All));
         };
 
         infinityButton.OnClick = () =>
         {
-            manager.SetScreen(new LevelSelectScreen(manager, InfinityLevels.All));
+            if (grassCompleted)
+                manager.SetScreen(new LevelSelectScreen(manager, InfinityLevels.All));
         };
+
+        stoneButton.IsDisabled = !grassCompleted;
+        oneHpButton.IsDisabled = !grassCompleted;
+        infinityButton.IsDisabled = !grassCompleted;
 
         backButton.OnClick = () =>
         {
@@ -107,5 +117,23 @@ public class ThemeSelectScreen : Screen
         infinityButton.Draw(spriteBatch);
         devButton?.Draw(spriteBatch);
         backButton.Draw(spriteBatch);
+
+        if (!grassCompleted)
+        {
+            DrawLockedLabel(spriteBatch, stoneButton);
+            DrawLockedLabel(spriteBatch, oneHpButton);
+            DrawLockedLabel(spriteBatch, infinityButton);
+        }
+    }
+
+    private static void DrawLockedLabel(SpriteBatch spriteBatch, SimpleButton button)
+    {
+        const string text = "Locked - finish the Grass campaign";
+        const float scale = 0.45f;
+        var size = Primitives.Font.MeasureString(text) * scale;
+        var bounds = button.Bounds;
+        var position = new Vector2(bounds.Center.X - size.X / 2f, bounds.Bottom + 6);
+
+        spriteBatch.DrawString(Primitives.Font, text, position, new Color(200, 80, 80), 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
     }
 }
