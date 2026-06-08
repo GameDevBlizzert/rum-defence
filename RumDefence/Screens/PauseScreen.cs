@@ -26,9 +26,6 @@ public class PauseScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
-        // Only switch to pause music when the player manually paused.
-        // For focus-loss pauses, audio is already suspended by RumGame —
-        // we leave it alone so ResumeAudio() can restore it perfectly.
         if (!pausedDueToFocusLoss)
         {
             AudioManager.Instance.PlayBackgroundMusic();
@@ -58,7 +55,6 @@ public class PauseScreen : Screen
 
         resumeButton.OnClick = () =>
         {
-            // Return to the game — restore gameplay music.
             AudioManager.Instance.PlayBackgroundMusic("menu_music");
             manager.SetScreen(previousScreen);
         };

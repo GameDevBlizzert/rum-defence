@@ -109,7 +109,6 @@ public class UpgradeMenu
         targetModeButton.IsDisabled = false;
         upgradeButton.IsDisabled = !SelectedTower.CanUpgrade || progress.CoinsRemaining < SelectedTower.GetUpgradeCost();
 
-        // This will potentially fire OnClick and set UpgradeClicked = true.
         targetModeButton.Update(gameTime);
         upgradeButton.Update(gameTime);
     }

@@ -92,9 +92,6 @@ public class Hud
         coinManager.Draw(spriteBatch);
         waveHud.Draw(spriteBatch);
 
-
-        var hovered = buildManager.GetHoveredTile();
-        // The game screen handles tracking current selection, we update the UpgradeMenu/RepairMenu separately.
         upgradeMenu.Draw(spriteBatch);
         wallRepairMenu.Draw(spriteBatch);
     }
