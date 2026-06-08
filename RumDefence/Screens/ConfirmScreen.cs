@@ -9,9 +9,7 @@ public class ConfirmScreen : Screen
     private string message;
     private Action onConfirm;
     private Screen previous;
-
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
+    private const int messageWidth = 600;
 
     private SimpleButton yesButton;
     private SimpleButton noButton;
@@ -21,21 +19,26 @@ public class ConfirmScreen : Screen
     public ConfirmScreen(ScreenManager manager, Screen previous, string message, Action onConfirm) : base(manager)
     {
         this.previous = previous;
-        this.message = message;
         this.onConfirm = onConfirm;
+        this.message = WrapText(Primitives.Font, message, messageWidth);
     }
 
     public override void Load()
     {
-        var content = RumGame.Instance.Content;
+        const int panelWidth = 700;
+        const int padding = 30;
+        var buttonSize = new Vector2(200, 70);
+        var messageHeight = (int)Primitives.Font.MeasureString(message).Y;
+        var panelHeight = padding + messageHeight + padding + (int)buttonSize.Y + padding;
+        var panelX = (RumGame.VirtualWidth - panelWidth) / 2;
+        var panelY = (RumGame.VirtualHeight - panelHeight) / 2;
+        panelRect = new Rectangle(panelX, panelY, panelWidth, panelHeight);
 
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
-        panelRect = new Rectangle(600, 300, 700, 400);
-
-        yesButton = new SimpleButton(buttonTexture, "Yes", new Vector2(700, 550), new Vector2(200, 100));
-        noButton = new SimpleButton(buttonTexture, "No", new Vector2(1000, 550), new Vector2(200, 100));
+        var buttonY = panelY + padding + messageHeight + padding;
+        var yesX = panelX + panelWidth / 2 - (int)buttonSize.X - padding / 2;
+        var noX = panelX + panelWidth / 2 + padding / 2;
+        yesButton = new SimpleButton(Primitives.ButtonTexture, "Yes", new Vector2(yesX, buttonY), buttonSize);
+        noButton = new SimpleButton(Primitives.ButtonTexture, "No", new Vector2(noX, buttonY), buttonSize);
 
         yesButton.OnClick = () =>
         {
@@ -56,15 +59,16 @@ public class ConfirmScreen : Screen
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(Primitives.Pixel,
+        previous.Draw(spriteBatch);
+
+        spriteBatch.Draw(
+            Primitives.Pixel,
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
-            Color.Black * 0.5f);
+            Color.Black * 0.3f);
 
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
-        const int messageWidth = 600;
-        var wrappedMessage = WrapText(Primitives.Font, message, messageWidth);
-        spriteBatch.DrawString(Primitives.Font, wrappedMessage, new Vector2(650, 380), Primitives.FontColor);
+        spriteBatch.DrawString(Primitives.Font, message, new Vector2(panelRect.X + (panelRect.Width - messageWidth) / 2, panelRect.Y + 10), Primitives.FontColor);
 
         yesButton.Draw(spriteBatch);
         noButton.Draw(spriteBatch);

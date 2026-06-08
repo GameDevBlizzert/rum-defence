@@ -8,9 +8,6 @@ public class SettingsScreen : Screen
 {
     private Screen previous;
 
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
-
     private SimpleButton keyBindingsButton;
     private SimpleButton backButton;
 
@@ -29,19 +26,15 @@ public class SettingsScreen : Screen
 
     public override void Load()
     {
-        var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
 
         int centerX = PanelLeft + PanelWidth / 2;
 
-        keyBindingsButton = new SimpleButton(buttonTexture, "Key Bindings",
+        keyBindingsButton = new SimpleButton(Primitives.ButtonTexture, "Key Bindings",
             new Vector2(centerX - 200, PanelTop + 430),
             new Vector2(400, 70));
 
-        backButton = new SimpleButton(buttonTexture, "Back",
+        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
             new Vector2(centerX - 100, PanelTop + 520),
             new Vector2(200, 70));
 
@@ -112,7 +105,7 @@ public class SettingsScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         var title = "Settings";
         var titleSize = Primitives.Font.MeasureString(title);
@@ -134,17 +127,17 @@ public class SettingsScreen : Screen
         var pct = $"{(int)(value * 100)}%";
         var pctSize = Primitives.Font.MeasureString(pct);
         spriteBatch.DrawString(Primitives.Font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Primitives.FontColor);
-
-        spriteBatch.Draw(Primitives.Pixel, track, new Color(170, 170, 170));
+        var gap = 30;
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y + gap, track.Width, track.Height), new Color(170, 170, 170));
 
         int filledWidth = (int)(track.Width * value);
         if (filledWidth > 0)
-            spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y, filledWidth, track.Height), new Color(70, 130, 200));
+            spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y + gap, filledWidth, track.Height), new Color(70, 130, 200));
 
         int thumbSize = 28;
         int thumbX = track.X + filledWidth - thumbSize / 2;
         int thumbY = track.Y + track.Height / 2 - thumbSize / 2;
-        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX, thumbY, thumbSize, thumbSize), Color.White);
-        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX + 3, thumbY + 3, thumbSize - 6, thumbSize - 6), new Color(40, 100, 180));
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX, thumbY + gap, thumbSize, thumbSize), Color.White);
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX + 3, thumbY + 3 + gap, thumbSize - 6, thumbSize - 6), new Color(40, 100, 180));
     }
 }

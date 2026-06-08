@@ -6,9 +6,6 @@ namespace RumDefence;
 
 public class GameOverScreen : Screen
 {
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
-
     private SimpleButton retryButton;
     private SimpleButton menuButton;
     private SimpleButton nextLevelButton;
@@ -45,16 +42,11 @@ public class GameOverScreen : Screen
 
     public override void Load()
     {
-        var content = RumGame.Instance.Content;
-
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         Vector2 buttonSize = new Vector2(360, 100);
 
-        retryButton = new SimpleButton(buttonTexture, "Retry", Vector2.Zero, buttonSize);
-        menuButton = new SimpleButton(buttonTexture, "Menu", Vector2.Zero, buttonSize);
-        nextLevelButton = new SimpleButton(buttonTexture, "Next Level", Vector2.Zero, buttonSize);
+        retryButton = new SimpleButton(Primitives.ButtonTexture, "Retry", Vector2.Zero, buttonSize);
+        menuButton = new SimpleButton(Primitives.ButtonTexture, "Menu", Vector2.Zero, buttonSize);
+        nextLevelButton = new SimpleButton(Primitives.ButtonTexture, "Next Level", Vector2.Zero, buttonSize);
 
         if (isWin)
         {
@@ -182,7 +174,7 @@ public class GameOverScreen : Screen
             panelHeight
         );
 
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         var title = isWin ? "YOU WIN!" : "GAME OVER";
         var titleSize = Primitives.Font.MeasureString(title);

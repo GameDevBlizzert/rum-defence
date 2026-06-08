@@ -1333,12 +1333,12 @@
 /processorParam:Quality=Best
 /build:Audio/WhatCloudsAreMadeOf.ogg
 
-#begin Fonts/KenneyFuture.spritefont
+#begin Fonts/font.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:Fonts/KenneyFuture.spritefont
+/build:Fonts/font.spritefont
 
 #begin KenneyPiratePack/PNG/Default size/Ship parts/cannon.png
 /importer:TextureImporter

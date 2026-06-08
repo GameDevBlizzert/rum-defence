@@ -5,7 +5,6 @@ namespace RumDefence;
 
 public class WallRepairMenu
 {
-    private Texture2D panelTexture;
     private Rectangle panelRect;
     private SimpleButton repairButton;
     private SimpleButton upgradeButton;
@@ -26,22 +25,18 @@ public class WallRepairMenu
     {
         this.progress = progress;
 
-        var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         int width = 340;
         int height = 390;
         int x = RumGame.VirtualWidth - width - 20;
         int y = RumGame.VirtualHeight - height - 320;
         panelRect = new Rectangle(x, y, width, height);
 
-        repairButton = new SimpleButton(buttonTexture, "Repair", Vector2.Zero, new Vector2(width - 40, 52));
+        repairButton = new SimpleButton(Primitives.ButtonTexture, "Repair", Vector2.Zero, new Vector2(width - 40, 52));
         repairButton.SetBounds(new Rectangle(panelRect.X + 20, panelRect.Y + 150, width - 40, 52));
         repairButton.TextScale = 0.72f;
         repairButton.OnClick = () => { RepairClicked = true; };
 
-        upgradeButton = new SimpleButton(buttonTexture, "Upgrade", Vector2.Zero, new Vector2(width - 40, 52));
+        upgradeButton = new SimpleButton(Primitives.ButtonTexture, "Upgrade", Vector2.Zero, new Vector2(width - 40, 52));
         upgradeButton.SetBounds(new Rectangle(panelRect.X + 20, panelRect.Y + 308, width - 40, 52));
         upgradeButton.TextScale = 0.72f;
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
@@ -80,7 +75,7 @@ public class WallRepairMenu
     {
         if (SelectedWall == null) return;
 
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         // Title + level
         string title = SelectedWall.UpgradeLevel > 0

@@ -6,8 +6,6 @@ namespace RumDefence;
 
 public class BuildMenu
 {
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
     private Rectangle panelRect;
 
     private readonly (IconButton button, TowerData data)[] towerButtons;
@@ -46,9 +44,6 @@ public class BuildMenu
         this.progress = progress;
 
         var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
         var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
 
@@ -84,7 +79,7 @@ public class BuildMenu
         {
             var data = allTowers[i];
             var icon = content.Load<Texture2D>(data.IconTexturePath);
-            var btn = new IconButton(buttonTexture, icon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+            var btn = new IconButton(Primitives.ButtonTexture, icon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
             btn.BackgroundSourceRect = buttonSourceRect;
             btn.OnClick = () => buildManager.SetTowerMode(data);
             btn.CostLabel = data.Cost.ToString();
@@ -92,13 +87,13 @@ public class BuildMenu
             currentY += ButtonHeight + spacing;
         }
 
-        wallButton = new IconButton(buttonTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        wallButton = new IconButton(Primitives.ButtonTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         wallButton.BackgroundSourceRect = buttonSourceRect;
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
         wallButton.CostLabel = BuildManager.WallCost.ToString();
         currentY += ButtonHeight + spacing;
 
-        removeButton = new IconButton(buttonTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
+        removeButton = new IconButton(Primitives.ButtonTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
         removeButton.BackgroundSourceRect = buttonSourceRect;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
@@ -108,12 +103,12 @@ public class BuildMenu
         fastForwardIcon = CreateFastForwardIcon(RumGame.Instance.GraphicsDevice);
 
         int speedButtonY = panelY + panelHeight - (ButtonHeight + spacing) * 2 - 20;
-        speedButton = new IconButton(buttonTexture, fastForwardIcon, new Vector2(buttonX, speedButtonY), new Vector2(ButtonWidth, ButtonHeight));
+        speedButton = new IconButton(Primitives.ButtonTexture, fastForwardIcon, new Vector2(buttonX, speedButtonY), new Vector2(ButtonWidth, ButtonHeight));
         speedButton.BackgroundSourceRect = buttonSourceRect;
         speedButton.OnClick = () => OnSpeedRequested?.Invoke();
 
         int pauseMenuButtonY = panelY + panelHeight - ButtonHeight - 20;
-        pauseMenuButton = new IconButton(buttonTexture, pauseIcon, new Vector2(buttonX, pauseMenuButtonY), new Vector2(ButtonWidth, ButtonHeight));
+        pauseMenuButton = new IconButton(Primitives.ButtonTexture, pauseIcon, new Vector2(buttonX, pauseMenuButtonY), new Vector2(ButtonWidth, ButtonHeight));
         pauseMenuButton.BackgroundSourceRect = buttonSourceRect;
         pauseMenuButton.OnClick = () => OnMenuRequested?.Invoke();
     }
@@ -215,7 +210,7 @@ public class BuildMenu
 
         var rect = new Rectangle(x, y, width, height);
 
-        NineSlice.Draw(spriteBatch, panelTexture, rect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, rect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         float titleScale = 0.75f;
         float statScale = 0.6f;
@@ -307,7 +302,7 @@ public class BuildMenu
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         healthBar.Draw(spriteBatch);
 
