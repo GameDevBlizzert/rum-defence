@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using RumDefence.UI.Box;
-using RumDefence.UI.Box;
 
 namespace RumDefence
 {
