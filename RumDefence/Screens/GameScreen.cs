@@ -142,11 +142,10 @@ public class GameScreen : Screen
                 AudioManager.Instance.PlayRandomImpact();
 
                 selectedTower = null;
+                selectedWall = null;
 
                 if (!buildManager.CtrlHeld)
                 {
-                    selectedTower = placedTowers[p];
-                    selectedWall = null;
                     buildManager.SetMode(BuildMode.None);
                 }
             }
