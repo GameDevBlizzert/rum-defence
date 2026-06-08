@@ -5,9 +5,6 @@ namespace RumDefence;
 
 public class MainMenuScreen : Screen
 {
-    private Texture2D panelTexture;
-    private Texture2D buttonTexture;
-
     private SimpleButton levelsButton;
     private SimpleButton settingsButton;
     private SimpleButton quitButton;
@@ -17,16 +14,11 @@ public class MainMenuScreen : Screen
     public MainMenuScreen(ScreenManager manager) : base(manager) { }
     public override void Load()
     {
-        var content = RumGame.Instance.Content;
-
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
-
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        levelsButton = new SimpleButton(buttonTexture, "Levels", new Vector2(800, 300), new Vector2(300, 100));
-        settingsButton = new SimpleButton(buttonTexture, "Settings", new Vector2(800, 450), new Vector2(300, 100));
-        quitButton = new SimpleButton(buttonTexture, "Quit", new Vector2(800, 600), new Vector2(300, 100));
+        levelsButton = new SimpleButton(Primitives.ButtonTexture, "Levels", new Vector2(800, 300), new Vector2(300, 100));
+        settingsButton = new SimpleButton(Primitives.ButtonTexture, "Settings", new Vector2(800, 450), new Vector2(300, 100));
+        quitButton = new SimpleButton(Primitives.ButtonTexture, "Quit", new Vector2(800, 600), new Vector2(300, 100));
 
         levelsButton.OnClick = () =>
         {
@@ -67,7 +59,7 @@ public class MainMenuScreen : Screen
         LoadingSplashScreen.DrawBackground(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
         LoadingSplashScreen.DrawWater(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
 
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
 
         levelsButton.Draw(spriteBatch);
         settingsButton.Draw(spriteBatch);

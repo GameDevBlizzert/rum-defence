@@ -32,7 +32,7 @@ public class TutorialOverlay
     private static readonly int PanelY = RumGame.VirtualHeight - PanelHeight - 30;
 
     private const int WaveNotifWidth = 760;
-    private const int WaveNotifHeight = 150;
+    private const int WaveNotifHeight = 200;
     private static readonly int WaveNotifX = (RumGame.VirtualWidth - WaveNotifWidth) / 2;
     private const int WaveNotifY = 80;
 
