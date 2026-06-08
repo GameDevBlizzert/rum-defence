@@ -15,7 +15,6 @@ public class ButtonBox : Box
     public TextItem Label { get; }
     public ImageBox Icon { get; set; }
 
-    // Fixed size so a parent Box can lay this button out alongside its siblings.
     public Vector2 Size { get; set; }
 
     private bool isHovering;
@@ -31,9 +30,6 @@ public class ButtonBox : Box
         Add(Label);
         Size = size ?? Vector2.Zero;
     }
-
-    // Reports a fixed size to the parent layout, regardless of the label's measured text size —
-    // the background/label should fill the button's own bounds, not size the button to fit them.
     public override Vector2 Measure() => Size;
 
     public override void Arrange(Rectangle rect)

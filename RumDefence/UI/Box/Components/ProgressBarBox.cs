@@ -12,7 +12,6 @@ public class ProgressBarBox : IBox
     public Func<float, Color> FillColorFunc { get; set; }
     public string Label { get; set; }
 
-    // Fixed size so a parent Box can lay this bar out alongside its siblings.
     public Vector2 Size { get; set; }
 
     public override Vector2 Measure() => Size;

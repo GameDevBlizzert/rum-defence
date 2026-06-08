@@ -29,6 +29,5 @@ public class ImageBox : IBox
     public override void DrawBox(SpriteBatch spriteBatch)
     {
         StretchSprite.Draw(spriteBatch, Texture, Slot, color: Color);
-        // NineSlice.Draw(spriteBatch, Texture, Slot, new(0, 0, Texture.Width, Texture.Height), 20, Color);
     }
 }
