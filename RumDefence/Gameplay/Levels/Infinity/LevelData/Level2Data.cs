@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 
-namespace RumDefence.Gameplay.Levels.Grass.LevelData;
+namespace RumDefence.Gameplay.Levels.Infinity.LevelData;
 
-public static class Level6Data
+public static class Level2Data
 {
     private static readonly Ship.Data BossShip = new()
     {
@@ -65,7 +65,7 @@ public static class Level6Data
     public static Level Create(Theme theme, bool unlocked = true)
     {
         return new Level(
-            6,
+            2,
             MapData,
             theme,
             SeedWaves,

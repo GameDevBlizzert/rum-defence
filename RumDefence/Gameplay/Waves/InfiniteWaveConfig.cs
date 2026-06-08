@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
+// AI generated
 public class InfiniteWaveConfig
 {
     // ── Ship types used when generating waves ──────────────────────────────
