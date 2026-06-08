@@ -30,9 +30,10 @@ public class Level
 
     public int StartingCoinBalance { get; private set; }
     public int StartingLives { get; private set; }
+    public InfiniteWaveConfig InfiniteConfig { get; private set; }
 
 
-    public Level(int id, string[] mapData, Theme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0, int startingLives = 100)
+    public Level(int id, string[] mapData, Theme theme, List<Wave> waves, bool unlocked = false, int startingCoinBalance = 0, int startingLives = 100, InfiniteWaveConfig infiniteConfig = null)
     {
         Id = id;
         Theme = theme;
@@ -42,6 +43,7 @@ public class Level
         Map = ParseMap(mapData);
         StartingCoinBalance = startingCoinBalance;
         StartingLives = startingLives;
+        InfiniteConfig = infiniteConfig;
         Decorations = DecorationManager.Generate(this);
     }
 

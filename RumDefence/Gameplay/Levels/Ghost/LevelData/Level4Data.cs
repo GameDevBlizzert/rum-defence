@@ -21,7 +21,7 @@ public static class Level4Data
         RotationOffsetDegrees = -90f,
     };
 
-    public static Level Create(Theme theme, bool unlocked = false)
+    public static Level Create(Theme theme, bool unlocked = true, int startingLives = 100)
     {
         return new Level(
             4,
@@ -29,7 +29,8 @@ public static class Level4Data
             theme,
             Waves,
             unlocked,
-            startingCoinBalance: 100
+            startingCoinBalance: 100,
+            startingLives: startingLives
         );
     }
 
@@ -44,31 +45,11 @@ public static class Level4Data
         CreateWave(minSpawnTime: 2f,   maxSpawnTime: 4f,   (NormalShip,  2, [(Regular,  7, 100)],              1.0f)),
         CreateWave(minSpawnTime: 1f,   maxSpawnTime: 9f,   (NormalShip,  3, [(Regular,  6, 100), (Ghost, 2, 50)],1.5f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
         CreateWave(minSpawnTime: 1f,   maxSpawnTime: 7f,   (NormalShip,  3, [(Regular, 8, 100), (Ghost, 3, 50)],0.8f), (BossShip, 1, [(Boss, 1, 500)], 0.5f)),
-        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 3f,   (NormalShip,  20, [(Regular, 4, 100), (Ghost, 2, 50)], 0.5f), (BossShip, 2, [(Boss, 1, 600)], 0.5f)),
-        CreateWave(minSpawnTime: 0.5f, maxSpawnTime: 8f, (NormalShip, 10, [(Regular, 10, 100), (Ghost, 4, 50)], 0.3f), (BossShip, 3, [(Boss, 1, 600)], 0.3f)),
+        CreateWave(minSpawnTime: 1f,   maxSpawnTime: 3f,   (NormalShip,  20, [(Regular, 4, 200), (Ghost, 2, 50)], 0.5f), (BossShip, 2, [(Boss, 1, 600)], 0.5f)),
+        CreateWave(minSpawnTime: 0.5f, maxSpawnTime: 8f, (NormalShip, 10, [(Regular, 10, 250), (Ghost, 4, 50)], 0.3f), (BossShip, 3, [(Boss, 1, 600)], 0.3f)),
     };
 
-    private static string[] MapData => new[]
-    {
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 # 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0",
-        "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
-    };
+    private static string[] MapData => StandardMap.Layout4;
 
     private static Wave CreateWave(float minSpawnTime, float maxSpawnTime, params (Ship.Data data, int count, (TroopData troop, int n, int hp)[] troops, float spawnDelay)[] groups)
     {
