@@ -47,6 +47,10 @@ public class InputManager
         currentMouse.LeftButton == ButtonState.Pressed &&
         previousMouse.LeftButton == ButtonState.Released;
 
+    public bool IsRightClick() =>
+        currentMouse.RightButton == ButtonState.Pressed &&
+        previousMouse.RightButton == ButtonState.Released;
+
     public bool IsActionJustPressed(string action) =>
         bindings.TryGetValue(action, out var key) &&
         currentKeyboard.IsKeyDown(key) && !previousKeyboard.IsKeyDown(key);
