@@ -4,7 +4,8 @@ public enum AttackMode
 {
     Nearest,
     Strongest,
-    Farthest
+    Farthest,
+    ClosestToRum
 }
 
 public static class AttackModeExtensions
@@ -16,6 +17,7 @@ public static class AttackModeExtensions
             AttackMode.Nearest => "Nearest",
             AttackMode.Strongest => "Strongest",
             AttackMode.Farthest => "Farthest",
+            AttackMode.ClosestToRum => "Closest to Rum",
             _ => mode.ToString()
         };
     }

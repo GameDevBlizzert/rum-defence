@@ -25,7 +25,7 @@ public class BaseTower : Entity
     public int CurrentDamage => (int)((Data.Damage + (CurrentLevel * Data.DamageUpgradeFlat)) * (1f + (CurrentLevel * Data.DamageUpgradePercent)));
 
     public float ProjectileSpeed { get; set; } = 200f;
-    public AttackMode AttackMode { get; set; } = AttackMode.Nearest;
+    public AttackMode AttackMode { get; set; } = AttackMode.ClosestToRum;
     public float RotationSpeed { get; set; } = 5f;
 
     public string CurrentAttackModeLabel => AttackMode.ToDisplayName();
@@ -49,9 +49,10 @@ public class BaseTower : Entity
     {
         AttackMode = AttackMode switch
         {
+            AttackMode.ClosestToRum => AttackMode.Nearest,
             AttackMode.Nearest => AttackMode.Strongest,
             AttackMode.Strongest => AttackMode.Farthest,
-            _ => AttackMode.Nearest
+            _ => AttackMode.ClosestToRum
         };
 
         _currentTarget = null;
@@ -151,6 +152,8 @@ public class BaseTower : Entity
         Troop best = null;
         float bestValue = float.MaxValue;
 
+        var rumPosition = RumGame.Instance.CurrentLevel?.RumBarrel?.Position;
+
         foreach (var troop in Troops)
         {
             if (troop.IsDead || troop.IsFinished) continue;
@@ -165,6 +168,9 @@ public class BaseTower : Entity
                 AttackMode.Nearest => dist,
                 AttackMode.Strongest => -troop.Health.Current,
                 AttackMode.Farthest => -dist,
+                AttackMode.ClosestToRum => rumPosition.HasValue
+                    ? Vector2.Distance(troop.Position, rumPosition.Value)
+                    : dist,
                 _ => dist
             };
 
