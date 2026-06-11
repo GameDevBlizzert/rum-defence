@@ -14,6 +14,8 @@ public class InfoPopupOverlay
 
     private ButtonBox continueButton;
     private Box panel;
+    private TextItem titleItem;
+    private TextItem bodyItem;
     private const float TitleScale = 0.75f;
     private const float BodyScale = 0.62f;
 
@@ -25,8 +27,6 @@ public class InfoPopupOverlay
 
     public InfoPopupOverlay()
     {
-        var content = RumGame.Instance.Content;
-
         panel = new Box();
         panel.AddBackground(new ImageBox(Primitives.PanelTexture));
 
@@ -36,8 +36,11 @@ public class InfoPopupOverlay
         );
         continueButton.OnClick = Advance;
 
-        panel.Add(new TextItem(current?.Title, scale: TitleScale));
-        panel.Add(new TextItem(current?.Body, scale: BodyScale));
+        titleItem = new TextItem("", scale: TitleScale);
+        bodyItem = new TextItem("", scale: BodyScale);
+
+        panel.Add(titleItem);
+        panel.Add(bodyItem);
         panel.Add(continueButton);
         panel.Arrange(new Rectangle(PanelX, PanelY, PanelWidth, PanelHeight));
     }
@@ -46,7 +49,7 @@ public class InfoPopupOverlay
     {
         pending.Enqueue(new PopupEntry(title, body));
         if (current == null)
-            current = pending.Dequeue();
+            SetCurrent(pending.Dequeue());
     }
 
     public void Update(GameTime gameTime)
@@ -63,12 +66,18 @@ public class InfoPopupOverlay
             return;
 
         panel.Draw(spriteBatch);
+    }
 
-        continueButton.Draw(spriteBatch);
+    private void SetCurrent(PopupEntry? entry)
+    {
+        current = entry;
+        titleItem.Text = entry?.Title ?? "";
+        bodyItem.Text = entry?.Body ?? "";
+        panel.Arrange(new Rectangle(PanelX, PanelY, PanelWidth, PanelHeight));
     }
 
     private void Advance()
     {
-        current = pending.Count > 0 ? pending.Dequeue() : null;
+        SetCurrent(pending.Count > 0 ? pending.Dequeue() : null);
     }
 }
