@@ -18,7 +18,6 @@ public class Box : IBox
         IBox child;
         for (int i = Children.Count; i > 0; i--)
         {
-            // iets nieuws geleerd https://learn.microsoft.com/en-us/dotnet/csharp/tutorials/ranges-indexes
             child = Children[^i];
             childSize = child.Measure();
             if (Direction == Direction.Column)
