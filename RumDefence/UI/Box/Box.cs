@@ -31,6 +31,7 @@ public class Box : IBox
                 size.Y += childSize.Y + GetGap(i);
             }
         }
+        size += new Vector2(2 * Padding);
         return size;
     }
     private int GetGap(int index)
@@ -51,9 +52,9 @@ public class Box : IBox
         // backup. ingeval iemand 0 om 0 geeft.
         var childrenMeasured = Measure();
         if (rect.Width == 0 || rect.Width < childrenMeasured.X)
-            rect.Width = (int)childrenMeasured.X;
+            rect.Width = (int)childrenMeasured.X + 2 * Padding;
         if (rect.Height == 0 || rect.Height < childrenMeasured.Y)
-            rect.Height = (int)childrenMeasured.Y;
+            rect.Height = (int)childrenMeasured.Y + 2 * Padding;
         x = rect.X;
         y = rect.Y;
         var Width = rect.Width - 2 * Padding;

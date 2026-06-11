@@ -1,6 +1,6 @@
-using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace RumDefence.UI.Box;
 
@@ -10,28 +10,29 @@ public class KeyBindBox : ButtonBox
     private bool IsRebinding { get; set; }
     private readonly TextItem nameLabel;
     private readonly TextItem keyLabel;
-    public KeyBindBox(string actionId, string actionName)
+    private readonly int borderSize = 8;
+    public KeyBindBox(string actionId, string actionName, float scale = 1f)
     {
         ActionId = actionId;
-        // this.anyRebinding = anyRebinding;
-        nameLabel = new TextItem(actionName, 0.75f);
-        keyLabel = new TextItem("", 0.75f, new Color(160, 210, 255));
+        nameLabel = new TextItem(actionName, scale);
+        keyLabel = new TextItem("", scale, new Color(160, 210, 255));
     }
+
     public override void Arrange(Rectangle rect)
     {
         base.Arrange(rect);
 
         nameLabel?.Arrange(new(
-            rect.X + Padding,
-            rect.Y + Padding + (rect.Height - (int)nameLabel.Measure().Y) / 2,
-            rect.Width - 2 * Padding,
-            rect.Height - 2 * Padding
+            rect.X + Padding + borderSize,
+            rect.Y + (rect.Height - (int)nameLabel.Measure().Y) / 2,
+            rect.Width - 2 * Padding + borderSize,
+            rect.Height - 2 * Padding + borderSize
         ));
         keyLabel?.Arrange(new(
-            rect.X - Padding + rect.Width - (int)keyLabel.Measure().X - 20,
-            rect.Y + Padding + (rect.Height - (int)keyLabel.Measure().Y) / 2,
-            rect.Width - 2 * Padding,
-            rect.Height - 2 * Padding
+            rect.X - Padding - borderSize + rect.Width - (int)keyLabel.Measure().X,
+            rect.Y + (rect.Height - (int)keyLabel.Measure().Y) / 2,
+            rect.Width - 2 * Padding + borderSize,
+            rect.Height - 2 * Padding + borderSize
         ));
     }
     public override void UpdateBox(GameTime gameTime)
@@ -42,6 +43,19 @@ public class KeyBindBox : ButtonBox
                 IsRebinding = true;
             else
                 IsRebinding = false;
+        }
+        if (IsRebinding)
+        {
+            if (InputManager.Instance.IsAnyKeyJustPressed(out Keys pressedKey))
+            {
+                if (pressedKey == Keys.Escape)
+                    IsRebinding = false;
+                else
+                {
+                    InputManager.Instance.SetBinding(ActionId, pressedKey);
+                    IsRebinding = false;
+                }
+            }
         }
 
         keyLabel.Text = IsRebinding
@@ -62,19 +76,19 @@ public class KeyBindBox : ButtonBox
                 ? new Color(255, 255, 255) * 0.12f
                 : new Color(255, 255, 255) * 0.05f;
 
-        Color border = IsRebinding
+        Color borderColor = IsRebinding
             ? new Color(255, 200, 80)
             : new Color(255, 255, 255) * 0.2f;
 
-        spriteBatch.Draw(Primitives.Pixel, new Rectangle(Slot.X + 1, Slot.Y + 1, Slot.Width - 1, Slot.Height - 1), border);
+        spriteBatch.Draw(Primitives.Pixel, new Rectangle(
+            Slot.X + borderSize,
+            Slot.Y + borderSize,
+            Slot.Width - 2 * borderSize,
+            Slot.Height - 2 * borderSize), borderColor
+        );
         spriteBatch.Draw(Primitives.Pixel, Slot, bg);
-        // spriteBatch.Draw(Primitives.Pixel, new Rectangle(Slot.X, Slot.Y, Slot.Width, 1), border);
-        // spriteBatch.Draw(Primitives.Pixel, new Rectangle(Slot.X, Slot.Bottom - 1, Slot.Width, 1), border);
-        // spriteBatch.Draw(Primitives.Pixel, new Rectangle(Slot.X, Slot.Y, 1, Slot.Height), border);
-        // spriteBatch.Draw(Primitives.Pixel, new Rectangle(Slot.Right - 1, Slot.Y, 1, Slot.Height), border);
 
         nameLabel.Draw(spriteBatch);
         keyLabel.Draw(spriteBatch);
     }
-    // protected override bool IsClickable() => !IsRebinding && !anyRebinding();
 }

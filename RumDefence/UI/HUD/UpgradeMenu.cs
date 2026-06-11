@@ -12,8 +12,6 @@ public class UpgradeMenu
 
     private Rectangle panelRect;
     private Box panel;
-
-    private Box towerContent;
     private TextItem towerTitle;
     private TextItem damStat;
     private TextItem rngStat;
@@ -39,23 +37,13 @@ public class UpgradeMenu
     {
         this.progress = progress;
 
-        int width = 400;
+        int width = 360;
         int height = 500;
-        int x = RumGame.VirtualWidth - width - 20; // right side
-        int y = RumGame.VirtualHeight - height - 20; // bottom right
+        int x = RumGame.VirtualWidth - width; // right side
+        int y = RumGame.VirtualHeight - height; // bottom right
         panelRect = new Rectangle(x, y, width, height);
 
-        BuildTowerContent();
-
-        panel = new Box { Padding = 20 };
-        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
-        panel.Add(towerContent);
-        panel.Arrange(panelRect);
-    }
-
-    private void BuildTowerContent()
-    {
-        var buttonSize = new Vector2(panelRect.Width - 40, 52);
+        var buttonSize = new Vector2(300, 52);
 
         towerTitle = new TextItem("", TitleScale);
         damStat = new TextItem("", StatScale);
@@ -63,20 +51,19 @@ public class UpgradeMenu
         spdStat = new TextItem("", StatScale);
 
         targetLabel = new TextItem("Target:", LabelScale);
-        targetModeButton = new ButtonBox(Primitives.ButtonTexture, "Nearest", 0.72f, buttonSize);
+        targetModeButton = new ButtonBox(Primitives.ButtonTexture, "Nearest", 0.7f, buttonSize);
         targetModeButton.OnClick = () => { TargetModeClicked = true; };
 
         costLabel = new TextItem("", StatScale);
-        upgradeButton = new ButtonBox(Primitives.ButtonTexture, "Upgrade", 0.72f, buttonSize);
+        upgradeButton = new ButtonBox(Primitives.ButtonTexture, "Upgrade", 0.7f, buttonSize);
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
 
-        towerContent = new Box
+        var towerContent = new Box
         {
             Direction = Direction.Row,
             AlignX = Align.Start,
             AlignY = Align.Start,
             Gap = 12,
-            Padding = 0
         };
         towerContent.Add(towerTitle);
         towerContent.Add(damStat);
@@ -86,6 +73,11 @@ public class UpgradeMenu
         towerContent.Add(targetModeButton);
         towerContent.Add(costLabel);
         towerContent.Add(upgradeButton);
+
+        panel = new Box { Padding = 8, Direction = Direction.Row };
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Add(towerContent);
+        panel.Arrange(panelRect);
     }
 
     public void Update(GameTime gameTime)
@@ -109,8 +101,7 @@ public class UpgradeMenu
         targetModeButton.IsDisabled = false;
         upgradeButton.IsDisabled = !SelectedTower.CanUpgrade || progress.CoinsRemaining < SelectedTower.GetUpgradeCost();
 
-        targetModeButton.Update(gameTime);
-        upgradeButton.Update(gameTime);
+        panel.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -127,7 +118,6 @@ public class UpgradeMenu
             ? $"Cost: {SelectedTower.GetUpgradeCost()} coins"
             : "";
 
-        panel.Arrange(panelRect);
         panel.Draw(spriteBatch);
     }
 }

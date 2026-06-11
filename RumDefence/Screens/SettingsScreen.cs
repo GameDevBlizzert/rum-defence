@@ -24,9 +24,9 @@ public class SettingsScreen : Screen
     private Rectangle panelRect;
 
     private const int PanelLeft = 560;
-    private const int PanelTop = 190;
+    private const int PanelTop = 90;
     private const int PanelWidth = 800;
-    private const int PanelHeight = 720;
+    private const int PanelHeight = 820;
 
     public SettingsScreen(ScreenManager manager, Screen previous) : base(manager)
     {
@@ -39,7 +39,7 @@ public class SettingsScreen : Screen
 
         var sliderSize = new Vector2(360, 24);
         var stepButtonSize = new Vector2(60, 60);
-        var navButtonSize = new Vector2(400, 70);
+        var navButtonSize = new Vector2(400, 100);
 
         titleText = new TextItem("Settings");
 
@@ -75,7 +75,7 @@ public class SettingsScreen : Screen
         soundRow.Add(soundPlusButton);
 
         keyBindingsButton = new ButtonBox(Primitives.ButtonTexture, "Key Bindings", size: navButtonSize);
-        backButton = new ButtonBox(Primitives.ButtonTexture, "Back", size: new Vector2(200, 70));
+        backButton = new ButtonBox(Primitives.ButtonTexture, "Back", size: navButtonSize);
 
         panel = new Box { Direction = Direction.Row, Gap = 30, Padding = 40 };
         panel.AddBackground(new ImageBox(Primitives.PanelTexture));
