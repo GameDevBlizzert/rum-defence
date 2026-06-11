@@ -321,8 +321,24 @@ public class BuildMenu
         }
     }
 
+    private static readonly string[] TowerSlotActions =
+    [
+        "BuildTower1", "BuildTower2", "BuildTower3", "BuildTower4", "BuildTower5"
+    ];
+
+    private void HandleTowerSlotShortcuts()
+    {
+        for (int i = 0; i < towerButtons.Length && i < TowerSlotActions.Length; i++)
+        {
+            if (InputManager.Instance.IsActionJustPressed(TowerSlotActions[i]))
+                buildManager.SetTowerMode(towerButtons[i].data);
+        }
+    }
+
     public void Update(GameTime gameTime)
     {
+        HandleTowerSlotShortcuts();
+
         var mode = buildManager.GetMode();
         var selectedData = buildManager.SelectedTowerData;
 

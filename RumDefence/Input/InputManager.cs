@@ -18,6 +18,11 @@ public class InputManager
         ["Repair"] = Keys.R,
         ["TogglePause"] = Keys.Space,
         ["ToggleFastForward"] = Keys.F,
+        ["BuildTower1"] = Keys.D1,
+        ["BuildTower2"] = Keys.D2,
+        ["BuildTower3"] = Keys.D3,
+        ["BuildTower4"] = Keys.D4,
+        ["BuildTower5"] = Keys.D5,
     };
 
     public static IReadOnlyDictionary<string, Keys> DefaultBindings => Defaults;
