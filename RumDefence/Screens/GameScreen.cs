@@ -213,6 +213,8 @@ public class GameScreen : Screen
     {
         if (HandlePause()) return;
 
+        HandlePlaybackShortcuts();
+
         UpdateBuildSystem(gameTime);
 
         if (playbackState == GamePlaybackState.Paused || ShouldFreezeGameplayForTutorial() || ShouldFreezeGameplayForPopup())
@@ -477,6 +479,23 @@ public class GameScreen : Screen
         hud.SetPlaybackState(playbackState);
     }
 
+    private void HandlePlaybackShortcuts()
+    {
+        if (InputManager.Instance.IsActionJustPressed("TogglePause"))
+        {
+            playbackState = playbackState == GamePlaybackState.Paused
+                ? GamePlaybackState.Normal
+                : GamePlaybackState.Paused;
+
+            hud.SetPlaybackState(playbackState);
+        }
+
+        if (InputManager.Instance.IsActionJustPressed("ToggleFastForward") && playbackState != GamePlaybackState.Paused)
+        {
+            CyclePlaybackState();
+        }
+    }
+
     private bool HandlePause()
     {
         if (InputManager.Instance.IsActionJustPressed("Pause"))
@@ -618,7 +637,6 @@ public class GameScreen : Screen
     private void DrawWallHealthBars(SpriteBatch spriteBatch)
     {
         const int barHeight = 3;
-        const int barYOffset = 4;
 
         foreach (var wall in walls.Values)
         {
@@ -627,7 +645,7 @@ public class GameScreen : Screen
             var center = grid.GridToWorld(wall.GridPos);
             int barWidth = grid.TileSize;
             int barX = (int)(center.X - barWidth / 2f);
-            int barY = (int)(center.Y + grid.TileSize / 2f + barYOffset);
+            int barY = (int)(center.Y - barHeight / 2f);
 
             float pct = (float)wall.Health / wall.MaxHealth;
             int healthWidth = (int)(barWidth * pct);
