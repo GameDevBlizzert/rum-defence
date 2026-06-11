@@ -16,6 +16,8 @@ public class InputManager
         ["LevelPrev"] = Keys.A,
         ["Upgrade"] = Keys.U,
         ["Repair"] = Keys.R,
+        ["TogglePause"] = Keys.Space,
+        ["ToggleFastForward"] = Keys.F,
         ["BuildTower1"] = Keys.D1,
         ["BuildTower2"] = Keys.D2,
         ["BuildTower3"] = Keys.D3,
@@ -51,6 +53,10 @@ public class InputManager
     public bool IsLeftClick() =>
         currentMouse.LeftButton == ButtonState.Pressed &&
         previousMouse.LeftButton == ButtonState.Released;
+
+    public bool IsRightClick() =>
+        currentMouse.RightButton == ButtonState.Pressed &&
+        previousMouse.RightButton == ButtonState.Released;
 
     public bool IsActionJustPressed(string action) =>
         bindings.TryGetValue(action, out var key) &&

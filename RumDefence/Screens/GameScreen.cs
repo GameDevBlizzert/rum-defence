@@ -121,8 +121,14 @@ public class GameScreen : Screen
 
         buildManager.SetWallPlacementCallback(p =>
         {
-            if (!walls.ContainsKey(p) && !placedTowers.ContainsKey(p) &&
-                progress.CoinsRemaining >= BuildManager.WallCost)
+            if (walls.ContainsKey(p) || placedTowers.ContainsKey(p))
+            {
+                buildManager.SetMode(BuildMode.None);
+                SelectTile(p);
+                return;
+            }
+
+            if (progress.CoinsRemaining >= BuildManager.WallCost)
             {
                 currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
                 walls[p] = new Wall(p);
@@ -160,8 +166,14 @@ public class GameScreen : Screen
         {
             bool isFreeTower = towerUnlockManager?.PendingFreeTower == data.Type;
 
-            if (!placedTowers.ContainsKey(p) && !walls.ContainsKey(p) &&
-                (isFreeTower || progress.CoinsRemaining >= data.Cost))
+            if (placedTowers.ContainsKey(p) || walls.ContainsKey(p))
+            {
+                buildManager.SetMode(BuildMode.None);
+                SelectTile(p);
+                return;
+            }
+
+            if (isFreeTower || progress.CoinsRemaining >= data.Cost)
             {
                 currentLevel.Decorations.RemoveAll(d => d.GridPos == p);
                 placedTowers[p] = TowerFactory.Create(data, grid.GridToWorld(p), Troops);
@@ -189,26 +201,7 @@ public class GameScreen : Screen
             }
         });
 
-        buildManager.SetSelectCallback(p =>
-        {
-            if (placedTowers.TryGetValue(p, out BaseTower tower))
-            {
-                selectedTower = tower;
-                selectedWall = null;
-            }
-            else if (walls.TryGetValue(p, out Wall wall))
-            {
-                selectedWall = wall;
-                selectedTower = null;
-            }
-            else
-            {
-                selectedTower = null;
-                selectedWall = null;
-            }
-            hud.SetSelectedWall(selectedWall);
-            hud.SetSelectedTower(selectedTower);
-        });
+        buildManager.SetSelectCallback(SelectTile);
 
         if (currentLevel.Id == 1)
             tutorialOverlay = new TutorialOverlay();
@@ -219,6 +212,8 @@ public class GameScreen : Screen
     public override void Update(GameTime gameTime)
     {
         if (HandlePause()) return;
+
+        HandlePlaybackShortcuts();
 
         UpdateBuildSystem(gameTime);
 
@@ -326,6 +321,27 @@ public class GameScreen : Screen
         troopEncounterPopup?.Draw(spriteBatch);
     }
 
+    private void SelectTile(Point p)
+    {
+        if (placedTowers.TryGetValue(p, out BaseTower tower))
+        {
+            selectedTower = tower;
+            selectedWall = null;
+        }
+        else if (walls.TryGetValue(p, out Wall wall))
+        {
+            selectedWall = wall;
+            selectedTower = null;
+        }
+        else
+        {
+            selectedTower = null;
+            selectedWall = null;
+        }
+        hud.SetSelectedWall(selectedWall);
+        hud.SetSelectedTower(selectedTower);
+    }
+
     private void UpdateBuildSystem(GameTime gameTime)
     {
         wallRenderer.Update(gameTime);
@@ -422,7 +438,8 @@ public class GameScreen : Screen
             buildManager.Update(
                 input.MousePositionScaled,
                 input.IsLeftClick(),
-                input.IsCtrlHeld()
+                input.IsCtrlHeld(),
+                input.IsRightClick()
             );
         }
         else
@@ -431,7 +448,8 @@ public class GameScreen : Screen
             buildManager.Update(
                 input.MousePositionScaled,
                 false, // forcefully tell buildManager it's NOT a click because the UI consumed it
-                input.IsCtrlHeld()
+                input.IsCtrlHeld(),
+                input.IsRightClick()
             );
         }
     }
@@ -459,6 +477,23 @@ public class GameScreen : Screen
         };
 
         hud.SetPlaybackState(playbackState);
+    }
+
+    private void HandlePlaybackShortcuts()
+    {
+        if (InputManager.Instance.IsActionJustPressed("TogglePause"))
+        {
+            playbackState = playbackState == GamePlaybackState.Paused
+                ? GamePlaybackState.Normal
+                : GamePlaybackState.Paused;
+
+            hud.SetPlaybackState(playbackState);
+        }
+
+        if (InputManager.Instance.IsActionJustPressed("ToggleFastForward") && playbackState != GamePlaybackState.Paused)
+        {
+            CyclePlaybackState();
+        }
     }
 
     private bool HandlePause()
@@ -602,7 +637,6 @@ public class GameScreen : Screen
     private void DrawWallHealthBars(SpriteBatch spriteBatch)
     {
         const int barHeight = 3;
-        const int barYOffset = 4;
 
         foreach (var wall in walls.Values)
         {
@@ -611,7 +645,7 @@ public class GameScreen : Screen
             var center = grid.GridToWorld(wall.GridPos);
             int barWidth = grid.TileSize;
             int barX = (int)(center.X - barWidth / 2f);
-            int barY = (int)(center.Y + grid.TileSize / 2f + barYOffset);
+            int barY = (int)(center.Y - barHeight / 2f);
 
             float pct = (float)wall.Health / wall.MaxHealth;
             int healthWidth = (int)(barWidth * pct);

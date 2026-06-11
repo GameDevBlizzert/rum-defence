@@ -13,11 +13,11 @@ public class KeyBindingsScreen : Screen
     private MouseState prevMouse;
 
     private const int PanelLeft = 560;
-    private const int PanelTop = 60;
+    private const int PanelTop = 120;
     private const int PanelWidth = 800;
-    private const int PanelHeight = 980;
+    private const int PanelHeight = 860;
 
-    private const int RowHeight = 64;
+    private const int RowHeight = 70;
     private const int RowsStartY = PanelTop + 90;
     private const int RowMargin = 30;
 
@@ -29,11 +29,8 @@ public class KeyBindingsScreen : Screen
         ("LevelPrev",  "Prev Level Page"),
         ("Upgrade",    "Upgrade Tower / Wall"),
         ("Repair",     "Repair Wall"),
-        ("BuildTower1", "Select Build Tower 1"),
-        ("BuildTower2", "Select Build Tower 2"),
-        ("BuildTower3", "Select Build Tower 3"),
-        ("BuildTower4", "Select Build Tower 4"),
-        ("BuildTower5", "Select Build Tower 5"),
+        ("TogglePause",       "Pause / Resume Gameplay"),
+        ("ToggleFastForward", "Toggle 2x Speed"),
     };
 
     private string rebindingAction = null;
