@@ -102,8 +102,8 @@ public class ButtonBox : IBox
         }
         else if (isPressed)
         {
-            tint = Color.Lerp(BaseTint, Color.Black, 0.9f);
-            textColor = Color.White;
+            tint = Color.RoyalBlue;
+            textColor = Color.SkyBlue;
         }
         else if (IsSelected)
         {
