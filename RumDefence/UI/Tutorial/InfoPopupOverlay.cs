@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
@@ -11,9 +12,8 @@ public class InfoPopupOverlay
     private readonly Queue<PopupEntry> pending = new();
     private PopupEntry? current;
 
-    private Texture2D panelTexture;
-    private SimpleButton continueButton;
-
+    private ButtonBox continueButton;
+    private Box panel;
     private const float TitleScale = 0.75f;
     private const float BodyScale = 0.62f;
 
@@ -21,23 +21,25 @@ public class InfoPopupOverlay
     private const int PanelHeight = 280;
     private static readonly int PanelX = (RumGame.VirtualWidth - PanelWidth) / 2;
     private static readonly int PanelY = (RumGame.VirtualHeight - PanelHeight) / 2;
-
     public bool IsActive => current != null;
 
     public InfoPopupOverlay()
     {
         var content = RumGame.Instance.Content;
-        panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
-        var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
-        continueButton = new SimpleButton(
-            buttonTexture,
-            "Continue",
-            new Vector2(PanelX + PanelWidth - 188, PanelY + PanelHeight - 68),
-            new Vector2(160, 52)
+        panel = new Box();
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+
+        continueButton = new ButtonBox(
+            Primitives.ButtonTexture,
+            "Continue"
         );
-        continueButton.TextScale = BodyScale;
         continueButton.OnClick = Advance;
+
+        panel.Add(new TextItem(current?.Title, scale: TitleScale));
+        panel.Add(new TextItem(current?.Body, scale: BodyScale));
+        panel.Add(continueButton);
+        panel.Arrange(new Rectangle(PanelX, PanelY, PanelWidth, PanelHeight));
     }
 
     public void Show(string title, string body)
@@ -60,17 +62,7 @@ public class InfoPopupOverlay
         if (current == null)
             return;
 
-        var entry = current.Value;
-        var panelRect = new Rectangle(PanelX, PanelY, PanelWidth, PanelHeight);
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
-
-        spriteBatch.DrawString(Primitives.Font, entry.Title,
-            new Vector2(PanelX + 28, PanelY + 24),
-            Primitives.FontColor, 0f, Vector2.Zero, TitleScale, SpriteEffects.None, 0f);
-
-        spriteBatch.DrawString(Primitives.Font, entry.Body,
-            new Vector2(PanelX + 28, PanelY + 78),
-            Primitives.FontColor, 0f, Vector2.Zero, BodyScale, SpriteEffects.None, 0f);
+        panel.Draw(spriteBatch);
 
         continueButton.Draw(spriteBatch);
     }
