@@ -11,7 +11,7 @@ public class ButtonBox : IBox
     public Color BaseTint { get; set; } = Color.White;
     public bool IsDisabled { get; set; }
     public bool IsSelected { get; set; }
-    public bool IsHovered { get; private set; }
+    public bool IsHovered => isHovering;
     public TextItem Label { get; }
     public ImageBox Icon { get; set; }
 
@@ -19,7 +19,7 @@ public class ButtonBox : IBox
     public int Padding { get; set; } = 4;
 
     private bool isHovering;
-    private bool isPressed;
+    private bool leftMousePress;
     private bool wasPressed;
 
     public ButtonBox() { }
@@ -64,29 +64,29 @@ public class ButtonBox : IBox
         foreach (var child in Children)
             child.Draw(spriteBatch);
     }
-
+    public virtual bool MouseHover()
+    {
+        var mousePos = ScreenManager.GetMousePositionScaled();
+        var mouseRect = new Rectangle((int)mousePos.X, (int)mousePos.Y, 1, 1);
+        return mouseRect.Intersects(Slot);
+    }
     public override void UpdateBox(GameTime gameTime)
     {
         Arrange(Slot);
         foreach (var child in Children)
             child.Update(gameTime);
 
-        var mousePos = ScreenManager.GetMousePositionScaled();
-        var mouseRect = new Rectangle((int)mousePos.X, (int)mousePos.Y, 1, 1);
-        isHovering = mouseRect.Intersects(Slot);
-        IsHovered = isHovering;
+        isHovering = MouseHover();
 
-        var mouse = Mouse.GetState();
-        bool mousePressed = mouse.LeftButton == ButtonState.Pressed;
-        isPressed = isHovering && mousePressed;
+        leftMousePress = isHovering && Mouse.GetState().LeftButton == ButtonState.Pressed;
 
-        if (isHovering && !mousePressed && wasPressed && !IsDisabled && IsClickable())
+        if (isHovering && !leftMousePress && wasPressed && !IsDisabled && IsClickable())
         {
             AudioManager.Instance.PlaySound("confirmation");
             OnClick?.Invoke();
         }
 
-        wasPressed = mousePressed;
+        wasPressed = leftMousePress;
 
         ApplyTint();
     }
@@ -100,7 +100,7 @@ public class ButtonBox : IBox
             tint = new Color(80, 80, 80);
             textColor = Color.DarkGray;
         }
-        else if (isPressed)
+        else if (leftMousePress)
         {
             tint = Color.RoyalBlue;
             textColor = Color.SkyBlue;
