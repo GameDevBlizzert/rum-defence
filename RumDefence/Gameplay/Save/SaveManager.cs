@@ -106,4 +106,40 @@ public static class SaveManager
         CurrentSave.LevelScores.TryGetValue(level.SaveKey, out var score);
         return score;
     }
+
+    public static bool IsTowerUnlocked(TowerType type)
+        => CurrentSave.UnlockedTowers.Contains(type.ToString());
+
+    public static void MarkTowerUnlocked(TowerType type)
+    {
+        if (CurrentSave.UnlockedTowers.Add(type.ToString()))
+            Save();
+    }
+
+    public static bool IsTroopEncountered(TroopType type)
+        => CurrentSave.EncounteredTroops.Contains(type.ToString());
+
+    public static void MarkTroopEncountered(TroopType type)
+    {
+        if (CurrentSave.EncounteredTroops.Add(type.ToString()))
+            Save();
+    }
+
+    public static bool HasClaimedFreeTowerPlacement(TowerType type)
+        => CurrentSave.FreeTowerPlacementsClaimed.Contains(type.ToString());
+
+    public static void MarkFreeTowerPlacementClaimed(TowerType type)
+    {
+        if (CurrentSave.FreeTowerPlacementsClaimed.Add(type.ToString()))
+            Save();
+    }
+
+    public static bool HasCompletedAllGrassLevels()
+    {
+        for (int i = 1; i <= 4; i++)
+            if (!CurrentSave.LevelScores.ContainsKey($"grass_{i}"))
+                return false;
+
+        return true;
+    }
 }

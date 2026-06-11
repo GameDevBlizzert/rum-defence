@@ -13,7 +13,8 @@ public record TroopData(
     float SizeInTiles,
     int SpriteFrameSize,
     float InitialSpeedMultiplier,
-    TroopType Type = TroopType.Grunt
+    TroopType Type = TroopType.Grunt,
+    string Description = null
 );
 
 public static class TroopFactory
@@ -38,7 +39,8 @@ public static class TroopFactory
         SizeInTiles: 0.5f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 0.5f,
-        Type: TroopType.Boss
+        Type: TroopType.Boss,
+        Description: "A heavily armoured pirate captain. Slow on its feet,\nbut it soaks up far more damage than regular troops -\nfocus it down with your strongest towers."
     );
 
     public static readonly TroopData Ghost = new(
@@ -50,7 +52,8 @@ public static class TroopFactory
         SizeInTiles: 0.5f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f,
-        Type: TroopType.Ghost
+        Type: TroopType.Ghost,
+        Description: "A spectral pirate that drifts straight through walls\nand defences as if they aren't there. Walls won't stop\nit - only your towers can."
     );
 
     public static readonly TroopData Bomber = new(
@@ -62,7 +65,8 @@ public static class TroopFactory
         SizeInTiles: 0.5f,
         SpriteFrameSize: 16,
         InitialSpeedMultiplier: 1f,
-        Type: TroopType.Bomber
+        Type: TroopType.Bomber,
+        Description: "Carries an explosive charge that detonates near your\nwalls, dealing heavy splash damage that can blow\nthem apart in one hit. Take it down before it gets close."
     );
 
     public static Troop Create(TroopData data, Vector2 start, Vector2 target)

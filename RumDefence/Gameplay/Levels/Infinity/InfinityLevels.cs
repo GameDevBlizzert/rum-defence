@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using RumDefence.Gameplay.Levels.Grass.LevelData;
+using System.Collections.Generic;
+using RumDefence.Gameplay.Levels.Infinity.LevelData;
 
-namespace RumDefence.Levels.Grass;
+namespace RumDefence.Levels.Infinity;
 
-public static class GrassLevels
+public static class InfinityLevels
 {
     private static GrassTheme grass = new GrassTheme();
 
@@ -24,12 +24,12 @@ public static class GrassLevels
                 _all = new List<Level>()
                 {
                     Level1Data.Create(theme, true),
-                    Level2Data.Create(theme),
-                    Level3Data.Create(theme),
-                    Level4Data.Create(theme),
+                    Level2Data.Create(theme, true),
+                    Level3Data.Create(theme, true),
+                    Level4Data.Create(theme, true),
                 };
 
-                string[] keys = { "grass_1", "grass_2", "grass_3", "grass_4" };
+                string[] keys = { "infinity_1", "infinity_2", "infinity_3", "infinity_4" };
                 for (int i = 0; i < _all.Count; i++)
                 {
                     _all[i].SaveKey = keys[i];

@@ -15,12 +15,12 @@ public class KeyBindingsScreen : Screen
     private MouseState prevMouse;
 
     private const int PanelLeft = 560;
-    private const int PanelTop = 190;
+    private const int PanelTop = 120;
     private const int PanelWidth = 800;
-    private const int PanelHeight = 760;
+    private const int PanelHeight = 860;
 
-    private const int RowHeight = 78;
-    private const int RowsStartY = PanelTop + 110;
+    private const int RowHeight = 70;
+    private const int RowsStartY = PanelTop + 90;
     private const int RowMargin = 30;
 
     private static readonly (string Id, string Name)[] Actions =
@@ -31,9 +31,15 @@ public class KeyBindingsScreen : Screen
         ("LevelPrev",  "Prev Level Page"),
         ("Upgrade",    "Upgrade Tower / Wall"),
         ("Repair",     "Repair Wall"),
+        ("TogglePause",       "Pause / Resume Gameplay"),
+        ("ToggleFastForward", "Toggle 2x Speed"),
     };
 
     private string rebindingAction = null;
+
+    private static int RowsEndY => RowsStartY + Actions.Length * RowHeight;
+    private static int HintY => RowsEndY + 24;
+    private static int BackButtonY => HintY + 50;
 
     public KeyBindingsScreen(ScreenManager manager, Screen previous) : base(manager)
     {
@@ -50,7 +56,7 @@ public class KeyBindingsScreen : Screen
 
         int backX = PanelLeft + (PanelWidth - 200) / 2;
         backButton = new ButtonBox(Primitives.ButtonTexture, "Back");
-        backButton.Arrange(new Rectangle(backX, PanelTop + PanelHeight - 110, 200, 70));
+        backButton.Arrange(new Rectangle(backX, BackButtonY, 200, 70));
 
         backButton.OnClick = () =>
         {
@@ -113,7 +119,7 @@ public class KeyBindingsScreen : Screen
             PanelLeft + RowMargin,
             RowsStartY + index * RowHeight,
             PanelWidth - RowMargin * 2,
-            68
+            RowHeight - 10
         );
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -187,7 +193,7 @@ public class KeyBindingsScreen : Screen
             : "Click a row to rebind";
         var hintSize = Primitives.Font.MeasureString(hint);
         spriteBatch.DrawString(Primitives.Font, hint,
-            new Vector2(PanelLeft + (PanelWidth - hintSize.X) / 2f, PanelTop + PanelHeight - 160),
+            new Vector2(PanelLeft + (PanelWidth - hintSize.X) / 2f, HintY),
             new Color(160, 160, 160));
 
         if (rebindingAction == null)

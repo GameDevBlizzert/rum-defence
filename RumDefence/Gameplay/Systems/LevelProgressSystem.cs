@@ -4,6 +4,7 @@ using RumDefence.Gameplay.Levels.Dev;
 using RumDefence.Gameplay.Levels.Ghost;
 using RumDefence.Levels.Ghost;
 using RumDefence.Levels.Grass;
+using RumDefence.Levels.Infinity;
 using System;
 using System.Collections.Generic;
 
@@ -45,7 +46,8 @@ public class LevelProgressSystem : IGameLoopSystem
     {
         DevLevels.All,
         GrassLevels.All,
-        GhostLevels.All
+        GhostLevels.All,
+        InfinityLevels.All
     };
 
     /// <param name="initialLives">The initial amount of lives at the start of the level</param>
