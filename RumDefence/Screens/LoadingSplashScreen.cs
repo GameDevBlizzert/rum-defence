@@ -1,6 +1,7 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
@@ -16,6 +17,10 @@ public class LoadingSplashScreen : Screen
     private Texture2D barrelTexture;
     private Texture2D boatTexture;
 
+    private Box titlePanel;
+    private ImageBox titlePanelBackground;
+    private ProgressBarBox loadingBar;
+
     public LoadingSplashScreen(ScreenManager manager) : base(manager)
     {
         nextScreen = new MainMenuScreen(manager);
@@ -28,6 +33,16 @@ public class LoadingSplashScreen : Screen
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         barrelTexture = content.Load<Texture2D>("Art/Objects/RumBarrel");
         boatTexture = content.Load<Texture2D>("Art/Themes/Grass/Ships/ship_1");
+
+        titlePanelBackground = new ImageBox(panelTexture);
+        titlePanel = new Box();
+        titlePanel.AddBackground(titlePanelBackground);
+
+        loadingBar = new ProgressBarBox
+        {
+            TrackColor = new Color(20, 12, 8) * 0.9f,
+            FillColor = new Color(245, 183, 72)
+        };
     }
 
     public override void Update(GameTime gameTime)
@@ -151,7 +166,9 @@ public class LoadingSplashScreen : Screen
         int panelHeight = 290;
         var panelRect = new Rectangle(width / 2 - panelWidth / 2, 110, panelWidth, panelHeight);
 
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White * 0.96f);
+        titlePanelBackground.Color = Color.White * 0.96f;
+        titlePanel.Arrange(panelRect);
+        titlePanel.Draw(spriteBatch);
 
         string title = "DEFEND THE RUM";
         string loading = GetLoadingText();
@@ -179,10 +196,13 @@ public class LoadingSplashScreen : Screen
         float progress = MathHelper.Clamp(elapsedSeconds / DurationSeconds, 0f, 1f);
 
         var barBounds = new Rectangle(width / 2 - 360, height - 160, 720, 34);
-        var fillBounds = new Rectangle(barBounds.X + 6, barBounds.Y + 6, (int)((barBounds.Width - 12) * progress), barBounds.Height - 12);
+        var innerBounds = new Rectangle(barBounds.X + 6, barBounds.Y + 6, barBounds.Width - 12, barBounds.Height - 12);
 
         spriteBatch.Draw(Primitives.Pixel, barBounds, new Color(20, 12, 8) * 0.9f);
-        spriteBatch.Draw(Primitives.Pixel, fillBounds, new Color(245, 183, 72));
+        loadingBar.Progress = progress;
+        loadingBar.Arrange(innerBounds);
+        loadingBar.TrackColor = new Color(20, 12, 8) * 0.9f;
+        loadingBar.Draw(spriteBatch);
 
         for (int i = 0; i < 5; i++)
         {

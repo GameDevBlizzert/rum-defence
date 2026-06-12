@@ -2,18 +2,21 @@ using System;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
 public class BuildMenu
 {
     private Rectangle panelRect;
+    private Box panel;
+    private Box hoverInfoPanel;
 
-    private (IconButton button, TowerData data)[] towerButtons;
-    private IconButton wallButton;
-    private IconButton removeButton;
-    private IconButton speedButton;
-    private IconButton pauseMenuButton;
+    private (IconButtonBox button, TowerData data)[] towerButtons;
+    private IconButtonBox wallButton;
+    private IconButtonBox removeButton;
+    private IconButtonBox speedButton;
+    private IconButtonBox pauseMenuButton;
 
     private readonly Texture2D playIcon;
     private readonly Texture2D pauseIcon;
@@ -28,30 +31,24 @@ public class BuildMenu
     private BuildManager buildManager;
     private LevelProgressSystem progress;
 
-    private HudHealthBar healthBar;
-    private Texture2D coinIcon;
+    private ProgressBarBox healthBar;
+    private ImageBox coinIconBox;
+    private TextItem coinText;
+    private Box contentBox;
+    private Box coinRow;
     public TowerData HoveredTowerData { get; private set; }
     public bool IsWallHovered { get; private set; }
     public TowerType? FreeTowerType { get; set; }
     public TowerType? HighlightedTower { get; set; }
 
-    private int coinAreaY;
-    private int coinIconSize;
-    private int panelX;
-
     private readonly Func<TowerData, bool> isTowerAvailable;
-    private Texture2D wallIcon;
-    private Texture2D removeIcon;
-    private Rectangle buttonSourceRect;
-    private int towerStartY;
-    private int buttonX;
-    private int panelY;
-    private int panelHeight;
     private const int Spacing = 8;
 
     private const int PanelWidth = 180;
     private const int ButtonWidth = PanelWidth - 20;
     private const int ButtonHeight = 60;
+    private Vector2 buttonSize;
+    private Rectangle buttonSourceRect;
 
     public BuildMenu(BuildManager buildManager, LevelProgressSystem progress, Func<TowerData, bool> isTowerAvailable = null)
     {
@@ -60,51 +57,93 @@ public class BuildMenu
         this.isTowerAvailable = isTowerAvailable;
 
         var content = RumGame.Instance.Content;
-        wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
-        removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
+        var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
+        var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
 
-        panelX = 20;
-        panelY = 20;
-        panelHeight = RumGame.VirtualHeight - 40;
+        int panelX = 0;
+        int panelY = 0;
+        var panelHeight = RumGame.VirtualHeight;
         panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
 
-        coinIcon = content.Load<Texture2D>("Art/UI/Coin");
+        var coinIcon = content.Load<Texture2D>("Art/UI/Coin");
 
-        const int barMargin = 8;
         int fontHeight = (int)Primitives.Font.MeasureString("0").Y;
         int barHeight = fontHeight + 8;
-        coinIconSize = fontHeight;
-        int coinHeight = fontHeight;
+        int coinIconSize = fontHeight;
+        const int iconTextGap = 4;
+        const int spacing = 8;
 
-        int currentY = panelY + 70;
-        buttonX = panelX + (PanelWidth - ButtonWidth) / 2;
-
-        var healthBarBounds = new Rectangle(panelX + barMargin, currentY, PanelWidth - barMargin * 2, barHeight);
-        healthBar = new HudHealthBar(progress, healthBarBounds);
-        currentY += barHeight + Spacing;
-
-        coinAreaY = currentY;
-        currentY += coinHeight + Spacing;
-
-        towerStartY = currentY;
+        buttonSize = new Vector2(ButtonWidth, ButtonHeight);
         buttonSourceRect = new Rectangle(0, 0, 64, 64);
 
-        BuildTowerAndUtilityButtons();
+        healthBar = new ProgressBarBox
+        {
+            Size = new Vector2(ButtonWidth, barHeight),
+            Padding = 24,
+            TrackColor = new Color(60, 0, 0),
+            FillColorFunc = pct => Color.Lerp(Color.Red, Color.LimeGreen, pct)
+        };
+        healthBar.AddBackground(new ImageBox(Primitives.ButtonTexture));
+
+        coinIconBox = new ImageBox(coinIcon, coinIconSize, coinIconSize);
+        coinText = new TextItem("");
+        coinRow = new Box { Direction = Direction.Column, Gap = iconTextGap, Padding = iconTextGap };
+        coinRow.Add(coinIconBox);
+        coinRow.Add(coinText);
+
+        var availableTowers = TowerFactory.All.Where(d => isTowerAvailable == null || isTowerAvailable(d)).ToArray();
+        towerButtons = new (IconButtonBox, TowerData)[availableTowers.Length];
+        for (int i = 0; i < availableTowers.Length; i++)
+        {
+            var data = availableTowers[i];
+            var icon = content.Load<Texture2D>(data.IconTexturePath);
+            var btn = new IconButtonBox(Primitives.ButtonTexture, icon, buttonSourceRect);
+            btn.Size = buttonSize;
+            btn.OnClick = () => buildManager.SetTowerMode(data);
+            btn.CostLabel = data.Cost.ToString();
+            towerButtons[i] = (btn, data);
+        }
+
+        wallButton = new IconButtonBox(Primitives.ButtonTexture, wallIcon, buttonSourceRect);
+        wallButton.Size = buttonSize;
+        wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
+        wallButton.CostLabel = BuildManager.WallCost.ToString();
+
+        removeButton = new IconButtonBox(Primitives.ButtonTexture, removeIcon, buttonSourceRect);
+        removeButton.Size = buttonSize;
+        removeButton.BaseTint = new Color(220, 70, 70);
+        removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
 
         playIcon = CreatePlayIcon(RumGame.Instance.GraphicsDevice);
         pauseIcon = CreatePauseIcon(RumGame.Instance.GraphicsDevice);
         fastForwardIcon = CreateFastForwardIcon(RumGame.Instance.GraphicsDevice);
         highlightArrowIcon = CreateHighlightArrowIcon(RumGame.Instance.GraphicsDevice);
 
-        int speedButtonY = panelY + panelHeight - (ButtonHeight + Spacing) * 2 - 20;
-        speedButton = new IconButton(Primitives.ButtonTexture, fastForwardIcon, new Vector2(buttonX, speedButtonY), new Vector2(ButtonWidth, ButtonHeight));
-        speedButton.BackgroundSourceRect = buttonSourceRect;
+        speedButton = new IconButtonBox(Primitives.ButtonTexture, fastForwardIcon, buttonSourceRect);
+        speedButton.Size = buttonSize;
         speedButton.OnClick = () => OnSpeedRequested?.Invoke();
 
-        int pauseMenuButtonY = panelY + panelHeight - ButtonHeight - 20;
-        pauseMenuButton = new IconButton(Primitives.ButtonTexture, pauseIcon, new Vector2(buttonX, pauseMenuButtonY), new Vector2(ButtonWidth, ButtonHeight));
-        pauseMenuButton.BackgroundSourceRect = buttonSourceRect;
+        pauseMenuButton = new IconButtonBox(Primitives.ButtonTexture, pauseIcon, buttonSourceRect);
+        pauseMenuButton.Size = buttonSize;
         pauseMenuButton.OnClick = () => OnMenuRequested?.Invoke();
+
+        contentBox = new Box { Direction = Direction.Row, Gap = spacing, Padding = 0, AlignX = Align.Center };
+        contentBox.Add(healthBar);
+        contentBox.Add(coinRow);
+        foreach (var (button, _) in towerButtons)
+            contentBox.Add(button);
+        contentBox.Add(wallButton);
+        contentBox.Add(removeButton);
+
+        var bottomContent = new Box { Direction = Direction.Row, Gap = spacing, Padding = 0, AlignX = Align.Center };
+        bottomContent.Add(speedButton);
+        bottomContent.Add(pauseMenuButton);
+
+        panel = new Box { Direction = Direction.Row, AlignY = Align.Between, Padding = 8, AlignX = Align.Center };
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Add(contentBox);
+        panel.Add(bottomContent);
+        panel.Arrange(panelRect);
     }
 
     public void SetPlaybackState(GamePlaybackState state)
@@ -112,40 +151,31 @@ public class BuildMenu
         playbackState = state;
     }
 
-    private void BuildTowerAndUtilityButtons()
+    public void Refresh()
     {
         var content = RumGame.Instance.Content;
         var availableTowers = TowerFactory.All.Where(d => isTowerAvailable == null || isTowerAvailable(d)).ToArray();
-
-        int currentY = towerStartY;
-        towerButtons = new (IconButton, TowerData)[availableTowers.Length];
+        towerButtons = new (IconButtonBox, TowerData)[availableTowers.Length];
         for (int i = 0; i < availableTowers.Length; i++)
         {
             var data = availableTowers[i];
             var icon = content.Load<Texture2D>(data.IconTexturePath);
-            var btn = new IconButton(Primitives.ButtonTexture, icon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-            btn.BackgroundSourceRect = buttonSourceRect;
+            var btn = new IconButtonBox(Primitives.ButtonTexture, icon, buttonSourceRect);
+            btn.Size = buttonSize;
             btn.OnClick = () => buildManager.SetTowerMode(data);
             btn.CostLabel = data.Cost.ToString();
             towerButtons[i] = (btn, data);
-            currentY += ButtonHeight + Spacing;
         }
 
-        wallButton = new IconButton(Primitives.ButtonTexture, wallIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        wallButton.BackgroundSourceRect = buttonSourceRect;
-        wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
-        wallButton.CostLabel = BuildManager.WallCost.ToString();
-        currentY += ButtonHeight + Spacing;
+        contentBox.Clear();
+        contentBox.Add(healthBar);
+        contentBox.Add(coinRow);
+        foreach (var (button, _) in towerButtons)
+            contentBox.Add(button);
+        contentBox.Add(wallButton);
+        contentBox.Add(removeButton);
 
-        removeButton = new IconButton(Primitives.ButtonTexture, removeIcon, new Vector2(buttonX, currentY), new Vector2(ButtonWidth, ButtonHeight));
-        removeButton.BackgroundSourceRect = buttonSourceRect;
-        removeButton.BaseTint = new Color(220, 70, 70);
-        removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
-    }
-
-    public void RefreshAvailableTowers()
-    {
-        BuildTowerAndUtilityButtons();
+        panel.Arrange(panelRect);
     }
 
     private static Texture2D CreatePlayIcon(GraphicsDevice graphicsDevice)
@@ -239,11 +269,7 @@ public class BuildMenu
 
     public Vector2 GetCoinTargetPosition()
     {
-        var size = Primitives.Font.MeasureString(progress.CoinsRemaining.ToString());
-        const int iconTextGap = 4;
-        float totalWidth = coinIconSize + iconTextGap + size.X;
-        float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
-        return new Vector2(coinRowX + coinIconSize / 2f, coinAreaY + coinIconSize / 2f);
+        return new Vector2(coinIconBox.Slot.Center.X, coinIconBox.Slot.Center.Y);
     }
 
     private const string WallDescription =
@@ -260,13 +286,11 @@ public class BuildMenu
 
         Vector2 mousePos = ScreenManager.GetMousePositionScaled();
 
-        const float titleScale = 0.75f;
         const float statScale = 0.6f;
         const float descScale = 0.55f;
         const int padding = 20;
         const int spacing = 34;
 
-        string title = HoveredTowerData != null ? HoveredTowerData.Label + " LVL 1" : "Wall";
         string description = HoveredTowerData != null ? HoveredTowerData.Description : WallDescription;
         int statCount = HoveredTowerData != null ? 4 : 2;
 
@@ -295,11 +319,15 @@ public class BuildMenu
 
         var rect = new Rectangle(x, y, width, height);
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, rect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        if (hoverInfoPanel == null)
+        {
+            hoverInfoPanel = new Box();
+            hoverInfoPanel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        }
+        hoverInfoPanel.Arrange(rect);
+        hoverInfoPanel.Draw(spriteBatch);
 
-        int startY = rect.Y + topPadding;
-
-        spriteBatch.DrawString(Primitives.Font, title, new Vector2(rect.X + padding, startY), Primitives.FontColor, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
+        int startY = rect.Y + 24;
 
         if (HoveredTowerData != null)
         {
@@ -343,10 +371,10 @@ public class BuildMenu
         var selectedData = buildManager.SelectedTowerData;
 
         foreach (var (button, data) in towerButtons)
-            button.SetSelected(mode == BuildMode.Tower && selectedData == data);
+            button.IsSelected = mode == BuildMode.Tower && selectedData == data;
 
-        wallButton.SetSelected(mode == BuildMode.Wall);
-        removeButton.SetSelected(mode == BuildMode.Remove);
+        wallButton.IsSelected = mode == BuildMode.Wall;
+        removeButton.IsSelected = mode == BuildMode.Remove;
 
         bool isPaused = playbackState == GamePlaybackState.Paused;
 
@@ -369,23 +397,23 @@ public class BuildMenu
             _ => playIcon
         };
 
+        healthBar.Progress = progress.LivesTotal > 0
+            ? MathHelper.Clamp((float)progress.LivesRemaining / progress.LivesTotal, 0f, 1f)
+            : 0f;
+        healthBar.Label = $"{progress.LivesRemaining}";
+        coinText.Text = progress.CoinsRemaining.ToString();
+
+        panel.Update(gameTime);
+
         HoveredTowerData = null;
+        IsWallHovered = false;
 
         foreach (var (button, data) in towerButtons)
-        {
-            button.Update(gameTime);
-
             if (button.IsHovered)
                 HoveredTowerData = data;
-        }
 
-        foreach (var (button, _) in towerButtons)
-            button.Update(gameTime);
-
-        wallButton.Update(gameTime);
-        removeButton.Update(gameTime);
-        speedButton.Update(gameTime);
-        pauseMenuButton.Update(gameTime);
+        if (wallButton.IsHovered)
+            IsWallHovered = true;
     }
 
     private void DrawHighlightArrow(SpriteBatch spriteBatch, Rectangle buttonBounds)
@@ -405,40 +433,11 @@ public class BuildMenu
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
-
-        healthBar.Draw(spriteBatch);
-
-        var coinText = progress.CoinsRemaining.ToString();
-        var coinSize = Primitives.Font.MeasureString(coinText);
-        const int iconTextGap = 4;
-        float totalWidth = coinIconSize + iconTextGap + coinSize.X;
-        float coinRowX = panelX + (PanelWidth - totalWidth) / 2f;
-        var iconRect = new Rectangle((int)coinRowX, coinAreaY, coinIconSize, coinIconSize);
-
-        spriteBatch.Draw(coinIcon, iconRect, Color.White);
-
-        float textY = coinAreaY + (coinIconSize - coinSize.Y) / 2f;
-
-        spriteBatch.DrawString(
-            Primitives.Font,
-            coinText,
-            new Vector2(coinRowX + coinIconSize + iconTextGap, textY),
-            Primitives.FontColor
-        );
+        panel.Draw(spriteBatch);
 
         foreach (var (button, data) in towerButtons)
-        {
-            button.Draw(spriteBatch);
-
             if (data.Type == HighlightedTower)
-                DrawHighlightArrow(spriteBatch, button.Bounds);
-        }
-
-        wallButton.Draw(spriteBatch);
-        removeButton.Draw(spriteBatch);
-        speedButton.Draw(spriteBatch);
-        pauseMenuButton.Draw(spriteBatch);
+                DrawHighlightArrow(spriteBatch, button.Slot);
 
         DrawHoverInfo(spriteBatch);
     }

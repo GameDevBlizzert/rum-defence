@@ -1,5 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
@@ -22,7 +23,10 @@ public class TutorialOverlay
     private const float WaveNotificationDuration = 5f;
 
     private Texture2D panelTexture;
-    private SimpleButton nextButton;
+    private ButtonBox nextButton;
+    private Box introPanel;
+    private Box waveNotifPanel;
+    private ImageBox waveNotifBackground;
 
     private const float TextScale = 0.62f;
 
@@ -44,14 +48,19 @@ public class TutorialOverlay
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 
-        nextButton = new SimpleButton(
-            buttonTexture,
-            "Next",
-            new Vector2(PanelX + PanelWidth - 168, PanelY + PanelHeight - 68),
-            new Vector2(140, 52)
-        );
-        nextButton.TextScale = TextScale;
+        nextButton = new ButtonBox(buttonTexture, "Next", TextScale);
+        nextButton.Arrange(new Rectangle(PanelX + PanelWidth - 168, PanelY + PanelHeight - 68, 140, 52));
         nextButton.OnClick = Advance;
+
+        var panelRect = new Rectangle(PanelX, PanelY, PanelWidth, PanelHeight);
+        introPanel = new Box();
+        introPanel.AddBackground(new ImageBox(panelTexture));
+        introPanel.Arrange(panelRect);
+
+        waveNotifBackground = new ImageBox(panelTexture);
+        waveNotifPanel = new Box();
+        waveNotifPanel.AddBackground(waveNotifBackground);
+        waveNotifPanel.Arrange(new Rectangle(WaveNotifX, WaveNotifY, WaveNotifWidth, WaveNotifHeight));
     }
 
     public void NotifyWaveStarted()
@@ -73,7 +82,7 @@ public class TutorialOverlay
 
         if (!introComplete)
         {
-            nextButton.Text = currentStep == IntroSteps.Length - 1 ? "Got it!" : "Next";
+            nextButton.Label.Text = currentStep == IntroSteps.Length - 1 ? "Got it!" : "Next";
             nextButton.Update(gameTime);
         }
     }
@@ -89,8 +98,7 @@ public class TutorialOverlay
 
     private void DrawIntroPanel(SpriteBatch spriteBatch)
     {
-        var panelRect = new Rectangle(PanelX, PanelY, PanelWidth, PanelHeight);
-        NineSlice.Draw(spriteBatch, panelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        introPanel.Draw(spriteBatch);
 
         spriteBatch.DrawString(Primitives.Font, $"{currentStep + 1} / {IntroSteps.Length}",
             new Vector2(PanelX + 22, PanelY + 18),
@@ -106,9 +114,8 @@ public class TutorialOverlay
     private void DrawWaveNotification(SpriteBatch spriteBatch)
     {
         float alpha = MathHelper.Clamp(waveNotificationTimer, 0f, 1f);
-        NineSlice.Draw(spriteBatch, panelTexture,
-            new Rectangle(WaveNotifX, WaveNotifY, WaveNotifWidth, WaveNotifHeight),
-            new Rectangle(0, 0, 128, 128), 20, Color.White * alpha);
+        waveNotifBackground.Color = Color.White * alpha;
+        waveNotifPanel.Draw(spriteBatch);
 
         spriteBatch.DrawString(Primitives.Font,
             "The first wave is incoming!\nTowers fire automatically at nearby\nenemies.",

@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RumDefence.Gameplay.Levels.Dev;
 using RumDefence.Gameplay.Levels.Ghost;
 using RumDefence.Levels.Ghost;
 using RumDefence.Levels.Grass;
+using RumDefence.UI.Box;
 using RumDefence.Levels.Infinity;
 using RumDefence.Levels.OneHp;
 
@@ -12,12 +13,14 @@ namespace RumDefence;
 
 public class ThemeSelectScreen : Screen
 {
-    private SimpleButton grassButton;
-    private SimpleButton stoneButton;
-    private SimpleButton oneHpButton;
-    private SimpleButton infinityButton;
-    private SimpleButton devButton;
-    private SimpleButton backButton;
+    private ButtonBox grassButton;
+    private ButtonBox stoneButton;
+    private ButtonBox oneHpButton;
+    private ButtonBox infinityButton;
+    private ButtonBox devButton;
+    private ButtonBox backButton;
+
+    private Box panel;
 
     private float elapsedSeconds;
     private bool grassCompleted;
@@ -28,38 +31,40 @@ public class ThemeSelectScreen : Screen
     {
         grassCompleted = SaveManager.HasCompletedAllGrassLevels();
 
-        grassButton = new SimpleButton(Primitives.ButtonTexture, "Grass",
-            new Vector2(800, 400), new Vector2(300, 100));
+        grassButton = new ButtonBox(Primitives.ButtonTexture, "Grass", size: new Vector2(300, 100));
+        stoneButton = new ButtonBox(Primitives.ButtonTexture, "Stone", size: new Vector2(300, 100));
+        oneHpButton = new ButtonBox(Primitives.ButtonTexture, "1 HP", size: new Vector2(300, 100));
+        infinityButton = new ButtonBox(Primitives.ButtonTexture, "Infinity", size: new Vector2(300, 100));
 
-        stoneButton = new SimpleButton(Primitives.ButtonTexture, "Stone",
-            new Vector2(800, 550), new Vector2(300, 100));
+        backButton = new ButtonBox(Primitives.ButtonTexture, "Back");
+        backButton.Arrange(new Rectangle(20, 20, 200, 80));
 
-        oneHpButton = new SimpleButton(Primitives.ButtonTexture, "1 HP",
-            new Vector2(800, 700), new Vector2(300, 100));
+        var row1 = new Box { Direction = Direction.Column, Gap = 20, AlignX = Align.Center, AlignY = Align.Center };
+        row1.Add(grassButton);
+        row1.Add(stoneButton);
 
-        infinityButton = new SimpleButton(Primitives.ButtonTexture, "Infinity",
-            new Vector2(800, 850), new Vector2(300, 100));
-
-        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
-            new Vector2(20, 20), new Vector2(200, 80));
-
+        var row2 = new Box { Direction = Direction.Column, Gap = 20, AlignX = Align.Center, AlignY = Align.Center };
+        row2.Add(oneHpButton);
+        row2.Add(infinityButton);
 
         bool devMode = Environment.GetEnvironmentVariable("RUM_DEV") == "true";
-
         if (devMode)
         {
-            devButton = new SimpleButton(Primitives.ButtonTexture, "Dev",
-                new Vector2(800, 1000), new Vector2(300, 100));
-            devButton.OnClick = () =>
-            {
-                manager.SetScreen(new LevelSelectScreen(manager, DevLevels.All));
-            };
+            devButton = new ButtonBox(Primitives.ButtonTexture, "Dev", size: new Vector2(300, 100));
+            devButton.OnClick = () => manager.SetScreen(new LevelSelectScreen(manager, DevLevels.All));
+            row2.Add(devButton);
         }
 
-        grassButton.OnClick = () =>
-        {
-            manager.SetScreen(new LevelSelectScreen(manager, GrassLevels.All));
-        };
+        panel = new Box { Direction = Direction.Row, Gap = 40, AlignX = Align.Center, AlignY = Align.Center };
+        panel.Add(row1);
+        panel.Add(row2);
+
+        var panelSize = panel.Measure();
+        int panelX = (RumGame.VirtualWidth - (int)panelSize.X) / 2;
+        int panelY = (RumGame.VirtualHeight - (int)panelSize.Y) / 2;
+        panel.Arrange(new Rectangle(panelX, panelY, (int)panelSize.X, (int)panelSize.Y));
+
+        grassButton.OnClick = () => manager.SetScreen(new LevelSelectScreen(manager, GrassLevels.All));
 
         stoneButton.OnClick = () =>
         {
@@ -83,23 +88,15 @@ public class ThemeSelectScreen : Screen
         oneHpButton.IsDisabled = !grassCompleted;
         infinityButton.IsDisabled = !grassCompleted;
 
-        backButton.OnClick = () =>
-        {
-            manager.SetScreen(new MainMenuScreen(manager));
-        };
+        backButton.OnClick = () => manager.SetScreen(new MainMenuScreen(manager));
 
-        // Play theme music
         AudioManager.Instance.PlayBackgroundMusic();
     }
 
     public override void Update(GameTime gameTime)
     {
         elapsedSeconds += (float)gameTime.ElapsedGameTime.TotalSeconds;
-        grassButton.Update(gameTime);
-        stoneButton.Update(gameTime);
-        oneHpButton.Update(gameTime);
-        infinityButton.Update(gameTime);
-        devButton?.Update(gameTime);
+        panel.Update(gameTime);
         backButton.Update(gameTime);
     }
 
@@ -107,15 +104,10 @@ public class ThemeSelectScreen : Screen
     {
         RumGame.Instance.GraphicsDevice.Clear(Color.CornflowerBlue);
 
-
         LoadingSplashScreen.DrawBackground(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
         LoadingSplashScreen.DrawWater(spriteBatch, RumGame.VirtualWidth, RumGame.VirtualHeight, elapsedSeconds);
 
-        grassButton.Draw(spriteBatch);
-        stoneButton.Draw(spriteBatch);
-        oneHpButton.Draw(spriteBatch);
-        infinityButton.Draw(spriteBatch);
-        devButton?.Draw(spriteBatch);
+        panel.Draw(spriteBatch);
         backButton.Draw(spriteBatch);
 
         if (!grassCompleted)
@@ -126,12 +118,12 @@ public class ThemeSelectScreen : Screen
         }
     }
 
-    private static void DrawLockedLabel(SpriteBatch spriteBatch, SimpleButton button)
+    private static void DrawLockedLabel(SpriteBatch spriteBatch, ButtonBox button)
     {
         const string text = "Locked - finish the Grass campaign";
         const float scale = 0.45f;
         var size = Primitives.Font.MeasureString(text) * scale;
-        var bounds = button.Bounds;
+        var bounds = button.Slot;
         var position = new Vector2(bounds.Center.X - size.X / 2f, bounds.Bottom + 6);
 
         spriteBatch.DrawString(Primitives.Font, text, position, new Color(200, 80, 80), 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);

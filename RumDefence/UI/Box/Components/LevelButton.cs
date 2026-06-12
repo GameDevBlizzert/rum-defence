@@ -1,41 +1,32 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
-public class LevelButton : Button
+public class LevelButton : ButtonBox
 {
     private Level level;
 
     public LevelButton(Level level)
     {
         this.level = level;
+        AddBackground(new ImageBox(Primitives.ButtonTexture));
+        BaseTint = level.IsUnlocked ? Color.White : Color.Brown * 0.85f;
     }
 
-    public override void Update(GameTime gameTime)
-    {
-        base.Update(gameTime);
+    protected override bool IsClickable() => level.IsUnlocked;
 
-        if (!level.IsUnlocked)
-            return;
-    }
-
-    public override void Draw(SpriteBatch spriteBatch)
+    public override void DrawBox(SpriteBatch spriteBatch)
     {
+        base.DrawBox(spriteBatch);
+
         Rectangle panel = new Rectangle(
-            bounds.X + 4,
-            bounds.Y + 4,
-            bounds.Width - 8,
-            bounds.Height - 8
+            Slot.X + 4,
+            Slot.Y + 4,
+            Slot.Width - 8,
+            Slot.Height - 8
         );
-
-        NineSlice.Draw(spriteBatch, Primitives.ButtonTexture, panel, new Rectangle(
-            0,
-            0,
-            Primitives.ButtonTexture.Width,
-            Primitives.ButtonTexture.Height
-        ), 20, level.IsUnlocked ? Color.White : Color.Brown * 0.85f);
 
         int mapWidth = 340;
         int mapHeight = 200;
@@ -55,16 +46,14 @@ public class LevelButton : Button
         );
         DrawLevelScore(spriteBatch, level, mapRect);
 
-        var labelColor = isPressed ? Color.White : Primitives.FontColor;
-
         spriteBatch.DrawString(
             Primitives.Font,
             $"LEVEL {level.Id}",
             new Vector2(mapRect.X, panel.Y + 4),
-            labelColor
+            Primitives.FontColor
         );
-
     }
+
     private void DrawLevelScore(SpriteBatch spriteBatch, Level level, Rectangle rect)
     {
         var score = SaveManager.GetLevelScore(level);
@@ -84,9 +73,5 @@ public class LevelButton : Button
             rect.X + 4,
             rect.Top + 1
         ), Color.SaddleBrown);
-    }
-    protected override bool IsClickable()
-    {
-        return level.IsUnlocked;
     }
 }
