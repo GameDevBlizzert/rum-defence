@@ -27,11 +27,11 @@ public static class StretchSprite
         var srcTileSize = (_source.Size.ToVector2() / 3).ToPoint();
 
         // backup als destination veels te klein is.
-        // if (destination.Width < _source.Width && destination.Height < _source.Height)
-        // {
-        //     spriteBatch.Draw(texture, destination, _source, _color);
-        //     return;
-        // }
+        if (destination.Width < _source.Width && destination.Height < _source.Height)
+        {
+            spriteBatch.Draw(texture, destination, _source, _color);
+            return;
+        }
 
         // pak de minimale width en height van de texture voor de hoeken. 
         // soms is destination kleiner dan de texture dus pak je dan daarvan de 1/2 in plaats 1/3 texture.
