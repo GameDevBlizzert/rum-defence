@@ -63,7 +63,7 @@ public class UpgradeMenu
             Direction = Direction.Row,
             AlignX = Align.Start,
             AlignY = Align.Start,
-            Gap = 12,
+            Gap = 8,
         };
         towerContent.Add(towerTitle);
         towerContent.Add(damStat);

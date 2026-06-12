@@ -95,6 +95,7 @@ public class GameScreen : Screen
         if (currentLevel.SaveKey?.StartsWith("grass_") == true)
         {
             infoPopup = new InfoPopupOverlay();
+            infoPopup.OnContinue = () => hud.RefreshBuildMenu();
             towerUnlockManager = new TowerUnlockManager(currentLevel.Id, infoPopup);
         }
 
@@ -108,7 +109,6 @@ public class GameScreen : Screen
             towerUnlockManager.OnTowerUnlocked += tower =>
             {
                 pendingHighlightTower = tower;
-                hud.RefreshAvailableTowers();
             };
 
         wallRenderer = new WallRenderer(

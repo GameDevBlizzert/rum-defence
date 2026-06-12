@@ -36,11 +36,6 @@ public class Hud
         set => buildMenu.OnMenuRequested = value;
     }
 
-    public void RefreshAvailableTowers()
-    {
-        buildMenu.RefreshAvailableTowers();
-    }
-
     public TowerType? FreeTowerType
     {
         set => buildMenu.FreeTowerType = value;
@@ -50,6 +45,8 @@ public class Hud
     {
         set => buildMenu.HighlightedTower = value;
     }
+
+    public void RefreshBuildMenu() => buildMenu.Refresh();
 
     public void SetPlaybackState(GamePlaybackState playbackState)
     {

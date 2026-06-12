@@ -24,15 +24,16 @@ public class InfoPopupOverlay
     private static readonly int PanelX = (RumGame.VirtualWidth - PanelWidth) / 2;
     private static readonly int PanelY = (RumGame.VirtualHeight - PanelHeight) / 2;
     public bool IsActive => current != null;
+    public System.Action OnContinue;
 
     public InfoPopupOverlay()
     {
-        panel = new Box();
+        panel = new Box() { Direction = Direction.Row };
         panel.AddBackground(new ImageBox(Primitives.PanelTexture));
 
         continueButton = new ButtonBox(
             Primitives.ButtonTexture,
-            "Continue"
+            "Continue", size: new(280, 80)
         );
         continueButton.OnClick = Advance;
 
@@ -54,10 +55,8 @@ public class InfoPopupOverlay
 
     public void Update(GameTime gameTime)
     {
-        if (current == null)
-            return;
 
-        continueButton.Update(gameTime);
+        panel.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -79,5 +78,6 @@ public class InfoPopupOverlay
     private void Advance()
     {
         SetCurrent(pending.Count > 0 ? pending.Dequeue() : null);
+        OnContinue?.Invoke();
     }
 }

@@ -12,7 +12,6 @@ public class KeyBindingsScreen : Screen
     private const int PanelWidth = 700;
     private static readonly (string Id, string Name)[] Actions =
     {
-        // ("Pause",             "Pause Game"),
         ("MultiPlace",        "Multi-Place Mode"),
         ("Upgrade",           "Upgrade Tower / Wall"),
         ("Repair",            "Repair Wall"),

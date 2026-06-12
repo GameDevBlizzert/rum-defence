@@ -20,6 +20,10 @@ public abstract class IBox
     {
         Children.Add(item);
     }
+    public void Clear()
+    {
+        Children.Clear();
+    }
     public virtual Vector2 Measure()
     {
         return Vector2.Zero;

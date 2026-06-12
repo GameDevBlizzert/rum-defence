@@ -64,18 +64,10 @@ public class GameOverScreen : Screen
         {
             Direction = Direction.Row,
             AlignX = Align.Center,
-            AlignY = Align.End,
+            AlignY = Align.Center,
             Gap = 20,
-            Padding = 60
         };
         panel.AddBackground(new ImageBox(Primitives.PanelTexture));
-
-        if (isWin)
-            panel.Add(nextLevelButton);
-        panel.Add(retryButton);
-        panel.Add(menuButton);
-
-        panel.Arrange(panelRect);
 
         if (isWin)
         {
@@ -120,6 +112,18 @@ public class GameOverScreen : Screen
                 manager.SetScreen(new MainMenuScreen(manager));
             }
         };
+
+        var title = isWin ? "YOU WIN!" : "GAME OVER";
+        panel.Add(new TextItem(title, scale: 1.5f));
+        panel.Add(new TextItem($"Waves: {wavesSurvived}"));
+        panel.Add(new TextItem($"Coins: {coins}"));
+
+        if (isWin)
+            panel.Add(nextLevelButton);
+        panel.Add(retryButton);
+        panel.Add(menuButton);
+
+        panel.Arrange(panelRect);
     }
 
     public override void Update(GameTime gameTime)
@@ -137,41 +141,6 @@ public class GameOverScreen : Screen
             Color.Black * 0.6f
         );
 
-        int panelWidth = 700;
-        int panelHeight = 700;
-
-        var panelRect = new Rectangle(
-            screenWidth / 2 - panelWidth / 2,
-            screenHeight / 2 - panelHeight / 2,
-            panelWidth,
-            panelHeight
-        );
-
         panel.Draw(spriteBatch);
-
-        var title = isWin ? "YOU WIN!" : "GAME OVER";
-        var titleSize = Primitives.Font.MeasureString(title);
-
-        spriteBatch.DrawString(
-            Primitives.Font,
-            title,
-            new Vector2(panelRect.Center.X - titleSize.X / 2, panelRect.Y + 40),
-            Primitives.FontColor
-        );
-
-        DrawCenteredText(spriteBatch, $"Waves: {wavesSurvived}", panelRect.Center.X, panelRect.Y + 140);
-        DrawCenteredText(spriteBatch, $"Coins: {coins}", panelRect.Center.X, panelRect.Y + 190);
-    }
-
-    private void DrawCenteredText(SpriteBatch spriteBatch, string text, float centerX, float y)
-    {
-        var size = Primitives.Font.MeasureString(text);
-
-        spriteBatch.DrawString(
-            Primitives.Font,
-            text,
-            new Vector2(centerX - size.X / 2, y),
-            Primitives.FontColor
-        );
     }
 }
