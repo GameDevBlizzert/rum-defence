@@ -217,16 +217,20 @@ public class GameScreen : Screen
 
         UpdateBuildSystem(gameTime);
 
-        if (playbackState == GamePlaybackState.Paused || ShouldFreezeGameplayForTutorial() || ShouldFreezeGameplayForPopup())
+        if (playbackState == GamePlaybackState.Paused)
             return;
 
         var gameplayGameTime = GetGameplayGameTime(gameTime);
 
-        UpdateSpawner(gameplayGameTime);
-        UpdateShips(gameplayGameTime);
-        UpdateTroops(gameplayGameTime);
         UpdateWalls();
         UpdateTowers(gameplayGameTime);
+        if (!ShouldFreezeGameplayForTutorial() && !ShouldFreezeGameplayForPopup())
+        {
+            UpdateSpawner(gameplayGameTime);
+            UpdateShips(gameplayGameTime);
+            UpdateTroops(gameplayGameTime);
+        }
+
         CheckLevelCompletion(gameplayGameTime);
     }
 
