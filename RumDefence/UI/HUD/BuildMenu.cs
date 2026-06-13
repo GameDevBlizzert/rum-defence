@@ -58,7 +58,7 @@ public class BuildMenu
 
         var content = RumGame.Instance.Content;
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
-        var removeIcon = content.Load<Texture2D>("KenneyUIPack/PNG/Blue/Default/icon_cross");
+        var removeIcon = content.Load<Texture2D>("Art/UI/remove-building-icon");
 
         int panelX = 0;
         int panelY = 0;
@@ -113,10 +113,11 @@ public class BuildMenu
         removeButton.Size = buttonSize;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
+        removeButton.CostLabel = $"{Primitives.RefundBuildingPrc * 100}%";
 
-        playIcon = CreatePlayIcon(RumGame.Instance.GraphicsDevice);
-        pauseIcon = CreatePauseIcon(RumGame.Instance.GraphicsDevice);
-        fastForwardIcon = CreateFastForwardIcon(RumGame.Instance.GraphicsDevice);
+        playIcon = content.Load<Texture2D>("Art/UI/normal-speed-icon");
+        pauseIcon = content.Load<Texture2D>("Art/UI/pause-icon");
+        fastForwardIcon = content.Load<Texture2D>("Art/UI/twice-speed-icon");
         highlightArrowIcon = CreateHighlightArrowIcon(RumGame.Instance.GraphicsDevice);
 
         speedButton = new IconButtonBox(Primitives.ButtonTexture, fastForwardIcon, buttonSourceRect);
