@@ -45,8 +45,8 @@ public class BuildMenu
     private readonly Func<TowerData, bool> isTowerAvailable;
     private const int Spacing = 8;
 
-    private const int PanelWidth = 180;
-    private const int ButtonWidth = PanelWidth - 20;
+    private const int PanelWidth = 240;
+    private const int ButtonWidth = PanelWidth - 80;
     private const int ButtonHeight = 60;
     private Vector2 buttonSize;
     private Rectangle buttonSourceRect;
