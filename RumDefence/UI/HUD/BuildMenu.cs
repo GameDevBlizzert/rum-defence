@@ -38,6 +38,7 @@ public class BuildMenu
     private Box coinRow;
     public TowerData HoveredTowerData { get; private set; }
     public bool IsWallHovered { get; private set; }
+    public bool IsRemoveHovered { get; private set; }
     public TowerType? FreeTowerType { get; set; }
     public TowerType? HighlightedTower { get; set; }
 
@@ -113,7 +114,6 @@ public class BuildMenu
         removeButton.Size = buttonSize;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
-        removeButton.CostLabel = $"{Primitives.RefundBuildingPrc * 100}%";
 
         playIcon = content.Load<Texture2D>("Art/UI/normal-speed-icon");
         pauseIcon = content.Load<Texture2D>("Art/UI/pause-icon");
@@ -280,9 +280,13 @@ public class BuildMenu
         "simply walk around it instead. Keep walls repaired and\n" +
         "backed up by towers.";
 
+    private const string RemoveDescription =
+        "Click a tower or wall to remove it and receive a\n" +
+        "partial refund of its original cost.";
+
     private void DrawHoverInfo(SpriteBatch spriteBatch)
     {
-        if (HoveredTowerData == null && !IsWallHovered)
+        if (HoveredTowerData == null && !IsWallHovered && !IsRemoveHovered)
             return;
 
         Vector2 mousePos = ScreenManager.GetMousePositionScaled();
@@ -292,8 +296,10 @@ public class BuildMenu
         const int padding = 20;
         const int spacing = 34;
 
-        string description = HoveredTowerData != null ? HoveredTowerData.Description : WallDescription;
-        int statCount = HoveredTowerData != null ? 4 : 2;
+        string description = HoveredTowerData != null ? HoveredTowerData.Description
+            : IsWallHovered ? WallDescription
+            : RemoveDescription;
+        int statCount = HoveredTowerData != null ? 4 : IsWallHovered ? 2 : 1;
 
         const int topPadding = 24;
         const int bottomPadding = 20;
@@ -337,10 +343,14 @@ public class BuildMenu
             spriteBatch.DrawString(Primitives.Font, $"SPD: {HoveredTowerData.FireRate:F1}/s", new Vector2(rect.X + padding, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
             spriteBatch.DrawString(Primitives.Font, $"Cost: {HoveredTowerData.Cost} coins", new Vector2(rect.X + padding, startY + spacing * 4), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         }
-        else
+        else if (IsWallHovered)
         {
             spriteBatch.DrawString(Primitives.Font, $"HP: {Wall.BaseMaxHealth}", new Vector2(rect.X + padding, startY + spacing), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
             spriteBatch.DrawString(Primitives.Font, $"Cost: {BuildManager.WallCost} coins", new Vector2(rect.X + padding, startY + spacing * 2), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+        }
+        else
+        {
+            spriteBatch.DrawString(Primitives.Font, $"Refund: {Primitives.RefundBuildingPrc * 100:0}% of cost", new Vector2(rect.X + padding, startY + spacing), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
         }
 
         if (!string.IsNullOrEmpty(description))
@@ -408,6 +418,7 @@ public class BuildMenu
 
         HoveredTowerData = null;
         IsWallHovered = false;
+        IsRemoveHovered = false;
 
         foreach (var (button, data) in towerButtons)
             if (button.IsHovered)
@@ -415,6 +426,9 @@ public class BuildMenu
 
         if (wallButton.IsHovered)
             IsWallHovered = true;
+
+        if (removeButton.IsHovered)
+            IsRemoveHovered = true;
     }
 
     private void DrawHighlightArrow(SpriteBatch spriteBatch, Rectangle buttonBounds)
