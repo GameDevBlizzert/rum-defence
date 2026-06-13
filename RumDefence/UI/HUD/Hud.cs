@@ -36,11 +36,6 @@ public class Hud
         set => buildMenu.OnMenuRequested = value;
     }
 
-    public void RefreshAvailableTowers()
-    {
-        buildMenu.RefreshAvailableTowers();
-    }
-
     public TowerType? FreeTowerType
     {
         set => buildMenu.FreeTowerType = value;
@@ -50,6 +45,8 @@ public class Hud
     {
         set => buildMenu.HighlightedTower = value;
     }
+
+    public void RefreshBuildMenu() => buildMenu.Refresh();
 
     public void SetPlaybackState(GamePlaybackState playbackState)
     {
@@ -68,13 +65,6 @@ public class Hud
         buildMenu.Update(gameTime);
         coinManager.Update(gameTime);
 
-        if (upgradeMenu.SelectedTower == null)
-        {
-            upgradeMenu.PreviewData = buildManager.GetMode() == BuildMode.Tower
-                ? buildManager.SelectedTowerData
-                : null;
-        }
-
         upgradeMenu.Update(gameTime);
         wallRepairMenu.Update(gameTime);
     }
@@ -82,8 +72,6 @@ public class Hud
     public void SetSelectedTower(BaseTower tower)
     {
         upgradeMenu.SelectedTower = tower;
-        if (tower != null)
-            upgradeMenu.PreviewData = null;
     }
 
     public void SetSelectedWall(Wall wall)
@@ -105,7 +93,7 @@ public class Hud
 
     public bool IsMouseOverUpgradeMenu(Vector2 mousePos)
     {
-        bool upgradeVisible = (upgradeMenu.SelectedTower != null || upgradeMenu.PreviewData != null) && upgradeMenu.IsMouseOver(mousePos);
+        bool upgradeVisible = upgradeMenu.SelectedTower != null && upgradeMenu.IsMouseOver(mousePos);
         bool repairVisible = wallRepairMenu.SelectedWall != null && wallRepairMenu.IsMouseOver(mousePos);
         return upgradeVisible || repairVisible;
     }
@@ -116,9 +104,6 @@ public class Hud
         coinManager.Draw(spriteBatch);
         waveHud.Draw(spriteBatch);
 
-
-        var hovered = buildManager.GetHoveredTile();
-        // The game screen handles tracking current selection, we update the UpgradeMenu/RepairMenu separately.
         upgradeMenu.Draw(spriteBatch);
         wallRepairMenu.Draw(spriteBatch);
     }

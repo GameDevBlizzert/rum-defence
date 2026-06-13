@@ -1,121 +1,70 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
 public class KeyBindingsScreen : Screen
 {
     private readonly Screen previous;
-
-    private SimpleButton backButton;
-    private Rectangle panelRect;
-    private MouseState prevMouse;
-
-    private const int PanelLeft = 560;
-    private const int PanelTop = 120;
-    private const int PanelWidth = 800;
-    private const int PanelHeight = 860;
-
-    private const int RowHeight = 70;
-    private const int RowsStartY = PanelTop + 90;
-    private const int RowMargin = 30;
-
+    private Box screenBox = new Box();
+    private const int PanelWidth = 700;
     private static readonly (string Id, string Name)[] Actions =
     {
-        ("Pause",      "Pause Game"),
-        ("MultiPlace", "Multi-Place Mode"),
-        ("LevelNext",  "Next Level Page"),
-        ("LevelPrev",  "Prev Level Page"),
-        ("Upgrade",    "Upgrade Tower / Wall"),
-        ("Repair",     "Repair Wall"),
-        ("TogglePause",       "Pause / Resume Gameplay"),
+        ("MultiPlace",        "Multi-Place Mode"),
+        ("Upgrade",           "Upgrade Tower / Wall"),
+        ("Repair",            "Repair Wall"),
+        ("TogglePause",       "Pause / Resume"),
         ("ToggleFastForward", "Toggle 2x Speed"),
     };
-
-    private string rebindingAction = null;
-
-    private static int RowsEndY => RowsStartY + Actions.Length * RowHeight;
-    private static int HintY => RowsEndY + 24;
-    private static int BackButtonY => HintY + 50;
-
     public KeyBindingsScreen(ScreenManager manager, Screen previous) : base(manager)
     {
         this.previous = previous;
     }
-
     public override void Load()
     {
-        panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
+        var panel = new Box() { Direction = Direction.Row, Gap = 10, Padding = 20 };
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
 
-        int backX = PanelLeft + (PanelWidth - 200) / 2;
-        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
-            new Vector2(backX, BackButtonY),
-            new Vector2(200, 70));
-
-        backButton.OnClick = () =>
+        panel.Add(new TextItem("Key Bindings"));
+        for (int i = 0; i < Actions.Length; i++)
+        {
+            var (id, name) = Actions[i];
+            var row = new KeyBindBox(id, name, 0.6f) { Size = new(PanelWidth - 60, 100), Padding = 12 };
+            panel.Add(row);
+        }
+        panel.Add(new TextItem("Click a row to rebind", 0.75f, new Color(160, 160, 160)));
+        var backOrSave = new Box();
+        var saveButton = new ButtonBox(Primitives.ButtonTexture, "Save", size: new Vector2(260, 100));
+        saveButton.OnClick = () =>
         {
             InputManager.Instance.SaveToSave();
             manager.SetScreen(previous);
         };
+        backOrSave.Add(saveButton);
+        var backButton = new ButtonBox(Primitives.ButtonTexture, "Back", size: new Vector2(260, 100));
+        backButton.OnClick = () =>
+        {
+            InputManager.Instance.LoadFromSave();
+            manager.SetScreen(previous);
+        };
+        backOrSave.Add(backButton);
+        panel.Add(backOrSave);
+        screenBox.Add(panel);
+        screenBox.Arrange(new(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight));
     }
 
     public override void Update(GameTime gameTime)
     {
-        var mouse = Mouse.GetState();
-        var mousePos = ScreenManager.GetMousePositionScaled();
-
-        if (rebindingAction != null)
+        if (InputManager.Instance.IsActionJustPressed("Pause"))
         {
-            if (InputManager.Instance.IsAnyKeyJustPressed(out Keys pressedKey))
-            {
-                if (pressedKey == Keys.Escape)
-                    rebindingAction = null;
-                else
-                {
-                    InputManager.Instance.SetBinding(rebindingAction, pressedKey);
-                    rebindingAction = null;
-                }
-            }
+            InputManager.Instance.LoadFromSave();
+            manager.SetScreen(previous);
+            return;
         }
-        else
-        {
-            bool clicked = mouse.LeftButton == ButtonState.Released &&
-                           prevMouse.LeftButton == ButtonState.Pressed;
-
-            if (clicked)
-            {
-                var mp = new Point((int)mousePos.X, (int)mousePos.Y);
-                for (int i = 0; i < Actions.Length; i++)
-                {
-                    if (GetRowRect(i).Contains(mp))
-                    {
-                        rebindingAction = Actions[i].Id;
-                        break;
-                    }
-                }
-            }
-
-            if (InputManager.Instance.IsActionJustPressed("Pause"))
-            {
-                InputManager.Instance.SaveToSave();
-                manager.SetScreen(previous);
-                return;
-            }
-
-            backButton.Update(gameTime);
-        }
-
-        prevMouse = mouse;
+        screenBox.Update(gameTime);
     }
-
-    private Rectangle GetRowRect(int index) =>
-        new Rectangle(
-            PanelLeft + RowMargin,
-            RowsStartY + index * RowHeight,
-            PanelWidth - RowMargin * 2,
-            RowHeight - 10
-        );
 
     public override void Draw(SpriteBatch spriteBatch)
     {
@@ -128,70 +77,6 @@ public class KeyBindingsScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
-
-        var title = "Key Bindings";
-        var titleSize = Primitives.Font.MeasureString(title);
-        spriteBatch.DrawString(Primitives.Font, title,
-            new Vector2(PanelLeft + (PanelWidth - titleSize.X) / 2f, PanelTop + 40),
-            Primitives.FontColor);
-
-        var mousePos = ScreenManager.GetMousePositionScaled();
-        var mp = new Point((int)mousePos.X, (int)mousePos.Y);
-
-        const float rowTextScale = 0.75f;
-
-        for (int i = 0; i < Actions.Length; i++)
-        {
-            var (id, name) = Actions[i];
-            var rowRect = GetRowRect(i);
-            bool isRebinding = rebindingAction == id;
-            bool isHovered = rebindingAction == null && rowRect.Contains(mp);
-
-            Color rowBg = isRebinding
-                ? new Color(80, 60, 20) * 0.9f
-                : isHovered
-                    ? new Color(255, 255, 255) * 0.12f
-                    : new Color(255, 255, 255) * 0.05f;
-
-            spriteBatch.Draw(Primitives.Pixel, rowRect, rowBg);
-
-            Color borderColor = isRebinding
-                ? new Color(255, 200, 80)
-                : new Color(255, 255, 255) * 0.2f;
-
-            spriteBatch.Draw(Primitives.Pixel, new Rectangle(rowRect.X, rowRect.Y, rowRect.Width, 1), borderColor);
-            spriteBatch.Draw(Primitives.Pixel, new Rectangle(rowRect.X, rowRect.Bottom - 1, rowRect.Width, 1), borderColor);
-            spriteBatch.Draw(Primitives.Pixel, new Rectangle(rowRect.X, rowRect.Y, 1, rowRect.Height), borderColor);
-            spriteBatch.Draw(Primitives.Pixel, new Rectangle(rowRect.Right - 1, rowRect.Y, 1, rowRect.Height), borderColor);
-
-            float scaledTextH = Primitives.Font.MeasureString(name).Y * rowTextScale;
-            int textY = rowRect.Y + (int)((rowRect.Height - scaledTextH) / 2);
-
-            spriteBatch.DrawString(Primitives.Font, name,
-                new Vector2(rowRect.X + 20, textY),
-                Primitives.FontColor, 0f, Vector2.Zero, rowTextScale, SpriteEffects.None, 0f);
-
-            string keyText = isRebinding
-                ? "Press any key..."
-                : InputManager.GetKeyDisplayName(InputManager.Instance.GetBinding(id));
-
-            Color keyColor = isRebinding ? new Color(255, 200, 80) : new Color(160, 210, 255);
-            var keySize = Primitives.Font.MeasureString(keyText) * rowTextScale;
-            spriteBatch.DrawString(Primitives.Font, keyText,
-                new Vector2(rowRect.Right - 20 - keySize.X, textY),
-                keyColor, 0f, Vector2.Zero, rowTextScale, SpriteEffects.None, 0f);
-        }
-
-        string hint = rebindingAction != null
-            ? "Press Escape to cancel"
-            : "Click a row to rebind";
-        var hintSize = Primitives.Font.MeasureString(hint);
-        spriteBatch.DrawString(Primitives.Font, hint,
-            new Vector2(PanelLeft + (PanelWidth - hintSize.X) / 2f, HintY),
-            new Color(160, 160, 160));
-
-        if (rebindingAction == null)
-            backButton.Draw(spriteBatch);
+        screenBox.Draw(spriteBatch);
     }
 }

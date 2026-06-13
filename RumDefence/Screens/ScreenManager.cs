@@ -38,7 +38,6 @@ public class ScreenManager
     {
         var currentMouse = Mouse.GetState();
 
-        // Play click sound on any mouse click
         if (currentMouse.LeftButton == ButtonState.Pressed &&
             previousMouse.LeftButton == ButtonState.Released)
         {

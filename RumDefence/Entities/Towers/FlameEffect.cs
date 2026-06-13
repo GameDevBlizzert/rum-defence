@@ -12,7 +12,7 @@ public class FlameEffect : Entity
     private const int NumFrames = 8;
     private const float FrameDuration = 0.1f;
     public const float TotalDuration = NumFrames * FrameDuration;
-    private const float SpreadAngle = MathHelper.Pi / 12f; // 15°
+    private const float SpreadAngle = MathHelper.Pi / 12f;
     private const float FlameHeight = 60f;
 
     private static readonly float ConeTan = MathF.Tan(SpreadAngle);
