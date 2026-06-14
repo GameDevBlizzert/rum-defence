@@ -52,6 +52,11 @@ public class LevelProgressSystem : IGameLoopSystem
 
     /// <param name="initialLives">The initial amount of lives at the start of the level</param>
     /// <param name="initialCoins">The initial amount of coins at the start of the level</param>
+    public LevelProgressSystem(int initialLives, int initialCoins)
+        : this(initialLives, initialCoins, new List<Level>(), null)
+    {
+    }
+
     public LevelProgressSystem(int initialLives, int initialCoins, List<Level> levelSet, Level level)
     {
         LivesRemaining = initialLives;
@@ -61,7 +66,6 @@ public class LevelProgressSystem : IGameLoopSystem
         activeLevelSet = levelSet;
         currentLevel = level;
     }
-
     /// <summary>
     /// Make the player take a certain amount of hits, reducing their remaining lives accordingly.
     /// When the player takes more hits than they have remaining, their lives will be reduced to 0, but not below.
@@ -181,6 +185,7 @@ public class LevelProgressSystem : IGameLoopSystem
     /// </summary>
     private void UnlockNextLevel()
     {
+        if (currentLevel == null || activeLevelSet == null) return;
         int index = activeLevelSet.FindIndex(l => l.Id == currentLevel.Id);
         if (index == -1) return;
 

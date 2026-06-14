@@ -39,6 +39,11 @@ public class PathfindingSystem : IGameLoopSystem
         return direction;
     }
 
+    public void UpdatePath(Vector2 currentPosition, Grid grid)
+    {
+        UpdatePath(currentPosition, grid, null);
+    }
+
     public void UpdatePath(Vector2 currentPosition, Grid grid, HashSet<Point> untraversableTiles)
     {
         int[,] map = new int[grid.Width, grid.Height];
