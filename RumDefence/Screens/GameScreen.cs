@@ -95,6 +95,7 @@ public class GameScreen : Screen
         if (currentLevel.SaveKey?.StartsWith("grass_") == true)
         {
             infoPopup = new InfoPopupOverlay();
+            infoPopup.OnContinue = () => hud.RefreshBuildMenu();
             towerUnlockManager = new TowerUnlockManager(currentLevel.Id, infoPopup);
         }
 
@@ -102,13 +103,12 @@ public class GameScreen : Screen
             towerUnlockManager != null ? data => towerUnlockManager.IsAvailable(data.Type) : null);
         hud.SetPlaybackState(playbackState);
         hud.OnSpeedRequested = CyclePlaybackState;
-        hud.OnMenuRequested = () => manager.SetScreen(new PauseScreen(manager, this));
+        hud.OnMenuRequested = () => manager.SetScreen(new PauseScreen(manager, this, level: currentLevel, levelSet: ActiveLevelSet));
 
         if (towerUnlockManager != null)
             towerUnlockManager.OnTowerUnlocked += tower =>
             {
                 pendingHighlightTower = tower;
-                hud.RefreshAvailableTowers();
             };
 
         wallRenderer = new WallRenderer(
@@ -500,7 +500,7 @@ public class GameScreen : Screen
     {
         if (InputManager.Instance.IsActionJustPressed("Pause"))
         {
-            manager.SetScreen(new PauseScreen(manager, this));
+            manager.SetScreen(new PauseScreen(manager, this, level: currentLevel, levelSet: ActiveLevelSet));
             return true;
         }
 

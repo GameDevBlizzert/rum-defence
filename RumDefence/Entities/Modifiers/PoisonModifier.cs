@@ -2,7 +2,7 @@ using Microsoft.Xna.Framework;
 
 namespace RumDefence;
 
-// Deals % of max HP per tick, making it scale against high-HP units.
+// Doet % damage op basis van de health per seconde. handig voor hoge HP troepen.
 public class PoisonModifier : IModifier
 {
     private float _duration;

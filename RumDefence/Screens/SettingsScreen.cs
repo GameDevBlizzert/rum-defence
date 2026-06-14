@@ -1,23 +1,32 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
 public class SettingsScreen : Screen
 {
+    private const float VolumeStep = 0.05f;
+
     private Screen previous;
 
-    private SimpleButton keyBindingsButton;
-    private SimpleButton backButton;
+    private ButtonBox keyBindingsButton;
+    private ButtonBox backButton;
 
+    private TextItem titleText;
+    private TextItem musicLabel;
+    private TextItem soundLabel;
+
+    private ProgressBarBox musicSlider;
+    private ProgressBarBox soundSlider;
+
+    private Box panel;
     private Rectangle panelRect;
-    private MouseState prevMouse;
 
     private const int PanelLeft = 560;
-    private const int PanelTop = 190;
+    private const int PanelTop = 90;
     private const int PanelWidth = 800;
-    private const int PanelHeight = 620;
+    private const int PanelHeight = 820;
 
     public SettingsScreen(ScreenManager manager, Screen previous) : base(manager)
     {
@@ -28,15 +37,61 @@ public class SettingsScreen : Screen
     {
         panelRect = new Rectangle(PanelLeft, PanelTop, PanelWidth, PanelHeight);
 
-        int centerX = PanelLeft + PanelWidth / 2;
+        var sliderSize = new Vector2(360, 24);
+        var stepButtonSize = new Vector2(60, 60);
+        var navButtonSize = new Vector2(400, 100);
 
-        keyBindingsButton = new SimpleButton(Primitives.ButtonTexture, "Key Bindings",
-            new Vector2(centerX - 200, PanelTop + 430),
-            new Vector2(400, 70));
+        titleText = new TextItem("Settings");
 
-        backButton = new SimpleButton(Primitives.ButtonTexture, "Back",
-            new Vector2(centerX - 100, PanelTop + 520),
-            new Vector2(200, 70));
+        musicLabel = new TextItem("");
+        soundLabel = new TextItem("");
+
+        musicSlider = new ProgressBarBox
+        {
+            TrackColor = new Color(170, 170, 170),
+            FillColor = new Color(70, 130, 200),
+            Size = sliderSize
+        };
+        soundSlider = new ProgressBarBox
+        {
+            TrackColor = new Color(170, 170, 170),
+            FillColor = new Color(70, 130, 200),
+            Size = sliderSize
+        };
+
+        var musicMinusButton = new ButtonBox(Primitives.ButtonTexture, "-", size: stepButtonSize);
+        var musicPlusButton = new ButtonBox(Primitives.ButtonTexture, "+", size: stepButtonSize);
+        var soundMinusButton = new ButtonBox(Primitives.ButtonTexture, "-", size: stepButtonSize);
+        var soundPlusButton = new ButtonBox(Primitives.ButtonTexture, "+", size: stepButtonSize);
+
+        var musicRow = new Box { Direction = Direction.Column, Gap = 16, Padding = 0 };
+        musicRow.Add(musicMinusButton);
+        musicRow.Add(musicSlider);
+        musicRow.Add(musicPlusButton);
+
+        var soundRow = new Box { Direction = Direction.Column, Gap = 16, Padding = 0 };
+        soundRow.Add(soundMinusButton);
+        soundRow.Add(soundSlider);
+        soundRow.Add(soundPlusButton);
+
+        keyBindingsButton = new ButtonBox(Primitives.ButtonTexture, "Key Bindings", size: navButtonSize);
+        backButton = new ButtonBox(Primitives.ButtonTexture, "Back", size: navButtonSize);
+
+        panel = new Box { Direction = Direction.Row, Gap = 30, Padding = 40 };
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Add(titleText);
+        panel.Add(musicLabel);
+        panel.Add(musicRow);
+        panel.Add(soundLabel);
+        panel.Add(soundRow);
+        panel.Add(keyBindingsButton);
+        panel.Add(backButton);
+        panel.Arrange(panelRect);
+
+        musicMinusButton.OnClick = () => AudioManager.Instance.MusicVolume -= VolumeStep;
+        musicPlusButton.OnClick = () => AudioManager.Instance.MusicVolume += VolumeStep;
+        soundMinusButton.OnClick = () => AudioManager.Instance.SoundVolume -= VolumeStep;
+        soundPlusButton.OnClick = () => AudioManager.Instance.SoundVolume += VolumeStep;
 
         keyBindingsButton.OnClick = () =>
         {
@@ -66,33 +121,13 @@ public class SettingsScreen : Screen
             return;
         }
 
-        var mouse = Mouse.GetState();
-        var mousePos = ScreenManager.GetMousePositionScaled();
+        musicLabel.Text = $"Music Volume  {(int)(AudioManager.Instance.MusicVolume * 100)}%";
+        soundLabel.Text = $"Sound Volume  {(int)(AudioManager.Instance.SoundVolume * 100)}%";
+        musicSlider.Progress = AudioManager.Instance.MusicVolume;
+        soundSlider.Progress = AudioManager.Instance.SoundVolume;
 
-        UpdateSlider(GetMusicTrack(), mouse, mousePos, v => AudioManager.Instance.MusicVolume = v);
-        UpdateSlider(GetSoundTrack(), mouse, mousePos, v => AudioManager.Instance.SoundVolume = v);
-
-        keyBindingsButton.Update(gameTime);
-        backButton.Update(gameTime);
-        prevMouse = mouse;
+        panel.Update(gameTime);
     }
-
-    private void UpdateSlider(Rectangle track, MouseState mouse, Vector2 mousePos, System.Action<float> setter)
-    {
-        var hitArea = new Rectangle(track.X - 15, track.Y - 15, track.Width + 30, track.Height + 30);
-        if (mouse.LeftButton == ButtonState.Pressed &&
-            hitArea.Contains(new Point((int)mousePos.X, (int)mousePos.Y)))
-        {
-            float t = MathHelper.Clamp((mousePos.X - track.X) / (float)track.Width, 0f, 1f);
-            setter(t);
-        }
-    }
-
-    private Rectangle GetMusicTrack() =>
-        new Rectangle(PanelLeft + 100, PanelTop + 200, PanelWidth - 200, 12);
-
-    private Rectangle GetSoundTrack() =>
-        new Rectangle(PanelLeft + 100, PanelTop + 360, PanelWidth - 200, 12);
 
     public override void Draw(SpriteBatch spriteBatch)
     {
@@ -105,39 +140,6 @@ public class SettingsScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.5f);
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
-
-        var title = "Settings";
-        var titleSize = Primitives.Font.MeasureString(title);
-        spriteBatch.DrawString(Primitives.Font, title,
-            new Vector2(PanelLeft + (PanelWidth - titleSize.X) / 2f, PanelTop + 40),
-            Primitives.FontColor);
-
-        DrawSlider(spriteBatch, "Music Volume", AudioManager.Instance.MusicVolume, GetMusicTrack());
-        DrawSlider(spriteBatch, "Sound Volume", AudioManager.Instance.SoundVolume, GetSoundTrack());
-
-        keyBindingsButton.Draw(spriteBatch);
-        backButton.Draw(spriteBatch);
-    }
-
-    private void DrawSlider(SpriteBatch spriteBatch, string label, float value, Rectangle track)
-    {
-        spriteBatch.DrawString(Primitives.Font, label, new Vector2(track.X, track.Y - 44), Primitives.FontColor);
-
-        var pct = $"{(int)(value * 100)}%";
-        var pctSize = Primitives.Font.MeasureString(pct);
-        spriteBatch.DrawString(Primitives.Font, pct, new Vector2(track.Right - pctSize.X, track.Y - 44), Primitives.FontColor);
-        var gap = 30;
-        spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y + gap, track.Width, track.Height), new Color(170, 170, 170));
-
-        int filledWidth = (int)(track.Width * value);
-        if (filledWidth > 0)
-            spriteBatch.Draw(Primitives.Pixel, new Rectangle(track.X, track.Y + gap, filledWidth, track.Height), new Color(70, 130, 200));
-
-        int thumbSize = 28;
-        int thumbX = track.X + filledWidth - thumbSize / 2;
-        int thumbY = track.Y + track.Height / 2 - thumbSize / 2;
-        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX, thumbY + gap, thumbSize, thumbSize), Color.White);
-        spriteBatch.Draw(Primitives.Pixel, new Rectangle(thumbX + 3, thumbY + 3 + gap, thumbSize - 6, thumbSize - 6), new Color(40, 100, 180));
+        panel.Draw(spriteBatch);
     }
 }

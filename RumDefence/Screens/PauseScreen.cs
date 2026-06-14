@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
+using System.Collections.Generic;
 
 namespace RumDefence;
 
@@ -8,25 +10,27 @@ public class PauseScreen : Screen
     private Screen previousScreen;
     private bool pausedDueToFocusLoss;
 
-    private SimpleButton resumeButton;
-    private SimpleButton settingsButton;
-    private SimpleButton menuButton;
+    private ButtonBox retryButton;
+    private ButtonBox resumeButton;
+    private ButtonBox settingsButton;
+    private ButtonBox menuButton;
 
+    private Box panel;
     private Rectangle panelRect;
-
-    public PauseScreen(ScreenManager manager, Screen previous, bool focusLoss = false) : base(manager)
+    private Level level;
+    private List<Level> levelSet;
+    public PauseScreen(ScreenManager manager, Screen previous, bool focusLoss = false, Level level = null, List<Level> levelSet = null) : base(manager)
     {
         previousScreen = previous;
         pausedDueToFocusLoss = focusLoss;
+        this.level = level ?? null;
+        this.levelSet = levelSet ?? null;
     }
 
     public override void Load()
     {
         var content = RumGame.Instance.Content;
 
-        // Only switch to pause music when the player manually paused.
-        // For focus-loss pauses, audio is already suspended by RumGame —
-        // we leave it alone so ResumeAudio() can restore it perfectly.
         if (!pausedDueToFocusLoss)
         {
             AudioManager.Instance.PlayBackgroundMusic();
@@ -34,10 +38,33 @@ public class PauseScreen : Screen
 
         panelRect = new Rectangle(500, 200, 900, 700);
 
-        resumeButton = new SimpleButton(Primitives.ButtonTexture, "Resume", new Vector2(800, 300), new Vector2(300, 100));
-        settingsButton = new SimpleButton(Primitives.ButtonTexture, "Settings", new Vector2(800, 450), new Vector2(300, 100));
-        menuButton = new SimpleButton(Primitives.ButtonTexture, "Main Menu", new Vector2(800, 600), new Vector2(300, 100));
+        var buttonSize = new Vector2(300, 100);
 
+        retryButton = new ButtonBox(Primitives.ButtonTexture, "Retry", size: buttonSize);
+        resumeButton = new ButtonBox(Primitives.ButtonTexture, "Resume", size: buttonSize);
+        settingsButton = new ButtonBox(Primitives.ButtonTexture, "Settings", size: buttonSize);
+        menuButton = new ButtonBox(Primitives.ButtonTexture, "Main Menu", size: buttonSize);
+
+        panel = new Box
+        {
+            Direction = Direction.Row,
+            AlignX = Align.Center,
+            AlignY = Align.Center,
+            Gap = 20,
+            Padding = 0
+        };
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Add(resumeButton);
+        if (level != null && levelSet != null)
+            panel.Add(retryButton);
+        panel.Add(settingsButton);
+        panel.Add(menuButton);
+        panel.Arrange(panelRect);
+
+        retryButton.OnClick = () =>
+        {
+            manager.SetScreen(new GameScreen(manager, level, levelSet));
+        };
         resumeButton.OnClick = () =>
         {
             // Return to the game — restore gameplay music.
@@ -64,9 +91,7 @@ public class PauseScreen : Screen
 
     public override void Update(GameTime gameTime)
     {
-        resumeButton.Update(gameTime);
-        settingsButton.Update(gameTime);
-        menuButton.Update(gameTime);
+        panel.Update(gameTime);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -78,10 +103,6 @@ public class PauseScreen : Screen
             new Rectangle(0, 0, RumGame.VirtualWidth, RumGame.VirtualHeight),
             Color.Black * 0.3f);
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
-
-        resumeButton.Draw(spriteBatch);
-        settingsButton.Draw(spriteBatch);
-        menuButton.Draw(spriteBatch);
+        panel.Draw(spriteBatch);
     }
 }

@@ -1,12 +1,14 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
 public class WaveHud
 {
     private readonly ShipSpawner spawner;
+    private readonly ProgressBarBox bar;
 
     private const int PanelPaddingX = 24;
     private const int PanelPaddingY = 10;
@@ -17,6 +19,11 @@ public class WaveHud
     public WaveHud(ShipSpawner spawner)
     {
         this.spawner = spawner;
+        bar = new ProgressBarBox
+        {
+            TrackColor = new Color(60, 60, 0),
+            FillColor = Color.Yellow
+        };
     }
 
     public void Draw(SpriteBatch spriteBatch)
@@ -56,17 +63,10 @@ public class WaveHud
             float barX = panelX + PanelPaddingX;
             float barWidth = panelWidth - PanelPaddingX * 2;
 
-            var barBgRect = new Rectangle((int)barX, (int)contentY, (int)barWidth, BarHeight);
-            var barFillRect = new Rectangle((int)barX, (int)contentY, (int)(barWidth * progress), BarHeight);
-
-            spriteBatch.Draw(Primitives.Pixel, barBgRect, new Color(60, 60, 0));
-            spriteBatch.Draw(Primitives.Pixel, barFillRect, Color.Yellow);
-
-            var pctPos = new Vector2(
-                barX + (barWidth - pctSize.X) / 2f,
-                contentY + (BarHeight - pctSize.Y) / 2f
-            );
-            spriteBatch.DrawString(Primitives.Font, pctText, pctPos, Primitives.FontColor);
+            bar.Progress = progress;
+            bar.Label = pctText;
+            bar.Arrange(new Rectangle((int)barX, (int)contentY, (int)barWidth, BarHeight));
+            bar.Draw(spriteBatch);
         }
     }
 }

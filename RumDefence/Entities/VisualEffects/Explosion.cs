@@ -8,13 +8,10 @@ public class Explosion : Entity
 {
     private float _lifeTime;
     private float _maxLifeTime = 0.45f;
-    private int _explosionIndex;
     public bool IsFinished => _lifeTime <= 0;
     private readonly Animation animation;
     public Explosion(Vector2 position, float radius)
     {
-        _explosionIndex = new Random().Next(0, 3);
-        // _explosionIndex = Math.Clamp(explosionIndex, 0, 2); // 0, 1, or 2
         _lifeTime = _maxLifeTime;
         Position = position;
         var SpriteFrameSize = 64;
@@ -42,7 +39,6 @@ public class Explosion : Entity
     {
         _lifeTime -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-        // Fade out alpha as the explosion expires
         float progress = 1 - (_lifeTime / _maxLifeTime);
         color = Color.White * (1 - progress);
         if (_lifeTime < 0) return;

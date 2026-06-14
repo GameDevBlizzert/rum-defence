@@ -1,13 +1,29 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
 public class WallRepairMenu
 {
+    private const float TitleScale = 0.8f;
+    private const float StatScale = 0.65f;
+    private const float LabelScale = 0.5f;
+
     private Rectangle panelRect;
-    private SimpleButton repairButton;
-    private SimpleButton upgradeButton;
+    private Box panel;
+    private Box content;
+
+    private TextItem title;
+    private TextItem hpStat;
+
+    private TextItem repairCostText;
+    private ButtonBox repairButton;
+
+    private TextItem upgradeCostText;
+    private TextItem upgradeHpText;
+    private ButtonBox upgradeButton;
+
     private LevelProgressSystem progress;
 
     public bool RepairClicked { get; private set; }
@@ -25,21 +41,55 @@ public class WallRepairMenu
     {
         this.progress = progress;
 
-        int width = 340;
-        int height = 390;
+        int width = 400;
+        int height = 500;
         int x = RumGame.VirtualWidth - width - 20;
-        int y = RumGame.VirtualHeight - height - 320;
+        int y = RumGame.VirtualHeight - height - 20;
         panelRect = new Rectangle(x, y, width, height);
 
-        repairButton = new SimpleButton(Primitives.ButtonTexture, "Repair", Vector2.Zero, new Vector2(width - 40, 52));
-        repairButton.SetBounds(new Rectangle(panelRect.X + 20, panelRect.Y + 150, width - 40, 52));
-        repairButton.TextScale = 0.72f;
+        BuildContent();
+
+        panel = new Box { Direction = Direction.Row, AlignX = Align.Start, AlignY = Align.Start, Padding = 20 };
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Add(content);
+        panel.Arrange(panelRect);
+    }
+
+    private void BuildContent()
+    {
+        var buttonSize = new Vector2(panelRect.Width - 40, 52);
+
+        title = new TextItem("", TitleScale);
+
+        hpStat = new TextItem("", StatScale);
+
+        var repairLabel = new TextItem("REPAIR", LabelScale, Color.Gray);
+        repairCostText = new TextItem("", StatScale);
+        repairButton = new ButtonBox(Primitives.ButtonTexture, "Repair", 0.72f, buttonSize);
         repairButton.OnClick = () => { RepairClicked = true; };
 
-        upgradeButton = new SimpleButton(Primitives.ButtonTexture, "Upgrade", Vector2.Zero, new Vector2(width - 40, 52));
-        upgradeButton.SetBounds(new Rectangle(panelRect.X + 20, panelRect.Y + 308, width - 40, 52));
-        upgradeButton.TextScale = 0.72f;
+        var repairSection = new Box { Direction = Direction.Row, AlignX = Align.Start, AlignY = Align.Start, Gap = 6, Padding = 0 };
+        repairSection.Add(repairLabel);
+        repairSection.Add(repairCostText);
+        repairSection.Add(repairButton);
+
+        var upgradeLabel = new TextItem("UPGRADE", LabelScale, Color.Gray);
+        upgradeCostText = new TextItem("", StatScale);
+        upgradeHpText = new TextItem("", StatScale);
+        upgradeButton = new ButtonBox(Primitives.ButtonTexture, "Upgrade", 0.72f, buttonSize);
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
+
+        var upgradeSection = new Box { Direction = Direction.Row, AlignX = Align.Start, AlignY = Align.Start, Gap = 6, Padding = 0 };
+        upgradeSection.Add(upgradeLabel);
+        upgradeSection.Add(upgradeCostText);
+        upgradeSection.Add(upgradeHpText);
+        upgradeSection.Add(upgradeButton);
+
+        content = new Box { Direction = Direction.Row, AlignX = Align.Start, AlignY = Align.Start, Gap = 14, Padding = 0 };
+        content.Add(title);
+        content.Add(hpStat);
+        content.Add(repairSection);
+        content.Add(upgradeSection);
     }
 
     public void Update(GameTime gameTime)
@@ -61,11 +111,11 @@ public class WallRepairMenu
 
         int repairCost = SelectedWall.GetRepairCostToFull();
         repairButton.IsDisabled = SelectedWall.IsDestroyed || !SelectedWall.IsDamaged || progress.CoinsRemaining < repairCost || repairCost <= 0;
-        repairButton.Text = $"Repair ({repairKeyLabel})";
+        repairButton.Label.Text = $"Repair ({repairKeyLabel})";
 
         int upgradeCost = SelectedWall.GetUpgradeCost();
         upgradeButton.IsDisabled = !SelectedWall.CanUpgrade || progress.CoinsRemaining < upgradeCost;
-        upgradeButton.Text = SelectedWall.CanUpgrade ? $"Upgrade ({upgradeKeyLabel})" : "MAX LEVEL";
+        upgradeButton.Label.Text = SelectedWall.CanUpgrade ? $"Upgrade ({upgradeKeyLabel})" : "MAX LEVEL";
 
         repairButton.Update(gameTime);
         upgradeButton.Update(gameTime);
@@ -75,73 +125,30 @@ public class WallRepairMenu
     {
         if (SelectedWall == null) return;
 
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
-
-        // Title + level
-        string title = SelectedWall.UpgradeLevel > 0
+        title.Text = SelectedWall.UpgradeLevel > 0
             ? $"Wall  LVL {SelectedWall.UpgradeLevel}"
             : "Wall";
-        spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 18), Primitives.FontColor, 0f, Vector2.Zero, 0.8f, SpriteEffects.None, 0f);
-
-        // Level pip indicators
-        DrawLevelPips(spriteBatch);
-
-        float statScale = 0.65f;
-
-        // HP stat
-        spriteBatch.DrawString(Primitives.Font, $"HP:  {SelectedWall.Health} / {SelectedWall.MaxHealth}", new Vector2(panelRect.X + 20, panelRect.Y + 82), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-
-        // ── REPAIR ──────────────────────────────────────────────────
-        spriteBatch.DrawString(Primitives.Font, "REPAIR", new Vector2(panelRect.X + 20, panelRect.Y + 114), Color.Gray, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
+        hpStat.Text = $"HP:  {SelectedWall.Health} / {SelectedWall.MaxHealth}";
 
         int repairCost = SelectedWall.GetRepairCostToFull();
-        string repairLine = (SelectedWall.IsDamaged && repairCost > 0)
+        repairCostText.Text = (SelectedWall.IsDamaged && repairCost > 0)
             ? $"Cost: {repairCost} coins"
             : "Full health";
-        spriteBatch.DrawString(Primitives.Font, repairLine, new Vector2(panelRect.X + 20, panelRect.Y + 128), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-
-        repairButton.Draw(spriteBatch);
-
-        // ── UPGRADE ─────────────────────────────────────────────────
-        spriteBatch.DrawString(Primitives.Font, "UPGRADE", new Vector2(panelRect.X + 20, panelRect.Y + 225), Color.Gray, 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0f);
 
         if (SelectedWall.CanUpgrade)
         {
             int upgradeCost = SelectedWall.GetUpgradeCost();
             int hpGain = SelectedWall.NextMaxHealth - SelectedWall.MaxHealth;
-            spriteBatch.DrawString(Primitives.Font, $"Cost: {upgradeCost} coins", new Vector2(panelRect.X + 20, panelRect.Y + 242), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-            spriteBatch.DrawString(Primitives.Font, $"HP: {SelectedWall.MaxHealth} -> {SelectedWall.NextMaxHealth}  (+{hpGain})", new Vector2(panelRect.X + 20, panelRect.Y + 268), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+            upgradeCostText.Text = $"Cost: {upgradeCost} coins";
+            upgradeHpText.Text = $"HP: {SelectedWall.MaxHealth} -> {SelectedWall.NextMaxHealth}  (+{hpGain})";
         }
         else
         {
-            spriteBatch.DrawString(Primitives.Font, "Max level reached", new Vector2(panelRect.X + 20, panelRect.Y + 242), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+            upgradeCostText.Text = "Max level reached";
+            upgradeHpText.Text = "";
         }
 
-        upgradeButton.Draw(spriteBatch);
+        panel.Arrange(panelRect);
+        panel.Draw(spriteBatch);
     }
-
-    private void DrawLevelPips(SpriteBatch spriteBatch)
-    {
-        const int pipSize = 14;
-        const int pipGap = 6;
-        int startX = panelRect.X + 20;
-        int pipY = panelRect.Y + 52;
-
-        for (int i = 0; i < Wall.MaxUpgradeLevel; i++)
-        {
-            int x = startX + i * (pipSize + pipGap);
-            // Dark outline so pips are visible on any background
-            spriteBatch.Draw(Primitives.Pixel, new Rectangle(x - 1, pipY - 1, pipSize + 2, pipSize + 2), Color.Black);
-            Color pipColor = i < SelectedWall.UpgradeLevel ? GetPipColor(i) : new Color(70, 70, 70);
-            spriteBatch.Draw(Primitives.Pixel, new Rectangle(x, pipY, pipSize, pipSize), pipColor);
-        }
-    }
-
-    private static Color GetPipColor(int level) => level switch
-    {
-        0 => new Color(200, 148, 80),  // bronze
-        1 => new Color(148, 188, 220), // silver
-        2 => new Color(250, 205, 50),  // gold
-        _ => Color.White
-    };
 }

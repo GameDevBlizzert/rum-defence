@@ -1,20 +1,32 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using RumDefence.UI.Box;
 
 namespace RumDefence;
 
 public class UpgradeMenu
 {
+    private const float TitleScale = 0.8f;
+    private const float StatScale = 0.65f;
+    private const float LabelScale = 0.6f;
+
     private Rectangle panelRect;
-    private SimpleButton upgradeButton;
-    private SimpleButton targetModeButton;
+    private Box panel;
+    private TextItem towerTitle;
+    private TextItem damStat;
+    private TextItem rngStat;
+    private TextItem spdStat;
+    private TextItem targetLabel;
+    private ButtonBox targetModeButton;
+    private TextItem costLabel;
+    private ButtonBox upgradeButton;
+
     private LevelProgressSystem progress;
     public bool UpgradeClicked { get; private set; }
     public bool TargetModeClicked { get; private set; }
     public bool IsDisabled { get; set; }
 
     public BaseTower SelectedTower { get; set; }
-    public TowerData PreviewData { get; set; }
 
     public bool IsMouseOver(Vector2 mousePos)
     {
@@ -25,19 +37,47 @@ public class UpgradeMenu
     {
         this.progress = progress;
 
-        int width = 340;
-        int height = 400;
-        int x = RumGame.VirtualWidth - width - 20; // right side
-        int y = RumGame.VirtualHeight - height - 20; // bottom right
+        int width = 360;
+        int height = 500;
+        int x = RumGame.VirtualWidth - width; // right side
+        int y = RumGame.VirtualHeight - height; // bottom right
         panelRect = new Rectangle(x, y, width, height);
 
-        upgradeButton = new SimpleButton(Primitives.ButtonTexture, "Upgrade", new Vector2(x + 20, y + 315), new Vector2(width - 40, 52));
-        upgradeButton.TextScale = 0.72f;
+        var buttonSize = new Vector2(300, 52);
+
+        towerTitle = new TextItem("", TitleScale);
+        damStat = new TextItem("", StatScale);
+        rngStat = new TextItem("", StatScale);
+        spdStat = new TextItem("", StatScale);
+
+        targetLabel = new TextItem("Target:", LabelScale);
+        targetModeButton = new ButtonBox(Primitives.ButtonTexture, "Nearest", 0.7f, buttonSize);
+        targetModeButton.OnClick = () => { TargetModeClicked = true; };
+
+        costLabel = new TextItem("", StatScale);
+        upgradeButton = new ButtonBox(Primitives.ButtonTexture, "Upgrade", 0.7f, buttonSize);
         upgradeButton.OnClick = () => { UpgradeClicked = true; };
 
-        targetModeButton = new SimpleButton(Primitives.ButtonTexture, "Nearest", new Vector2(x + 20, y + 205), new Vector2(width - 40, 52));
-        targetModeButton.TextScale = 0.72f;
-        targetModeButton.OnClick = () => { TargetModeClicked = true; };
+        var towerContent = new Box
+        {
+            Direction = Direction.Row,
+            AlignX = Align.Start,
+            AlignY = Align.Start,
+            Gap = 8,
+        };
+        towerContent.Add(towerTitle);
+        towerContent.Add(damStat);
+        towerContent.Add(rngStat);
+        towerContent.Add(spdStat);
+        towerContent.Add(targetLabel);
+        towerContent.Add(targetModeButton);
+        towerContent.Add(costLabel);
+        towerContent.Add(upgradeButton);
+
+        panel = new Box { Padding = 8, Direction = Direction.Row };
+        panel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        panel.Add(towerContent);
+        panel.Arrange(panelRect);
     }
 
     public void Update(GameTime gameTime)
@@ -55,83 +95,29 @@ public class UpgradeMenu
             UpgradeClicked = true;
 
         var upgradeKeyLabel = InputManager.GetKeyDisplayName(InputManager.Instance.GetBinding("Upgrade"));
-        upgradeButton.Text = SelectedTower.CanUpgrade ? $"Upgrade ({upgradeKeyLabel})" : "MAX LEVEL";
+        upgradeButton.Label.Text = SelectedTower.CanUpgrade ? $"Upgrade ({upgradeKeyLabel})" : "MAX LEVEL";
 
-        targetModeButton.Text = SelectedTower.CurrentAttackModeLabel;
+        targetModeButton.Label.Text = SelectedTower.CurrentAttackModeLabel;
         targetModeButton.IsDisabled = false;
         upgradeButton.IsDisabled = !SelectedTower.CanUpgrade || progress.CoinsRemaining < SelectedTower.GetUpgradeCost();
 
-        // This will potentially fire OnClick and set UpgradeClicked = true.
-        targetModeButton.Update(gameTime);
-        upgradeButton.Update(gameTime);
+        panel.Update(gameTime);
     }
 
     public void Draw(SpriteBatch spriteBatch)
     {
-        if (SelectedTower != null)
-            DrawForTower(spriteBatch);
-    }
+        if (SelectedTower == null)
+            return;
 
-    private void DrawForTower(SpriteBatch spriteBatch)
-    {
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
+        towerTitle.Text = SelectedTower.Label + $" LVL {SelectedTower.CurrentLevel + 1}";
+        damStat.Text = $"DAM: {SelectedTower.CurrentDamage}";
+        rngStat.Text = $"RNG: {(int)SelectedTower.CurrentRange}";
+        spdStat.Text = $"SPD: {SelectedTower.CurrentFireRate:F1}/s";
 
-        var title = SelectedTower.Label;
-        title += $" LVL {SelectedTower.CurrentLevel + 1}";
+        costLabel.Text = SelectedTower.CanUpgrade
+            ? $"Cost: {SelectedTower.GetUpgradeCost()} coins"
+            : "";
 
-        float titleScale = 0.8f;
-        spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Primitives.FontColor, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
-
-        var startY = panelRect.Y + 70;
-        var spacing = 34;
-        var color = Primitives.FontColor;
-        float statScale = 0.65f;
-
-        spriteBatch.DrawString(Primitives.Font, $"DAM: {SelectedTower.CurrentDamage}", new Vector2(panelRect.X + 20, startY), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        spriteBatch.DrawString(Primitives.Font, $"RNG: {(int)SelectedTower.CurrentRange}", new Vector2(panelRect.X + 20, startY + spacing), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        spriteBatch.DrawString(Primitives.Font, $"SPD: {SelectedTower.CurrentFireRate:F1}/s", new Vector2(panelRect.X + 20, startY + spacing * 2), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-
-        spriteBatch.DrawString(
-            Primitives.Font,
-            "Target:",
-            new Vector2(panelRect.X + 20, panelRect.Y + 166),
-            Primitives.FontColor,
-            0f,
-            Vector2.Zero,
-            0.6f,
-            SpriteEffects.None,
-            0f
-        );
-        targetModeButton.Draw(spriteBatch);
-
-        if (SelectedTower.CanUpgrade)
-        {
-            var cost = SelectedTower.GetUpgradeCost();
-            spriteBatch.DrawString(Primitives.Font, $"Cost: {cost} coins", new Vector2(panelRect.X + 20, panelRect.Y + 258), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-            upgradeButton.Draw(spriteBatch);
-        }
-        else
-        {
-            spriteBatch.DrawString(Primitives.Font, "MAX LEVEL", new Vector2(panelRect.X + 20, panelRect.Y + 258), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        }
-    }
-
-    private void DrawPreview(SpriteBatch spriteBatch)
-    {
-        NineSlice.Draw(spriteBatch, Primitives.PanelTexture, panelRect, new Rectangle(0, 0, 128, 128), 20, Color.White);
-
-        var title = PreviewData.Label + " LVL 1";
-        float titleScale = 0.8f;
-        spriteBatch.DrawString(Primitives.Font, title, new Vector2(panelRect.X + 20, panelRect.Y + 20), Primitives.FontColor, 0f, Vector2.Zero, titleScale, SpriteEffects.None, 0f);
-
-        var startY = panelRect.Y + 70;
-        var spacing = 35;
-        var color = Primitives.FontColor;
-        float statScale = 0.65f;
-
-        spriteBatch.DrawString(Primitives.Font, $"DAM: {PreviewData.Damage}", new Vector2(panelRect.X + 20, startY), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        spriteBatch.DrawString(Primitives.Font, $"RNG: {(int)PreviewData.Range}", new Vector2(panelRect.X + 20, startY + spacing), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        spriteBatch.DrawString(Primitives.Font, $"SPD: {PreviewData.FireRate:F1}/s", new Vector2(panelRect.X + 20, startY + spacing * 2), color, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        spriteBatch.DrawString(Primitives.Font, $"Cost: {PreviewData.Cost} coins", new Vector2(panelRect.X + 20, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
+        panel.Draw(spriteBatch);
     }
 }
