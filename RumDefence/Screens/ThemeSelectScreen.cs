@@ -39,11 +39,11 @@ public class ThemeSelectScreen : Screen
         backButton = new ButtonBox(Primitives.ButtonTexture, "Back");
         backButton.Arrange(new Rectangle(20, 20, 200, 80));
 
-        var row1 = new Box { Direction = Direction.Column, Gap = 100, AlignX = Align.Center, AlignY = Align.Center };
+        var row1 = new Box { Direction = Direction.Column, Gap = 20, AlignX = Align.Center, AlignY = Align.Center };
         row1.Add(grassButton);
         row1.Add(stoneButton);
 
-        var row2 = new Box { Direction = Direction.Column, Gap = 100, AlignX = Align.Center, AlignY = Align.Center };
+        var row2 = new Box { Direction = Direction.Column, Gap = 20, AlignX = Align.Center, AlignY = Align.Center };
         row2.Add(oneHpButton);
         row2.Add(infinityButton);
 

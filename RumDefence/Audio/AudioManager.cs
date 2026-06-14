@@ -108,7 +108,7 @@ public class AudioManager
         try
         {
             if (footstepSounds.Count > 0)
-                footstepSounds[random.Next(footstepSounds.Count)].Play();
+                PlayFromList(footstepSounds);
             else
                 System.Diagnostics.Debug.WriteLine("Warning: No footstep sounds loaded");
         }
@@ -123,7 +123,7 @@ public class AudioManager
         try
         {
             if (impactSounds.Count > 0)
-                impactSounds[random.Next(impactSounds.Count)].Play();
+                PlayFromList(impactSounds);
             else
                 System.Diagnostics.Debug.WriteLine("Warning: No impact sounds loaded");
         }
@@ -138,7 +138,7 @@ public class AudioManager
         try
         {
             if (explosionSounds.Count > 0)
-                explosionSounds[random.Next(explosionSounds.Count)].Play();
+                PlayFromList(explosionSounds);
             else
                 System.Diagnostics.Debug.WriteLine("Warning: No explosion sounds loaded");
         }
@@ -146,6 +146,13 @@ public class AudioManager
         {
             System.Diagnostics.Debug.WriteLine($"Warning: Failed to play random explosion: {ex}");
         }
+    }
+
+    private void PlayFromList(List<SoundEffect> sounds)
+    {
+        var instance = sounds[random.Next(sounds.Count)].CreateInstance();
+        instance.Volume = soundVolume;
+        instance.Play();
     }
 
     public void PlayBackgroundMusic(string songName = "menu_music")
