@@ -45,4 +45,5 @@ public static class Primitives
     public static Color FontLightColor => new Color(255, 225, 120);
 
     public const float TowerSize = 1f;
+    public const float RefundBuildingPrc = 0.8f;
 }

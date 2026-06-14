@@ -55,7 +55,7 @@ public class ThemeSelectScreen : Screen
             row2.Add(devButton);
         }
 
-        panel = new Box { Direction = Direction.Row, Gap = 40, AlignX = Align.Center, AlignY = Align.Center };
+        panel = new Box { Direction = Direction.Row, Gap = 80, AlignX = Align.Center, AlignY = Align.Center };
         panel.Add(row1);
         panel.Add(row2);
 

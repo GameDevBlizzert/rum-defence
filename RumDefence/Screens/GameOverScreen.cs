@@ -138,7 +138,7 @@ public class GameOverScreen : Screen
         spriteBatch.Draw(
             Primitives.Pixel,
             new Rectangle(0, 0, screenWidth, screenHeight),
-            Color.Black * 0.6f
+            isWin ? Color.Green * 0.6f : Color.Red * 0.6f
         );
 
         panel.Draw(spriteBatch);

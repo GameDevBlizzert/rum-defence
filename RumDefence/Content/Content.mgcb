@@ -1141,6 +1141,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/UI/Cursor.png;Art/UI/Cursor
 
+#begin Art/UI/normal-speed-icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/UI/normal-speed-icon.png;Art/UI/normal-speed-icon
+
 #begin Art/UI/Panels/panel_blue.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1177,6 +1189,18 @@
 /processorParam:TextureFormat=Color
 /build:Art/UI/Panels/panel.png;Art/UI/Panels/panel
 
+#begin Art/UI/pause-icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/UI/pause-icon.png;Art/UI/pause-icon
+
 #begin Art/UI/pixel.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -1188,6 +1212,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Art/UI/pixel.png;Art/UI/pixel
+
+#begin Art/UI/remove-building-icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/UI/remove-building-icon.png;Art/UI/remove-building-icon
+
+#begin Art/UI/twice-speed-icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Art/UI/twice-speed-icon.png;Art/UI/twice-speed-icon
 
 #begin Audio/click_004.ogg
 /importer:OggImporter

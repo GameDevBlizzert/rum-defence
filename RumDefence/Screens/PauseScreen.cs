@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using RumDefence.UI.Box;
+using System.Collections.Generic;
 
 namespace RumDefence;
 
@@ -9,17 +10,21 @@ public class PauseScreen : Screen
     private Screen previousScreen;
     private bool pausedDueToFocusLoss;
 
+    private ButtonBox retryButton;
     private ButtonBox resumeButton;
     private ButtonBox settingsButton;
     private ButtonBox menuButton;
 
     private Box panel;
     private Rectangle panelRect;
-
-    public PauseScreen(ScreenManager manager, Screen previous, bool focusLoss = false) : base(manager)
+    private Level level;
+    private List<Level> levelSet;
+    public PauseScreen(ScreenManager manager, Screen previous, bool focusLoss = false, Level level = null, List<Level> levelSet = null) : base(manager)
     {
         previousScreen = previous;
         pausedDueToFocusLoss = focusLoss;
+        this.level = level ?? null;
+        this.levelSet = levelSet ?? null;
     }
 
     public override void Load()
@@ -35,6 +40,7 @@ public class PauseScreen : Screen
 
         var buttonSize = new Vector2(300, 100);
 
+        retryButton = new ButtonBox(Primitives.ButtonTexture, "Retry", size: buttonSize);
         resumeButton = new ButtonBox(Primitives.ButtonTexture, "Resume", size: buttonSize);
         settingsButton = new ButtonBox(Primitives.ButtonTexture, "Settings", size: buttonSize);
         menuButton = new ButtonBox(Primitives.ButtonTexture, "Main Menu", size: buttonSize);
@@ -44,15 +50,21 @@ public class PauseScreen : Screen
             Direction = Direction.Row,
             AlignX = Align.Center,
             AlignY = Align.Center,
-            Gap = 50,
-            Padding = 60
+            Gap = 20,
+            Padding = 0
         };
         panel.AddBackground(new ImageBox(Primitives.PanelTexture));
         panel.Add(resumeButton);
+        if (level != null && levelSet != null)
+            panel.Add(retryButton);
         panel.Add(settingsButton);
         panel.Add(menuButton);
         panel.Arrange(panelRect);
 
+        retryButton.OnClick = () =>
+        {
+            manager.SetScreen(new GameScreen(manager, level, levelSet));
+        };
         resumeButton.OnClick = () =>
         {
             // Return to the game — restore gameplay music.

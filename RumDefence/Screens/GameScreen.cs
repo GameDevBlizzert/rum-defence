@@ -103,7 +103,7 @@ public class GameScreen : Screen
             towerUnlockManager != null ? data => towerUnlockManager.IsAvailable(data.Type) : null);
         hud.SetPlaybackState(playbackState);
         hud.OnSpeedRequested = CyclePlaybackState;
-        hud.OnMenuRequested = () => manager.SetScreen(new PauseScreen(manager, this));
+        hud.OnMenuRequested = () => manager.SetScreen(new PauseScreen(manager, this, level: currentLevel, levelSet: ActiveLevelSet));
 
         if (towerUnlockManager != null)
             towerUnlockManager.OnTowerUnlocked += tower =>
@@ -145,12 +145,12 @@ public class GameScreen : Screen
 
             if (walls.ContainsKey(p))
             {
-                refundAmount = (int)Math.Ceiling(BuildManager.WallCost * 0.8f);
+                refundAmount = (int)Math.Ceiling(BuildManager.WallCost * Primitives.RefundBuildingPrc);
                 walls.Remove(p);
             }
             else if (placedTowers.TryGetValue(p, out BaseTower tower))
             {
-                refundAmount = (int)Math.Ceiling(tower.Data.Cost * 0.8f);
+                refundAmount = (int)Math.Ceiling(tower.Data.Cost * Primitives.RefundBuildingPrc);
                 placedTowers.Remove(p);
             }
 
@@ -217,16 +217,20 @@ public class GameScreen : Screen
 
         UpdateBuildSystem(gameTime);
 
-        if (playbackState == GamePlaybackState.Paused || ShouldFreezeGameplayForTutorial() || ShouldFreezeGameplayForPopup())
+        if (playbackState == GamePlaybackState.Paused)
             return;
 
         var gameplayGameTime = GetGameplayGameTime(gameTime);
 
-        UpdateSpawner(gameplayGameTime);
-        UpdateShips(gameplayGameTime);
-        UpdateTroops(gameplayGameTime);
         UpdateWalls();
         UpdateTowers(gameplayGameTime);
+        if (!ShouldFreezeGameplayForTutorial() && !ShouldFreezeGameplayForPopup())
+        {
+            UpdateSpawner(gameplayGameTime);
+            UpdateShips(gameplayGameTime);
+            UpdateTroops(gameplayGameTime);
+        }
+
         CheckLevelCompletion(gameplayGameTime);
     }
 
@@ -500,7 +504,7 @@ public class GameScreen : Screen
     {
         if (InputManager.Instance.IsActionJustPressed("Pause"))
         {
-            manager.SetScreen(new PauseScreen(manager, this));
+            manager.SetScreen(new PauseScreen(manager, this, level: currentLevel, levelSet: ActiveLevelSet));
             return true;
         }
 
