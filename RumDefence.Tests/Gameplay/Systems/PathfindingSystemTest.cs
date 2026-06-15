@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
 using Xunit;
 
@@ -22,11 +24,11 @@ public class PathfindingSystemTest
         };
 
         // Act
-        pathfindingSystem.UpdatePath(currentPosition, grid);
+        pathfindingSystem.UpdatePath(currentPosition, grid, new HashSet<Point>());
 
-        // Assert
+        // Assert: the path leads to the destination tile (waypoints snap to grid coords).
         Assert.NotEmpty(pathfindingSystem.Path);
-        Assert.Equal(destination, pathfindingSystem.Path.Peek());
+        Assert.True(Vector2.Distance(pathfindingSystem.Path.Last(), destination) <= grid.TileSize);
     }
 
 }

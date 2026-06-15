@@ -1,5 +1,13 @@
 # Rum Defence
 
+A pirate-themed tower-defence game built with C# / .NET 8 and MonoGame.
+
+## Documentation
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for an overview of how the codebase is
+organised and how the major systems (screens, grid, pathfinding, spawning,
+towers/troops, build system, persistence) fit together.
+
 ## Audio credits
 
 - [Kenney Interface Sounds](https://www.kenney.nl/assets/interface-sounds)
@@ -13,7 +21,7 @@ Each troop has a `PathfindingSystem` that computes a route from the troop's curr
 
 **Algorithm — A\***
 
-`UpdatePath` runs A* on the tile grid. Each tile normally costs 1 to enter. Tiles that contain an untraversable structure (e.g. a wall) are assigned a cost of 100 000, which effectively blocks that route unless no other path exists. The heuristic is Manhattan distance, keeping the search admissible and optimal.
+`UpdatePath` runs A* on the tile grid. Each tile normally costs 1 to enter. Tiles that contain an untraversable structure (e.g. a wall or water) cost 10 (see `Grid.GetTileCost`), so routes avoid them but can still cross if no other path exists. The heuristic is Manhattan distance, keeping the search admissible and optimal.
 
 **Path representation**
 
