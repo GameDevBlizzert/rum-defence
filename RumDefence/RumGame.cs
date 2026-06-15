@@ -27,6 +27,9 @@ namespace RumDefence
         public RumGame()
         {
             _graphics = new GraphicsDeviceManager(this);
+            // HiDef raises the max Texture2D size from 2048 (Reach) to 4096. The browser/WebGL
+            // backend strictly enforces the Reach cap, and some sprite sheets exceed 2048px.
+            _graphics.GraphicsProfile = GraphicsProfile.HiDef;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
 
@@ -66,8 +69,18 @@ namespace RumDefence
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
-            var cursor = Content.Load<Texture2D>("Art/UI/Cursor");
-            Mouse.SetCursor(MouseCursor.FromTexture2D(cursor, 0, 0));
+
+            // Custom hardware cursors aren't supported on every platform (e.g. the
+            // browser/WebGL backend), so fall back to the default cursor there.
+            try
+            {
+                var cursor = Content.Load<Texture2D>("Art/UI/Cursor");
+                Mouse.SetCursor(MouseCursor.FromTexture2D(cursor, 0, 0));
+            }
+            catch (System.PlatformNotSupportedException)
+            {
+                // Keep the default system cursor (IsMouseVisible is already true).
+            }
 
             AudioManager.Instance.LoadContent();
         }
