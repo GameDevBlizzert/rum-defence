@@ -576,8 +576,6 @@ public class GameScreen : Screen
 
             if (troop.IsFinished)
             {
-                // progress.TakeHits(1);
-                // Spawner.NotifyTroopDefeated();
                 Troops.RemoveAt(i);
             }
         }

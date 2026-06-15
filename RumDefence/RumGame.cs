@@ -57,7 +57,6 @@ namespace RumDefence
 
             base.Initialize();
             UpdateScaleMatrix();
-            SaveManager.Load();
             AudioManager.Instance.MusicVolume = SaveManager.CurrentSave.MusicVolume;
             AudioManager.Instance.SoundVolume = SaveManager.CurrentSave.SfxVolume;
 
