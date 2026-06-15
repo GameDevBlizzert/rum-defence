@@ -5,3 +5,5 @@
 /bin/Debug/net8.0-windows
 /obj
 /.vs
+/RumDefence.Web/bin/Debug/net8.0
+/RumDefence.Web/obj
