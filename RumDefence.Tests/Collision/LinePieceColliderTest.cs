@@ -101,7 +101,7 @@ public class LinePieceColliderTest
         // Vertical line x=4:   from (4,0) to (4,10)
         // Expected intersection: (4, 2)
         var horizontal = new LinePieceCollider(new Vector2(0, 2), new Vector2(10, 2));
-        var vertical   = new LinePieceCollider(new Vector2(4, 0), new Vector2(4, 10));
+        var vertical = new LinePieceCollider(new Vector2(4, 0), new Vector2(4, 10));
 
         Vector2 result = horizontal.GetIntersection(vertical);
 
