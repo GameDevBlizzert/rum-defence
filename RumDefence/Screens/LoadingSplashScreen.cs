@@ -31,8 +31,11 @@ public class LoadingSplashScreen : Screen
     {
         var content = RumGame.Instance.Content;
 
+        // custom textures by Tobias Roessingh
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
+        // AI generated rum barrel texture
         barrelTexture = content.Load<Texture2D>("Art/Objects/RumBarrel");
+        // https://kenney.nl/ or https://kenney-assets.itch.io/pirate-pack
         boatTexture = content.Load<Texture2D>("Art/Themes/Grass/Ships/ship_1");
 
         titlePanelBackground = new ImageBox(panelTexture);

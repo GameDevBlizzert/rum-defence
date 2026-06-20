@@ -56,6 +56,7 @@ public class BuildMenu
         this.isTowerAvailable = isTowerAvailable;
 
         var content = RumGame.Instance.Content;
+        // https://kenney.nl/ or https://kenney-assets.itch.io/pirate-pack
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
         // custom texture by Tobias Roessingh
         var removeIcon = content.Load<Texture2D>("Art/UI/remove-building-icon");
@@ -65,6 +66,7 @@ public class BuildMenu
         var panelHeight = RumGame.VirtualHeight;
         panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
 
+        // https://kenney.nl/ or https://kenney-assets.itch.io/pirate-pack
         var coinIcon = content.Load<Texture2D>("Art/UI/Coin");
 
         int fontHeight = (int)Primitives.Font.MeasureString("0").Y;
