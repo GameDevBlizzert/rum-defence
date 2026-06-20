@@ -20,6 +20,7 @@ public record TroopData(
 public static class TroopFactory
 {
     public static readonly TroopData Regular = new(
+        // used https://foozlecc.itch.io/scallywag-pirates sprite with customisation by Tobias Roessingh
         SpritePath: "Art/Pirates/pirate.grunt",
         Health: 100,
         BaseSpeed: 60f,
@@ -31,6 +32,7 @@ public static class TroopFactory
     );
 
     public static readonly TroopData Boss = new(
+        // used https://foozlecc.itch.io/scallywag-pirates sprite with customisation by Tobias Roessingh
         SpritePath: "Art/Pirates/pirate.captain",
         Health: 500,
         BaseSpeed: 60f,
@@ -44,6 +46,7 @@ public static class TroopFactory
     );
 
     public static readonly TroopData Ghost = new(
+        // used https://foozlecc.itch.io/scallywag-pirates sprite with customisation by Tobias Roessingh
         SpritePath: "Art/Pirates/pirate.ghost",
         Health: 50,
         BaseSpeed: 45f,
@@ -57,6 +60,7 @@ public static class TroopFactory
     );
 
     public static readonly TroopData Bomber = new(
+        // used https://foozlecc.itch.io/scallywag-pirates sprite with customisation by Tobias Roessingh
         SpritePath: "Art/Pirates/pirate.bomber",
         Health: 80,
         BaseSpeed: 70f,

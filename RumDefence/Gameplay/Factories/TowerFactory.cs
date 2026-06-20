@@ -33,11 +33,13 @@ public record TowerData(
 public static class TowerFactory
 {
     public static readonly TowerData Musket = new(
+        // custom texture by Tobias Roessingh
         Type: TowerType.Musket,
         TexturePath: "Art/Towers/musket",
         Label: "musket",
         Description: "A reliable all-rounder that fires steadily at the\nnearest enemy. Cheap to build and easy to upgrade -\na solid backbone for any defence.",
         OverlayTexturePath: null,
+        // custom texture by Tobias Roessingh
         IconTexturePath: "Art/Towers/musket-icon",
         Range: 250f,
         FireRate: 0.7f,
@@ -58,10 +60,12 @@ public static class TowerFactory
 
     public static readonly TowerData Fisher = new(
         Type: TowerType.Fisher,
+        // custom texture by Tobias Roessingh
         TexturePath: "Art/Towers/fisher",
         Label: "fisher",
         Description: "Casts weighted nets that slow every enemy caught\nin the splash. Doesn't hit hard, but buys your other\ntowers more time to finish the job.",
         OverlayTexturePath: null,
+        // custom texture by Tobias Roessingh
         IconTexturePath: "Art/Towers/fisher-icon",
         Range: 150f,
         FireRate: 0.5f,
@@ -82,10 +86,12 @@ public static class TowerFactory
 
     public static readonly TowerData Cannon = new(
         Type: TowerType.Cannon,
+        // custom texture by Tobias Roessingh
         TexturePath: "Art/Towers/cannon",
         Label: "cannon",
         Description: "Lobs heavy cannonballs that explode on impact,\ndamaging every enemy near the blast. Great against\ngroups, but it reloads slowly.",
         OverlayTexturePath: null,
+        // custom texture by Tobias Roessingh
         IconTexturePath: "Art/Towers/cannon-icon",
         Range: 250f,
         FireRate: 0.5f,
@@ -106,10 +112,12 @@ public static class TowerFactory
 
     public static readonly TowerData Fire = new(
         Type: TowerType.Fire,
+        // custom texture by Tobias Roessingh
         TexturePath: "Art/Towers/fire",
         Label: "fire",
         Description: "Sprays a cone of flame that keeps burning enemies\ncaught inside it. Excellent for covering chokepoints\nwhere troops have to walk through.",
         OverlayTexturePath: null,
+        // custom texture by Tobias Roessingh
         IconTexturePath: "Art/Towers/fire-icon",
         Range: 150f,
         FireRate: 1.5f,
@@ -130,10 +138,12 @@ public static class TowerFactory
 
     public static readonly TowerData Bandit = new(
         Type: TowerType.Bandit,
+        // custom texture by Tobias Roessingh
         TexturePath: "Art/Towers/bandit",
         Label: "bandit",
         Description: "Your cheapest tower - fires quick, light shots that\nchip away at anything nearby. Perfect for filling gaps\nearly on when coins are tight.",
         OverlayTexturePath: null,
+        // custom texture by Tobias Roessingh
         IconTexturePath: "Art/Towers/bandit-icon",
         Range: 150f,
         FireRate: 1f,

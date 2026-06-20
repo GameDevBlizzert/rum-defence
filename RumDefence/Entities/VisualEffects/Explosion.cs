@@ -15,6 +15,7 @@ public class Explosion : Entity
         _lifeTime = _maxLifeTime;
         Position = position;
         var SpriteFrameSize = 64;
+        // texture from FireWorks lesson with a little bit of customisation.
         Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Projectiles/explosion");
         var totalFrames = 36;
         animation = new Animation(SpriteFrameSize, SpriteFrameSize, _maxLifeTime / totalFrames);

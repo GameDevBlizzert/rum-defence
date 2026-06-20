@@ -16,6 +16,7 @@ public class CannonProjectile : BaseProjectile
     {
         ApplyDirectDamage = false;
         _aoeRadius = aoeRadius;
+        // custom texture by Tobias Roessingh
         Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Projectiles/cannonball");
 
         int frameWidth = Texture.Width / 4;

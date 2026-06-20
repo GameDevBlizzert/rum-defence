@@ -24,6 +24,7 @@ public class NetEffect : Entity
         _attackSlowMultiplier = attackSlowMultiplier;
         Position = position;
 
+        // custom texture by Tobias Roessingh
         if (_netTexture == null)
             _netTexture = RumGame.Instance.Content.Load<Texture2D>("Art/Towers/fishing-net");
 
