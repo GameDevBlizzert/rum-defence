@@ -13,6 +13,7 @@ public class IconButtonBox : ButtonBox
 
     public IconButtonBox(Texture2D backgroundTexture, Texture2D iconTexture, Rectangle? backgroundSourceRect = null)
     {
+        backgroundSourceRect ??= new Rectangle(0, 0, 64, 64);
         AddBackground(new ImageBox(backgroundTexture, backgroundSourceRect));
         IconTexture = iconTexture;
     }

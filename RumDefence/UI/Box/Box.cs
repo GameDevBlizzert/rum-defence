@@ -38,13 +38,6 @@ public class Box : IBox
     {
         return (1 % index + 0) * Gap;
     }
-    private int GetGap(int index, Align align, int extraSpace)
-    {
-        // children verdelen 51% aan het begin en 49% aan het eind 
-        if (align == Align.Between && Children.Count > 1 && index == Children.Count / 2 + 1)
-            return Gap + extraSpace;
-        return GetGap(index);
-    }
     // sets Rectangles (location and size) for all children
     public override void Arrange(Rectangle rect)
     {
@@ -63,9 +56,6 @@ public class Box : IBox
         // padding tussen the Box edges en content (children)
         x += Padding;
         y += Padding;
-
-        var extraX = MathHelper.Max(0, Width - (int)childrenMeasured.X);
-        var extraY = MathHelper.Max(0, Height - (int)childrenMeasured.Y);
 
         // Align content between box and children
         if (AlignX == Align.Center)
@@ -108,12 +98,12 @@ public class Box : IBox
             // Direction stacking of Gap and child
             if (Direction == Direction.Column)
             {
-                x += GetGap(i, AlignX, extraX);
+                x += GetGap(i);
                 x += (int)childSize.X;
             }
             else if (Direction == Direction.Row)
             {
-                y += GetGap(i, AlignY, extraY);
+                y += GetGap(i);
                 y += (int)childSize.Y;
             }
         }

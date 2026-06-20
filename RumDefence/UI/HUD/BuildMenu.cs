@@ -75,7 +75,6 @@ public class BuildMenu
         const int spacing = 8;
 
         buttonSize = new Vector2(ButtonWidth, ButtonHeight);
-        buttonSourceRect = new Rectangle(0, 0, 64, 64);
 
         healthBar = new ProgressBarBox
         {
@@ -98,19 +97,19 @@ public class BuildMenu
         {
             var data = availableTowers[i];
             var icon = content.Load<Texture2D>(data.IconTexturePath);
-            var btn = new IconButtonBox(Primitives.ButtonTexture, icon, buttonSourceRect);
+            var btn = new IconButtonBox(Primitives.ButtonTexture, icon);
             btn.Size = buttonSize;
             btn.OnClick = () => buildManager.SetTowerMode(data);
             btn.CostLabel = data.Cost.ToString();
             towerButtons[i] = (btn, data);
         }
 
-        wallButton = new IconButtonBox(Primitives.ButtonTexture, wallIcon, buttonSourceRect);
+        wallButton = new IconButtonBox(Primitives.ButtonTexture, wallIcon);
         wallButton.Size = buttonSize;
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
         wallButton.CostLabel = BuildManager.WallCost.ToString();
 
-        removeButton = new IconButtonBox(Primitives.ButtonTexture, removeIcon, buttonSourceRect);
+        removeButton = new IconButtonBox(Primitives.ButtonTexture, removeIcon);
         removeButton.Size = buttonSize;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
@@ -120,11 +119,11 @@ public class BuildMenu
         fastForwardIcon = content.Load<Texture2D>("Art/UI/twice-speed-icon");
         highlightArrowIcon = CreateHighlightArrowIcon(RumGame.Instance.GraphicsDevice);
 
-        speedButton = new IconButtonBox(Primitives.ButtonTexture, fastForwardIcon, buttonSourceRect);
+        speedButton = new IconButtonBox(Primitives.ButtonTexture, fastForwardIcon);
         speedButton.Size = buttonSize;
         speedButton.OnClick = () => OnSpeedRequested?.Invoke();
 
-        pauseMenuButton = new IconButtonBox(Primitives.ButtonTexture, pauseIcon, buttonSourceRect);
+        pauseMenuButton = new IconButtonBox(Primitives.ButtonTexture, pauseIcon);
         pauseMenuButton.Size = buttonSize;
         pauseMenuButton.OnClick = () => OnMenuRequested?.Invoke();
 
@@ -140,7 +139,9 @@ public class BuildMenu
         bottomContent.Add(speedButton);
         bottomContent.Add(pauseMenuButton);
 
-        panel = new Box { Direction = Direction.Row, AlignY = Align.Between, Padding = 8, AlignX = Align.Center };
+        var panelGap = panelRect.Height - contentBox.Measure().Y - bottomContent.Measure().Y;
+        panelGap -= 2 * spacing;
+        panel = new Box { Direction = Direction.Row, Padding = 0, Gap = (int)panelGap };
         panel.AddBackground(new ImageBox(Primitives.PanelTexture));
         panel.Add(contentBox);
         panel.Add(bottomContent);
@@ -161,7 +162,7 @@ public class BuildMenu
         {
             var data = availableTowers[i];
             var icon = content.Load<Texture2D>(data.IconTexturePath);
-            var btn = new IconButtonBox(Primitives.ButtonTexture, icon, buttonSourceRect);
+            var btn = new IconButtonBox(Primitives.ButtonTexture, icon);
             btn.Size = buttonSize;
             btn.OnClick = () => buildManager.SetTowerMode(data);
             btn.CostLabel = data.Cost.ToString();
