@@ -5,6 +5,7 @@ using RumDefence.UI.Box;
 
 namespace RumDefence;
 
+// AI generated
 public class LoadingSplashScreen : Screen
 {
     private const float DurationSeconds = 2.8f;

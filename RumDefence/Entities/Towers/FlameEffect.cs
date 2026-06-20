@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
+// AI generated
 public class FlameEffect : Entity
 {
     private const int FrameWidth = 128;
