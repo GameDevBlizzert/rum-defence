@@ -19,7 +19,7 @@ public class CoinManager
     {
         this.getTargetPosition = getTargetPosition;
         this.progress = progress;
-        // https://kenney.nl/ or https://kenney-assets.itch.io/pirate-pack
+        // ai generated coin texture
         coinTexture = RumGame.Instance.Content.Load<Texture2D>("Art/UI/Coin");
     }
 

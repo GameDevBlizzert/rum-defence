@@ -10,10 +10,18 @@ towers/troops, build system, persistence) fit together.
 
 ## Audio credits
 
-- [Kenney Interface Sounds](https://www.kenney.nl/assets/interface-sounds)
-- [Kenney Impact Sounds](https://www.kenney.nl/assets/impact-sounds)
-- [Cozy Tunes by Pizza Doggy](https://pizzadoggy.itch.io/cozy-tunes)
-- [Free Pirate Game Music Pack](https://alkakrab.itch.io/free-pirate-game-music-pack)
+-   [Kenney Interface Sounds](https://www.kenney.nl/assets/interface-sounds)
+-   [Kenney Impact Sounds](https://www.kenney.nl/assets/impact-sounds)
+-   [Cozy Tunes by Pizza Doggy](https://pizzadoggy.itch.io/cozy-tunes)
+-   [Free Pirate Game Music Pack](https://alkakrab.itch.io/free-pirate-game-music-pack)
+
+## Visual credits
+
+-   [Kenney Assets](https://kenney.nl/) or [Pirate Pack by Kenney](https://kenney-assets.itch.io/pirate-pack)
+-   Tobias Roessingh custom Tower, Projectile, Icons, Button, Panels and Pirate (Edited) Textures.
+-   [Scallywag pirates by Foozle ](https://foozlecc.itch.io/scallywag-pirates)
+-   Joey Jordaan for editing stone land texture.
+-   Tim Grootscholten for creating cross walls.
 
 ## Pathfinding
 
@@ -21,7 +29,7 @@ Each troop has a `PathfindingSystem` that computes a route from the troop's curr
 
 **Algorithm — A\***
 
-`UpdatePath` runs A* on the tile grid. Each tile normally costs 1 to enter. Tiles that contain an untraversable structure (e.g. a wall or water) cost 10 (see `Grid.GetTileCost`), so routes avoid them but can still cross if no other path exists. The heuristic is Manhattan distance, keeping the search admissible and optimal.
+`UpdatePath` runs A\* on the tile grid. Each tile normally costs 1 to enter. Tiles that contain an untraversable structure (e.g. a wall or water) cost 10 (see `Grid.GetTileCost`), so routes avoid them but can still cross if no other path exists. The heuristic is Manhattan distance, keeping the search admissible and optimal.
 
 **Path representation**
 
@@ -36,4 +44,4 @@ The resulting path is stored as a `Queue<Vector2>` of world-space waypoints — 
 ### Pathfinding
 
 You can use the environment variable `SHOW_PATHFINDING` to visualize the pathfinding and the waypoints that are
-determined by the pathfinding algorithm. 
+determined by the pathfinding algorithm.

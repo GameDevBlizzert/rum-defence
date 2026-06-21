@@ -66,7 +66,7 @@ public class BuildMenu
         var panelHeight = RumGame.VirtualHeight;
         panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
 
-        // https://kenney.nl/ or https://kenney-assets.itch.io/pirate-pack
+        // ai generated coin texture
         var coinIcon = content.Load<Texture2D>("Art/UI/Coin");
 
         int fontHeight = (int)Primitives.Font.MeasureString("0").Y;
