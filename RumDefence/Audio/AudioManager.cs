@@ -48,6 +48,8 @@ public class AudioManager
     {
         var content = RumGame.Instance.Content;
 
+        // [Free Pirate Game Music Pack](https://alkakrab.itch.io/free-pirate-game-music-pack)
+        // and [Kenney Impact Sounds](https://www.kenney.nl/assets/impact-sounds)
         soundEffects["click"] = content.Load<SoundEffect>("Audio/click_004");
         soundEffects["confirmation"] = content.Load<SoundEffect>("Audio/confirmation_002");
         soundEffects["error"] = content.Load<SoundEffect>("Audio/error_008");

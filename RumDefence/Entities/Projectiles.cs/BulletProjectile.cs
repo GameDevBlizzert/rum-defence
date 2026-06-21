@@ -11,6 +11,7 @@ public class BulletProjectile : BaseProjectile
     public BulletProjectile(Vector2 start, Troop target, float speed, int damage)
         : base(start, target, speed, damage)
     {
+        // custom texture by Tobias Roessingh
         Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Projectiles/bullet");
 
         int frameWidth = Texture.Width / 4;

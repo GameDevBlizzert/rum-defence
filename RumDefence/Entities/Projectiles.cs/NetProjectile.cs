@@ -17,6 +17,7 @@ public class NetProjectile : BaseProjectile
         _slowMultiplier = 0.5f;
         _debuffDuration = 1f;
 
+        // custom texture by Tobias Roessingh
         Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Towers/fishing-net");
 
         origin = new Vector2(Texture.Width / 2f, Texture.Height / 2f);

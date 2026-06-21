@@ -45,6 +45,7 @@ public class TutorialOverlay
     public TutorialOverlay()
     {
         var content = RumGame.Instance.Content;
+        // custom texture by Tobias Roessingh
         panelTexture = content.Load<Texture2D>("Art/UI/Panels/panel");
         var buttonTexture = content.Load<Texture2D>("Art/UI/Buttons/button");
 

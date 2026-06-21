@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace RumDefence.UI.Box;
-
+// AI generated
 public class KeyBindBox : ButtonBox
 {
     public string ActionId { get; }

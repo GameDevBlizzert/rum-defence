@@ -49,8 +49,6 @@ public class BuildMenu
     private const int ButtonWidth = PanelWidth - 80;
     private const int ButtonHeight = 60;
     private Vector2 buttonSize;
-    private Rectangle buttonSourceRect;
-
     public BuildMenu(BuildManager buildManager, LevelProgressSystem progress, Func<TowerData, bool> isTowerAvailable = null)
     {
         this.buildManager = buildManager;
@@ -58,7 +56,9 @@ public class BuildMenu
         this.isTowerAvailable = isTowerAvailable;
 
         var content = RumGame.Instance.Content;
+        // https://kenney.nl/ or https://kenney-assets.itch.io/pirate-pack
         var wallIcon = content.Load<Texture2D>("Art/Themes/Grass/Walls/wall");
+        // custom texture by Tobias Roessingh
         var removeIcon = content.Load<Texture2D>("Art/UI/remove-building-icon");
 
         int panelX = 0;
@@ -66,16 +66,15 @@ public class BuildMenu
         var panelHeight = RumGame.VirtualHeight;
         panelRect = new Rectangle(panelX, panelY, PanelWidth, panelHeight);
 
+        // ai generated coin texture
         var coinIcon = content.Load<Texture2D>("Art/UI/Coin");
 
         int fontHeight = (int)Primitives.Font.MeasureString("0").Y;
         int barHeight = fontHeight + 8;
         int coinIconSize = fontHeight;
         const int iconTextGap = 4;
-        const int spacing = 8;
 
         buttonSize = new Vector2(ButtonWidth, ButtonHeight);
-        buttonSourceRect = new Rectangle(0, 0, 64, 64);
 
         healthBar = new ProgressBarBox
         {
@@ -98,37 +97,38 @@ public class BuildMenu
         {
             var data = availableTowers[i];
             var icon = content.Load<Texture2D>(data.IconTexturePath);
-            var btn = new IconButtonBox(Primitives.ButtonTexture, icon, buttonSourceRect);
+            var btn = new IconButtonBox(Primitives.ButtonTexture, icon);
             btn.Size = buttonSize;
             btn.OnClick = () => buildManager.SetTowerMode(data);
             btn.CostLabel = data.Cost.ToString();
             towerButtons[i] = (btn, data);
         }
 
-        wallButton = new IconButtonBox(Primitives.ButtonTexture, wallIcon, buttonSourceRect);
+        wallButton = new IconButtonBox(Primitives.ButtonTexture, wallIcon);
         wallButton.Size = buttonSize;
         wallButton.OnClick = () => buildManager.SetMode(BuildMode.Wall);
         wallButton.CostLabel = BuildManager.WallCost.ToString();
 
-        removeButton = new IconButtonBox(Primitives.ButtonTexture, removeIcon, buttonSourceRect);
+        removeButton = new IconButtonBox(Primitives.ButtonTexture, removeIcon);
         removeButton.Size = buttonSize;
         removeButton.BaseTint = new Color(220, 70, 70);
         removeButton.OnClick = () => buildManager.SetMode(BuildMode.Remove);
 
+        // custom textures by Tobias Roessingh
         playIcon = content.Load<Texture2D>("Art/UI/normal-speed-icon");
         pauseIcon = content.Load<Texture2D>("Art/UI/pause-icon");
         fastForwardIcon = content.Load<Texture2D>("Art/UI/twice-speed-icon");
         highlightArrowIcon = CreateHighlightArrowIcon(RumGame.Instance.GraphicsDevice);
 
-        speedButton = new IconButtonBox(Primitives.ButtonTexture, fastForwardIcon, buttonSourceRect);
+        speedButton = new IconButtonBox(Primitives.ButtonTexture, fastForwardIcon);
         speedButton.Size = buttonSize;
         speedButton.OnClick = () => OnSpeedRequested?.Invoke();
 
-        pauseMenuButton = new IconButtonBox(Primitives.ButtonTexture, pauseIcon, buttonSourceRect);
+        pauseMenuButton = new IconButtonBox(Primitives.ButtonTexture, pauseIcon);
         pauseMenuButton.Size = buttonSize;
         pauseMenuButton.OnClick = () => OnMenuRequested?.Invoke();
 
-        contentBox = new Box { Direction = Direction.Row, Gap = spacing, Padding = 0, AlignX = Align.Center };
+        contentBox = new Box { Direction = Direction.Row, Gap = Spacing, Padding = 0, AlignX = Align.Center };
         contentBox.Add(healthBar);
         contentBox.Add(coinRow);
         foreach (var (button, _) in towerButtons)
@@ -136,11 +136,13 @@ public class BuildMenu
         contentBox.Add(wallButton);
         contentBox.Add(removeButton);
 
-        var bottomContent = new Box { Direction = Direction.Row, Gap = spacing, Padding = 0, AlignX = Align.Center };
+        var bottomContent = new Box { Direction = Direction.Row, Gap = Spacing, Padding = 0, AlignX = Align.Center };
         bottomContent.Add(speedButton);
         bottomContent.Add(pauseMenuButton);
 
-        panel = new Box { Direction = Direction.Row, AlignY = Align.Between, Padding = 8, AlignX = Align.Center };
+        var panelGap = panelRect.Height - contentBox.Measure().Y - bottomContent.Measure().Y;
+        panelGap -= 2 * Spacing;
+        panel = new Box { Direction = Direction.Row, Padding = 0, Gap = (int)panelGap };
         panel.AddBackground(new ImageBox(Primitives.PanelTexture));
         panel.Add(contentBox);
         panel.Add(bottomContent);
@@ -161,7 +163,7 @@ public class BuildMenu
         {
             var data = availableTowers[i];
             var icon = content.Load<Texture2D>(data.IconTexturePath);
-            var btn = new IconButtonBox(Primitives.ButtonTexture, icon, buttonSourceRect);
+            var btn = new IconButtonBox(Primitives.ButtonTexture, icon);
             btn.Size = buttonSize;
             btn.OnClick = () => buildManager.SetTowerMode(data);
             btn.CostLabel = data.Cost.ToString();
@@ -178,69 +180,6 @@ public class BuildMenu
 
         panel.Arrange(panelRect);
     }
-
-    private static Texture2D CreatePlayIcon(GraphicsDevice graphicsDevice)
-    {
-        const int w = 24, h = 14;
-        var data = new Color[w * h];
-
-        int midY = h / 2;
-        for (int y = 0; y < h; y++)
-        {
-            int halfWidth = (int)Math.Round((midY - Math.Abs(y - midY)) * 0.85f);
-            int startX = 4;
-            for (int x = startX; x < startX + halfWidth * 2 && x < w - 2; x++)
-                data[y * w + x] = Color.White;
-        }
-
-        var tex = new Texture2D(graphicsDevice, w, h);
-        tex.SetData(data);
-        return tex;
-    }
-
-    private static Texture2D CreatePauseIcon(GraphicsDevice graphicsDevice)
-    {
-        const int w = 24, h = 14;
-        var data = new Color[w * h];
-
-        for (int y = 2; y < h - 2; y++)
-        {
-            for (int x = 4; x < 8; x++)
-                data[y * w + x] = Color.White;
-
-            for (int x = 16; x < 20; x++)
-                data[y * w + x] = Color.White;
-        }
-
-        var tex = new Texture2D(graphicsDevice, w, h);
-        tex.SetData(data);
-        return tex;
-    }
-
-    private static Texture2D CreateFastForwardIcon(GraphicsDevice graphicsDevice)
-    {
-        const int w = 24, h = 14;
-        var data = new Color[w * h];
-
-        int midY = h / 2;
-        for (int y = 0; y < h; y++)
-        {
-            int halfWidth = (int)Math.Round((midY - Math.Abs(y - midY)) * 0.85f);
-
-            int leftStartX = 1;
-            for (int x = leftStartX; x < leftStartX + halfWidth * 2 && x < 11; x++)
-                data[y * w + x] = Color.White;
-
-            int rightStartX = 12;
-            for (int x = rightStartX; x < rightStartX + halfWidth * 2 && x < w - 1; x++)
-                data[y * w + x] = Color.White;
-        }
-
-        var tex = new Texture2D(graphicsDevice, w, h);
-        tex.SetData(data);
-        return tex;
-    }
-
     private static Texture2D CreateHighlightArrowIcon(GraphicsDevice graphicsDevice)
     {
         const int w = 28, h = 20;
@@ -289,75 +228,60 @@ public class BuildMenu
         if (HoveredTowerData == null && !IsWallHovered && !IsRemoveHovered)
             return;
 
-        Vector2 mousePos = ScreenManager.GetMousePositionScaled();
-
         const float statScale = 0.6f;
         const float descScale = 0.55f;
         const int padding = 20;
-        const int spacing = 34;
+        const int statGap = 2;
+        const int descGap = 8;
 
         string description = HoveredTowerData != null ? HoveredTowerData.Description
             : IsWallHovered ? WallDescription
             : RemoveDescription;
-        int statCount = HoveredTowerData != null ? 4 : IsWallHovered ? 2 : 1;
 
-        const int topPadding = 24;
-        const int bottomPadding = 20;
+        var statsBox = new Box { Direction = Direction.Row, Gap = statGap, Padding = 0, AlignX = Align.Start, AlignY = Align.Start };
+        if (HoveredTowerData != null)
+        {
+            statsBox.Add(new TextItem(HoveredTowerData.Label, 0.75f));
+            statsBox.Add(new TextItem($"DAM: {HoveredTowerData.Damage}", statScale));
+            statsBox.Add(new TextItem($"RNG: {(int)HoveredTowerData.Range}", statScale));
+            statsBox.Add(new TextItem($"SPD: {HoveredTowerData.FireRate:F1}/s", statScale));
+            statsBox.Add(new TextItem($"Cost: {HoveredTowerData.Cost} coins", statScale));
+        }
+        else if (IsWallHovered)
+        {
+            statsBox.Add(new TextItem($"HP: {Wall.BaseMaxHealth}", statScale));
+            statsBox.Add(new TextItem($"Cost: {BuildManager.WallCost} coins", statScale));
+        }
+        else
+        {
+            statsBox.Add(new TextItem($"Refund: {Primitives.RefundBuildingPrc * 100:0}% of cost", statScale));
+        }
 
-        int width = 340;
-        int statsBlockHeight = (statCount + 1) * spacing;
-        var descSize = !string.IsNullOrEmpty(description) ? Primitives.Font.MeasureString(description) * descScale : Vector2.Zero;
-        int descGap = !string.IsNullOrEmpty(description) ? 16 : 0;
+        if (hoverInfoPanel == null)
+        {
+            hoverInfoPanel = new Box { Direction = Direction.Row, Gap = descGap, Padding = padding, AlignX = Align.Start, AlignY = Align.Start };
+            hoverInfoPanel.AddBackground(new ImageBox(Primitives.PanelTexture));
+        }
+        hoverInfoPanel.Clear();
+        hoverInfoPanel.Add(statsBox);
+        if (!string.IsNullOrEmpty(description))
+            hoverInfoPanel.Add(new TextItem(description, descScale));
 
-        int requiredWidth = (int)descSize.X + padding * 2;
-        if (requiredWidth > width)
-            width = requiredWidth;
+        var size = hoverInfoPanel.Measure();
+        int width = Math.Max(340, (int)size.X);
+        int height = (int)size.Y;
 
-        int height = topPadding + statsBlockHeight + descGap + (int)descSize.Y + bottomPadding;
-
+        Vector2 mousePos = ScreenManager.GetMousePositionScaled();
         int x = (int)mousePos.X + 24;
         int y = (int)mousePos.Y + 24;
 
         if (x + width > RumGame.VirtualWidth)
             x = (int)mousePos.X - width - 24;
-
         if (y + height > RumGame.VirtualHeight)
             y = (int)mousePos.Y - height - 24;
 
-        var rect = new Rectangle(x, y, width, height);
-
-        if (hoverInfoPanel == null)
-        {
-            hoverInfoPanel = new Box();
-            hoverInfoPanel.AddBackground(new ImageBox(Primitives.PanelTexture));
-        }
-        hoverInfoPanel.Arrange(rect);
+        hoverInfoPanel.Arrange(new Rectangle(x, y, width, height));
         hoverInfoPanel.Draw(spriteBatch);
-
-        int startY = rect.Y + 24;
-
-        if (HoveredTowerData != null)
-        {
-            spriteBatch.DrawString(Primitives.Font, $"DAM: {HoveredTowerData.Damage}", new Vector2(rect.X + padding, startY + spacing), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-            spriteBatch.DrawString(Primitives.Font, $"RNG: {(int)HoveredTowerData.Range}", new Vector2(rect.X + padding, startY + spacing * 2), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-            spriteBatch.DrawString(Primitives.Font, $"SPD: {HoveredTowerData.FireRate:F1}/s", new Vector2(rect.X + padding, startY + spacing * 3), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-            spriteBatch.DrawString(Primitives.Font, $"Cost: {HoveredTowerData.Cost} coins", new Vector2(rect.X + padding, startY + spacing * 4), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        }
-        else if (IsWallHovered)
-        {
-            spriteBatch.DrawString(Primitives.Font, $"HP: {Wall.BaseMaxHealth}", new Vector2(rect.X + padding, startY + spacing), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-            spriteBatch.DrawString(Primitives.Font, $"Cost: {BuildManager.WallCost} coins", new Vector2(rect.X + padding, startY + spacing * 2), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        }
-        else
-        {
-            spriteBatch.DrawString(Primitives.Font, $"Refund: {Primitives.RefundBuildingPrc * 100:0}% of cost", new Vector2(rect.X + padding, startY + spacing), Primitives.FontColor, 0f, Vector2.Zero, statScale, SpriteEffects.None, 0f);
-        }
-
-        if (!string.IsNullOrEmpty(description))
-        {
-            int descY = startY + statsBlockHeight + descGap;
-            spriteBatch.DrawString(Primitives.Font, description, new Vector2(rect.X + padding, descY), Primitives.FontColor, 0f, Vector2.Zero, descScale, SpriteEffects.None, 0f);
-        }
     }
 
     private static readonly string[] TowerSlotActions =

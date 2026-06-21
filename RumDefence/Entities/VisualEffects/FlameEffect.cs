@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 namespace RumDefence;
 
+// AI generated
 public class FlameEffect : Entity
 {
     private const int FrameWidth = 128;
@@ -48,6 +49,7 @@ public class FlameEffect : Entity
         _outerLeftRot = baseAngle - SpreadAngle;
         _outerRightRot = baseAngle + SpreadAngle;
 
+        // custom texture by Tobias Roessingh
         Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Projectiles/flames");
 
         _spriteOrigin = new Vector2(FrameWidth, FrameHeight / 2f);

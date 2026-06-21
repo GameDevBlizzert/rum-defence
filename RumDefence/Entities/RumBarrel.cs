@@ -23,6 +23,7 @@ public class RumBarrel : Entity, ICollidable
         _SpriteFrameSize = 128;
         scale = Size.X / _SpriteFrameSize;
         origin = new Vector2(_SpriteFrameSize) / 2;
+        // AI generated rum barrel texture
         Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Objects/RumBarrel");
     }
 

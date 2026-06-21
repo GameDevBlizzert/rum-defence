@@ -19,6 +19,7 @@ public class OverlayRenderer
         this.occupiedTiles = occupiedTiles;
 
         var content = RumGame.Instance.Content;
+        // https://kenney.nl/ or https://kenney-assets.itch.io/pirate-pack
         placeableOverlay = content.Load<Texture2D>("Art/Themes/Grass/Utilities/placeable");
         destroyableOverlay = content.Load<Texture2D>("Art/Themes/Grass/Utilities/destroyable");
     }

@@ -19,6 +19,7 @@ public class CoinManager
     {
         this.getTargetPosition = getTargetPosition;
         this.progress = progress;
+        // ai generated coin texture
         coinTexture = RumGame.Instance.Content.Load<Texture2D>("Art/UI/Coin");
     }
 

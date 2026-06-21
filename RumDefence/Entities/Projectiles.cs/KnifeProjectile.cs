@@ -12,6 +12,7 @@ public class KnifeProjectile : BaseProjectile
     public KnifeProjectile(Vector2 start, Troop target, float speed, int damage)
         : base(start, target, speed, damage)
     {
+        // custom texture by Tobias Roessingh
         Texture = RumGame.Instance.Content.Load<Texture2D>("Art/Projectiles/bandit-knife");
         origin = new Vector2(FrameWidth / 2f, FrameHeight / 2f);
         Size = SizeSystem.Square(0.5f);

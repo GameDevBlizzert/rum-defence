@@ -74,6 +74,7 @@ namespace RumDefence
             // browser/WebGL backend), so fall back to the default cursor there.
             try
             {
+                // https://kenney.nl/ or https://kenney-assets.itch.io/pirate-pack
                 var cursor = Content.Load<Texture2D>("Art/UI/Cursor");
                 Mouse.SetCursor(MouseCursor.FromTexture2D(cursor, 0, 0));
             }

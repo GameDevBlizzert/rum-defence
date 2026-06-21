@@ -32,7 +32,6 @@ public class GameScreen : Screen
     public static GameScreen Instance { get; private set; }
     public List<Explosion> Explosions = new();
     public List<NetEffect> NetEffects = new();
-    public List<FireEffect> FireEffects = new();
     public List<FlameEffect> FlameEffects = new();
     public IEnumerable<Wall> Walls => walls.Values;
 
@@ -255,13 +254,6 @@ public class GameScreen : Screen
                 NetEffects.RemoveAt(i);
         }
 
-        for (int i = FireEffects.Count - 1; i >= 0; i--)
-        {
-            FireEffects[i].Update(gameTime);
-            if (FireEffects[i].IsFinished)
-                FireEffects.RemoveAt(i);
-        }
-
         for (int i = FlameEffects.Count - 1; i >= 0; i--)
         {
             FlameEffects[i].Update(gameTime);
@@ -301,9 +293,6 @@ public class GameScreen : Screen
 
         foreach (var net in NetEffects)
             net.Draw(spriteBatch);
-
-        foreach (var fire in FireEffects)
-            fire.Draw(spriteBatch);
 
         foreach (var flame in FlameEffects)
             flame.Draw(spriteBatch);
